@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#070708">
+  <meta name="description" content="NaZerak — личный кабинет игрока.">
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./styles.css">
+  <title>NaZerak — личный кабинет</title>
+</head>
+<body data-cabinet>
+  <div class="scroll-progress" aria-hidden="true"><span></span></div>
+  <div class="site-noise" aria-hidden="true"></div>
+
+  <header class="topbar" id="top">
+    <div class="container topbar__inner">
+      <a class="brand" href="./" aria-label="NaZerak — на главную">
+        <span class="brand__mark" aria-hidden="true">N</span>
+        <span class="brand__name">NaZerak</span>
+      </a>
+
+      <nav class="nav nav--cabinet" aria-label="Навигация кабинета">
+        <a href="./#about">Проект</a>
+        <a href="./#world">Мир</a>
+        <a href="./#start">Старт</a>
+        <a class="nav-account" data-auth-link href="./cabinet.html">
+          <span class="nav-account__avatar">
+            <img data-auth-link-avatar alt="" hidden>
+            <span data-auth-link-fallback>◉</span>
+          </span>
+          <span data-auth-link-label>Войти</span>
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="account-page">
+    <div class="container">
+      <section class="account-hero reveal">
+        <div>
+          <span class="section-kicker">NAZERAK / ACCOUNT</span>
+          <h1>Личный кабинет.</h1>
+          <p>Один аккаунт через Discord для профиля игрока, привязки Minecraft и заявок на медиа-партнёрство.</p>
+        </div>
+        <div class="account-hero__badge">
+          <i></i>
+          <span data-auth-status>CHECKING AUTH</span>
+        </div>
+      </section>
+
+      <div class="auth-message" data-auth-message hidden></div>
+
+      <section class="account-view" data-account-view="loading">
+        <div class="account-loading">
+          <span class="account-spinner"></span>
+          <strong>Проверяем сессию…</strong>
+        </div>
+      </section>
+
+      <section class="account-view" data-account-view="config" id="auth-config" hidden>
+        <div class="account-panel account-panel--setup">
+          <span class="section-kicker">01 / SETUP</span>
+          <h2>Авторизация ещё не подключена.</h2>
+          <p>Код Discord OAuth уже встроен в сайт. Осталось указать URL Supabase и публичный publishable key в <code>auth-config.js</code>, а затем включить Discord Provider в Supabase.</p>
+          <div class="setup-steps">
+            <div><b>01</b><span>Создай отдельный Supabase project для NaZerak.</span></div>
+            <div><b>02</b><span>Выполни <code>supabase/schema.sql</code> в SQL Editor.</span></div>
+            <div><b>03</b><span>Включи Discord Provider и добавь OAuth callback из <code>AUTH_SETUP.md</code>.</span></div>
+            <div><b>04</b><span>Заполни <code>auth-config.js</code> двумя публичными значениями.</span></div>
+          </div>
+          <a class="button button--primary" href="./AUTH_SETUP.md">
+            <span>Открыть инструкцию</span><span aria-hidden="true">↗</span>
+          </a>
+        </div>
+      </section>
+
+      <section class="account-view" data-account-view="guest" hidden>
+        <div class="login-panel">
+          <div class="login-panel__visual" aria-hidden="true">
+            <div class="login-orbit login-orbit--one"></div>
+            <div class="login-orbit login-orbit--two"></div>
+            <div class="login-core">
+              <span>N</span>
+              <small>NZ</small>
+            </div>
+          </div>
+          <div class="login-panel__content">
+            <span class="section-kicker">01 / DISCORD</span>
+            <h2>Войти в NaZerak.</h2>
+            <p>Регистрация отдельной формой не нужна: первый вход через Discord автоматически создаёт аккаунт NaZerak.</p>
+            <button class="button button--primary" type="button" data-discord-login>
+              <span>Продолжить с Discord</span>
+              <span aria-hidden="true">↗</span>
+            </button>
+            <small>NaZerak получает только необходимые данные Discord для идентификации аккаунта. Пароль Discord сайт не видит.</small>
+          </div>
+        </div>
+      </section>
+
+      <section class="account-view" data-account-view="user" hidden>
+        <div class="account-grid">
+          <article class="account-panel account-panel--profile">
+            <div class="account-panel__top">
+              <span>ACCOUNT</span><span>01</span>
+            </div>
+            <div class="account-profile">
+              <div class="account-avatar">
+                <img data-user-avatar alt="" hidden>
+                <span data-user-initial>NZ</span>
+              </div>
+              <div>
+                <h2 data-user-name>Игрок NaZerak</h2>
+                <p data-discord-name>Discord</p>
+              </div>
+            </div>
+            <div class="account-data">
+              <div><span>ACCOUNT CREATED</span><strong data-account-created>—</strong></div>
+              <div><span>LAST SIGN IN</span><strong data-last-sign-in>—</strong></div>
+              <div><span>USER ID</span><strong class="account-data__mono" data-user-id>—</strong></div>
+            </div>
+            <button class="button button--ghost account-signout" type="button" data-sign-out>
+              <span>Выйти из аккаунта</span><span aria-hidden="true">↗</span>
+            </button>
+          </article>
+
+          <article class="account-panel account-panel--server">
+            <div class="account-panel__top">
+              <span>NAZERAK SERVER</span><span>02</span>
+            </div>
+            <div class="account-server__status">
+              <span class="server-node__dot"></span>
+              <strong>nazehard.rustix.cc</strong>
+            </div>
+            <div class="account-server__version">Minecraft <b>1.21.11</b></div>
+            <div class="account-server__note">Текущий online-статус сервера остаётся на главной странице и обновляется через публичный status API.</div>
+            <a class="button button--ghost" href="./#start">
+              <span>К данным сервера</span><span aria-hidden="true">↗</span>
+            </a>
+          </article>
+
+          <article class="account-panel" id="minecraft-profile">
+            <div class="account-panel__top">
+              <span>GAME PROFILE</span><span>03</span>
+            </div>
+            <div>
+              <span class="section-kicker">MINECRAFT</span>
+              <h2>Игровой профиль.</h2>
+              <p class="account-panel__description">Сохрани ник, который используешь на NaZerak. Настоящая проверка владения будет подключаться отдельно через серверный контур.</p>
+            </div>
+            <form class="account-form" id="minecraft-profile-form">
+              <label>
+                <span>Minecraft username</span>
+                <input id="minecraft-username" name="minecraft_username" maxlength="16" autocomplete="off" spellcheck="false" data-minecraft-input placeholder="Например, NaZerakPlayer">
+              </label>
+              <div class="account-form__actions">
+                <span class="verification-pill">НЕ ПОДТВЕРЖДЁН</span>
+                <button class="button button--primary" type="submit"><span>Сохранить</span><span aria-hidden="true">→</span></button>
+              </div>
+            </form>
+          </article>
+
+          <article class="account-panel account-panel--media" id="media-application">
+            <div class="account-panel__top">
+              <span>MEDIA PARTNERSHIP</span><span>04</span>
+            </div>
+            <div class="account-media__intro">
+              <div>
+                <span class="section-kicker">CONTENT CREATORS</span>
+                <h2>Стать медиа-партнёром.</h2>
+                <p class="account-panel__description">Укажи свой канал и коротко расскажи о формате. Заявка сохранится в системе NaZerak.</p>
+              </div>
+              <span class="media-application__tag">NAZERAK</span>
+            </div>
+            <form class="account-form" id="media-application-form">
+              <label>
+                <span>Ссылка на канал</span>
+                <input id="media-channel-url" name="channel_url" type="url" maxlength="500" required placeholder="https://youtube.com/...">
+              </label>
+              <label>
+                <span>О себе и контенте</span>
+                <textarea id="media-message" name="message" maxlength="2000" rows="5" required placeholder="Кто ты, где публикуешься и какой контент создаёшь?"></textarea>
+              </label>
+              <button class="button button--primary" type="submit"><span>Отправить заявку</span><span aria-hidden="true">↗</span></button>
+            </form>
+
+            <div class="media-history">
+              <div class="media-history__head"><span>МОИ ЗАЯВКИ</span><span>HISTORY</span></div>
+              <div class="media-history__list" data-media-list></div>
+              <p class="media-history__empty" data-media-empty>Пока нет отправленных заявок.</p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <div class="account-footer-link">
+        <a class="button button--ghost" href="./">
+          <span>Вернуться на сайт</span><span aria-hidden="true">←</span>
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer__inner">
+      <div>
+        <a class="brand brand--footer" href="./">
+          <span class="brand__mark" aria-hidden="true">N</span>
+          <span class="brand__name">NaZerak</span>
+        </a>
+        <p class="footer__copy">Личный кабинет NaZerak.</p>
+        <p class="footer__legal">NaZerak — независимый Minecraft-проект. Не связан с Mojang Studios или Microsoft.</p>
+      </div>
+      <div class="footer__right">
+        <span>© <span id="year"></span> NaZerak</span>
+        <a href="#top">Наверх ↑</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js" defer></script>
+  <script src="./auth-config.js" defer></script>
+  <script src="./auth.js" defer></script>
+</body>
+</html>
