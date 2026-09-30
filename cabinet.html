@@ -20,7 +20,12 @@
         <span class="brand__name">NaZerak</span>
       </a>
 
-      <nav class="nav nav--cabinet" aria-label="Навигация кабинета">
+      <button class="nav-toggle" type="button" aria-controls="cabinet-nav" aria-expanded="false">
+        <span></span><span></span><span></span>
+        <span class="sr-only">Открыть меню</span>
+      </button>
+
+      <nav class="nav nav--cabinet" id="cabinet-nav" aria-label="Навигация кабинета">
         <a href="./#about">Проект</a>
         <a href="./#world">Мир</a>
         <a href="./#start">Старт</a>
@@ -221,5 +226,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js" defer></script>
   <script src="./auth-config.js" defer></script>
   <script src="./auth.js" defer></script>
+  <script src="./script.js" defer></script>
 </body>
 </html>
