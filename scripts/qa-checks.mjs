@@ -63,6 +63,27 @@ if (/clientSecret\s*[:=]/i.test(config)) {
   fail.push("client secret assignment found in frontend config");
 }
 
+
+const publishedFiles = new Set(requiredFiles.filter((file) => fs.existsSync(path.join(root, file))));
+for (const [name, page] of [
+  ["index.html", index],
+  ["cabinet.html", cabinet],
+  ["404.html", read("404.html")]
+]) {
+  const refs = [...page.matchAll(/\b(?:href|src)="(\.\/[^"#?]+)"/g)].map((m) => m[1].slice(2));
+  const missing = [...new Set(refs.filter((ref) => !publishedFiles.has(ref)))];
+  if (missing.length) {
+    fail.push(`missing local reference(s) in ${name}: ${missing.join(", ")}`);
+  }
+
+  const ids = new Set([...page.matchAll(/\bid=["']([^"']+)["']/g)].map((m) => m[1]));
+  const hashRefs = [...page.matchAll(/\bhref="#([^"]+)"/g)].map((m) => m[1]);
+  const missingHashes = [...new Set(hashRefs.filter((id) => !ids.has(id)))];
+  if (missingHashes.length) {
+    fail.push(`missing hash target(s) in ${name}: ${missingHashes.join(", ")}`);
+  }
+}
+
 for (const file of ["script.js", "auth.js", "supabase-loader.js"]) {
   try {
     new Function(read(file));
