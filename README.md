@@ -12,12 +12,13 @@
 
 - `index.html` — главная страница
 - `styles.css` — оформление, адаптивность и motion
-- `script.js` — меню, scroll-анимации, микроинтеракции и копирование IP
+- `script.js` — меню, анимации, копирование IP и мониторинг статуса сервера
 - `favicon.svg` — иконка сайта
+- `supabase-loader.js` — отказоустойчивый загрузчик Supabase JS с резервным CDN
 - `404.html` — страница ошибки
 - `.nojekyll` — отключение Jekyll-обработки
 
-Сайт не использует npm, сборщик или внешние UI-библиотеки.
+Сайт не использует npm или сборщик. Единственная внешняя runtime-зависимость для кабинета — Supabase JS, загружаемый с фиксированной версией и резервным CDN.
 
 ## Локальный запуск
 
@@ -72,5 +73,4 @@ python -m http.server 8000
 - `supabase/schema.sql` — таблицы и RLS;
 - `AUTH_SETUP.md` — пошаговая настройка Discord + Supabase.
 
-Для настоящего входа нужно создать отдельный Supabase project для NaZerak, выполнить SQL-схему, включить Discord Provider и заполнить `auth-config.js`. Discord Client Secret и Supabase service_role остаются только в настройках Supabase и в GitHub не попадают.
-
+Для настоящего входа используется существующий Supabase project NaZerak. Нужно включить Discord Provider и задать корректные OAuth URL; публичный publishable key находится в `auth-config.js`, а Discord Client Secret и Supabase service_role в GitHub не попадают.
