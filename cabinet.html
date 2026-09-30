@@ -11,6 +11,7 @@
   <title>NaZerak — личный кабинет</title>
 </head>
 <body data-cabinet>
+  <a class="skip-link" href="#main-content">К содержимому</a>
   <div class="scroll-progress" aria-hidden="true"><span></span></div>
   <header class="topbar" id="top">
     <div class="container topbar__inner">
@@ -39,7 +40,7 @@
     </div>
   </header>
 
-  <main class="account-page">
+  <main class="account-page" id="main-content" tabindex="-1">
     <div class="container">
       <section class="account-hero reveal">
         <div>
@@ -55,7 +56,7 @@
 
       <div class="auth-message" data-auth-message role="status" aria-live="polite" hidden></div>
 
-      <section class="account-view" data-account-view="loading">
+      <section class="account-view" data-account-view="loading" hidden>
         <div class="account-loading">
           <span class="account-spinner"></span>
           <strong>Проверяем сессию…</strong>
@@ -221,6 +222,8 @@
       </div>
     </div>
   </footer>
+
+  <noscript><div class="noscript-message">Для входа и личного кабинета NaZerak требуется включить JavaScript.</div></noscript>
 
   <script src="./auth-config.js?v=2" defer></script>
   <script src="./supabase-loader.js?v=1" defer></script>
