@@ -1,108 +1,497 @@
 # NaZerak — Discord авторизация и личный кабинет
 
-Авторизация построена на **Discord OAuth + Supabase Auth**. Сам сайт остаётся статическим и продолжает работать через GitHub Pages.
+Авторизация NaZerak построена на **Discord OAuth + Supabase Auth**.
 
-## 1. Создать отдельный Supabase project
+Сам сайт остаётся статическим и работает через GitHub Pages. Supabase нужен для авторизации, профилей и заявок из личного кабинета.
 
-Не используй сторонний проект сайта или магазина. Создай отдельный проект только для NaZerak.
+## Что нужно получить
 
-После создания запиши:
-- Project URL вида `https://<project-ref>.supabase.co`
-- Publishable key вида `sb_publishable_...`
+Тебе понадобятся:
 
-В браузер можно публиковать только publishable key. **Discord Client Secret и Supabase service_role никогда не добавляй в GitHub.**
+1. Supabase Project URL
+2. Supabase Publishable key
+3. Discord Client ID
+4. Discord Client Secret
 
-## 2. Создать таблицы NaZerak
+В GitHub попадут только первые два.
 
-Открой Supabase → SQL Editor и выполни содержимое:
+**Никогда не клади в GitHub и не отправляй в чат Discord Client Secret или Supabase Secret key / service_role.**
 
-`supabase/schema.sql`
+---
 
-В схеме включён RLS: пользователь может читать и менять только собственный профиль, а заявки на медиа-партнёрство доступны только их владельцу.
+# 1. Создать Supabase project
 
-## 3. Подключить Discord
+Открой Supabase Dashboard и создай отдельный проект именно для NaZerak.
+
+Не используй старый проект HellsaizShop — для NaZerak лучше отдельная база, чтобы данные разных проектов не смешивались.
+
+На текущем Supabase Free Plan разрешены два активных бесплатных проекта с учётом действующего лимита. Для старта NaZerak этого достаточно.
+
+После создания открой проект.
+
+### Получить Project URL и Publishable key
+
+Открой:
+
+**Settings → API Keys**
+
+Нужен:
+
+**Publishable key**
+
+Он начинается с:
+
+    sb_publishable_
+
+Также нужен:
+
+**Project URL**
+
+Он имеет вид:
+
+    https://xxxxxxxx.supabase.co
+
+В разделе Secret keys ничего для сайта копировать не нужно.
+
+---
+
+# 2. Создать таблицы NaZerak
 
 В Supabase открой:
 
+**SQL Editor → New query**
+
+В репозитории NaZerak открой файл:
+
+    supabase/schema.sql
+
+Скопируй **весь файл целиком** в SQL Editor.
+
+Нажми:
+
+**Run**
+
+После выполнения в Table Editor должны появиться:
+
+- profiles
+- media_applications
+
+RLS уже включён в нашей схеме.
+
+Пользователь сможет работать только со своими строками.
+
+---
+
+# 3. Создать Discord Application
+
+Открой:
+
+**Discord Developer Portal**
+
+Нажми:
+
+**New Application**
+
+Название:
+
+**NaZerak**
+
+После создания открой:
+
+**OAuth2**
+
+Найди:
+
+**Redirects**
+
+---
+
+# 4. Получить Callback URL из Supabase
+
+Вернись в Supabase:
+
 **Authentication → Sign In / Providers → Discord**
 
-Callback URL будет:
+Скопируй значение:
 
-`https://<project-ref>.supabase.co/auth/v1/callback`
+**Callback URL**
 
-В Discord Developer Portal:
+Оно будет примерно таким:
 
-**Applications → твое приложение → OAuth2 → Redirects**
+    https://ТВОЙ-PROJECT-REF.supabase.co/auth/v1/callback
 
-добавь этот callback URL и сохрани Client ID + Client Secret.
+Это значение нужно вставить в Discord без изменений.
 
-Затем в Supabase включи Discord и вставь Client ID / Client Secret.
+### В Discord
 
-## 4. Разрешить возврат на сайт NaZerak
+Открой:
 
-В Supabase Auth → URL Configuration добавь адрес GitHub Pages:
+**OAuth2 → Redirects → Add Redirect**
 
-`https://waslnison22-sudo.github.io/NazerakSites/cabinet.html`
+Вставь callback URL из Supabase.
 
-и будущий адрес:
+Нажми:
 
-`https://nazerak.is-a.dev/cabinet.html`
+**Save Changes**
 
-Для локального запуска можно добавить адрес вида:
+После этого скопируй:
 
-`http://localhost:8000/cabinet.html`
+**Client ID**
 
-## 5. Заполнить публичную конфигурацию сайта
+и создай/скопируй:
 
-Открой `auth-config.js` и вставь:
+**Client Secret**
 
-```js
-window.NAZERAK_SUPABASE_CONFIG = {
-  url: "https://<project-ref>.supabase.co",
-  publishableKey: "sb_publishable_..."
-};
-```
+Client Secret сохрани у себя.
 
-Это **единственный** секретоподобный параметр, который должен находиться в публичном клиенте. Publishable key предназначен для браузерного использования.
+---
 
-## 6. Как работает регистрация
+# 5. Включить Discord Provider в Supabase
 
-Отдельной формы «регистрация» не нужно.
+В Supabase:
 
-Нажатие **Войти через Discord** отправляет игрока в Discord:
-- существующий пользователь входит;
-- новый пользователь автоматически появляется в Supabase Auth;
-- после возврата открывается личный кабинет;
-- профиль NaZerak создаётся автоматически.
+**Authentication → Sign In / Providers → Discord**
 
-## 7. Что уже есть в кабинете
+Включи:
 
-- вход через Discord;
-- сохранение сессии;
-- выход;
-- имя, Discord username и аватар;
+**Discord Enabled → ON**
+
+Заполни:
+
+**Client ID**
+
+**Client Secret**
+
+Нажми:
+
+**Save**
+
+После этого Supabase сможет проводить авторизацию через Discord.
+
+---
+
+# 6. Настроить возврат пользователя на NaZerak
+
+Открой:
+
+**Authentication → URL Configuration**
+
+### Site URL
+
+Поставь основной адрес GitHub Pages:
+
+    https://waslnison22-sudo.github.io/NazerakSites/
+
+### Redirect URLs
+
+Добавь:
+
+    https://waslnison22-sudo.github.io/NazerakSites/cabinet.html
+
+Для локального теста добавь:
+
+    http://localhost:8000/cabinet.html
+
+После подключения домена NaZerak добавь:
+
+    https://nazerak.is-a.dev/cabinet.html
+
+В production лучше использовать точные URL.
+
+---
+
+# 7. Подключить Supabase к сайту
+
+В GitHub открой:
+
+    auth-config.js
+
+Сейчас там:
+
+    window.NAZERAK_SUPABASE_CONFIG = {
+      url: "",
+      publishableKey: ""
+    };
+
+Замени на:
+
+    window.NAZERAK_SUPABASE_CONFIG = {
+      url: "https://ТВОЙ-PROJECT-REF.supabase.co",
+      publishableKey: "sb_publishable_ТВОЙ-КЛЮЧ"
+    };
+
+Например:
+
+    window.NAZERAK_SUPABASE_CONFIG = {
+      url: "https://abc123.supabase.co",
+      publishableKey: "sb_publishable_xxxxxxxxx"
+    };
+
+Сохрани файл в ветку main.
+
+### Что можно хранить в GitHub
+
+Можно:
+
+- Supabase Project URL
+- Supabase Publishable key
+
+Нельзя:
+
+- Discord Client Secret
+- Supabase Secret key
+- service_role
+- админские токены
+- пароли
+
+---
+
+# 8. Как работает регистрация
+
+Отдельной формы регистрации нет.
+
+Игрок нажимает:
+
+**Войти через Discord**
+
+Дальше:
+
+    NaZerak → Supabase Auth → Discord → Supabase → cabinet.html
+
+Первый вход создаёт пользователя в Supabase Auth.
+
+Последующие входы используют его существующий аккаунт.
+
+Пароль Discord сайт не получает.
+
+---
+
+# 9. Что пользователь получает
+
+### Discord
+
+- имя;
+- username;
+- аватар;
 - дата создания аккаунта;
-- дата последнего входа;
-- Supabase user ID;
-- Minecraft-ник;
-- отправка заявки на медиа-партнёрство;
-- история своих заявок и их статус.
+- последний вход;
+- Supabase User ID.
 
-## 8. Что пока нельзя делать безопасно без серверной части
+### Minecraft
 
-Проверку владения Minecraft-аккаунтом нельзя считать настоящей только потому, что пользователь написал ник.
+Можно сохранить Minecraft ник.
 
-Для настоящей привязки нужно подтвердить аккаунт через сервер NaZerak: плагин/серверный API должен связать игрока с Auth user ID и менять подтверждённое состояние на серверной стороне.
+Сейчас он отображается как:
 
-## 9. После настройки
+**НЕ ПОДТВЕРЖДЁН**
 
-После заполнения `auth-config.js`:
-1. Открой сайт.
-2. Нажми **Войти**.
-3. Разреши доступ NaZerak в Discord.
-4. После возврата должен открыться `cabinet.html`.
-5. Заполни Minecraft-ник и проверь сохранение.
-6. Отправь тестовую заявку на медиа-партнёрство.
+Это специально.
 
-Официальная документация Supabase для Discord:
+Просто введённый ник не является доказательством владения аккаунтом.
+
+### Медиа-партнёрство
+
+Можно:
+
+- указать канал;
+- написать описание;
+- отправить заявку;
+- посмотреть историю своих заявок;
+- видеть статус заявки.
+
+---
+
+# 10. Проверка после настройки
+
+Проверяй строго по порядку.
+
+### Тест 1 — сайт
+
+Открой:
+
+    https://waslnison22-sudo.github.io/NazerakSites/
+
+Нажми:
+
+**Войти**
+
+### Тест 2 — Discord
+
+Должен открыться Discord OAuth.
+
+Разреши доступ.
+
+После авторизации должен открыться:
+
+    cabinet.html
+
+### Тест 3 — кабинет
+
+Должны появиться:
+
+- Discord имя;
+- аватар;
+- информация об аккаунте;
+- Minecraft-профиль;
+- медиа-заявки.
+
+### Тест 4 — Minecraft
+
+Введи:
+
+    TestNaZerak
+
+Нажми:
+
+**Сохранить**
+
+Должно появиться:
+
+**Игровой профиль сохранён.**
+
+### Тест 5 — медиа
+
+Создай тестовую заявку.
+
+Она должна появиться в:
+
+**МОИ ЗАЯВКИ**
+
+### Тест 6 — выход
+
+Нажми:
+
+**Выйти из аккаунта**
+
+Сайт должен вернуть пользователя на главную.
+
+---
+
+# 11. Ошибки
+
+## Provider not enabled
+
+Проверь:
+
+**Authentication → Providers → Discord**
+
+Discord должен быть включён.
+
+## redirect_uri_mismatch
+
+Проверь Discord:
+
+**OAuth2 → Redirects**
+
+Там должен находиться точный callback Supabase:
+
+    https://ТВОЙ-PROJECT-REF.supabase.co/auth/v1/callback
+
+Не добавляй к этому URL:
+
+    /cabinet.html
+
+## После Discord возвращает ошибку
+
+Проверь:
+
+**Authentication → URL Configuration → Redirect URLs**
+
+Должен быть:
+
+    https://waslnison22-sudo.github.io/NazerakSites/cabinet.html
+
+## Профиль не сохраняется
+
+Проверь:
+
+**Table Editor → profiles**
+
+и повторно выполни:
+
+    supabase/schema.sql
+
+## Медиа-заявка не сохраняется
+
+Проверь:
+
+**Table Editor → media_applications**
+
+и наличие RLS-политик из schema.sql.
+
+---
+
+# 12. Безопасность
+
+В репозитории допускаются:
+
+    Supabase Project URL
+    sb_publishable_...
+
+В репозитории запрещены:
+
+    sb_secret_...
+    service_role
+    Discord Client Secret
+    admin tokens
+    passwords
+
+Publishable key предназначен для публичного клиента.
+
+Secret key и service_role имеют привилегии backend-уровня и не должны попадать в браузерный JavaScript.
+
+---
+
+# 13. Следующий этап
+
+После успешного входа подключаем настоящую связь:
+
+    Discord
+       ↓
+    NaZerak Account
+       ↓
+    Minecraft account
+       ↓
+    Server verification
+       ↓
+    Player statistics
+
+Тогда появятся:
+
+- подтверждение Minecraft аккаунта;
+- Discord ↔ Minecraft связь;
+- текущий online игрока;
+- статистика;
+- достижения;
+- история;
+- дополнительные функции кабинета.
+
+Для настоящего доказательства владения Minecraft аккаунтом понадобится серверный компонент/плагин NaZerak. Одного введённого ника недостаточно.
+
+---
+
+# Официальная документация
+
+Supabase — Discord OAuth:
 https://supabase.com/docs/guides/auth/social-login/auth-discord
+
+Supabase — Redirect URLs:
+https://supabase.com/docs/guides/auth/redirect-urls
+
+Supabase — API keys:
+https://supabase.com/docs/guides/getting-started/migrating-to-new-api-keys
+
+Discord Developer Portal:
+https://discord.com/developers
+
+# Порядок действий
+
+**Supabase project**
+→ **SQL schema**
+→ **Discord Application**
+→ **Callback URL**
+→ **Discord Client ID + Secret в Supabase**
+→ **Redirect URLs**
+→ **auth-config.js**
+→ **вход через Discord**
+→ **проверка кабинета**
