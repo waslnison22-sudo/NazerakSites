@@ -2253,3 +2253,28 @@ xt);
 .connect-card--version:hover {
   border-color: #353b43;
 }
+
+.not-found {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 28px;
+  text-align: center;
+}
+
+.not-found__eyebrow {
+  justify-content: center;
+}
+
+.not-found__title {
+  margin: 0;
+  font-size: clamp(64px, 13vw, 140px);
+  line-height: .9;
+  letter-spacing: -.06em;
+}
+
+.not-found__copy {
+  max-width: 500px;
+  margin: 24px auto 30px;
+  color: var(--muted);
+}
