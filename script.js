@@ -60,7 +60,7 @@
           const isActive =
             link.getAttribute("href") === "#" + entry.target.id;
           link.classList.toggle("is-active", isActive);
-          if (isActive) link.setAttribute("aria-current", "page");
+          if (isActive) link.setAttribute("aria-current", "location");
           else link.removeAttribute("aria-current");
         });
       });
