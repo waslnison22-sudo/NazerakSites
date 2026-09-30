@@ -52,7 +52,7 @@
 
     const detail = result.description || result.error || "Неизвестная ошибка OAuth.";
     const code = result.code ? " [" + result.code + "]" : "";
-    showMessage("Ошибка входа через Discord" + code + ": " + decodeURIComponent(detail), "error");
+    showMessage("Ошибка входа через Discord" + code + ": " + detail, "error");
     window.history.replaceState(null, "", window.location.pathname + window.location.search);
     return true;
   };
