@@ -595,7 +595,7 @@
     }
   };
 
-  const renderCabinet = async (session = undefined) =>
+  const renderCabinet = async (session = undefined) => {
     if (!document.body.dataset.cabinet) return;
 
     if (!configured) {
