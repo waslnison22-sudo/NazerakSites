@@ -15,7 +15,7 @@
 - `script.js` — меню, scroll-анимации, микроинтеракции и копирование IP
 - `favicon.svg` — иконка сайта
 - `404.html` — страница ошибки
-- `.github/workflows/pages.yml` — автоматическая публикация через GitHub Pages
+- `.nojekyll` — отключение Jekyll-обработки
 
 Сайт не использует npm, сборщик или внешние UI-библиотеки.
 
@@ -31,9 +31,17 @@ python -m http.server 8000
 
 ## GitHub Pages
 
-Репозиторий рассчитан на публикацию как статический GitHub Pages-сайт из ветки `main` через GitHub Actions.
+Сайт рассчитан на публикацию **напрямую из ветки `main`**, без CI/CD и без отдельного веб-сервера.
 
-После включения Pages workflow `Deploy NaZerak site` публикует содержимое репозитория.
+В GitHub открыть:
+
+**Settings → Pages → Build and deployment → Source → Deploy from a branch**
+
+Затем:
+
+**Branch: `main` / Folder: `/(root)`**
+
+После сохранения GitHub Pages будет раздавать содержимое репозитория.
 
 ## Домен
 
@@ -41,7 +49,7 @@ python -m http.server 8000
 
 `https://nazerak.is-a.dev`
 
-После регистрации домена его нужно указать в настройках Custom domain у GitHub Pages. DNS при этом остаётся внешним направлением на Pages; отдельный VPS для самого сайта не требуется.
+После регистрации домена его нужно указать в настройках Custom domain у GitHub Pages. Отдельный VPS/хостинг для статического сайта не требуется.
 
 ## Принципы
 
