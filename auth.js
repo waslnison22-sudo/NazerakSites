@@ -119,6 +119,9 @@
           avatar.alt = "";
         }
       }
+
+      const fallback = qs("[data-auth-link-fallback]", link);
+      if (fallback) fallback.hidden = !!userAvatar(state.user);
     });
 
     qsa("[data-auth-only]").forEach((element) => {
@@ -148,6 +151,9 @@
     qsa("[data-last-sign-in]").forEach((el) => { el.textContent = formatDate(user?.last_sign_in_at); });
     qsa("[data-minecraft-name]").forEach((el) => {
       el.textContent = profile?.minecraft_username || "Не привязан";
+    });
+    qsa("[data-minecraft-input]").forEach((input) => {
+      input.value = profile?.minecraft_username || "";
     });
 
     qsa("[data-user-avatar]").forEach((img) => {
