@@ -3,7 +3,6 @@
   if (year) year.textContent = String(new Date().getFullYear());
 
   const progress = document.querySelector(".scroll-progress span");
-  const cursor = document.querySelector(".cursor-light");
   const toggle = document.querySelector(".nav-toggle");
   const nav = document.getElementById("site-nav");
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -66,31 +65,6 @@
     }, { threshold: 0.13 });
 
     revealItems.forEach((item) => observer.observe(item));
-  }
-
-  if (!reduceMotion && !isTouch && cursor) {
-    let cursorX = window.innerWidth / 2;
-    let cursorY = window.innerHeight / 2;
-    let lightX = cursorX;
-    let lightY = cursorY;
-
-    document.addEventListener("pointermove", (event) => {
-      cursorX = event.clientX;
-      cursorY = event.clientY;
-      cursor.classList.add("is-active");
-    }, { passive: true });
-
-    document.addEventListener("pointerleave", () => cursor.classList.remove("is-active"));
-
-    const animateCursor = () => {
-      lightX += (cursorX - lightX) * 0.085;
-      lightY += (cursorY - lightY) * 0.085;
-      cursor.style.left = lightX + "px";
-      cursor.style.top = lightY + "px";
-      requestAnimationFrame(animateCursor);
-    };
-
-    requestAnimationFrame(animateCursor);
   }
 
   const parallaxItems = [...document.querySelectorAll("[data-parallax]")];
@@ -182,5 +156,121 @@
       }, 1800);
     });
   });
+
+  const SERVER_STATUS_API =
+    "https://minecraftstatus.com/api/v1/status/java?address=nazehard.rustix.cc";
+
+  const statusText = document.getElementById("server-status-text");
+  const statusDetail = document.getElementById("server-status-detail");
+  const playersText = document.getElementById("server-players");
+  const pingText = document.getElementById("server-ping");
+  const versionText = document.getElementById("server-reported-version");
+  const refreshButton = document.getElementById("server-refresh");
+
+  let refreshTimer = null;
+
+  const setServerStatus = (state, detail) => {
+    if (!statusText) return;
+
+    statusText.classList.toggle("is-online", state === "online");
+    statusText.dataset.state = state;
+
+    if (state === "online") statusText.textContent = "Сервер онлайн";
+    else if (state === "offline") statusText.textContent = "Сервер офлайн";
+    else if (state === "unknown") statusText.textContent = "Статус неизвестен";
+    else statusText.textContent = "Проверяем сервер…";
+
+    if (statusDetail) statusDetail.textContent = detail;
+  };
+
+  const formatLatency = (value) => {
+    if (!Number.isFinite(value)) return "—";
+    return Math.round(value) + " ms";
+  };
+
+  const scheduleRefresh = (validUntil) => {
+    if (refreshTimer) window.clearTimeout(refreshTimer);
+
+    const until = Date.parse(validUntil || "");
+    const delay = Number.isFinite(until)
+      ? Math.max(until - Date.now() + 1000, 30000)
+      : 60000;
+
+    refreshTimer = window.setTimeout(() => loadServerStatus(), delay);
+  };
+
+  const loadServerStatus = async () => {
+    if (!statusText) return;
+
+    refreshButton?.classList.add("is-loading");
+    refreshButton?.setAttribute("aria-busy", "true");
+    setServerStatus("checking", "Получаем свежую проверку Minecraft-сервера…");
+
+    try {
+      const response = await fetch(SERVER_STATUS_API, {
+        method: "GET",
+        headers: { Accept: "application/json" },
+        cache: "no-store"
+      });
+
+      if (!response.ok) {
+        throw new Error("HTTP " + response.status);
+      }
+
+      const data = await response.json();
+      const verdict = String(data?.verdict || "unknown").toLowerCase();
+
+      if (playersText) {
+        const online = Number.isFinite(data?.players?.online) ? data.players.online : null;
+        const max = Number.isFinite(data?.players?.max) ? data.players.max : null;
+        playersText.textContent =
+          online !== null && max !== null ? online + " / " + max :
+          online !== null ? String(online) : "—";
+      }
+
+      if (pingText) pingText.textContent = formatLatency(data?.latencyMs);
+
+      if (versionText) {
+        versionText.textContent = data?.version?.reportedName || "—";
+      }
+
+      if (verdict === "online") {
+        setServerStatus("online", "Сервер отвечает. Данные обновляются автоматически.");
+      } else if (verdict === "offline") {
+        setServerStatus("offline", "Сейчас сервер не отвечает на проверку.");
+      } else {
+        setServerStatus("unknown", "Сервис проверки не получил достаточно данных для уверенного статуса.");
+      }
+
+      scheduleRefresh(data?.validUntil);
+    } catch (error) {
+      if (playersText) playersText.textContent = "—";
+      if (pingText) pingText.textContent = "—";
+      if (versionText) versionText.textContent = "—";
+      setServerStatus(
+        navigator.onLine ? "unknown" : "unknown",
+        navigator.onLine
+          ? "Не удалось получить текущие данные. Попробуем ещё раз автоматически."
+          : "Нет интернет-соединения. Статус обновится после восстановления сети."
+      );
+      scheduleRefresh();
+    } finally {
+      refreshButton?.classList.remove("is-loading");
+      refreshButton?.setAttribute("aria-busy", "false");
+    }
+  };
+
+  refreshButton?.addEventListener("click", () => {
+    loadServerStatus();
+  });
+
+  document.querySelectorAll("img").forEach((img) => {
+    img.addEventListener("error", () => {
+      img.classList.add("is-missing");
+      img.setAttribute("aria-hidden", "true");
+    });
+  });
+
+  loadServerStatus();
 
 })();
