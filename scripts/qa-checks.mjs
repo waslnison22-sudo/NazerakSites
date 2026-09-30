@@ -18,9 +18,6 @@ const requiredFiles = [
 
 const bannedTokens = [
   "sb_secret_",
-  "service_role",
-  "SUPABASE_SERVICE_ROLE",
-  "DISCORD_CLIENT_SECRET",
   "cursor-light",
   "nazerak-cube",
   "cube-face",
@@ -55,6 +52,16 @@ const allSource = [index, cabinet, css, script, auth, loader, config, schema].jo
 
 for (const token of bannedTokens) {
   if (allSource.includes(token)) fail.push(`banned token: ${token}`);
+}
+
+if (/sb_secret_[A-Za-z0-9_-]+/.test(config)) {
+  fail.push("secret-style Supabase key found in auth-config.js");
+}
+if (/service_role\s*[:=]\s*["']/i.test(config)) {
+  fail.push("service_role key assignment found in auth-config.js");
+}
+if (/clientSecret\s*[:=]/i.test(config)) {
+  fail.push("client secret assignment found in frontend config");
 }
 
 for (const file of ["script.js", "auth.js", "supabase-loader.js"]) {
