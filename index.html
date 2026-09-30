@@ -13,7 +13,6 @@
   <title>NaZerak — официальный сайт</title>
 </head>
 <body>
-  <div class="cursor-light" aria-hidden="true"></div>
   <div class="scroll-progress" aria-hidden="true"><span></span></div>
   <div class="site-noise" aria-hidden="true"></div>
 
@@ -78,28 +77,32 @@
           </div>
         </div>
 
-        <div class="hero-card-wrap reveal reveal--delay" data-parallax="0.11">
-          <div class="hero-card">
-            <div class="hero-card__orbit hero-card__orbit--one"></div>
-            <div class="hero-card__orbit hero-card__orbit--two"></div>
+        <div class="hero-visual-wrap reveal reveal--delay" data-parallax="0.11">
+          <div class="hero-visual">
+            <div class="hero-visual__grid" aria-hidden="true"></div>
 
-            <div class="hero-card__top">
-              <span>PROJECT / NAZERAK</span>
-              <span>01</span>
+            <div class="nazerak-stage" aria-label="Вращающийся блок NaZerak">
+              <div class="nazerak-cube">
+                <span class="cube-face cube-face--front">NaZerak</span>
+                <span class="cube-face cube-face--back">NaZerak</span>
+                <span class="cube-face cube-face--right">NaZerak</span>
+                <span class="cube-face cube-face--left">NaZerak</span>
+                <span class="cube-face cube-face--top">NaZerak</span>
+                <span class="cube-face cube-face--bottom">NaZerak</span>
+              </div>
+              <span class="nazerak-stage__label">NAZERAK CORE / 01</span>
             </div>
 
-            <div class="hero-card__core">
-              <span class="hero-card__ghost">N</span>
-              <span class="hero-card__logo">NZ</span>
-            </div>
+            <figure class="hero-character" data-depth="0.06">
+              <img src="https://www.minecraft.net/content/dam/minecraftnet/games/minecraft/screenshots/default_skins_ari.jpg"
+                   alt="Minecraft — персонаж Ari"
+                   loading="eager"
+                   decoding="async"
+                   referrerpolicy="no-referrer">
+              <figcaption>CHARACTER / ARI</figcaption>
+            </figure>
 
-            <div class="hero-card__line"></div>
-
-            <div class="hero-card__bottom">
-              <span>WORLD</span>
-              <span>COMMUNITY</span>
-              <span>NEWS</span>
-            </div>
+            <span class="hero-visual__stamp">NZ // WORLD</span>
           </div>
         </div>
       </div>
@@ -171,20 +174,58 @@
             <span class="feature-card__arrow" aria-hidden="true">↗</span>
           </article>
         </div>
+
+        <div class="character-strip reveal">
+          <div class="character-strip__heading">
+            <span class="section-kicker">02 / ПЕРСОНАЖИ</span>
+            <span>DEFAULT SKINS / MINECRAFT</span>
+          </div>
+
+          <div class="character-strip__grid">
+            <figure class="character-tile">
+              <img src="https://www.minecraft.net/content/dam/minecraftnet/games/minecraft/screenshots/default_skins_efe.jpg"
+                   alt="Minecraft — Efe"
+                   loading="lazy"
+                   decoding="async"
+                   referrerpolicy="no-referrer">
+              <figcaption><span>EFE</span><small>01</small></figcaption>
+            </figure>
+            <figure class="character-tile character-tile--red">
+              <img src="https://www.minecraft.net/content/dam/minecraftnet/games/minecraft/screenshots/default_skins_makena.jpg"
+                   alt="Minecraft — Makena"
+                   loading="lazy"
+                   decoding="async"
+                   referrerpolicy="no-referrer">
+              <figcaption><span>MAKENA</span><small>02</small></figcaption>
+            </figure>
+            <figure class="character-tile">
+              <img src="https://www.minecraft.net/content/dam/minecraftnet/games/minecraft/screenshots/default_skins_noor.jpg"
+                   alt="Minecraft — Noor"
+                   loading="lazy"
+                   decoding="async"
+                   referrerpolicy="no-referrer">
+              <figcaption><span>NOOR</span><small>03</small></figcaption>
+            </figure>
+          </div>
+        </div>
       </div>
     </section>
 
     <section class="section section--world" id="world">
       <div class="container">
         <div class="world-panel reveal">
-          <div class="world-panel__visual" aria-hidden="true">
-            <div class="world-panel__ring world-panel__ring--one"></div>
-            <div class="world-panel__ring world-panel__ring--two"></div>
-            <div class="world-panel__cross"></div>
+          <div class="world-panel__visual">
+            <img class="world-panel__image"
+                 src="https://www.minecraft.net/content/dam/minecraftnet/archive/7c8013717ecf4c95e1daf1e824f834d8-ingame2.jpg"
+                 alt="Minecraft — редстоун в подземной шахте"
+                 loading="lazy"
+                 decoding="async"
+                 referrerpolicy="no-referrer">
+            <div class="world-panel__overlay" aria-hidden="true"></div>
             <span class="world-panel__coord world-panel__coord--a">N / 01</span>
             <span class="world-panel__coord world-panel__coord--b">WORLD</span>
-            <span class="world-panel__coord world-panel__coord--c">00° 00′</span>
-            <strong>NZ</strong>
+            <span class="world-panel__coord world-panel__coord--c">REDSTONE / CORE</span>
+            <div class="world-panel__badge">NAZERAK WORLD</div>
           </div>
 
           <div class="world-panel__content">
@@ -206,11 +247,53 @@
       </div>
     </section>
 
+    <section class="section section--live">
+      <div class="container">
+        <div class="live-panel reveal">
+          <div class="live-panel__main">
+            <div class="live-panel__heading">
+              <span class="section-kicker">03 / SERVER STATUS</span>
+              <span class="live-source-dot"><i></i> LIVE DATA</span>
+            </div>
+            <h2><span id="server-status-text">Проверяем сервер…</span></h2>
+            <p id="server-status-detail">Получаем актуальный ответ от Minecraft-сервера.</p>
+
+            <div class="live-stats">
+              <div class="live-stat">
+                <span>ИГРОКИ</span>
+                <strong id="server-players">— / —</strong>
+              </div>
+              <div class="live-stat">
+                <span>ЗАДЕРЖКА</span>
+                <strong id="server-ping">—</strong>
+              </div>
+              <div class="live-stat">
+                <span>ВЕРСИЯ</span>
+                <strong id="server-reported-version">—</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="live-panel__side">
+            <div class="live-panel__server">
+              <span>SERVER</span>
+              <strong>nazehard.rustix.cc</strong>
+              <small>Java / 1.21.11</small>
+            </div>
+            <button class="live-refresh" type="button" id="server-refresh" aria-label="Обновить статус сервера" title="Обновить">
+              <span>Обновить</span><b>↻</b>
+            </button>
+            <a class="live-attribution" href="https://minecraftstatus.com" target="_blank" rel="nofollow noopener noreferrer">Status by MinecraftStatus.com</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section class="section section--compact">
       <div class="container">
         <div class="status-panel reveal">
           <div>
-            <span class="section-kicker">03 / СТАТУС</span>
+            <span class="section-kicker">04 / СТАТУС ПРОЕКТА</span>
             <h2>Официальная площадка уже собирается.</h2>
             <p>
               Основные данные проекта уже опубликованы: для подключения используется Minecraft 1.21.11,
@@ -229,7 +312,7 @@
     <section class="section section--connect" id="start">
       <div class="container">
         <div class="connect-head reveal">
-          <span class="section-kicker">04 / ПОДКЛЮЧЕНИЕ</span>
+          <span class="section-kicker">05 / ПОДКЛЮЧЕНИЕ</span>
           <h2>Заходи в NaZerak.</h2>
           <p>Всё необходимое для подключения — прямо здесь. Сохрани IP и залетай в официальный Discord.</p>
         </div>
@@ -302,6 +385,29 @@
           <a class="button button--ghost magnetic" href="#top">
             <span>Наверх</span><span aria-hidden="true">↑</span>
           </a>
+        </div>
+      </div>
+    </section>
+    <section class="section section--partner" id="media">
+      <div class="container">
+        <div class="partner-panel reveal">
+          <div class="partner-panel__character">
+            <img src="https://www.minecraft.net/content/dam/minecraftnet/games/minecraft/screenshots/default_skins_noor.jpg"
+                 alt="Minecraft — Noor"
+                 loading="lazy"
+                 decoding="async"
+                 referrerpolicy="no-referrer">
+          </div>
+          <div class="partner-panel__content">
+            <span class="section-kicker">06 / ПАРТНЁРСТВО</span>
+            <h2>Стать медиа-партнёром NaZerak.</h2>
+            <p>Для блогеров, стримеров и авторов контента. Подробности и связь — в Discord.</p>
+            <a class="button button--primary magnetic partner-button"
+               href="https://discord.gg/2KvsYYDHN6" target="_blank" rel="noopener noreferrer">
+              <span>Стать медиа-партнёром</span><span aria-hidden="true">↗</span>
+            </a>
+            <small class="partner-panel__note">Прямая ссылка на контакт владельца добавится после указания твоего Discord ID.</small>
+          </div>
         </div>
       </div>
     </section>
