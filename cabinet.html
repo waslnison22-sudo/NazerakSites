@@ -5,14 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#070708">
   <meta name="description" content="NaZerak — личный кабинет игрока.">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
   <link rel="icon" href="./favicon.svg?v=4" type="image/svg+xml">
   <link rel="stylesheet" href="./styles.css">
   <title>NaZerak — личный кабинет</title>
 </head>
 <body data-cabinet>
   <div class="scroll-progress" aria-hidden="true"><span></span></div>
-  <div class="site-noise" aria-hidden="true"></div>
-
   <header class="topbar" id="top">
     <div class="container topbar__inner">
       <a class="brand" href="./" aria-label="NaZerak — на главную">
@@ -54,7 +53,7 @@
         </div>
       </section>
 
-      <div class="auth-message" data-auth-message hidden></div>
+      <div class="auth-message" data-auth-message role="status" aria-live="polite" hidden></div>
 
       <section class="account-view" data-account-view="loading">
         <div class="account-loading">
@@ -66,15 +65,15 @@
       <section class="account-view" data-account-view="config" id="auth-config" hidden>
         <div class="account-panel account-panel--setup">
           <span class="section-kicker">01 / SETUP</span>
-          <h2>Авторизация ещё не подключена.</h2>
-          <p>Код Discord OAuth уже встроен в сайт. Осталось указать URL Supabase и публичный publishable key в <code>auth-config.js</code>, а затем включить Discord Provider в Supabase.</p>
-          <div class="setup-steps">
+          <h2 data-auth-config-title>Авторизация ещё не подключена.</h2>
+          <p data-auth-config-copy>Код Discord OAuth уже встроен в сайт. Проверь публичный URL Supabase, publishable key и включённый Discord Provider.</p>
+          <div class="setup-steps" data-auth-setup-steps>
             <div><b>01</b><span>Создай отдельный Supabase project для NaZerak.</span></div>
             <div><b>02</b><span>Выполни <code>supabase/schema.sql</code> в SQL Editor.</span></div>
             <div><b>03</b><span>Включи Discord Provider и добавь OAuth callback из <code>AUTH_SETUP.md</code>.</span></div>
             <div><b>04</b><span>Заполни <code>auth-config.js</code> двумя публичными значениями.</span></div>
           </div>
-          <a class="button button--primary" href="./AUTH_SETUP.md">
+          <a class="button button--primary" data-auth-config-link href="./AUTH_SETUP.md">
             <span>Открыть инструкцию</span><span aria-hidden="true">↗</span>
           </a>
         </div>
@@ -223,9 +222,9 @@
     </div>
   </footer>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js" defer></script>
   <script src="./auth-config.js?v=2" defer></script>
-  <script src="./auth.js?v=2" defer></script>
+  <script src="./supabase-loader.js?v=1" defer></script>
+  <script src="./auth.js?v=3" defer></script>
   <script src="./script.js" defer></script>
 </body>
 </html>
