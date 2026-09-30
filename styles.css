@@ -1332,45 +1332,6 @@ button { font: inherit; }
 .connect-note .status-dot { margin-right: 9px; }
 
 @media (max-width: 980px) {
-  .connect-grid {
-    grid-template-columns: 1fr 1fr;
-  }
-  .connect-card--ip {
-    grid-column: span 2;
-  }
-}
-
-@media (max-width: 760px) {
-  .nav-discord { display: none; }
-
-  .connect-grid {
-    grid-template-columns: 1fr;
-  }
-  .connect-card--ip {
-    grid-column: auto;
-  }
-  .connect-card {
-    min-height: 265px;
-  }
-  .connect-note {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-}
-
-@media (max-width: 540px) {
-  .section--connect {
-    padding-top: 78px;
-  }
-  .connect-head h2 {
-    font-size: 39px;
-  }
-  .server-ip {
-    font-size: 25px;
-  }
-}
-
-@media (max-width: 980px) {
   .hero {
     min-height: auto;
     padding: 130px 0 92px;
@@ -1399,6 +1360,13 @@ button { font: inherit; }
     min-height: 410px;
     border-right: 0;
     border-bottom: 1px solid var(--line-soft);
+  }
+
+  .connect-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .connect-card--ip {
+    grid-column: span 2;
   }
 }
 
@@ -1458,6 +1426,22 @@ button { font: inherit; }
     gap: 18px;
   }
 
+  .nav-discord { display: none; }
+
+  .connect-grid {
+    grid-template-columns: 1fr;
+  }
+  .connect-card--ip {
+    grid-column: auto;
+  }
+  .connect-card {
+    min-height: 265px;
+  }
+  .connect-note {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
   .scroll-cue { display: none; }
 
   .cursor-light { display: none; }
@@ -1506,6 +1490,16 @@ button { font: inherit; }
 
   .world-panel__visual {
     min-height: 340px;
+  }
+
+  .section--connect {
+    padding-top: 78px;
+  }
+  .connect-head h2 {
+    font-size: 39px;
+  }
+  .server-ip {
+    font-size: 25px;
   }
 
   .status-panel,
