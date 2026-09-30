@@ -273,10 +273,15 @@
     setBusy(button, true, "Переходим в Discord…");
     showMessage("");
 
+    const redirectTarget = new URL(accountUrl());
+    if (window.location.hash === "#media-application") {
+      redirectTarget.hash = "media-application";
+    }
+
     const { error } = await client.auth.signInWithOAuth({
       provider: "discord",
       options: {
-        redirectTo: accountUrl(),
+        redirectTo: redirectTarget.href,
         scopes: "identify"
       }
     });
@@ -358,10 +363,17 @@
     const channelUrl = escapeText(urlInput.value);
     const message = escapeText(messageInput.value);
 
+    let parsedUrl;
     try {
-      new URL(channelUrl);
+      parsedUrl = new URL(channelUrl);
     } catch {
       showMessage("Укажи корректную ссылку на канал или площадку.", "error");
+      urlInput.focus();
+      return;
+    }
+
+    if (!/^https?:$/.test(parsedUrl.protocol)) {
+      showMessage("Ссылка должна начинаться с http:// или https://.", "error");
       urlInput.focus();
       return;
     }
@@ -429,6 +441,15 @@
     renderUser(state.user, state.profile);
     await loadMediaApplications(state.user);
     setAccountView("user");
+
+    if (window.location.hash === "#media-application") {
+      window.setTimeout(() => {
+        document.getElementById("media-application")?.scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+      }, 80);
+    }
   };
 
   const init = async () => {
