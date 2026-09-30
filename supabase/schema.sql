@@ -40,6 +40,9 @@ create unique index if not exists media_applications_one_pending_per_user
   on public.media_applications (user_id)
   where status = 'pending';
 
+create index if not exists media_applications_user_created_idx
+  on public.media_applications (user_id, created_at desc);
+
 alter table public.profiles enable row level security;
 alter table public.media_applications enable row level security;
 
