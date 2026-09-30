@@ -31,7 +31,9 @@ create table if not exists public.media_applications (
   constraint media_applications_channel_url_length
     check (char_length(channel_url) between 8 and 500),
   constraint media_applications_message_length
-    check (char_length(message) between 10 and 2000)
+    check (char_length(message) between 10 and 2000),
+  constraint media_applications_channel_url_scheme
+    check (channel_url ~* '^https?://')
 );
 
 create unique index if not exists media_applications_one_pending_per_user
@@ -82,3 +84,6 @@ grant select, insert on public.media_applications to authenticated;
 
 comment on table public.profiles is 'NaZerak user profile, keyed to Supabase Auth user id.';
 comment on table public.media_applications is 'NaZerak media partner applications submitted by authenticated users.';
+
+-- The identity sequence is used when authenticated users insert applications.
+grant usage, select on sequence public.media_applications_id_seq to authenticated;
