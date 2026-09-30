@@ -981,6 +981,282 @@ button { font: inherit; }
   outline-offset: 4px;
 }
 
+
+.nav-discord {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: rgba(255,255,255,.025);
+  color: #cfd1d4;
+  transition: transform .35s var(--ease), color .2s ease, background .2s ease, border-color .2s ease;
+}
+.nav-discord::after { display: none !important; }
+.nav-discord:hover {
+  transform: translateY(-2px);
+  color: #fff;
+  background: rgba(255,255,255,.075);
+  border-color: rgba(255,255,255,.18);
+}
+.nav-discord svg {
+  width: 17px;
+  height: 17px;
+  fill: currentColor;
+}
+
+.icon-button {
+  width: 50px;
+  height: 50px;
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 50px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: rgba(255,255,255,.025);
+  color: #cfd1d4;
+}
+.icon-button svg {
+  width: 22px;
+  height: 22px;
+  fill: currentColor;
+}
+.icon-button--discord:hover {
+  color: #fff;
+  background: rgba(255,255,255,.09);
+  border-color: rgba(255,255,255,.20);
+}
+
+.section--connect {
+  padding-top: 96px;
+}
+
+.connect-head {
+  max-width: 760px;
+}
+.connect-head h2 {
+  margin: 17px 0 0;
+  font-size: clamp(40px, 5vw, 64px);
+  line-height: 1;
+  letter-spacing: -.05em;
+}
+.connect-head p {
+  margin: 20px 0 0;
+  color: var(--muted);
+  font-size: 15px;
+}
+
+.connect-grid {
+  display: grid;
+  grid-template-columns: 1.3fr .7fr .9fr;
+  gap: 13px;
+  margin-top: 48px;
+}
+
+.connect-card {
+  position: relative;
+  min-height: 285px;
+  padding: 25px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background:
+    radial-gradient(circle at 90% 12%, rgba(255,255,255,.07), transparent 18rem),
+    linear-gradient(145deg, rgba(255,255,255,.045), rgba(255,255,255,.012));
+  transition: transform .55s var(--ease), border-color .3s ease, box-shadow .55s var(--ease), background .3s ease;
+}
+.connect-card:hover {
+  transform: translateY(-7px);
+  border-color: rgba(255,255,255,.18);
+  box-shadow: 0 26px 65px rgba(0,0,0,.28);
+}
+.connect-card__top,
+.connect-card__bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--muted-2);
+  font-size: 9px;
+  font-weight: 810;
+  letter-spacing: .16em;
+}
+.connect-card__main {
+  position: relative;
+  min-height: 165px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.connect-card__label {
+  color: var(--muted-2);
+  font-size: 9px;
+  letter-spacing: .16em;
+  font-weight: 800;
+}
+.server-ip {
+  display: block;
+  margin-top: 12px;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  font-size: clamp(24px, 3.2vw, 37px);
+  line-height: 1.1;
+  letter-spacing: -.045em;
+  font-weight: 820;
+}
+.copy-button {
+  align-self: flex-start;
+  margin-top: 18px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 38px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  background: rgba(255,255,255,.03);
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 720;
+  transition: background .2s ease, color .2s ease, border-color .2s ease, transform .25s var(--ease);
+}
+.copy-button:hover {
+  color: var(--text);
+  background: rgba(255,255,255,.075);
+  border-color: rgba(255,255,255,.18);
+  transform: translateY(-2px);
+}
+.copy-button svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.copy-button.is-copied {
+  color: var(--text);
+  border-color: rgba(255,255,255,.24);
+}
+
+.connect-card__version {
+  margin-top: 58px;
+  font-size: clamp(44px, 6vw, 67px);
+  line-height: .9;
+  letter-spacing: -.06em;
+  font-weight: 850;
+}
+.connect-card > p {
+  max-width: 235px;
+  margin: 16px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+.connect-card__bottom {
+  position: absolute;
+  left: 25px;
+  right: 25px;
+  bottom: 22px;
+}
+
+.connect-card--discord {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+}
+.discord-mark {
+  width: 60px;
+  height: 60px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: rgba(255,255,255,.04);
+  color: #e2e4e6;
+  transition: transform .45s var(--ease), background .25s ease;
+}
+.discord-mark svg {
+  width: 30px;
+  height: 30px;
+  fill: currentColor;
+}
+.connect-card--discord:hover .discord-mark {
+  transform: rotate(-6deg) scale(1.05);
+  background: rgba(255,255,255,.09);
+}
+.connect-card__discord-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-right: 24px;
+}
+.connect-card__discord-copy strong {
+  font-size: 20px;
+  letter-spacing: -.03em;
+}
+.connect-card__discord-copy span {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.connect-note {
+  margin-top: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+.connect-note > span {
+  color: var(--muted-2);
+  font-size: 10px;
+  letter-spacing: .13em;
+  font-weight: 780;
+  text-transform: uppercase;
+}
+.connect-note .status-dot { margin-right: 9px; }
+
+@media (max-width: 980px) {
+  .connect-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .connect-card--ip {
+    grid-column: span 2;
+  }
+}
+
+@media (max-width: 760px) {
+  .nav-discord { display: none; }
+
+  .connect-grid {
+    grid-template-columns: 1fr;
+  }
+  .connect-card--ip {
+    grid-column: auto;
+  }
+  .connect-card {
+    min-height: 265px;
+  }
+  .connect-note {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 540px) {
+  .section--connect {
+    padding-top: 78px;
+  }
+  .connect-head h2 {
+    font-size: 39px;
+  }
+  .server-ip {
+    font-size: 25px;
+  }
+}
+
 @media (max-width: 980px) {
   .hero {
     min-height: auto;
