@@ -232,6 +232,50 @@
   let refreshTimer = null;
   let statusAbortController = null;
 
+  const STATUS_CACHE_KEY = "nazerak.server-status.v1";
+
+  const saveStatusCache = (data, source) => {
+    try {
+      localStorage.setItem(STATUS_CACHE_KEY, JSON.stringify({
+        savedAt: Date.now(),
+        source,
+        online: data?.online === true,
+        verdict: data?.verdict || "unknown",
+        players: data?.players || null,
+        latencyMs: data?.latencyMs ?? null,
+        version: data?.version?.reportedName || null
+      }));
+    } catch {
+      // Storage can be unavailable in privacy/incognito modes.
+    }
+  };
+
+  const readStatusCache = () => {
+    try {
+      const raw = localStorage.getItem(STATUS_CACHE_KEY);
+      if (!raw) return null;
+
+      const cached = JSON.parse(raw);
+      if (!cached || !Number.isFinite(Number(cached.savedAt))) return null;
+      if (Date.now() - Number(cached.savedAt) > 1000 * 60 * 60 * 6) {
+        return null;
+      }
+
+      return cached;
+    } catch {
+      return null;
+    }
+  };
+
+  const formatStaleAge = (timestamp) => {
+    const seconds = Math.max(0, Math.round((Date.now() - timestamp) / 1000));
+    if (seconds < 60) return "только что";
+    const minutes = Math.round(seconds / 60);
+    if (minutes < 60) return minutes + " мин назад";
+    const hours = Math.round(minutes / 60);
+    return hours + " ч назад";
+  };
+
   const setServerStatus = (state, detail) => {
     if (!statusText) return;
 
@@ -380,6 +424,8 @@
             : "—";
       }
 
+      saveStatusCache(data, source);
+
       if (verdict === "online") {
         setServerStatus(
           "online",
@@ -411,14 +457,43 @@
         error?.name === "AbortError" &&
         navigator.onLine;
 
-      setServerStatus(
-        "unknown",
-        !navigator.onLine
-          ? "Нет интернет-соединения. Статус обновится после восстановления сети."
-          : aborted
-            ? "Проверка заняла слишком много времени. Повторим автоматически."
-            : "Не удалось получить текущие данные. Попробуем ещё раз автоматически."
-      );
+      const cached = readStatusCache();
+
+      if (cached) {
+        const online = cached.online === true;
+        const cachedPlayers = Number(cached?.players?.online);
+        const cachedMax = Number(cached?.players?.max);
+        const cachedPlayersLabel =
+          Number.isFinite(cachedPlayers) && Number.isFinite(cachedMax)
+            ? cachedPlayers + " / " + cachedMax
+            : Number.isFinite(cachedPlayers)
+              ? String(cachedPlayers)
+              : "—";
+
+        if (playersText) playersText.textContent = cachedPlayersLabel;
+        if (heroPlayersText) heroPlayersText.textContent = cachedPlayersLabel;
+
+        const cachedPing = formatLatency(cached.latencyMs);
+        if (pingText) pingText.textContent = cachedPing;
+        if (heroPingText) heroPingText.textContent = cachedPing;
+
+        if (versionText) versionText.textContent = cached.version || "—";
+
+        setServerStatus(
+          online ? "online" : "offline",
+          "Нет свежего ответа. Показаны последние сохранённые данные: " +
+            formatStaleAge(Number(cached.savedAt)) + "."
+        );
+      } else {
+        setServerStatus(
+          "unknown",
+          !navigator.onLine
+            ? "Нет интернет-соединения. Статус обновится после восстановления сети."
+            : aborted
+              ? "Проверка заняла слишком много времени. Повторим автоматически."
+              : "Не удалось получить текущие данные. Попробуем ещё раз автоматически."
+        );
+      }
 
       scheduleRefresh();
     } finally {
