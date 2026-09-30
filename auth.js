@@ -392,17 +392,28 @@
       redirectTarget.hash = "media-application";
     }
 
-    const { error } = await client.auth.signInWithOAuth({
-      provider: "discord",
-      options: {
-        redirectTo: redirectTarget.href,
-        scopes: "identify"
-      }
-    });
+    try {
+      const { error } = await client.auth.signInWithOAuth({
+        provider: "discord",
+        options: {
+          redirectTo: redirectTarget.href,
+          scopes: "identify"
+        }
+      });
 
-    if (error) {
+      if (error) {
+        setBusy(button, false);
+        showMessage(error.message || "Не удалось открыть Discord.", "error");
+        setAuthStatus("DISCORD ERROR", "error");
+      }
+    } catch (error) {
       setBusy(button, false);
-      showMessage(error.message || "Не удалось открыть Discord.", "error");
+      showMessage(
+        error instanceof Error
+          ? error.message
+          : "Не удалось открыть Discord.",
+        "error"
+      );
       setAuthStatus("DISCORD ERROR", "error");
     }
   };
