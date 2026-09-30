@@ -13,7 +13,9 @@ const requiredFiles = [
   "auth-config.js",
   "supabase-loader.js",
   "supabase/schema.sql",
-  "404.html"
+  "404.html",
+  "README.md",
+  "AUTH_SETUP.md"
 ];
 
 const bannedTokens = [
