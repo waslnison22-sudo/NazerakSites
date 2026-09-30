@@ -226,10 +226,20 @@
         item.status === "rejected" ? "Отклонено" : "На рассмотрении";
 
       const url = document.createElement("a");
-      url.href = item.channel_url;
-      url.target = "_blank";
-      url.rel = "noopener noreferrer";
-      url.textContent = item.channel_url;
+      let safeUrl = "";
+      try {
+        const candidate = new URL(item.channel_url);
+        if (/^https?:$/.test(candidate.protocol)) safeUrl = candidate.href;
+      } catch {}
+
+      if (safeUrl) {
+        url.href = safeUrl;
+        url.target = "_blank";
+        url.rel = "noopener noreferrer";
+        url.textContent = safeUrl;
+      } else {
+        url.remove();
+      }
 
       const date = document.createElement("time");
       date.dateTime = item.created_at || "";
@@ -252,7 +262,7 @@
 
     const { data, error } = await client
       .from("profiles")
-      .insert({ id: user.id })
+      .upsert({ id: user.id }, { onConflict: "id" })
       .select("id, minecraft_username, created_at, updated_at")
       .single();
 
