@@ -574,7 +574,28 @@
     await loadMediaApplications(state.user);
   };
 
-  const renderCabinet = async () => {
+  const getSessionSafe = async (timeoutMs = 8000) => {
+    if (!client) return { data: { session: null }, error: new Error("Supabase client не инициализирован.") };
+
+    let timer = null;
+    try {
+      return await Promise.race([
+        client.auth.getSession(),
+        new Promise((resolve) => {
+          timer = window.setTimeout(() => {
+            resolve({
+              data: { session: null },
+              error: new Error("Проверка сессии превысила 8 секунд.")
+            });
+          }, timeoutMs);
+        })
+      ]);
+    } finally {
+      if (timer) window.clearTimeout(timer);
+    }
+  };
+
+  const renderCabinet = async (session = undefined) =>
     if (!document.body.dataset.cabinet) return;
 
     if (!configured) {
@@ -596,14 +617,23 @@
     setAccountView("loading");
     setAuthStatus("CHECKING AUTH", "loading");
 
-    const { data, error } = await client.auth.getSession();
+    const result = session === undefined
+      ? await getSessionSafe()
+      : { data: { session }, error: null };
 
-    if (error) {
-      console.warn("[NaZerak Auth] session lookup failed:", error.message);
+    if (result.error) {
+      console.warn("[NaZerak Auth] session lookup failed:", result.error.message);
       state.user = null;
-    } else {
-      state.user = data?.session?.user || null;
+      showMessage(
+        "Не удалось получить сессию за отведённое время. Нажми обновить страницу и повтори вход.",
+        "error"
+      );
+      setAuthStatus("AUTH TIMEOUT", "error");
+      setAccountView("guest");
+      return;
     }
+
+    state.user = result.data?.session?.user || null;
 
     if (!state.user) {
       setAuthStatus("DISCORD READY", "ready");
@@ -699,19 +729,23 @@
       return;
     }
 
-    const { data, error } = await client.auth.getSession();
+    const sessionResult = await getSessionSafe();
 
-    if (error) {
-      console.warn("[NaZerak Auth] session lookup failed:", error.message);
-      showMessage("Не удалось проверить текущую сессию. Обнови страницу.", "error");
+    if (sessionResult.error) {
+      console.warn("[NaZerak Auth] initial session lookup failed:", sessionResult.error.message);
+      showMessage(
+        "Не удалось получить сессию. Проверь загрузку страницы и повтори попытку.",
+        "error"
+      );
     }
 
-    state.user = data?.session?.user || null;
+    const initialSession = sessionResult.data?.session || null;
+    state.user = initialSession?.user || null;
     state.loading = false;
     renderAuthLinks();
 
     if (document.body.dataset.cabinet) {
-      await renderCabinet();
+      await renderCabinet(initialSession);
     }
 
     client.auth.onAuthStateChange((_event, session) => {
