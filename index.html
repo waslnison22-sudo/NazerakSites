@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0a0a0b">
+  <meta name="description" content="NaZerak — официальный сайт проекта. Minecraft-проект, сообщество и новости.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="NaZerak — официальный сайт">
+  <meta property="og:description" content="Официальный сайт проекта NaZerak.">
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./styles.css">
+  <title>NaZerak — официальный сайт</title>
+</head>
+<body>
+  <div class="site-noise" aria-hidden="true"></div>
+
+  <header class="topbar" id="top">
+    <div class="container topbar__inner">
+      <a class="brand" href="#top" aria-label="NaZerak — на главную">
+        <span class="brand__mark" aria-hidden="true">N</span>
+        <span class="brand__name">NaZerak</span>
+      </a>
+
+      <button class="nav-toggle" type="button" aria-controls="site-nav" aria-expanded="false">
+        <span></span><span></span><span></span>
+        <span class="sr-only">Открыть меню</span>
+      </button>
+
+      <nav class="nav" id="site-nav" aria-label="Основная навигация">
+        <a href="#about">О проекте</a>
+        <a href="#status">Статус</a>
+        <a href="#start">Начать</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container hero__grid">
+        <div class="hero__content reveal">
+          <div class="eyebrow"><span class="eyebrow__dot"></span> Официальный сайт проекта</div>
+          <h1>NaZerak<span class="hero__accent">.</span></h1>
+          <p class="hero__lead">
+            Проект, который строится вокруг игры, сообщества и своей атмосферы.
+            Здесь будут собираться новости, информация о сервере и всё важное для игроков.
+          </p>
+
+          <div class="hero__actions">
+            <a class="button button--primary" href="#start">Начать</a>
+            <a class="button button--ghost" href="#about">Узнать больше</a>
+          </div>
+
+          <div class="hero__meta" aria-label="Состояние проекта">
+            <span><i class="status-dot status-dot--muted"></i> Сайт в разработке</span>
+            <span class="hero__meta-separator">•</span>
+            <span>NaZerak</span>
+          </div>
+        </div>
+
+        <div class="hero-card reveal reveal--delay" aria-label="Карточка проекта">
+          <div class="hero-card__top">
+            <span class="hero-card__label">PROJECT / NAZERAK</span>
+            <span class="hero-card__index">01</span>
+          </div>
+          <div class="hero-card__logo">NZ</div>
+          <div class="hero-card__line"></div>
+          <div class="hero-card__bottom">
+            <span>PLAY</span>
+            <span>COMMUNITY</span>
+            <span>NEWS</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero__glow hero__glow--one" aria-hidden="true"></div>
+      <div class="hero__glow hero__glow--two" aria-hidden="true"></div>
+    </section>
+
+    <section class="section" id="about">
+      <div class="container">
+        <div class="section-head reveal">
+          <span class="section-kicker">01 / О ПРОЕКТЕ</span>
+          <h2>NaZerak — это больше, чем адрес сервера.</h2>
+          <p>
+            Этот сайт станет единой точкой входа в проект: от первого знакомства
+            до важных объявлений и материалов для игроков.
+          </p>
+        </div>
+
+        <div class="feature-grid">
+          <article class="feature-card reveal">
+            <span class="feature-card__number">01</span>
+            <h3>Игра</h3>
+            <p>Информация о сервере, правилах, подключении и основных возможностях проекта.</p>
+          </article>
+          <article class="feature-card reveal reveal--delay">
+            <span class="feature-card__number">02</span>
+            <h3>Сообщество</h3>
+            <p>Новости, объявления и площадки проекта будут собраны в одном месте.</p>
+          </article>
+          <article class="feature-card reveal reveal--delay-2">
+            <span class="feature-card__number">03</span>
+            <h3>Развитие</h3>
+            <p>Сайт рассчитан на постоянное расширение без переделки основной структуры.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--compact" id="status">
+      <div class="container">
+        <div class="status-panel reveal">
+          <div>
+            <span class="section-kicker">02 / СТАТУС</span>
+            <h2>Официальная площадка готовится.</h2>
+            <p>
+              Сейчас это первая версия главной страницы. Данные, которые пока не подтверждены,
+              намеренно не выдумываются — по мере готовности проекта здесь появятся реальные адреса,
+              ссылки и статусы.
+            </p>
+          </div>
+          <div class="status-panel__badge">
+            <i class="status-dot status-dot--live"></i>
+            <span>BUILDING</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="start">
+      <div class="container">
+        <div class="start-panel reveal">
+          <div>
+            <span class="section-kicker">03 / НАЧАТЬ</span>
+            <h2>Следи за запуском NaZerak.</h2>
+            <p>
+              Раздел подключения, Discord и актуальные новости будут добавлены сюда,
+              когда соответствующие данные будут готовы.
+            </p>
+          </div>
+          <a class="button button--primary" href="#top">Вернуться наверх</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer__inner">
+      <div>
+        <a class="brand brand--footer" href="#top">
+          <span class="brand__mark" aria-hidden="true">N</span>
+          <span class="brand__name">NaZerak</span>
+        </a>
+        <p class="footer__copy">Официальный сайт проекта.</p>
+      </div>
+      <div class="footer__right">
+        <span>© <span id="year"></span> NaZerak</span>
+        <a href="#top">Наверх ↑</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="./script.js" defer></script>
+</body>
+</html>
