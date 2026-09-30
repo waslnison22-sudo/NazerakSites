@@ -2,25 +2,14 @@
   "use strict";
 
   const config = window.NAZERAK_SUPABASE_CONFIG || {};
-  const supabaseFactory = window.supabase?.createClient;
-
   const configured =
     typeof config.url === "string" &&
-    config.url.startsWith("https://") &&
+    /^https:\/\//.test(config.url) &&
     typeof config.publishableKey === "string" &&
     config.publishableKey.length > 20;
 
   let client = null;
-  if (configured && typeof supabaseFactory === "function") {
-    client = supabaseFactory(config.url, config.publishableKey, {
-      auth: {
-        flowType: "pkce",
-        persistSession: true,
-        autoRefreshToken: true,
-        detectSessionInUrl: true
-      }
-    });
-  }
+  let bootstrapError = null;
 
   const state = {
     user: null,
@@ -30,11 +19,22 @@
 
   const qs = (selector, root = document) => root.querySelector(selector);
   const qsa = (selector, root = document) => [...root.querySelectorAll(selector)];
-
   const accountUrl = () => new URL("./cabinet.html", window.location.href).href;
+  const escapeText = (value) => String(value ?? "").trim();
+
+  const safeHttpUrl = (value) => {
+    try {
+      const url = new URL(String(value || ""));
+      return /^https?:$/.test(url.protocol) ? url.href : "";
+    } catch {
+      return "";
+    }
+  };
 
   const readOAuthError = () => {
-    const hash = window.location.hash.startsWith("#") ? window.location.hash.slice(1) : "";
+    const hash = window.location.hash.startsWith("#")
+      ? window.location.hash.slice(1)
+      : "";
     if (!hash) return null;
 
     const params = new URLSearchParams(hash);
@@ -46,6 +46,21 @@
     return { error, description, code };
   };
 
+  const showMessage = (message, kind = "info") => {
+    qsa("[data-auth-message]").forEach((element) => {
+      element.textContent = message;
+      element.dataset.kind = kind;
+      element.hidden = !message;
+    });
+  };
+
+  const setAuthStatus = (label, stateName = "") => {
+    qsa("[data-auth-status]").forEach((element) => {
+      element.textContent = label;
+      element.dataset.state = stateName;
+    });
+  };
+
   const showOAuthError = () => {
     const result = readOAuthError();
     if (!result) return false;
@@ -53,11 +68,29 @@
     const detail = result.description || result.error || "Неизвестная ошибка OAuth.";
     const code = result.code ? " [" + result.code + "]" : "";
     showMessage("Ошибка входа через Discord" + code + ": " + detail, "error");
-    window.history.replaceState(null, "", window.location.pathname + window.location.search);
+    setAuthStatus("DISCORD ERROR", "error");
+    window.history.replaceState(
+      null,
+      "",
+      window.location.pathname + window.location.search
+    );
     return true;
   };
 
-  const escapeText = (value) => String(value ?? "").trim();
+  const setBusy = (button, busy, labelWhenBusy = "Загрузка…") => {
+    if (!button) return;
+
+    if (busy) {
+      button.dataset.originalLabel ||= button.textContent;
+      button.textContent = labelWhenBusy;
+      button.disabled = true;
+      button.setAttribute("aria-busy", "true");
+    } else {
+      button.textContent = button.dataset.originalLabel || button.textContent;
+      button.disabled = false;
+      button.removeAttribute("aria-busy");
+    }
+  };
 
   const userDisplayName = (user) => {
     const metadata = user?.user_metadata || {};
@@ -88,7 +121,12 @@
 
   const userAvatar = (user) => {
     const metadata = user?.user_metadata || {};
-    return metadata.avatar_url || metadata.picture || metadata.custom_claims?.avatar_url || "";
+    return safeHttpUrl(
+      metadata.avatar_url ||
+      metadata.picture ||
+      metadata.custom_claims?.avatar_url ||
+      ""
+    );
   };
 
   const formatDate = (value) => {
@@ -102,28 +140,6 @@
     }).format(date);
   };
 
-  const showMessage = (message, kind = "info") => {
-    qsa("[data-auth-message]").forEach((element) => {
-      element.textContent = message;
-      element.dataset.kind = kind;
-      element.hidden = !message;
-    });
-  };
-
-  const setBusy = (button, busy, labelWhenBusy = "Загрузка…") => {
-    if (!button) return;
-    if (busy) {
-      button.dataset.originalLabel ||= button.textContent;
-      button.textContent = labelWhenBusy;
-      button.disabled = true;
-      button.setAttribute("aria-busy", "true");
-    } else {
-      button.textContent = button.dataset.originalLabel || button.textContent;
-      button.disabled = false;
-      button.removeAttribute("aria-busy");
-    }
-  };
-
   const renderAuthLinks = () => {
     qsa("[data-auth-link]").forEach((link) => {
       const label = qs("[data-auth-link-label]", link);
@@ -131,16 +147,24 @@
 
       link.hidden = false;
       link.href = accountUrl();
-      link.setAttribute("aria-label", state.user ? "Открыть личный кабинет" : "Войти через Discord");
+      link.setAttribute(
+        "aria-label",
+        state.user ? "Открыть личный кабинет" : "Войти через Discord"
+      );
       link.title = state.user ? "Личный кабинет" : "Войти через Discord";
 
-      if (label) label.textContent = state.user ? userDisplayName(state.user) : "Войти";
+      if (label) {
+        label.textContent = state.user ? userDisplayName(state.user) : "Войти";
+      }
+
       if (avatar) {
         const src = userAvatar(state.user);
         avatar.hidden = !src;
         if (src) {
           avatar.src = src;
           avatar.alt = "";
+        } else {
+          avatar.removeAttribute("src");
         }
       }
 
@@ -163,16 +187,56 @@
     });
   };
 
+  const configureSetupView = (runtimeFailure) => {
+    const title = qs("[data-auth-config-title]");
+    const copy = qs("[data-auth-config-copy]");
+    const steps = qs("[data-auth-setup-steps]");
+    const action = qs("[data-auth-config-link]");
+
+    if (runtimeFailure) {
+      if (title) title.textContent = "Не удалось загрузить авторизацию.";
+      if (copy) {
+        copy.textContent =
+          "Supabase настроен, но библиотека авторизации не загрузилась. Страница автоматически попробовала два CDN-источника. Обнови её через Ctrl+F5 и повтори вход.";
+      }
+      if (steps) steps.hidden = true;
+      if (action) {
+        action.href = "./cabinet.html?retry=1";
+        action.textContent = "Повторить проверку";
+      }
+      return;
+    }
+
+    if (title) title.textContent = "Авторизация ещё не подключена.";
+    if (copy) {
+      copy.textContent =
+        "Код Discord OAuth уже встроен в сайт. Проверь публичный URL Supabase, publishable key и включённый Discord Provider.";
+    }
+    if (steps) steps.hidden = false;
+    if (action) {
+      action.href = "./AUTH_SETUP.md";
+      action.textContent = "Открыть инструкцию";
+    }
+  };
+
   const renderUser = (user, profile) => {
     const name = userDisplayName(user);
     const discordName = userDiscordName(user);
     const avatar = userAvatar(user);
 
     qsa("[data-user-name]").forEach((el) => { el.textContent = name; });
-    qsa("[data-discord-name]").forEach((el) => { el.textContent = discordName ? "@" + discordName : "Discord"; });
-    qsa("[data-user-id]").forEach((el) => { el.textContent = user?.id || "—"; });
-    qsa("[data-account-created]").forEach((el) => { el.textContent = formatDate(user?.created_at); });
-    qsa("[data-last-sign-in]").forEach((el) => { el.textContent = formatDate(user?.last_sign_in_at); });
+    qsa("[data-discord-name]").forEach((el) => {
+      el.textContent = discordName ? "@" + discordName : "Discord";
+    });
+    qsa("[data-user-id]").forEach((el) => {
+      el.textContent = user?.id || "—";
+    });
+    qsa("[data-account-created]").forEach((el) => {
+      el.textContent = formatDate(user?.created_at);
+    });
+    qsa("[data-last-sign-in]").forEach((el) => {
+      el.textContent = formatDate(user?.last_sign_in_at);
+    });
     qsa("[data-minecraft-name]").forEach((el) => {
       el.textContent = profile?.minecraft_username || "Не привязан";
     });
@@ -185,11 +249,20 @@
       if (avatar) {
         img.src = avatar;
         img.alt = "Аватар Discord " + name;
+      } else {
+        img.removeAttribute("src");
       }
     });
 
-    const initials = name.slice(0, 1).toUpperCase();
-    qsa("[data-user-initial]").forEach((el) => { el.textContent = initials; });
+    const initials = name.slice(0, 1).toUpperCase() || "N";
+    qsa("[data-user-initial]").forEach((el) => {
+      el.textContent = initials;
+    });
+  };
+
+  const clearElementChildren = (element) => {
+    if (!element) return;
+    while (element.firstChild) element.removeChild(element.firstChild);
   };
 
   const loadProfile = async (user) => {
@@ -220,15 +293,16 @@
       .eq("user_id", user.id)
       .order("created_at", { ascending: false });
 
+    clearElementChildren(list);
+
     if (error) {
       if (empty) {
-        empty.textContent = "Раздел заявок пока не подключён к базе данных.";
+        empty.textContent = "Не удалось загрузить историю заявок. Попробуй обновить страницу.";
         empty.hidden = false;
       }
       return;
     }
 
-    list.innerHTML = "";
     if (!data?.length) {
       if (empty) {
         empty.textContent = "Пока нет отправленных заявок.";
@@ -240,29 +314,28 @@
     if (empty) empty.hidden = true;
 
     const fragment = document.createDocumentFragment();
+
     data.forEach((item) => {
       const card = document.createElement("article");
       card.className = "media-application";
+
       const status = document.createElement("span");
       status.className = "media-application__status";
       status.textContent =
-        item.status === "approved" ? "Одобрено" :
-        item.status === "rejected" ? "Отклонено" : "На рассмотрении";
+        item.status === "approved"
+          ? "Одобрено"
+          : item.status === "rejected"
+            ? "Отклонено"
+            : "На рассмотрении";
 
-      const url = document.createElement("a");
-      let safeUrl = "";
-      try {
-        const candidate = new URL(item.channel_url);
-        if (/^https?:$/.test(candidate.protocol)) safeUrl = candidate.href;
-      } catch {}
-
+      const safeUrl = safeHttpUrl(item.channel_url);
       if (safeUrl) {
+        const url = document.createElement("a");
         url.href = safeUrl;
         url.target = "_blank";
         url.rel = "noopener noreferrer";
         url.textContent = safeUrl;
-      } else {
-        url.remove();
+        card.appendChild(url);
       }
 
       const date = document.createElement("time");
@@ -272,9 +345,10 @@
       const message = document.createElement("p");
       message.textContent = item.message || "Без сообщения.";
 
-      card.append(status, url, message, date);
+      card.append(status, message, date);
       fragment.appendChild(card);
     });
+
     list.appendChild(fragment);
   };
 
@@ -301,7 +375,12 @@
   const signIn = async (button) => {
     if (!client) {
       setBusy(button, false);
-      showMessage("Supabase не инициализирован. Обнови страницу с Ctrl+F5. Если ошибка останется, проверь auth-config.js и доступность Supabase.", "error");
+      showMessage(
+        bootstrapError?.message ||
+        "Supabase не инициализирован. Обнови страницу с Ctrl+F5.",
+        "error"
+      );
+      setAuthStatus("AUTH ERROR", "error");
       return;
     }
 
@@ -324,6 +403,7 @@
     if (error) {
       setBusy(button, false);
       showMessage(error.message || "Не удалось открыть Discord.", "error");
+      setAuthStatus("DISCORD ERROR", "error");
     }
   };
 
@@ -341,6 +421,7 @@
 
     state.user = null;
     state.profile = null;
+    renderAuthLinks();
     window.location.replace("./");
   };
 
@@ -352,10 +433,16 @@
     const button = qs("button[type='submit']", form);
     const value = escapeText(input?.value);
 
-    if (!client || !state.user || !input) return;
+    if (!client || !state.user || !input) {
+      showMessage("Сессия пользователя ещё не готова. Обнови страницу и попробуй снова.", "error");
+      return;
+    }
 
     if (!/^[A-Za-z0-9_]{3,16}$/.test(value)) {
-      showMessage("Minecraft-ник должен содержать 3–16 символов: латинские буквы, цифры и _.", "error");
+      showMessage(
+        "Minecraft-ник должен содержать 3–16 символов: латинские буквы, цифры и _.",
+        "error"
+      );
       input.focus();
       return;
     }
@@ -376,7 +463,10 @@
     setBusy(button, false);
 
     if (error) {
-      showMessage("Не удалось сохранить профиль. Проверь, что SQL-схема NaZerak уже установлена в Supabase.", "error");
+      showMessage(
+        "Не удалось сохранить профиль. Проверь подключение к Supabase и права RLS.",
+        "error"
+      );
       return;
     }
 
@@ -393,22 +483,20 @@
     const messageInput = qs("#media-message", form);
     const button = qs("button[type='submit']", form);
 
-    if (!client || !state.user || !urlInput || !messageInput) return;
-
-    const channelUrl = escapeText(urlInput.value);
-    const message = escapeText(messageInput.value);
-
-    let parsedUrl;
-    try {
-      parsedUrl = new URL(channelUrl);
-    } catch {
-      showMessage("Укажи корректную ссылку на канал или площадку.", "error");
-      urlInput.focus();
+    if (!client || !state.user || !urlInput || !messageInput) {
+      showMessage("Сессия пользователя ещё не готова. Обнови страницу и попробуй снова.", "error");
       return;
     }
 
-    if (!/^https?:$/.test(parsedUrl.protocol)) {
-      showMessage("Ссылка должна начинаться с http:// или https://.", "error");
+    const channelUrl = escapeText(urlInput.value);
+    const message = escapeText(messageInput.value);
+    const parsedUrl = safeHttpUrl(channelUrl);
+
+    if (!parsedUrl) {
+      showMessage(
+        "Укажи корректную ссылку на канал или площадку с http:// или https://.",
+        "error"
+      );
       urlInput.focus();
       return;
     }
@@ -422,11 +510,13 @@
     setBusy(button, true, "Отправляем…");
     showMessage("");
 
-    const { error } = await client.from("media_applications").insert({
-      user_id: state.user.id,
-      channel_url: channelUrl,
-      message
-    });
+    const { error } = await client
+      .from("media_applications")
+      .insert({
+        user_id: state.user.id,
+        channel_url: parsedUrl,
+        message
+      });
 
     setBusy(button, false);
 
@@ -438,43 +528,53 @@
       showMessage(
         duplicate
           ? "У тебя уже есть заявка на рассмотрении."
-          : "Не удалось отправить заявку. Проверь, что таблица заявок создана в Supabase.",
+          : "Не удалось отправить заявку. Проверь подключение к базе данных.",
         "error"
       );
       return;
     }
 
     form.reset();
-    showMessage("Заявка отправлена. Мы рассмотрим её через систему NaZerak.", "success");
+    showMessage(
+      "Заявка отправлена. Мы рассмотрим её через систему NaZerak.",
+      "success"
+    );
     await loadMediaApplications(state.user);
   };
 
   const renderCabinet = async () => {
     if (!document.body.dataset.cabinet) return;
 
-    if (!configured || !client) {
-      console.error("[NaZerak Auth] Supabase client is not configured or failed to initialize.", {
-        configured,
-        hasSupabaseGlobal: !!window.supabase,
-        hasCreateClient: typeof supabaseFactory === "function",
-        configUrl: config.url || "(empty)",
-        publishableKeyPresent: !!config.publishableKey
-      });
+    if (!configured) {
+      setAuthStatus("AUTH SETUP REQUIRED", "config");
+      configureSetupView(false);
+      setAccountView("config");
+      state.loading = false;
+      return;
+    }
+
+    if (!client) {
+      setAuthStatus("AUTH UNAVAILABLE", "error");
+      configureSetupView(true);
       setAccountView("config");
       state.loading = false;
       return;
     }
 
     setAccountView("loading");
+    setAuthStatus("CHECKING AUTH", "loading");
 
     const { data, error } = await client.auth.getUser();
+
     if (error) {
       console.warn("[NaZerak Auth] user lookup failed:", error.message);
+      state.user = null;
+    } else {
+      state.user = data?.user || null;
     }
 
-    state.user = data?.user || null;
-
     if (!state.user) {
+      setAuthStatus("DISCORD READY", "ready");
       setAccountView("guest");
       return;
     }
@@ -482,6 +582,8 @@
     state.profile = await ensureProfile(state.user);
     renderUser(state.user, state.profile);
     await loadMediaApplications(state.user);
+
+    setAuthStatus("SIGNED IN", "signed-in");
     setAccountView("user");
 
     if (window.location.hash === "#media-application") {
@@ -494,16 +596,57 @@
     }
   };
 
+  const bootstrapClient = async () => {
+    if (!configured) return;
+
+    try {
+      if (window.NAZERAK_SUPABASE_READY instanceof Promise) {
+        await window.NAZERAK_SUPABASE_READY;
+      }
+
+      const factory = window.supabase?.createClient;
+      if (typeof factory !== "function") {
+        throw new Error("Supabase SDK createClient не найден.");
+      }
+
+      client = factory(config.url, config.publishableKey, {
+        auth: {
+          flowType: "pkce",
+          persistSession: true,
+          autoRefreshToken: true,
+          detectSessionInUrl: true
+        }
+      });
+    } catch (error) {
+      bootstrapError =
+        error instanceof Error
+          ? error
+          : new Error(String(error || "Неизвестная ошибка Supabase SDK."));
+      client = null;
+      console.error("[NaZerak Auth] Supabase bootstrap failed:", bootstrapError);
+    }
+  };
+
+  let initialized = false;
+
   const init = async () => {
+    if (initialized) return;
+    initialized = true;
+
+    document.documentElement.classList.add("auth-ready");
     renderAuthLinks();
     showOAuthError();
 
     qsa("[data-discord-login]").forEach((button) => {
-      button.addEventListener("click", () => signIn(button));
+      button.addEventListener("click", () => {
+        void signIn(button);
+      });
     });
 
     qsa("[data-sign-out]").forEach((button) => {
-      button.addEventListener("click", () => signOut(button));
+      button.addEventListener("click", () => {
+        void signOut(button);
+      });
     });
 
     qsa("#minecraft-profile-form").forEach((form) => {
@@ -514,32 +657,41 @@
       form.addEventListener("submit", submitMediaApplication);
     });
 
+    await bootstrapClient();
+
     if (!configured || !client) {
-      qsa("[data-auth-status]").forEach((el) => {
-        el.textContent = "AUTH SETUP REQUIRED";
-      });
-      qsa("[data-auth-config-link]").forEach((link) => {
-        link.href = "#auth-config";
-      });
-      await renderCabinet();
+      if (document.body.dataset.cabinet) {
+        await renderCabinet();
+      }
       renderAuthLinks();
       return;
     }
 
-    const { data } = await client.auth.getSession();
-    state.user = data.session?.user || null;
+    const { data, error } = await client.auth.getSession();
+
+    if (error) {
+      console.warn("[NaZerak Auth] session lookup failed:", error.message);
+      showMessage("Не удалось проверить текущую сессию. Обнови страницу.", "error");
+    }
+
+    state.user = data?.session?.user || null;
     state.loading = false;
     renderAuthLinks();
-    await renderCabinet();
 
-    client.auth.onAuthStateChange(async (_event, session) => {
+    if (document.body.dataset.cabinet) {
+      await renderCabinet();
+    }
+
+    client.auth.onAuthStateChange((_event, session) => {
       state.user = session?.user || null;
       state.profile = null;
       renderAuthLinks();
 
-      if (document.body.dataset.cabinet) {
-        await renderCabinet();
-      }
+      window.setTimeout(() => {
+        if (document.body.dataset.cabinet) {
+          void renderCabinet();
+        }
+      }, 0);
     });
   };
 
@@ -552,8 +704,10 @@
   });
 
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", init, { once: true });
+    document.addEventListener("DOMContentLoaded", () => {
+      void init();
+    }, { once: true });
   } else {
-    init();
+    void init();
   }
 })();
