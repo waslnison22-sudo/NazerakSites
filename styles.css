@@ -1856,7 +1856,6 @@ button { font: inherit; }
   .live-stats { grid-template-columns: 1fr; }
   .partner-panel { grid-template-columns: 1fr; }
   .partner-panel__visual { min-height: 270px; }
-  .partner-panel__character::after { background: linear-gradient(180deg, transparent 50%, rgba(7,7,8,.70)); }
 }
 
 @media (max-width: 540px) {
@@ -2247,8 +2246,11 @@ button { font: inherit; }
   overflow: hidden;
   border: 1px solid rgba(255,255,255,.14);
   border-radius: 22px;
-  background: linear-gradient(145deg, #f2f2f0, #7f8186);
-  color: #09090a;
+  background:
+    repeating-linear-gradient(0deg, rgba(255,255,255,.035) 0 6px, transparent 6px 12px),
+    repeating-linear-gradient(90deg, rgba(255,255,255,.035) 0 6px, transparent 6px 12px),
+    linear-gradient(145deg, #e52f40, #650a12);
+  color: #fff;
   box-shadow: 0 20px 52px rgba(0,0,0,.32);
 }
 .account-avatar img {
