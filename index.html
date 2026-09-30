@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#08090b">
   <meta name="description" content="NaZerak — независимый Minecraft-проект, сервер и сообщество.">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
   <meta property="og:type" content="website">
   <meta property="og:title" content="NaZerak — Minecraft project">
   <meta property="og:description" content="Сервер NaZerak, сообщество, подключение и личный кабинет.">
@@ -14,8 +15,6 @@
 </head>
 <body>
   <div class="scroll-progress" aria-hidden="true"><span></span></div>
-  <div class="site-noise" aria-hidden="true"></div>
-
   <header class="topbar" id="top">
     <div class="container topbar__inner">
       <a class="brand" href="#top" aria-label="NaZerak — на главную">
@@ -32,7 +31,7 @@
         <a class="nav-discord" href="https://discord.gg/2KvsYYDHN6" target="_blank" rel="noopener noreferrer" aria-label="Официальный Discord NaZerak" title="Официальный Discord">
           <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M19.54 4.99A16.7 16.7 0 0 0 15.2 3.64l-.53 1.08a15.8 15.8 0 0 0-5.34 0L8.8 3.64a16.73 16.73 0 0 0-4.34 1.35C1.7 9.22 1.02 13.35 1.36 17.43a16.9 16.9 0 0 0 5.27 2.69l1.27-1.72c-.69-.25-1.36-.57-1.98-.96l.48-.37a11.9 11.9 0 0 0 10.2 0l.48.37c-.62.39-1.29.71-1.98.96l1.27 1.72a16.88 16.88 0 0 0 5.27-2.69c.4-4.73-.68-8.82-2.62-12.44ZM8.12 15.2c-1.03 0-1.88-.94-1.88-2.09s.83-2.1 1.88-2.1 1.89.94 1.88 2.1c0 1.15-.84 2.09-1.88 2.09Zm7.76 0c-1.03 0-1.88-.94-1.88-2.09s.83-2.1 1.88-2.1 1.89.94 1.88 2.1c0 1.15-.84 2.09-1.88 2.09Z"/></svg>
         </a>
-        <a class="nav-account" data-auth-link href="./cabinet.html" hidden>
+        <a class="nav-account" data-auth-link href="./cabinet.html">
           <span class="nav-account__avatar"><img data-auth-link-avatar alt="" hidden><span data-auth-link-fallback>◉</span></span>
           <span data-auth-link-label>Войти</span>
         </a>
@@ -69,9 +68,9 @@
               </div>
             </div>
             <div class="hero-visual__stats">
-              <div><span>STATUS</span><strong>LIVE</strong></div>
-              <div><span>PLAYERS</span><strong>— / —</strong></div>
-              <div><span>PING</span><strong>—</strong></div>
+              <div><span>STATUS</span><strong data-server-hero-status>CHECKING</strong></div>
+              <div><span>PLAYERS</span><strong data-server-hero-players>— / —</strong></div>
+              <div><span>PING</span><strong data-server-hero-ping>—</strong></div>
             </div>
             <div class="hero-visual__footer"><span>NAZERAK</span><span>LIVE SERVER DATA</span></div>
           </div>
@@ -127,12 +126,12 @@
       </div>
     </section>
 
-    <section class="section section--live">
+    <section class="section section--live" id="server">
       <div class="container">
         <div class="live-panel reveal">
           <div class="live-panel__main">
             <div class="live-panel__heading"><span class="section-kicker">03 / SERVER STATUS</span><span class="live-source-dot"><i></i> LIVE DATA</span></div>
-            <h2><span id="server-status-text">Проверяем сервер…</span></h2><p id="server-status-detail">Получаем актуальный ответ от Minecraft-сервера.</p>
+            <h2><span id="server-status-text" role="status" aria-live="polite">Проверяем сервер…</span></h2><p id="server-status-detail" aria-live="polite">Получаем актуальный ответ от Minecraft-сервера.</p>
             <div class="live-stats"><div class="live-stat"><span>ИГРОКИ</span><strong id="server-players">— / —</strong></div><div class="live-stat"><span>ЗАДЕРЖКА</span><strong id="server-ping">—</strong></div><div class="live-stat"><span>ВЕРСИЯ</span><strong id="server-reported-version">—</strong></div></div>
           </div>
           <div class="live-panel__side">
@@ -208,9 +207,9 @@
     </div>
   </footer>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js" defer></script>
   <script src="./auth-config.js?v=2" defer></script>
-  <script src="./auth.js?v=2" defer></script>
+  <script src="./supabase-loader.js?v=1" defer></script>
+  <script src="./auth.js?v=3" defer></script>
   <script src="./script.js" defer></script>
 </body>
 </html>
