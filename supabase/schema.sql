@@ -87,3 +87,21 @@ comment on table public.media_applications is 'NaZerak media partner application
 
 -- The identity sequence is used when authenticated users insert applications.
 grant usage, select on sequence public.media_applications_id_seq to authenticated;
+
+
+-- Least-privilege access for the browser client.
+revoke all on table public.profiles, public.media_applications from anon;
+
+revoke delete, references, trigger, truncate
+  on table public.profiles
+  from authenticated;
+
+revoke delete, references, trigger, truncate, update
+  on table public.media_applications
+  from authenticated;
+
+grant select, insert, update on table public.profiles to authenticated;
+grant select, insert on table public.media_applications to authenticated;
+
+revoke all on sequence public.media_applications_id_seq from anon;
+grant usage, select on sequence public.media_applications_id_seq to authenticated;
