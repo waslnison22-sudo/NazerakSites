@@ -32,18 +32,29 @@
   };
 
   const readOAuthError = () => {
-    const hash = window.location.hash.startsWith("#")
-      ? window.location.hash.slice(1)
-      : "";
-    if (!hash) return null;
+    const sources = [];
 
-    const params = new URLSearchParams(hash);
-    const error = params.get("error");
-    const description = params.get("error_description");
-    const code = params.get("error_code");
+    if (window.location.search) {
+      sources.push(new URLSearchParams(window.location.search));
+    }
 
-    if (!error && !description && !code) return null;
-    return { error, description, code };
+    if (window.location.hash.startsWith("#")) {
+      sources.push(
+        new URLSearchParams(window.location.hash.slice(1))
+      );
+    }
+
+    for (const params of sources) {
+      const error = params.get("error");
+      const description = params.get("error_description");
+      const code = params.get("error_code");
+
+      if (error || description || code) {
+        return { error, description, code };
+      }
+    }
+
+    return null;
   };
 
   const showMessage = (message, kind = "info") => {
