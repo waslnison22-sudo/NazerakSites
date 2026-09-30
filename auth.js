@@ -596,13 +596,13 @@
     setAccountView("loading");
     setAuthStatus("CHECKING AUTH", "loading");
 
-    const { data, error } = await client.auth.getUser();
+    const { data, error } = await client.auth.getSession();
 
     if (error) {
-      console.warn("[NaZerak Auth] user lookup failed:", error.message);
+      console.warn("[NaZerak Auth] session lookup failed:", error.message);
       state.user = null;
     } else {
-      state.user = data?.user || null;
+      state.user = data?.session?.user || null;
     }
 
     if (!state.user) {
