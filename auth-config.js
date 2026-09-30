@@ -6,9 +6,9 @@
  * - NEVER put the Discord Client Secret, Supabase service_role key,
  *   or any other server secret in this file or in GitHub.
  *
- * Fill these two values after creating the NaZerak Supabase project.
+ * This file contains only public browser configuration.
  */
 window.NAZERAK_SUPABASE_CONFIG = {
-  url: "",
-  publishableKey: ""
+  url: "https://ujlbyzvdsncvqbrhasuw.supabase.co",
+  publishableKey: "sb_publishable_r3EO5cvyT-W2HqzeLWTLkA_Vw1kDAz2"
 };
