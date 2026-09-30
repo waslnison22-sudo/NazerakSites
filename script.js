@@ -150,4 +150,37 @@
       if (title) title.style.transform = "";
     });
   }
+  document.querySelectorAll("[data-copy]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const value = button.getAttribute("data-copy");
+      if (!value) return;
+
+      const label = button.querySelector("span");
+      const originalLabel = label ? label.textContent : "Копировать";
+
+      try {
+        await navigator.clipboard.writeText(value);
+        button.classList.add("is-copied");
+        if (label) label.textContent = "Скопировано";
+      } catch {
+        const fallback = document.createElement("textarea");
+        fallback.value = value;
+        fallback.setAttribute("readonly", "");
+        fallback.style.position = "fixed";
+        fallback.style.opacity = "0";
+        document.body.appendChild(fallback);
+        fallback.select();
+        try { document.execCommand("copy"); } catch {}
+        fallback.remove();
+        button.classList.add("is-copied");
+        if (label) label.textContent = "Скопировано";
+      }
+
+      window.setTimeout(() => {
+        button.classList.remove("is-copied");
+        if (label) label.textContent = originalLabel;
+      }, 1800);
+    });
+  });
+
 })();
