@@ -208,6 +208,9 @@
   const pingText = document.getElementById("server-ping");
   const versionText = document.getElementById("server-reported-version");
   const refreshButton = document.getElementById("server-refresh");
+  const heroStatusText = document.querySelector("[data-server-hero-status]");
+  const heroPlayersText = document.querySelector("[data-server-hero-players]");
+  const heroPingText = document.querySelector("[data-server-hero-ping]");
 
   let refreshTimer = null;
   let statusAbortController = null;
@@ -224,6 +227,12 @@
     else statusText.textContent = "Проверяем сервер…";
 
     if (statusDetail) statusDetail.textContent = detail;
+    if (heroStatusText) {
+      heroStatusText.textContent =
+        state === "online" ? "ONLINE" :
+        state === "offline" ? "OFFLINE" :
+        state === "checking" ? "CHECKING" : "UNKNOWN";
+    }
   };
 
   const formatLatency = (value) => {
@@ -277,15 +286,19 @@
       if (playersText) {
         const online = Number(data?.players?.online);
         const max = Number(data?.players?.max);
-        playersText.textContent =
+        const playersLabel =
           Number.isFinite(online) && Number.isFinite(max)
             ? online + " / " + max
             : Number.isFinite(online)
               ? String(online)
               : "—";
+        playersText.textContent = playersLabel;
+        if (heroPlayersText) heroPlayersText.textContent = playersLabel;
       }
 
-      if (pingText) pingText.textContent = formatLatency(data?.latencyMs);
+      const latencyLabel = formatLatency(data?.latencyMs);
+      if (pingText) pingText.textContent = latencyLabel;
+      if (heroPingText) heroPingText.textContent = latencyLabel;
 
       if (versionText) {
         versionText.textContent =
@@ -316,6 +329,8 @@
       if (playersText) playersText.textContent = "—";
       if (pingText) pingText.textContent = "—";
       if (versionText) versionText.textContent = "—";
+      if (heroPlayersText) heroPlayersText.textContent = "—";
+      if (heroPingText) heroPingText.textContent = "—";
 
       const aborted =
         error?.name === "AbortError" &&
