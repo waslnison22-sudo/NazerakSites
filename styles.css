@@ -2187,3 +2187,25 @@ img {
     transform: none;
   }
 }
+/* Small state accents */
+.live-panel__main h2 #server-status-text[data-state="online"] {
+  color: #e8fff0;
+}
+
+.live-panel__main h2 #server-status-text[data-state="offline"] {
+  color: #ffb1b8;
+}
+
+.icon-button--discord:hover {
+  color: #fff;
+  border-color: rgba(217,35,54,.5);
+  background: rgba(217,35,54,.09);
+}
+
+.connect-card--discord:hover {
+  border-color: rgba(217,35,54,.42);
+}
+
+.connect-card--version:hover {
+  border-color: #353b43;
+}
