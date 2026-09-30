@@ -33,6 +33,30 @@
 
   const accountUrl = () => new URL("./cabinet.html", window.location.href).href;
 
+  const readOAuthError = () => {
+    const hash = window.location.hash.startsWith("#") ? window.location.hash.slice(1) : "";
+    if (!hash) return null;
+
+    const params = new URLSearchParams(hash);
+    const error = params.get("error");
+    const description = params.get("error_description");
+    const code = params.get("error_code");
+
+    if (!error && !description && !code) return null;
+    return { error, description, code };
+  };
+
+  const showOAuthError = () => {
+    const result = readOAuthError();
+    if (!result) return false;
+
+    const detail = result.description || result.error || "Неизвестная ошибка OAuth.";
+    const code = result.code ? " [" + result.code + "]" : "";
+    showMessage("Ошибка входа через Discord" + code + ": " + decodeURIComponent(detail), "error");
+    window.history.replaceState(null, "", window.location.pathname + window.location.search);
+    return true;
+  };
+
   const escapeText = (value) => String(value ?? "").trim();
 
   const userDisplayName = (user) => {
@@ -276,7 +300,8 @@
 
   const signIn = async (button) => {
     if (!client) {
-      window.location.href = accountUrl() + "#auth-config";
+      setBusy(button, false);
+      showMessage("Supabase не инициализирован. Обнови страницу с Ctrl+F5. Если ошибка останется, проверь auth-config.js и доступность Supabase.", "error");
       return;
     }
 
@@ -428,6 +453,13 @@
     if (!document.body.dataset.cabinet) return;
 
     if (!configured || !client) {
+      console.error("[NaZerak Auth] Supabase client is not configured or failed to initialize.", {
+        configured,
+        hasSupabaseGlobal: !!window.supabase,
+        hasCreateClient: typeof supabaseFactory === "function",
+        configUrl: config.url || "(empty)",
+        publishableKeyPresent: !!config.publishableKey
+      });
       setAccountView("config");
       state.loading = false;
       return;
@@ -464,6 +496,7 @@
 
   const init = async () => {
     renderAuthLinks();
+    showOAuthError();
 
     qsa("[data-discord-login]").forEach((button) => {
       button.addEventListener("click", () => signIn(button));
