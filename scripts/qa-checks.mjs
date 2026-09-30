@@ -108,6 +108,9 @@ for (const [i, page] of cspPages.entries()) {
   if (!page.includes('http-equiv="Content-Security-Policy"')) {
     fail.push(`CSP missing on page #${i + 1}`);
   }
+  if (!page.includes("style-src-attr 'unsafe-inline'")) {
+    fail.push(`style-src-attr missing on page #${i + 1}`);
+  }
   if (/<script(?![^>]*\bsrc=)[^>]*>/i.test(page)) {
     fail.push(`inline script tag found on page #${i + 1}`);
   }
@@ -169,6 +172,9 @@ for (const token of [
   if (!auth.includes(token)) fail.push(`auth guard missing: ${token}`);
 }
 
+if (!auth.includes("const getSessionSafe")) fail.push("bounded session lookup is missing");
+if (!auth.includes("renderCabinet(initialSession)")) fail.push("initial session is not reused");
+if (!auth.includes("window.setTimeout(() =>")) fail.push("auth state callback is not deferred");
 if (!loader.includes('VERSION = "2.117.2"')) fail.push("Supabase SDK version is not pinned");
 if (!loader.includes("unpkg.com")) fail.push("Supabase CDN fallback is missing");
 if (!script.includes("8000")) fail.push("server status timeout is missing");
