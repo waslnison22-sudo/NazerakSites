@@ -4,12 +4,12 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#070708">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://unpkg.com; connect-src 'self' https://ujlbyzvdsncvqbrhasuw.supabase.co https://minecraftstatus.com https://api.mcstatus.io; img-src 'self' data: https:; style-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; frame-src 'none'; form-action 'self';">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://unpkg.com; connect-src 'self' https://ujlbyzvdsncvqbrhasuw.supabase.co https://minecraftstatus.com https://api.mcstatus.io; img-src 'self' data: https:; style-src 'self'; style-src-attr 'unsafe-inline'; font-src 'self'; object-src 'none'; base-uri 'self'; frame-src 'none'; form-action 'self';">
   <meta name="description" content="NaZerak — личный кабинет игрока.">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <meta name="robots" content="noindex,nofollow,noarchive">
   <link rel="icon" href="./favicon.svg?v=4" type="image/svg+xml">
-  <link rel="stylesheet" href="./styles.css?v=3">
+  <link rel="stylesheet" href="./styles.css?v=4">
   <title>NaZerak — личный кабинет</title>
 </head>
 <body data-cabinet>
@@ -58,7 +58,7 @@
 
       <div class="auth-message" data-auth-message role="status" aria-live="polite" hidden></div>
 
-      <section class="account-view" data-account-view="loading" hidden>
+      <section class="account-view" data-account-view="loading">
         <div class="account-loading">
           <span class="account-spinner"></span>
           <strong>Проверяем сессию…</strong>
@@ -212,7 +212,7 @@
     <div class="container footer__inner">
       <div>
         <a class="brand brand--footer" href="./">
-          <span class="brand__mark" aria-hidden="true">N</span>
+          <span class="brand__mark" aria-hidden="true">NZ</span>
           <span class="brand__name">NaZerak</span>
         </a>
         <p class="footer__copy">Личный кабинет NaZerak.</p>
@@ -227,9 +227,9 @@
 
   <noscript><div class="noscript-message">Для входа и личного кабинета NaZerak требуется включить JavaScript.</div></noscript>
 
-  <script src="./auth-config.js?v=2" defer></script>
-  <script src="./supabase-loader.js?v=1" defer></script>
-  <script src="./auth.js?v=3" defer></script>
-  <script src="./script.js?v=2" defer></script>
+  <script src="./auth-config.js?v=3" defer></script>
+  <script src="./supabase-loader.js?v=2" defer></script>
+  <script src="./auth.js?v=4" defer></script>
+  <script src="./script.js?v=3" defer></script>
 </body>
 </html>
