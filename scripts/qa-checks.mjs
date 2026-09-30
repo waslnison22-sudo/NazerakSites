@@ -183,7 +183,11 @@ for (const token of [
   'create policy "profiles_update_own"',
   'create policy "media_applications_select_own"',
   'create policy "media_applications_insert_own"',
-  "revoke all on table public.profiles, public.media_applications from anon"
+  "revoke all on table public.profiles, public.media_applications from anon",
+  "grant insert (id, minecraft_username)",
+  "grant update (minecraft_username, updated_at)",
+  "grant insert (user_id, channel_url, message)",
+  "revoke insert, update, delete, references, trigger, truncate"
 ]) {
   if (!schema.includes(token)) fail.push(`schema guard missing: ${token}`);
 }
