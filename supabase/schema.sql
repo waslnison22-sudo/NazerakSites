@@ -99,16 +99,14 @@ grant usage, select on sequence public.media_applications_id_seq to authenticate
 -- Least-privilege access for the browser client.
 revoke all on table public.profiles, public.media_applications from anon;
 
-revoke delete, references, trigger, truncate
+revoke insert, update, delete, references, trigger, truncate
   on table public.profiles
   from authenticated;
 
-revoke update, delete, references, trigger, truncate
+revoke insert, update, delete, references, trigger, truncate
   on table public.media_applications
   from authenticated;
 
-grant select, insert, update on table public.profiles to authenticated;
-grant select, insert on table public.media_applications to authenticated;
 
 revoke all on sequence public.media_applications_id_seq from anon;
 grant usage, select on sequence public.media_applications_id_seq to authenticated;
