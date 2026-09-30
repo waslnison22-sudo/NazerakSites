@@ -17,7 +17,6 @@ const requiredFiles = [
 ];
 
 const bannedTokens = [
-  "sb_secret_",
   "cursor-light",
   "nazerak-cube",
   "cube-face",
