@@ -77,6 +77,25 @@ if (cssOpen !== cssClose) {
   fail.push(`CSS braces mismatch: ${cssOpen} != ${cssClose}`);
 }
 
+
+const cspPages = [index, cabinet, read("404.html")];
+for (const [i, page] of cspPages.entries()) {
+  if (!page.includes('http-equiv="Content-Security-Policy"')) {
+    fail.push(`CSP missing on page #${i + 1}`);
+  }
+  if (/<script(?![^>]*\bsrc=)[^>]*>/i.test(page)) {
+    fail.push(`inline script tag found on page #${i + 1}`);
+  }
+  if (/\sstyle=/i.test(page)) {
+    fail.push(`inline style attribute found on page #${i + 1}`);
+  }
+
+  const blankLinks = [...page.matchAll(/<a\b[^>]*target="_blank"[^>]*>/gi)].map((m) => m[0]);
+  if (blankLinks.some((link) => !/rel="[^"]*noopener[^"]*"/i.test(link))) {
+    fail.push(`target=_blank without noopener on page #${i + 1}`);
+  }
+}
+
 const duplicateIds = (html, name) => {
   const ids = [...html.matchAll(/\bid=["']([^"']+)["']/g)].map((match) => match[1]);
   const duplicates = [...new Set(ids.filter((id, i) => ids.indexOf(id) !== i))];
