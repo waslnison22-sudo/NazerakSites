@@ -157,7 +157,7 @@
             <form class="account-form" id="minecraft-profile-form">
               <label>
                 <span>Minecraft username</span>
-                <input id="minecraft-username" name="minecraft_username" maxlength="16" autocomplete="off" spellcheck="false" data-minecraft-input placeholder="Например, NaZerakPlayer">
+                <input id="minecraft-username" name="minecraft_username" maxlength="16" minlength="3" pattern="[A-Za-z0-9_]{3,16}" autocomplete="off" spellcheck="false" data-minecraft-input placeholder="Например, NaZerakPlayer">
               </label>
               <div class="account-form__actions">
                 <span class="verification-pill">НЕ ПОДТВЕРЖДЁН</span>
@@ -181,11 +181,11 @@
             <form class="account-form" id="media-application-form">
               <label>
                 <span>Ссылка на канал</span>
-                <input id="media-channel-url" name="channel_url" type="url" maxlength="500" required placeholder="https://youtube.com/...">
+                <input id="media-channel-url" name="channel_url" type="url" maxlength="500" required autocomplete="url" placeholder="https://youtube.com/...">
               </label>
               <label>
                 <span>О себе и контенте</span>
-                <textarea id="media-message" name="message" maxlength="2000" rows="5" required placeholder="Кто ты, где публикуешься и какой контент создаёшь?"></textarea>
+                <textarea id="media-message" name="message" maxlength="2000" minlength="10" rows="5" required placeholder="Кто ты, где публикуешься и какой контент создаёшь?"></textarea>
               </label>
               <button class="button button--primary" type="submit"><span>Отправить заявку</span><span aria-hidden="true">↗</span></button>
             </form>
