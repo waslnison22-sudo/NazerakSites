@@ -1714,3 +1714,15 @@ button { font: inherit; }
   }
   .reveal { opacity: 1; transform: none; }
 }
+
+
+.footer__legal {
+  max-width: 620px;
+  margin: 6px 0 0;
+  color: #5f6166;
+  font-size: 9px;
+  line-height: 1.55;
+}
+img.is-missing {
+  display: none !important;
+}
