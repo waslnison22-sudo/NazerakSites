@@ -1,6 +1,6 @@
 # NaZerak — настройка Supabase + Discord
 
-Сейчас проект NaZerak уже подключён к Supabase project:
+Сейчас проект NaZerak уже подключён к рабочему Supabase project:
 
 - Project ref: `ujlbyzvdsncvqbrhasuw`
 - Project URL: `https://ujlbyzvdsncvqbrhasuw.supabase.co`
@@ -163,4 +163,5 @@ https://waslnison22-sudo.github.io/NazerakSites/cabinet.html
 Supabase — Discord OAuth: https://supabase.com/docs/guides/auth/social-login/auth-discord
 Supabase — Redirect URLs: https://supabase.com/docs/guides/auth/redirect-urls
 Supabase — API Keys: https://supabase.com/docs/guides/getting-started/migrating-to-new-api-keys
+Supabase — PKCE: https://supabase.com/docs/guides/auth/sessions/pkce-flow
 Discord Developer Portal: https://discord.com/developers
