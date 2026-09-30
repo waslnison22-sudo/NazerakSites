@@ -102,7 +102,6 @@
       metadata.preferred_username ||
       metadata.custom_claims?.global_name ||
       metadata.custom_claims?.username ||
-      user?.email?.split("@")[0] ||
       "Игрок NaZerak"
     );
   };
@@ -121,12 +120,23 @@
 
   const userAvatar = (user) => {
     const metadata = user?.user_metadata || {};
-    return safeHttpUrl(
+    const candidate = safeHttpUrl(
       metadata.avatar_url ||
       metadata.picture ||
       metadata.custom_claims?.avatar_url ||
       ""
     );
+    if (!candidate) return "";
+
+    try {
+      const host = new URL(candidate).hostname.toLowerCase();
+      return host === "cdn.discordapp.com" ||
+        host === "media.discordapp.net"
+        ? candidate
+        : "";
+    } catch {
+      return "";
+    }
   };
 
   const formatDate = (value) => {
