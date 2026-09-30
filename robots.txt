@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://waslnison22-sudo.github.io/NazerakSites/sitemap.xml
