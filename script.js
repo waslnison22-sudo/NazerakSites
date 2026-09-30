@@ -208,8 +208,16 @@
     });
   });
 
-  const SERVER_STATUS_API =
-    "https://minecraftstatus.com/api/v1/status/java?address=nazehard.rustix.cc";
+  const SERVER_STATUS_SOURCES = [
+    {
+      name: "minecraftstatus",
+      url: "https://minecraftstatus.com/api/v1/status/java?address=nazehard.rustix.cc"
+    },
+    {
+      name: "mcstatus",
+      url: "https://api.mcstatus.io/v2/status/java/nazehard.rustix.cc?query=false&timeout=5"
+    }
+  ];
 
   const statusText = document.getElementById("server-status-text");
   const statusDetail = document.getElementById("server-status-detail");
@@ -278,19 +286,75 @@
     );
 
     try {
-      const response = await fetch(SERVER_STATUS_API, {
-        method: "GET",
-        headers: { Accept: "application/json" },
-        cache: "no-store",
-        signal: statusAbortController.signal
-      });
+      let data = null;
+      let source = null;
+      let lastError = null;
 
-      if (!response.ok) {
-        throw new Error("HTTP " + response.status);
+      for (const candidate of SERVER_STATUS_SOURCES) {
+        try {
+          const response = await fetch(candidate.url, {
+            method: "GET",
+            headers: { Accept: "application/json" },
+            cache: "no-store",
+            signal: statusAbortController.signal
+          });
+
+          if (!response.ok) {
+            throw new Error(candidate.name + " HTTP " + response.status);
+          }
+
+          const payload = await response.json();
+
+          if (candidate.name === "minecraftstatus") {
+            data = {
+              online: String(payload?.verdict || "").toLowerCase() === "online",
+              verdict: String(payload?.verdict || "unknown").toLowerCase(),
+              players: payload?.players,
+              latencyMs: payload?.latencyMs,
+              version: {
+                reportedName: payload?.version?.reportedName
+              },
+              validUntil: payload?.validUntil
+            };
+          } else {
+            data = {
+              online: payload?.online === true,
+              verdict: payload?.online === true ? "online" : "offline",
+              players: payload?.players,
+              latencyMs: payload?.latency_ms ?? payload?.latency ?? null,
+              version: {
+                reportedName:
+                  payload?.version?.name_clean ||
+                  payload?.version?.name ||
+                  null
+              },
+              validUntil: payload?.expires_at
+                ? new Date(payload.expires_at).toISOString()
+                : null
+            };
+          }
+
+          source = candidate.name;
+          break;
+        } catch (error) {
+          lastError = error;
+
+          if (error?.name === "AbortError") {
+            throw error;
+          }
+        }
       }
 
-      const data = await response.json();
-      const verdict = String(data?.verdict || "unknown").toLowerCase();
+      if (!data || !source) {
+        throw lastError || new Error("Все источники статуса недоступны.");
+      }
+
+      const verdict =
+        data.verdict === "online" || data.online === true
+          ? "online"
+          : data.verdict === "offline" || data.online === false
+            ? "offline"
+            : "unknown";
 
       if (playersText) {
         const online = Number(data?.players?.online);
@@ -319,7 +383,9 @@
       if (verdict === "online") {
         setServerStatus(
           "online",
-          "Сервер отвечает. Данные обновляются автоматически."
+          source === "minecraftstatus"
+            ? "Сервер отвечает. Данные обновляются автоматически."
+            : "Основной источник статуса недоступен; показаны данные резервного источника."
         );
       } else if (verdict === "offline") {
         setServerStatus(
