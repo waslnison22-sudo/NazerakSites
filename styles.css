@@ -723,7 +723,6 @@ button { font: inherit; }
 
 .section-head p,
 .status-panel p,
-.start-panel p,
 .world-panel__content > p {
   margin: 22px 0 0;
   max-width: 690px;
@@ -999,8 +998,7 @@ button { font: inherit; }
   letter-spacing: .08em;
 }
 
-.status-panel,
-.start-panel {
+.status-panel {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
@@ -1025,9 +1023,6 @@ button { font: inherit; }
   letter-spacing: .16em;
 }
 
-.start-panel {
-  align-items: center;
-}
 
 .footer {
   padding: 30px 0;
@@ -1847,15 +1842,29 @@ button { font: inherit; }
   .identity-strip__heading { align-items: flex-start; flex-direction: column; }
   .identity-strip__grid { grid-template-columns: 1fr; }
   .identity-card:last-child { grid-column: auto; }
-  .status-panel,
-  .start-panel { align-items: flex-start; flex-direction: column; padding: 28px; }
-  .start-panel .button { width: 100%; }
+  .status-panel { align-items: flex-start; flex-direction: column; padding: 28px; }
   .world-panel__content { padding: 30px; }
   .world-stats { grid-template-columns: 1fr; gap: 18px; }
   .scroll-cue { display: none; }
   .live-stats { grid-template-columns: 1fr; }
   .partner-panel { grid-template-columns: 1fr; }
   .partner-panel__visual { min-height: 270px; }
+  /* Cabinet responsive layout */
+  .nav--cabinet { display: flex; }
+  .account-page { padding-top: 122px; }
+  .account-hero { align-items: flex-start; flex-direction: column; }
+  .account-hero h1 { font-size: clamp(50px,15vw,76px); }
+  .login-panel { grid-template-columns: 1fr; }
+  .login-panel__visual { min-height: 300px; }
+  .account-grid { grid-template-columns: 1fr; }
+  .account-panel--profile { grid-row: auto; }
+  .account-panel--media { grid-column: auto; }
+  .setup-steps { grid-template-columns: 1fr; }
+  .account-media__intro { flex-direction: column; }
+  .media-application { grid-template-columns: 1fr auto; }
+  .media-application > a { grid-column: 1 / -1; order: 2; }
+  .media-application > p { order: 3; }
+  .media-application > time { order: 1; }
 }
 
 @media (max-width: 540px) {
@@ -1880,11 +1889,9 @@ button { font: inherit; }
   .section--compact { padding: 70px 0; }
   .section-head h2,
   .status-panel h2,
-  .start-panel h2,
   .world-panel__content h2 { font-size: 38px; }
   .world-panel__visual { min-height: 340px; }
-  .status-panel,
-  .start-panel { padding: 24px; }
+  .status-panel { padding: 24px; }
   .connect-card { min-height: 265px; }
   .server-ip { font-size: 25px; }
   .live-panel { padding: 24px; }
@@ -1894,6 +1901,17 @@ button { font: inherit; }
   .partner-panel__visual { min-height: 235px; }
   .footer__inner { align-items: flex-start; flex-direction: column; }
   .footer__right { width: 100%; justify-content: space-between; }
+  /* Cabinet compact layout */
+  .account-page { padding-top: 108px; }
+  .account-panel,
+  .account-panel--setup { padding: 22px; }
+  .login-panel__content { padding: 27px 22px; }
+  .login-panel__content h2 { font-size: 43px; }
+  .login-core { width: 104px; height: 104px; }
+  .setup-steps > div { min-height: auto; }
+  .account-form__actions { align-items: flex-start; flex-direction: column; }
+  .account-form__actions .button { width: 100%; }
+  .verification-pill { order: 2; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -2465,33 +2483,3 @@ button { font: inherit; }
 }
 
 .nav--cabinet .nav-account { margin-left: 3px; }
-
-@media (max-width: 760px) {
-  .nav--cabinet { display: flex; }
-  .account-page { padding-top: 122px; }
-  .account-hero { align-items: flex-start; flex-direction: column; }
-  .account-hero h1 { font-size: clamp(50px,15vw,76px); }
-  .login-panel { grid-template-columns: 1fr; }
-  .login-panel__visual { min-height: 300px; }
-  .account-grid { grid-template-columns: 1fr; }
-  .account-panel--profile { grid-row: auto; }
-  .account-panel--media { grid-column: auto; }
-  .setup-steps { grid-template-columns: 1fr; }
-  .account-media__intro { flex-direction: column; }
-  .media-application { grid-template-columns: 1fr auto; }
-  .media-application > a { grid-column: 1 / -1; order: 2; }
-  .media-application > p { order: 3; }
-  .media-application > time { order: 1; }
-}
-@media (max-width: 540px) {
-  .account-page { padding-top: 108px; }
-  .account-panel,
-  .account-panel--setup { padding: 22px; }
-  .login-panel__content { padding: 27px 22px; }
-  .login-panel__content h2 { font-size: 43px; }
-  .login-core { width: 104px; height: 104px; }
-  .setup-steps > div { min-height: auto; }
-  .account-form__actions { align-items: flex-start; flex-direction: column; }
-  .account-form__actions .button { width: 100%; }
-  .verification-pill { order: 2; }
-}
