@@ -61,3 +61,16 @@ python -m http.server 8000
 - без тяжёлых UI-фреймворков;
 - реальные данные проекта добавляются только после подтверждения;
 - анимации должны уважать `prefers-reduced-motion`.
+
+
+## Discord авторизация и личный кабинет
+
+В репозитории уже находятся:
+- `cabinet.html` — личный кабинет;
+- `auth.js` — Discord OAuth, сессия, профиль и заявки;
+- `auth-config.js` — публичная конфигурация Supabase;
+- `supabase/schema.sql` — таблицы и RLS;
+- `AUTH_SETUP.md` — пошаговая настройка Discord + Supabase.
+
+Для настоящего входа нужно создать отдельный Supabase project для NaZerak, выполнить SQL-схему, включить Discord Provider и заполнить `auth-config.js`. Discord Client Secret и Supabase service_role остаются только в настройках Supabase и в GitHub не попадают.
+
