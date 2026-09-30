@@ -2178,6 +2178,9 @@ xt);
   }
 
   html.js-ready .reveal {
+    opacity: 1;
+    transform: none;
+  }
 
   *,
   *::before,
