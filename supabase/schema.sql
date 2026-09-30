@@ -79,8 +79,15 @@ create policy "media_applications_insert_own"
   to authenticated
   with check ((select auth.uid()) = user_id);
 
-grant select, insert, update on public.profiles to authenticated;
-grant select, insert on public.media_applications to authenticated;
+grant select on public.profiles to authenticated;
+grant select on public.media_applications to authenticated;
+
+grant insert (id, minecraft_username)
+  on table public.profiles to authenticated;
+grant update (minecraft_username, updated_at)
+  on table public.profiles to authenticated;
+grant insert (user_id, channel_url, message)
+  on table public.media_applications to authenticated;
 
 comment on table public.profiles is 'NaZerak user profile, keyed to Supabase Auth user id.';
 comment on table public.media_applications is 'NaZerak media partner applications submitted by authenticated users.';
@@ -96,7 +103,7 @@ revoke delete, references, trigger, truncate
   on table public.profiles
   from authenticated;
 
-revoke delete, references, trigger, truncate, update
+revoke update, delete, references, trigger, truncate
   on table public.media_applications
   from authenticated;
 
