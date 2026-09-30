@@ -241,11 +241,25 @@
               <span>01</span>
             </div>
             <div class="connect-card__main">
+              <div class="server-node">
+                <span class="server-node__dot"></span>
+                <span>SERVER NODE</span>
+                <span class="server-node__line"></span>
+                <span class="server-node__code">NZ-01</span>
+              </div>
+
               <span class="connect-card__label">IP СЕРВЕРА</span>
               <strong class="server-ip" id="server-ip">nazehard.rustix.cc</strong>
+
+              <div class="server-meta">
+                <span class="server-chip">JAVA</span>
+                <span class="server-chip">1.21.11</span>
+                <span class="server-chip">RUSTIX</span>
+              </div>
+
               <button class="copy-button" type="button" data-copy="nazehard.rustix.cc" aria-label="Скопировать IP сервера" title="Скопировать IP">
                 <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 8h10a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2V10a2 2 0 0 1 2-2Zm0 2v9h10v-9H9ZM5 4h10a2 2 0 0 1 2 2v1h-2V6H5v9h1v2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"/></svg>
-                <span>Копировать</span>
+                <span>Копировать IP</span>
               </button>
             </div>
             <div class="connect-card__bottom">
@@ -255,6 +269,7 @@
           </article>
 
           <article class="connect-card connect-card--version reveal reveal--delay">
+            <div class="connect-card__scan" aria-hidden="true"></div>
             <div class="connect-card__top">
               <span>REQUIRED VERSION</span>
               <span>02</span>
@@ -267,7 +282,7 @@
             </div>
           </article>
 
-          <a class="connect-card connect-card--discord reveal reveal--delay-2" href="https://discord.gg/2KvsYYDHN6" target="_blank" rel="noopener noreferrer">
+          <a class="connect-card connect-card--discord reveal reveal--delay-2" aria-label="Открыть официальный Discord NaZerak" href="https://discord.gg/2KvsYYDHN6" target="_blank" rel="noopener noreferrer">
             <div class="connect-card__top">
               <span>COMMUNITY</span>
               <span>03</span>
