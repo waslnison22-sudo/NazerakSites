@@ -9,10 +9,22 @@
 
   const loadScript = (src) => new Promise((resolve, reject) => {
     const script = document.createElement("script");
+    const timeout = window.setTimeout(() => {
+      script.remove();
+      reject(new Error("Таймаут загрузки " + src));
+    }, 6000);
+
     script.src = src;
     script.async = false;
-    script.onload = () => resolve(src);
-    script.onerror = () => reject(new Error("Не удалось загрузить " + src));
+    script.onload = () => {
+      window.clearTimeout(timeout);
+      resolve(src);
+    };
+    script.onerror = () => {
+      window.clearTimeout(timeout);
+      script.remove();
+      reject(new Error("Не удалось загрузить " + src));
+    };
     document.head.appendChild(script);
   });
 
