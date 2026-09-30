@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#0a0a0b">
-  <meta name="description" content="NaZerak — официальный сайт проекта. Minecraft-проект, сообщество и новости.">
+  <meta name="theme-color" content="#070708">
+  <meta name="description" content="NaZerak — официальный сайт Minecraft-проекта, его сообщества и новостей.">
   <meta property="og:type" content="website">
   <meta property="og:title" content="NaZerak — официальный сайт">
   <meta property="og:description" content="Официальный сайт проекта NaZerak.">
@@ -13,6 +13,8 @@
   <title>NaZerak — официальный сайт</title>
 </head>
 <body>
+  <div class="cursor-light" aria-hidden="true"></div>
+  <div class="scroll-progress" aria-hidden="true"><span></span></div>
   <div class="site-noise" aria-hidden="true"></div>
 
   <header class="topbar" id="top">
@@ -28,98 +30,189 @@
       </button>
 
       <nav class="nav" id="site-nav" aria-label="Основная навигация">
-        <a href="#about">О проекте</a>
-        <a href="#status">Статус</a>
-        <a href="#start">Начать</a>
+        <a href="#about">Проект</a>
+        <a href="#world">Мир</a>
+        <a href="#start">Старт</a>
       </nav>
     </div>
   </header>
 
   <main>
-    <section class="hero">
-      <div class="container hero__grid">
+    <section class="hero" data-parallax-root>
+      <div class="hero__grid container">
         <div class="hero__content reveal">
-          <div class="eyebrow"><span class="eyebrow__dot"></span> Официальный сайт проекта</div>
-          <h1>NaZerak<span class="hero__accent">.</span></h1>
+          <div class="eyebrow">
+            <span class="eyebrow__dot"></span>
+            Minecraft project / official
+          </div>
+
+          <h1 class="hero-title">
+            <span>NaZerak</span><em>.</em>
+          </h1>
+
           <p class="hero__lead">
-            Проект, который строится вокруг игры, сообщества и своей атмосферы.
-            Здесь будут собираться новости, информация о сервере и всё важное для игроков.
+            Свой мир. Своё сообщество. Своя история.
+            Официальная площадка NaZerak постепенно собирает всё необходимое
+            для игроков в одном месте.
           </p>
 
           <div class="hero__actions">
-            <a class="button button--primary" href="#start">Начать</a>
-            <a class="button button--ghost" href="#about">Узнать больше</a>
+            <a class="button button--primary magnetic" href="#start">
+              <span>О проекте</span><span aria-hidden="true">↘</span>
+            </a>
+            <a class="button button--ghost magnetic" href="#world">
+              <span>Исследовать</span><span aria-hidden="true">↓</span>
+            </a>
           </div>
 
           <div class="hero__meta" aria-label="Состояние проекта">
-            <span><i class="status-dot status-dot--muted"></i> Сайт в разработке</span>
+            <span><i class="status-dot status-dot--muted"></i>Сайт развивается</span>
             <span class="hero__meta-separator">•</span>
-            <span>NaZerak</span>
+            <span>NaZerak / 2026</span>
           </div>
         </div>
 
-        <div class="hero-card reveal reveal--delay" aria-label="Карточка проекта">
-          <div class="hero-card__top">
-            <span class="hero-card__label">PROJECT / NAZERAK</span>
-            <span class="hero-card__index">01</span>
-          </div>
-          <div class="hero-card__logo">NZ</div>
-          <div class="hero-card__line"></div>
-          <div class="hero-card__bottom">
-            <span>PLAY</span>
-            <span>COMMUNITY</span>
-            <span>NEWS</span>
+        <div class="hero-card-wrap reveal reveal--delay" data-parallax="0.11">
+          <div class="hero-card">
+            <div class="hero-card__orbit hero-card__orbit--one"></div>
+            <div class="hero-card__orbit hero-card__orbit--two"></div>
+
+            <div class="hero-card__top">
+              <span>PROJECT / NAZERAK</span>
+              <span>01</span>
+            </div>
+
+            <div class="hero-card__core">
+              <span class="hero-card__ghost">N</span>
+              <span class="hero-card__logo">NZ</span>
+            </div>
+
+            <div class="hero-card__line"></div>
+
+            <div class="hero-card__bottom">
+              <span>WORLD</span>
+              <span>COMMUNITY</span>
+              <span>NEWS</span>
+            </div>
           </div>
         </div>
       </div>
 
+      <div class="hero__gridlines" aria-hidden="true"></div>
       <div class="hero__glow hero__glow--one" aria-hidden="true"></div>
       <div class="hero__glow hero__glow--two" aria-hidden="true"></div>
+
+      <a class="scroll-cue" href="#about" aria-label="Прокрутить к разделу о проекте">
+        <span>SCROLL</span>
+        <span class="scroll-cue__line"></span>
+        <span>↓</span>
+      </a>
+    </section>
+
+    <section class="ticker" aria-label="NaZerak">
+      <div class="ticker__track">
+        <span>NAZERAK</span><b>✦</b>
+        <span>MINECRAFT</span><b>✦</b>
+        <span>COMMUNITY</span><b>✦</b>
+        <span>NAZERAK</span><b>✦</b>
+        <span>MINECRAFT</span><b>✦</b>
+        <span>COMMUNITY</span><b>✦</b>
+      </div>
     </section>
 
     <section class="section" id="about">
       <div class="container">
         <div class="section-head reveal">
-          <span class="section-kicker">01 / О ПРОЕКТЕ</span>
-          <h2>NaZerak — это больше, чем адрес сервера.</h2>
+          <span class="section-kicker">01 / ПРОЕКТ</span>
+          <h2>Место, куда хочется возвращаться.</h2>
           <p>
-            Этот сайт станет единой точкой входа в проект: от первого знакомства
-            до важных объявлений и материалов для игроков.
+            Сайт строится как центральная точка NaZerak: здесь будут собраны
+            актуальные материалы, события и информация, которая действительно нужна игроку.
           </p>
         </div>
 
         <div class="feature-grid">
-          <article class="feature-card reveal">
-            <span class="feature-card__number">01</span>
-            <h3>Игра</h3>
-            <p>Информация о сервере, правилах, подключении и основных возможностях проекта.</p>
+          <article class="feature-card feature-card--large reveal">
+            <div class="feature-card__top">
+              <span>01</span><span>PLAY</span>
+            </div>
+            <div>
+              <h3>Игра</h3>
+              <p>Подключение, правила, механики и всё необходимое для первого входа.</p>
+            </div>
+            <span class="feature-card__arrow" aria-hidden="true">↗</span>
           </article>
+
           <article class="feature-card reveal reveal--delay">
-            <span class="feature-card__number">02</span>
-            <h3>Сообщество</h3>
-            <p>Новости, объявления и площадки проекта будут собраны в одном месте.</p>
+            <div class="feature-card__top">
+              <span>02</span><span>LIVE</span>
+            </div>
+            <div>
+              <h3>События</h3>
+              <p>Новости и обновления проекта без лишнего шума и бесконечных страниц.</p>
+            </div>
+            <span class="feature-card__arrow" aria-hidden="true">↗</span>
           </article>
+
           <article class="feature-card reveal reveal--delay-2">
-            <span class="feature-card__number">03</span>
-            <h3>Развитие</h3>
-            <p>Сайт рассчитан на постоянное расширение без переделки основной структуры.</p>
+            <div class="feature-card__top">
+              <span>03</span><span>JOIN</span>
+            </div>
+            <div>
+              <h3>Сообщество</h3>
+              <p>Основные площадки и важные контакты проекта в одном понятном месте.</p>
+            </div>
+            <span class="feature-card__arrow" aria-hidden="true">↗</span>
           </article>
         </div>
       </div>
     </section>
 
-    <section class="section section--compact" id="status">
+    <section class="section section--world" id="world">
+      <div class="container">
+        <div class="world-panel reveal">
+          <div class="world-panel__visual" aria-hidden="true">
+            <div class="world-panel__ring world-panel__ring--one"></div>
+            <div class="world-panel__ring world-panel__ring--two"></div>
+            <div class="world-panel__cross"></div>
+            <span class="world-panel__coord world-panel__coord--a">N / 01</span>
+            <span class="world-panel__coord world-panel__coord--b">WORLD</span>
+            <span class="world-panel__coord world-panel__coord--c">00° 00′</span>
+            <strong>NZ</strong>
+          </div>
+
+          <div class="world-panel__content">
+            <span class="section-kicker">02 / МИР</span>
+            <h2>Постепенно открываем карту.</h2>
+            <p>
+              Этот блок уже готов для будущих материалов: карта мира,
+              описание серверной концепции, сезонные события и другие детали,
+              когда они будут подтверждены.
+            </p>
+
+            <div class="world-stats">
+              <div><span>STATUS</span><strong>BUILDING</strong></div>
+              <div><span>FORMAT</span><strong>MINECRAFT</strong></div>
+              <div><span>HOME</span><strong>NAZERAK</strong></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--compact">
       <div class="container">
         <div class="status-panel reveal">
           <div>
-            <span class="section-kicker">02 / СТАТУС</span>
-            <h2>Официальная площадка готовится.</h2>
+            <span class="section-kicker">03 / СТАТУС</span>
+            <h2>Официальная площадка уже собирается.</h2>
             <p>
-              Сейчас это первая версия главной страницы. Данные, которые пока не подтверждены,
-              намеренно не выдумываются — по мере готовности проекта здесь появятся реальные адреса,
-              ссылки и статусы.
+              Пока не опубликованы конкретные адреса сервера и внешние ссылки,
+              сайт не делает вид, что они существуют. Когда данные будут готовы,
+              они появятся здесь без переделки структуры.
             </p>
           </div>
+
           <div class="status-panel__badge">
             <i class="status-dot status-dot--live"></i>
             <span>BUILDING</span>
@@ -132,14 +225,17 @@
       <div class="container">
         <div class="start-panel reveal">
           <div>
-            <span class="section-kicker">03 / НАЧАТЬ</span>
-            <h2>Следи за запуском NaZerak.</h2>
+            <span class="section-kicker">04 / СТАРТ</span>
+            <h2>NaZerak ещё только начинает.</h2>
             <p>
-              Раздел подключения, Discord и актуальные новости будут добавлены сюда,
-              когда соответствующие данные будут готовы.
+              Следующая версия сайта может добавить полноценный блок сервера,
+              Discord, новости, правила, FAQ и интерактивные страницы.
             </p>
           </div>
-          <a class="button button--primary" href="#top">Вернуться наверх</a>
+
+          <a class="button button--primary magnetic" href="#top">
+            <span>Вернуться наверх</span><span aria-hidden="true">↑</span>
+          </a>
         </div>
       </div>
     </section>
@@ -154,6 +250,7 @@
         </a>
         <p class="footer__copy">Официальный сайт проекта.</p>
       </div>
+
       <div class="footer__right">
         <span>© <span id="year"></span> NaZerak</span>
         <a href="#top">Наверх ↑</a>
