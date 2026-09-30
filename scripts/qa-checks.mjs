@@ -15,7 +15,9 @@ const requiredFiles = [
   "supabase/schema.sql",
   "404.html",
   "README.md",
-  "AUTH_SETUP.md"
+  "AUTH_SETUP.md",
+  "robots.txt",
+  "sitemap.xml"
 ];
 
 const bannedTokens = [
