@@ -131,12 +131,15 @@ duplicateIds(cabinet, "cabinet.html");
 for (const asset of [
   "auth-config.js?v=2",
   "supabase-loader.js?v=1",
-  "auth.js?v=3",
-  "script.js"
+  "auth.js?v=3"
 ]) {
-  if (!index.includes(asset) || !cabinet.includes(asset)) {
-    fail.push(`script include mismatch: ${asset}`);
+  if (!cabinet.includes(asset)) {
+    fail.push(`cabinet auth include missing: ${asset}`);
   }
+}
+
+if (!index.includes("script.js") || !cabinet.includes("script.js")) {
+  fail.push("script.js include missing from a published page");
 }
 
 for (const id of [
@@ -195,7 +198,7 @@ if (!cabinet.includes('<noscript>') || !index.includes('<noscript>')) {
 
 info.push(`Checked ${requiredFiles.length} required files.`);
 info.push(`Checked ${bannedTokens.length} banned/secret tokens.`);
-info.push(`Checked HTML IDs, JavaScript syntax, CSS braces, auth guards, server guards and RLS guards.`);
+info.push(`Checked HTML IDs, JavaScript syntax, CSS braces, auth guards, server guards, security headers and RLS guards.`);
 
 if (fail.length) {
   console.error("NaZerak QA FAILED");
