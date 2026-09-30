@@ -166,6 +166,10 @@ if (!loader.includes('VERSION = "2.117.2"')) fail.push("Supabase SDK version is 
 if (!loader.includes("unpkg.com")) fail.push("Supabase CDN fallback is missing");
 if (!script.includes("8000")) fail.push("server status timeout is missing");
 if (!script.includes('addEventListener("online"')) fail.push("online recovery is missing");
+if (!script.includes("api.mcstatus.io/v2/status/java")) fail.push("server status fallback is missing");
+if (!index.includes("https://api.mcstatus.io") || !cabinet.includes("https://api.mcstatus.io")) {
+  fail.push("CSP does not allow the server status fallback");
+}
 
 for (const token of [
   "enable row level security",
