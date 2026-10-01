@@ -523,11 +523,21 @@
   };
 
   const signIn = async (button) => {
+    setBusy(button, true, "Подключаем Discord…");
+    showMessage("");
+    setAuthStatus("CONNECTING AUTH", "loading");
+
+    // The login button must be self-healing: a slow/failed CDN bootstrap
+    // must not turn the visible login control into a dead button.
+    if (!client && configured) {
+      await bootstrapClient();
+    }
+
     if (!client) {
       setBusy(button, false);
       showMessage(
         bootstrapError?.message ||
-        "Supabase не инициализирован. Обнови страницу с Ctrl+F5.",
+        "Не удалось подключить авторизацию. Обнови страницу и повтори вход.",
         "error"
       );
       setAuthStatus("AUTH ERROR", "error");
@@ -535,7 +545,6 @@
     }
 
     setBusy(button, true, "Переходим в Discord…");
-    showMessage("");
 
     const redirectTarget = new URL(accountUrl());
     rememberReturnTarget(window.location.hash);
