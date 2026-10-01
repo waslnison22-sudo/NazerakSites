@@ -124,6 +124,7 @@ linear-gradient(145deg,#15181d,#0a0c0f 62%,#130d10)}
 .copy-button{width:max-content;min-height:36px;display:inline-flex;align-items:center;gap:8px;margin-top:15px;padding:0 10px;border:1px solid var(--line);border-radius:8px;background:rgba(255,255,255,.02);color:var(--text);font-size:9px;font-weight:800}
 .copy-button:hover{border-color:#3b4149;background:rgba(255,255,255,.05)}
 .copy-button svg{width:14px;height:14px;fill:currentColor}
+.clipboard-fallback{position:fixed;left:-9999px;top:0;width:1px;height:1px;opacity:0;pointer-events:none}
 .copy-button.is-copied{border-color:rgba(217,35,54,.55);background:var(--accent-soft)}
 .connect-card__version{margin-top:auto;font-size:clamp(44px,5vw,72px);font-weight:900;letter-spacing:-.07em}
 .connect-card--version p{max-width:250px;margin:10px 0 0;color:var(--muted);font-size:11px;line-height:1.65}
