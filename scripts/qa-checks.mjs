@@ -137,7 +137,7 @@ duplicateIds(cabinet, "cabinet.html");
 for (const asset of [
   "auth-config.js?v=3",
   "supabase-loader.js?v=2",
-  "auth.js?v=4"
+  "auth.js?v=5"
 ]) {
   if (!cabinet.includes(asset)) {
     fail.push(`cabinet auth include missing: ${asset}`);
@@ -172,6 +172,8 @@ if (auth.indexOf('setAccountView("user")') > auth.indexOf("void hydrateCabinetDa
 if (!auth.includes("const setButtonLabel")) fail.push("button label helper is missing");
 if (!auth.includes("originalButtonLabel")) fail.push("button markup-preserving busy state is missing");
 if (!auth.includes('event === "USER_UPDATED"')) fail.push("USER_UPDATED auth event is not handled");
+if (!auth.includes("nazerak_auth_return_hash")) fail.push("OAuth return target storage is missing");
+if (auth.includes('redirectTarget.hash = "media-application"')) fail.push("OAuth redirect still carries media fragment");
 if (!auth.includes("const getSessionSafe")) fail.push("bounded session lookup is missing");
 if (!auth.includes("renderCabinet(initialSession)")) fail.push("initial session is not reused");
 if (!auth.includes("renderCabinet(session || null)")) fail.push("auth event session is not reused");
