@@ -237,6 +237,9 @@ if (/server-status-text|server-players|data-server-hero/.test(index)) fail.push(
 if (!index.includes("hero-art-placeholder") || !index.includes("world-screenshot-placeholder")) fail.push("artwork or screenshot placeholder missing");
 if (!index.includes('data-auth-link-label>Войти')) fail.push("homepage auth link must default to neutral login state");
 if (!cabinet.includes('class="nav-account is-active"') || !cabinet.includes('aria-current="page"')) fail.push("cabinet account route must be marked active");
+if (!cabinet.includes('<section class="account-view" data-account-view="loading">')) fail.push("cabinet loading view must be visible before JavaScript starts");
+if (!cabinet.includes('<section class="account-view" data-account-view="guest" hidden>')) fail.push("cabinet guest view must be hidden before auth resolves");
+if (!cabinet.includes('<main class="account-page" id="main-content" tabindex="-1" aria-busy="true">')) fail.push("cabinet main must start in auth-busy state");
 if (!css.includes(".scroll-cue{position:absolute;right:0;bottom:22px;")) fail.push("desktop scroll cue is outside hero");
 
 const authLinkLabel = /data-auth-link-label[^>]*>\s*([^<]+?)\s*</i;
