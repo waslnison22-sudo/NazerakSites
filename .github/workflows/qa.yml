@@ -27,3 +27,6 @@ jobs:
 
       - name: Run release checks
         run: node scripts/qa-checks.mjs
+
+      - name: Run Supabase runtime smoke test
+        run: node scripts/runtime-smoke.mjs

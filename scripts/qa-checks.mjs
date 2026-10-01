@@ -20,7 +20,8 @@ const requiredFiles = [
   "sitemap.xml",
   "forum.html",
   "favicon.svg",
-  "supabase/migrations/20260930205000_harden_frontend_column_privileges.sql"
+  "supabase/migrations/20260930205000_harden_frontend_column_privileges.sql",
+  "scripts/runtime-smoke.mjs"
 ];
 
 const bannedTokens = [
