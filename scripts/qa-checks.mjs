@@ -211,9 +211,13 @@ if (!index.includes('data-auth-link-label>Войти')) fail.push("homepage auth
 if (!cabinet.includes('class="nav-account is-active"') || !cabinet.includes('aria-current="page"')) fail.push("cabinet account route must be marked active");
 if (!css.includes(".scroll-cue{position:absolute;right:0;bottom:22px;")) fail.push("desktop scroll cue is outside hero");
 
-if (auth.includes("Регистрация") || auth.includes("Зарегистрироваться")) fail.push("legacy registration label remains in auth.js");
-if (index.includes("Регистрация") || index.includes("Зарегистрироваться")) fail.push("legacy registration label remains in index.html");
-if (cabinet.includes("Регистрация") || cabinet.includes("Зарегистрироваться")) fail.push("legacy registration label remains in cabinet.html");
+const authLinkLabel = /data-auth-link-label[^>]*>\s*([^<]+?)\s*</i;
+for (const [name, page] of [["index.html", index], ["cabinet.html", cabinet], ["forum.html", read("forum.html")]]) {
+  const labels = [...page.matchAll(/data-auth-link-label[^>]*>\s*([^<]+?)\s*</gi)].map((m) => m[1].trim());
+  if (labels.some((label) => !["Войти", "Кабинет"].includes(label))) {
+    fail.push(`unexpected auth link label in ${name}: ${labels.join(", ")}`);
+  }
+}
 if (!index.includes('href="./forum.html"') || !cabinet.includes('href="./forum.html"')) fail.push("forum navigation link missing");
 if (auth.includes(".from(\"profiles\")\n      .upsert(")) fail.push("profile initialization still uses upsert");
 if (script.includes(".magnetic") || script.includes("[data-parallax]")) fail.push("unstable motion controls remain");
