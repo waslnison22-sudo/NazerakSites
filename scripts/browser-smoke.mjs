@@ -181,5 +181,20 @@ const runSignedInFlowSmoke = async () => {
   }
 };
 
-await runRealBrowserSmoke();
-await runSignedInFlowSmoke();
+let realFailed = false;
+
+try {
+  await runRealBrowserSmoke();
+} catch (error) {
+  realFailed = true;
+  console.log("REAL browser smoke failed:", error instanceof Error ? error.message : String(error));
+}
+
+try {
+  await runSignedInFlowSmoke();
+} catch (error) {
+  console.log("SIGNED-IN browser smoke failed:", error instanceof Error ? error.message : String(error));
+  process.exitCode = 1;
+}
+
+if (realFailed) process.exitCode = 1;
