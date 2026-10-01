@@ -40,8 +40,8 @@ create unique index if not exists media_applications_one_pending_per_user
   on public.media_applications (user_id)
   where status = 'pending';
 
+
 alter table public.profiles enable row level security;
-alter table public.media_applications enable row level security;
 
 drop policy if exists "profiles_select_own" on public.profiles;
 create policy "profiles_select_own"
@@ -79,46 +79,32 @@ create policy "media_applications_insert_own"
   to authenticated
   with check ((select auth.uid()) = user_id);
 
-grant select on public.profiles to authenticated;
-grant select on public.media_applications to authenticated;
-grant insert (id, minecraft_username)
-  on table public.profiles to authenticated;
-grant update (minecraft_username, updated_at)
-  on table public.profiles to authenticated;
-grant insert (user_id, channel_url, message)
-  on table public.media_applications to authenticated;
-
-comment on table public.profiles is 'NaZerak user profile, keyed to Supabase Auth user id.';
-comment on table public.media_applications is 'NaZerak media partner applications submitted by authenticated users.';
-
-
--- Re-apply browser privileges after the deny-all hardening above.
--- Keep these grants at the end so later REVOKE statements cannot remove them.
-grant select on public.profiles to authenticated;
-grant select on public.media_applications to authenticated;
-grant insert (id, minecraft_username)
-  on table public.profiles to authenticated;
-grant update (minecraft_username, updated_at)
-  on table public.profiles to authenticated;
-grant insert (user_id, channel_url, message)
-  on table public.media_applications to authenticated;
-
-revoke all on sequence public.media_applications_id_seq from anon;
-grant usage, select on sequence public.media_applications_id_seq to authenticated;
-
--- Final browser privilege hardening. REVOKE first, then restore only required privileges.
+-- Browser privileges: deny anonymous access, then restore only what the UI uses.
 revoke all on table public.profiles, public.media_applications from anon;
+
 revoke insert, update, delete, references, trigger, truncate
   on table public.profiles
   from authenticated;
 revoke insert, update, delete, references, trigger, truncate
   on table public.media_applications
   from authenticated;
+
 revoke all on sequence public.media_applications_id_seq from anon;
 
 grant select on public.profiles to authenticated;
 grant select on public.media_applications to authenticated;
-grant insert (id, minecraft_username) on table public.profiles to authenticated;
-grant update (minecraft_username, updated_at) on table public.profiles to authenticated;
-grant insert (user_id, channel_url, message) on table public.media_applications to authenticated;
-grant usage, select on sequence public.media_applications_id_seq to authenticated;
+
+grant insert (id, minecraft_username)
+  on table public.profiles to authenticated;
+grant update (minecraft_username, updated_at)
+  on table public.profiles to authenticated;
+
+grant insert (user_id, channel_url, message)
+  on table public.media_applications to authenticated;
+
+grant usage, select
+  on sequence public.media_applications_id_seq
+  to authenticated;
+
+comment on table public.profiles is 'NaZerak user profile, keyed to Supabase Auth user id.';
+comment on table public.media_applications is 'NaZerak media partner applications submitted by authenticated users.';
