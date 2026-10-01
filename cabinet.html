@@ -57,6 +57,10 @@
       </section>
 
       <div class="auth-message" data-auth-message role="status" aria-live="polite" hidden></div>
+      <div class="account-actions" data-account-actions hidden>
+        <a class="button button--ghost" href="./"><span>На главную</span><span aria-hidden="true">←</span></a>
+        <button class="button button--primary" type="button" data-auth-retry><span>Повторить проверку</span><span aria-hidden="true">↻</span></button>
+      </div>
 
       <section class="account-view" data-account-view="loading">
         <div class="account-loading">
@@ -94,13 +98,13 @@
           </div>
           <div class="login-panel__content">
             <span class="section-kicker">01 / DISCORD</span>
-            <h2>Войти в NaZerak.</h2>
-            <p>Регистрация отдельной формой не нужна: первый вход через Discord автоматически создаёт аккаунт NaZerak.</p>
+            <h2 data-login-title>Войти в NaZerak.</h2>
+            <p data-login-copy>Регистрация отдельной формой не нужна: первый вход через Discord автоматически создаёт аккаунт NaZerak.</p>
             <button class="button button--primary" type="button" data-discord-login>
               <span>Продолжить с Discord</span>
               <span aria-hidden="true">↗</span>
             </button>
-            <small>NaZerak получает только необходимые данные Discord для идентификации аккаунта. Пароль Discord сайт не видит.</small>
+            <small data-login-note>NaZerak получает только необходимые данные Discord для идентификации аккаунта. Пароль Discord сайт не видит.</small>
           </div>
         </div>
       </section>
@@ -140,9 +144,9 @@
               <strong>nazehard.rustix.cc</strong>
             </div>
             <div class="account-server__version">Minecraft <b>1.21.11</b></div>
-            <div class="account-server__note">Текущий online-статус сервера остаётся на главной странице и обновляется через публичный status API.</div>
+            <div class="account-server__note">Статистика сервера сейчас намеренно не показывается: данные нельзя выдавать как актуальные без надёжного источника.</div>
             <a class="button button--ghost" href="./#start">
-              <span>К данным сервера</span><span aria-hidden="true">↗</span>
+              <span>Подключение</span><span aria-hidden="true">↗</span>
             </a>
           </article>
 
