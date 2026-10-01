@@ -1029,13 +1029,12 @@ img {
 }
 
 html.js-ready .reveal {
-  opacity: 0;
-  transform: translateY(18px);
-  transition: opacity .6s var(--ease), transform .6s var(--ease);
+  opacity: 1;
+  transform: none;
 }
 
-.reveal--delay { transition-delay: .08s; }
-.reveal--delay-2 { transition-delay: .16s; }
+.reveal--delay { }
+.reveal--delay-2 { }
 
 .reveal.is-visible {
   opacity: 1;
@@ -1146,7 +1145,6 @@ html.js-ready .reveal {
 .auth-message[data-kind="success"] {
   border-color: #30353c;
   color: var(--text);
-xt);
 }
 
 .login-panel {
@@ -1943,3 +1941,10 @@ xt);
   .hero-art-placeholder { min-height: 290px; }
   .world-screenshot-placeholder { min-height: 260px; }
 }
+
+
+/* Stability: navigation and controls stay visible and predictable. */
+.nav-forum { color: var(--text); }
+.nav-forum:hover, .nav-forum:focus-visible { color: var(--text); }
+.button, .icon-button, .copy-button, .nav-toggle { cursor: pointer; }
+.button[disabled], .copy-button[disabled] { opacity: .6; cursor: wait; }
