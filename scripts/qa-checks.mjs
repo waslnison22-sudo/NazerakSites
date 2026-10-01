@@ -189,6 +189,8 @@ if (!auth.includes("nazerak_auth_return_hash")) fail.push("OAuth return target s
 if (auth.includes('redirectTarget.hash = "media-application"')) fail.push("OAuth redirect still carries media fragment");
 
 if (!auth.includes("skipAutoInitialize: true")) fail.push("Supabase auth must disable implicit auto-initialize");
+if (!auth.includes('setAccountView("loading");')) fail.push("cabinet must start in auth loading state");
+
 if (!auth.includes("client.auth.initialize()")) fail.push("explicit Supabase auth initialization is missing");
 if (auth.indexOf("client.auth.onAuthStateChange((event, session) =>") > auth.indexOf("client.auth.initialize()")) {
   fail.push("auth initialize must run after listener registration");
