@@ -135,9 +135,9 @@ duplicateIds(index, "index.html");
 duplicateIds(cabinet, "cabinet.html");
 
 for (const asset of [
-  "auth-config.js?v=3",
-  "supabase-loader.js?v=3",
-  "auth.js?v=5"
+  "auth-config.js?v=5",
+  "supabase-loader.js?v=5",
+  "auth.js?v=9"
 ]) {
   if (!cabinet.includes(asset)) {
     fail.push(`cabinet auth include missing: ${asset}`);
@@ -168,6 +168,7 @@ if (!auth.includes("Сохранение профиля превысило 7 с�
 if (!auth.includes("Отправка заявки превысила 7 секунд.")) fail.push("media submit timeout guard is missing");
 if (!auth.includes('client.auth.onAuthStateChange((event, session) =>')) fail.push("auth listener is missing");
 if (auth.indexOf('client.auth.onAuthStateChange((event, session) =>') > auth.indexOf('const sessionResult = await getSessionSafe()')) fail.push("auth listener registered too late");
+if (!auth.includes("state.user = session?.user || null")) fail.push("global auth link state is not updated from auth events");
 if (auth.indexOf('setAccountView("user")') > auth.indexOf("void hydrateCabinetData")) fail.push("cabinet waits for optional data before showing user view");
 if (!auth.includes("const setButtonLabel")) fail.push("button label helper is missing");
 if (!auth.includes("originalButtonLabel")) fail.push("button markup-preserving busy state is missing");
@@ -178,15 +179,17 @@ if (!auth.includes("const getSessionSafe")) fail.push("bounded session lookup is
 if (!auth.includes("renderCabinet(initialSession)")) fail.push("initial session is not reused");
 if (!auth.includes("renderCabinet(session || null)")) fail.push("auth event session is not reused");
 if (!auth.includes("window.setTimeout(() =>")) fail.push("auth state callback is not deferred");
-if (!loader.includes('VERSION = "2.117.2"')) fail.push("Supabase SDK version is not pinned");
+if (!loader.includes("@supabase/supabase-js@2.117.2")) fail.push("Supabase SDK version is not pinned to 2.117.2");
 if (!loader.includes("unpkg.com")) fail.push("Supabase CDN fallback is missing");
 if (script.includes("loadServerStatus") || script.includes("SERVER_STATUS_SOURCES") || script.includes("api.mcstatus.io")) fail.push("obsolete server status polling remains");
 if (/online-статус.*status API/i.test(cabinet)) fail.push("cabinet still promises live server status");
 if (!cabinet.includes("data-auth-retry") || !cabinet.includes("data-login-title")) fail.push("cabinet auth fallback controls are missing");
+if (!auth.includes("const resolveOAuthCallback")) fail.push("OAuth callback exchange guard is missing");
+if (!auth.includes('label.textContent = state.user ? "Кабинет" : "Войти";')) fail.push("global auth link label state is missing");
 if (/https:\/\/minecraftstatus\.com/i.test(read("404.html"))) fail.push("obsolete status host remains in 404 CSP");
 if (/\.live-panel|\.section--live|#server-status-text|\.world-map\\b|\.hero-server-mark\\b/.test(css)) fail.push("obsolete live/dashboard CSS remains");
-if (!auth.includes('.from("profiles")\n      .update(')) fail.push("profile save must use least-privilege update flow");
-if (!auth.includes('.from("profiles")\n      .insert({ id: user.id })')) fail.push("profile initialization insert is missing");
+if (!/\.from\(["']profiles["']\)[\s\S]{0,220}\.update\(/.test(auth)) fail.push("profile save must use least-privilege update flow");
+if (!/\.from\(["']profiles["']\)[\s\S]{0,220}\.insert\(\{\s*id:\s*user\.id/.test(auth)) fail.push("profile initialization insert is missing");
 if (/nazerak\.is-a\.dev\/cabinet\.html/i.test(read("AUTH_SETUP.md"))) fail.push("obsolete custom-domain auth URL remains");
 if (/server-status-text|server-players|data-server-hero/.test(index)) fail.push("obsolete server statistics markup remains");
 if (!index.includes("hero-art-placeholder") || !index.includes("world-screenshot-placeholder")) fail.push("artwork or screenshot placeholder missing");
