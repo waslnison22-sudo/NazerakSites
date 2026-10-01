@@ -30,6 +30,17 @@ jobs:
 
       - name: Run Supabase runtime smoke test
         run: node scripts/runtime-smoke.mjs
+      - name: Wait for GitHub Pages to publish this revision
+        run: |
+          for i in {1..18}; do
+            if curl -fsSL https://waslnison22-sudo.github.io/NazerakSites/cabinet.html | grep -q 'auth.js?v=17'; then
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "GitHub Pages did not expose auth.js v17 within 90 seconds."
+          exit 1
+
       - name: Install browser test runtime
         run: |
           npm install --no-save --no-package-lock playwright@1.55.0
