@@ -206,6 +206,25 @@
     qsa("[data-account-view]").forEach((view) => {
       view.hidden = view.dataset.accountView !== mode;
     });
+    qsa("[data-account-actions]").forEach((actions) => {
+      actions.hidden = mode === "user" || mode === "loading";
+    });
+  };
+
+  const showLoginFallback = (title, copy, note, kind = "error") => {
+    const titleEl = qs("[data-login-title]");
+    const copyEl = qs("[data-login-copy]");
+    const noteEl = qs("[data-login-note]");
+    if (titleEl) titleEl.textContent = title;
+    if (copyEl) copyEl.textContent = copy;
+    if (noteEl) noteEl.textContent = note;
+    qsa("[data-discord-login]").forEach((button) => {
+      button.disabled = false;
+      button.removeAttribute("aria-busy");
+      button.textContent = "Повторить вход через Discord ↗";
+    });
+    setAccountView("guest");
+    setAuthStatus(kind === "error" ? "AUTH UNAVAILABLE" : "DISCORD READY", kind);
   };
 
   const configureSetupView = (runtimeFailure) => {
@@ -616,9 +635,11 @@
     }
 
     if (!client) {
-      setAuthStatus("AUTH UNAVAILABLE", "error");
-      configureSetupView(true);
-      setAccountView("config");
+      showLoginFallback(
+        "Вход временно недоступен.",
+        "Сервис авторизации не успел загрузиться. Это не должно оставлять страницу в бесконечной загрузке.",
+        "Нажми «Повторить проверку». Если ошибка сохраняется, можно вернуться на главную — аккаунт и данные не потеряются."
+      );
       state.loading = false;
       return;
     }
@@ -714,6 +735,12 @@
       });
     });
 
+    qsa("[data-auth-retry]").forEach((button) => {
+      button.addEventListener("click", () => {
+        window.location.reload();
+      });
+    });
+
     qsa("[data-sign-out]").forEach((button) => {
       button.addEventListener("click", () => {
         void signOut(button);
@@ -743,7 +770,7 @@
     if (sessionResult.error) {
       console.warn("[NaZerak Auth] initial session lookup failed:", sessionResult.error.message);
       showMessage(
-        "Не удалось получить сессию. Проверь загрузку страницы и повтори попытку.",
+        "Не удалось получить сессию вовремя. Можно повторить проверку без перезагрузки.",
         "error"
       );
     }
