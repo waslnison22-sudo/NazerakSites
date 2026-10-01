@@ -510,19 +510,32 @@
     setBusy(button, true, "Сохраняем…");
     showMessage("");
 
-    const { data, error } = await client
+    let { data, error } = await client
       .from("profiles")
-      .upsert({
-        id: state.user.id,
+      .update({
         minecraft_username: value,
         updated_at: new Date().toISOString()
       })
+      .eq("id", state.user.id)
       .select("id, minecraft_username, created_at, updated_at")
-      .single();
+      .maybeSingle();
+
+    if (!error && !data) {
+      const insertResult = await client
+        .from("profiles")
+        .insert({
+          id: state.user.id,
+          minecraft_username: value
+        })
+        .select("id, minecraft_username, created_at, updated_at")
+        .single();
+      data = insertResult.data;
+      error = insertResult.error;
+    }
 
     setBusy(button, false);
 
-    if (error) {
+    if (error || !data) {
       showMessage(
         "Не удалось сохранить профиль. Проверь подключение к Supabase и права RLS.",
         "error"
