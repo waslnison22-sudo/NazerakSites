@@ -11,6 +11,12 @@
   let client = null;
   let bootstrapError = null;
 
+  const authDebug = (stage, detail = "") => {
+    window.__NAZERAK_AUTH_STAGE = stage;
+    if (detail) window.__NAZERAK_AUTH_DETAIL = detail;
+  };
+  authDebug("SCRIPT_LOADED");
+
   const state = {
     user: null,
     profile: null,
@@ -804,9 +810,14 @@
   };
 
   const waitForInitialSession = async () => {
-    if (!client) return { session: null, error: new Error("Supabase client не инициализирован.") };
+    if (!client) {
+      authDebug("SESSION_NO_CLIENT");
+      return { session: null, error: new Error("Supabase client не инициализирован.") };
+    }
 
+    authDebug("SESSION_LOOKUP_START");
     const result = await getSessionSafe(9000);
+    authDebug(result.error ? "SESSION_LOOKUP_ERROR" : "SESSION_LOOKUP_END", result.error?.message || "");
     if (result.data?.session?.user) {
       return { session: result.data.session, error: null };
     }
@@ -903,9 +914,11 @@
   const renderCabinet = async (session = undefined) => {
     if (!document.body.dataset.cabinet) return;
 
+    authDebug("CABINET_RENDER_START");
     const sequence = ++renderSequence;
 
     if (!configured) {
+      authDebug("CONFIG_MISSING");
       setAuthStatus("AUTH SETUP REQUIRED", "config");
       configureSetupView(false);
       setAccountView("config");
@@ -914,6 +927,7 @@
     }
 
     if (!client) {
+      authDebug("CLIENT_MISSING");
       showLoginFallback(
         "Вход временно недоступен.",
         "Сервис авторизации не успел загрузиться.",
@@ -930,6 +944,7 @@
       ? await getSessionSafe()
       : { data: { session }, error: null };
 
+    authDebug(result.error ? "CABINET_SESSION_ERROR" : "CABINET_SESSION_READY");
     if (sequence !== renderSequence) return;
 
     if (result.error) {
@@ -961,11 +976,13 @@
     renderAuthLinks();
 
     if (!state.user) {
+      authDebug("CABINET_GUEST");
       setAuthStatus("DISCORD READY", "ready");
       setAccountView("guest");
       return;
     }
 
+    authDebug("CABINET_USER");
     const user = state.user;
 
     // The account shell is rendered immediately. Profile/history are optional
@@ -989,11 +1006,17 @@
   };
 
   const bootstrapClient = async () => {
-    if (!configured) return;
+    if (!configured) {
+      authDebug("BOOTSTRAP_CONFIG_MISSING");
+      return;
+    }
 
+    authDebug("BOOTSTRAP_START");
     try {
       if (window.NAZERAK_SUPABASE_READY instanceof Promise) {
+        authDebug("SDK_WAIT");
         await window.NAZERAK_SUPABASE_READY;
+        authDebug("SDK_READY");
       }
 
       const factory = window.supabase?.createClient;
@@ -1001,6 +1024,7 @@
         throw new Error("Supabase SDK createClient не найден.");
       }
 
+      authDebug("CLIENT_CREATE_START");
       client = factory(config.url, config.publishableKey, {
         auth: {
           flowType: "pkce",
@@ -1009,6 +1033,7 @@
           detectSessionInUrl: true
         }
       });
+      authDebug("CLIENT_CREATED");
     } catch (error) {
       bootstrapError =
         error instanceof Error
@@ -1025,6 +1050,7 @@
     if (initialized) return;
     initialized = true;
 
+    authDebug("INIT_START");
     document.documentElement.classList.add("auth-ready");
     renderAuthLinks();
     showOAuthError();
@@ -1063,6 +1089,7 @@
     });
 
     await bootstrapClient();
+    authDebug("BOOTSTRAP_FINISHED");
 
     if (!configured || !client) {
       renderAuthLinks();
@@ -1079,6 +1106,7 @@
 
     // Subscribe immediately after client creation so future OAuth/session events
     // are captured. The initial page state is resolved from getSession().
+    authDebug("LISTENER_ATTACH_START");
     client.auth.onAuthStateChange((event, session) => {
       if (event === "SIGNED_OUT") {
         renderSequence += 1;
@@ -1120,6 +1148,7 @@
       }
     });
 
+    authDebug("LISTENER_ATTACHED");
     window.addEventListener("pageshow", () => {
       schedulePageAuthStateSync();
     });
@@ -1147,7 +1176,9 @@
       } else {
         await renderCabinet(initialResult.session);
       }
-    } else {
+    }
+    authDebug("INIT_FINISHED");
+    if (!document.body.dataset.cabinet) {
       state.user = initialResult.session?.user || state.user || null;
       state.loading = false;
       renderAuthLinks();
