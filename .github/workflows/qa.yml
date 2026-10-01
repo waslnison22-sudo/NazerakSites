@@ -44,7 +44,7 @@ jobs:
       - name: Install browser test runtime
         run: |
           npm install --no-save --no-package-lock playwright@1.55.0
-          npx playwright install --with-deps chromium
+          npx playwright install chromium
 
       - name: Run production browser smoke test
         run: node scripts/browser-smoke.mjs
