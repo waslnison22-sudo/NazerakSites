@@ -142,7 +142,7 @@ for (const [name, page] of [
   ["cabinet.html", cabinet],
   ["forum.html", read("forum.html")]
 ]) {
-  for (const asset of ["auth-config.js?v=5", "supabase-loader.js?v=6", "auth.js?v=15", "styles.css?v=10"]) {
+  for (const asset of ["auth-config.js?v=5", "supabase-loader.js?v=6", "auth.js?v=16", "styles.css?v=10"]) {
     if (!page.includes(asset)) {
       fail.push(`${name} asset include missing: ${asset}`);
     }
@@ -207,6 +207,7 @@ if (!auth.includes("detectSessionInUrl: true")) fail.push("automatic browser OAu
 if (!auth.includes("const waitForInitialAuthSession")) fail.push("initial auth session gate is missing");
 if (!auth.includes("initialAuthSessionPromise")) fail.push("initial auth session promise is missing");
 if (!auth.includes("resolveInitialAuthSession?.(session || null)")) fail.push("initial auth event resolver is missing");
+if (!auth.includes("Do not let a stale null result override")) fail.push("stale auth-session downgrade guard is missing");
 if (auth.includes("skipAutoInitialize: true")) fail.push("browser auth must use Supabase automatic initialization");
 if (auth.includes("client.auth.initialize()")) fail.push("manual browser auth initialization must not be used");
 if (auth.includes("client.auth.exchangeCodeForSession(code)")) fail.push("manual OAuth code exchange must not race Supabase initialization");
