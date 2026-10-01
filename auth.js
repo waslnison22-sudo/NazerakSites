@@ -832,8 +832,17 @@
     }
 
     const session = result.data?.session || null;
+    const nextUserId = session?.user?.id || null;
+    const currentUserId = state.user?.id || null;
 
     if (document.body.dataset.cabinet) {
+      if (nextUserId === currentUserId && nextUserId) {
+        state.user = session.user;
+        state.loading = false;
+        renderAuthLinks();
+        return;
+      }
+
       await renderCabinet(session);
       return;
     }
@@ -1065,12 +1074,14 @@
         state.profile = null;
         state.loading = false;
         renderAuthLinks();
-        if (document.body.dataset.cabinet) setAccountView("guest");
+        if (document.body.dataset.cabinet) {
+          setAuthStatus("DISCORD READY", "ready");
+          setAccountView("guest");
+        }
         return;
       }
 
       if (
-        session ||
         event === "INITIAL_SESSION" ||
         event === "SIGNED_IN" ||
         event === "USER_UPDATED"
@@ -1085,6 +1096,13 @@
           state.loading = false;
           renderAuthLinks();
         }, 0);
+        return;
+      }
+
+      if (session && event === "TOKEN_REFRESHED") {
+        state.user = session.user;
+        state.loading = false;
+        renderAuthLinks();
       }
     });
 
