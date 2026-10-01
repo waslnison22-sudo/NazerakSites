@@ -13,6 +13,7 @@
 - `index.html` — главная страница
 - `styles.css` — оформление, адаптивность и motion
 - `script.js` — меню, анимации и копирование IP
+- `scripts/qa-checks.mjs` — статические проверки перед публикацией
 - `favicon.svg` — иконка сайта
 - `supabase-loader.js` — отказоустойчивый загрузчик Supabase JS с резервным CDN
 - `404.html` — страница ошибки
@@ -42,7 +43,7 @@ python -m http.server 8000
 
 ## GitHub Pages
 
-Сайт рассчитан на публикацию **напрямую из ветки `main`**, без CI/CD и без отдельного веб-сервера.
+Сайт рассчитан на публикацию **напрямую из ветки `main`**, без серверной сборки и без отдельного веб-сервера.
 
 В GitHub открыть:
 
@@ -81,6 +82,7 @@ python -m http.server 8000
 - `auth.js` — Discord OAuth, сессия, профиль и заявки;
 - `auth-config.js` — публичная конфигурация Supabase;
 - `supabase/schema.sql` — таблицы и RLS;
+- `supabase/migrations/` — дополнительные миграции безопасности;
 - `AUTH_SETUP.md` — пошаговая настройка Discord + Supabase.
 
 Для настоящего входа используется существующий Supabase project NaZerak. Нужно включить Discord Provider и задать корректные OAuth URL; публичный publishable key находится в `auth-config.js`, а Discord Client Secret и Supabase service_role в GitHub не попадают.
