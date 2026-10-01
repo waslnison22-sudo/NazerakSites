@@ -400,7 +400,7 @@
 
     const { data, error } = await client
       .from("profiles")
-      .upsert({ id: user.id }, { onConflict: "id" })
+      .insert({ id: user.id })
       .select("id, minecraft_username, created_at, updated_at")
       .single();
 
