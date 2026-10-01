@@ -167,7 +167,9 @@ if (!auth.includes("media history timed out or failed")) fail.push("media histor
 if (!auth.includes("Сохранение профиля превысило 7 секунд.")) fail.push("profile save timeout guard is missing");
 if (!auth.includes("Отправка заявки превысила 7 секунд.")) fail.push("media submit timeout guard is missing");
 if (!auth.includes('client.auth.onAuthStateChange((event, session) =>')) fail.push("auth listener is missing");
-if (auth.indexOf('client.auth.onAuthStateChange((event, session) =>') > auth.indexOf('const sessionResult = await getSessionSafe()')) fail.push("auth listener registered too late");
+const listenerIndex = auth.indexOf('client.auth.onAuthStateChange((event, session) =>');
+const initialLookupIndex = auth.indexOf('const sessionResult = await getSessionSafe();\n    const initialSession');
+if (listenerIndex === -1 || initialLookupIndex === -1 || listenerIndex > initialLookupIndex) fail.push("auth listener registered too late");
 if (!auth.includes("state.user = session?.user || null")) fail.push("global auth link state is not updated from auth events");
 if (auth.indexOf('setAccountView("user")') > auth.indexOf("void hydrateCabinetData")) fail.push("cabinet waits for optional data before showing user view");
 if (!auth.includes("const setButtonLabel")) fail.push("button label helper is missing");
