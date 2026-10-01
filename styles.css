@@ -72,7 +72,7 @@ linear-gradient(145deg,#15181d,#0a0c0f 62%,#130d10)}
 .hero-art-placeholder__eyebrow{top:22px;left:22px}
 .hero-art-placeholder__caption{bottom:22px;left:10%;right:10%}
 .hero-art-placeholder__mark{position:relative;color:rgba(245,246,247,.08);font-size:clamp(120px,17vw,210px);font-weight:950;letter-spacing:-.12em;line-height:.9}
-.scroll-cue{position:absolute;right:0;bottom:-46px;display:flex;align-items:center;gap:9px;color:var(--dim);font-size:8px;font-weight:850;letter-spacing:.18em}
+.scroll-cue{position:absolute;right:0;bottom:22px;display:flex;align-items:center;gap:9px;color:var(--dim);font-size:8px;font-weight:850;letter-spacing:.18em}
 .scroll-cue__line{width:36px;height:1px;background:#373c43}
 .ticker{overflow:hidden;border-bottom:1px solid var(--line-soft);background:#0a0b0d}
 .ticker__track{width:max-content;min-height:40px;display:flex;align-items:center;gap:20px;padding:0 12px;color:#6e737b;font-size:8px;font-weight:850;letter-spacing:.16em;animation:ticker 28s linear infinite}
