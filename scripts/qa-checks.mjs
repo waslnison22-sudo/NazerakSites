@@ -18,7 +18,9 @@ const requiredFiles = [
   "AUTH_SETUP.md",
   "robots.txt",
   "sitemap.xml",
-  "forum.html"
+  "forum.html",
+  "favicon.svg",
+  "supabase/migrations/20260930205000_harden_frontend_column_privileges.sql"
 ];
 
 const bannedTokens = [
@@ -134,15 +136,19 @@ const duplicateIds = (html, name) => {
 duplicateIds(index, "index.html");
 duplicateIds(cabinet, "cabinet.html");
 
-for (const asset of [
-  "auth-config.js?v=5",
-  "supabase-loader.js?v=5",
-  "auth.js?v=10"
+for (const [name, page] of [
+  ["index.html", index],
+  ["cabinet.html", cabinet],
+  ["forum.html", read("forum.html")]
 ]) {
-  if (!cabinet.includes(asset)) {
-    fail.push(`cabinet auth include missing: ${asset}`);
+  for (const asset of ["auth-config.js?v=5", "supabase-loader.js?v=5", "auth.js?v=11", "styles.css?v=10"]) {
+    if (!page.includes(asset)) {
+      fail.push(`${name} asset include missing: ${asset}`);
+    }
   }
 }
+
+if (!read("404.html").includes("styles.css?v=10")) fail.push("404.html styles cache version is stale");
 
 if (!index.includes("script.js") || !cabinet.includes("script.js") || !read("forum.html").includes("script.js")) {
   fail.push("script.js include missing from a published page");
@@ -202,6 +208,9 @@ if (/nazerak\.is-a\.dev\/cabinet\.html/i.test(read("AUTH_SETUP.md"))) fail.push(
 if (/server-status-text|server-players|data-server-hero/.test(index)) fail.push("obsolete server statistics markup remains");
 if (!index.includes("hero-art-placeholder") || !index.includes("world-screenshot-placeholder")) fail.push("artwork or screenshot placeholder missing");
 if (!index.includes('data-auth-link-label>Войти')) fail.push("homepage auth link must default to neutral login state");
+if (!cabinet.includes('class="nav-account is-active"') || !cabinet.includes('aria-current="page"')) fail.push("cabinet account route must be marked active");
+if (!css.includes(".scroll-cue{position:absolute;right:0;bottom:22px;")) fail.push("desktop scroll cue is outside hero");
+
 if (auth.includes("Регистрация") || auth.includes("Зарегистрироваться")) fail.push("legacy registration label remains in auth.js");
 if (index.includes("Регистрация") || index.includes("Зарегистрироваться")) fail.push("legacy registration label remains in index.html");
 if (cabinet.includes("Регистрация") || cabinet.includes("Зарегистрироваться")) fail.push("legacy registration label remains in cabinet.html");
