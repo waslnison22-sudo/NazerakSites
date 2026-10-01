@@ -166,6 +166,9 @@ if (!auth.includes("renderCabinet(session || null)")) fail.push("auth event sess
 if (!auth.includes("window.setTimeout(() =>")) fail.push("auth state callback is not deferred");
 if (!loader.includes('VERSION = "2.117.2"')) fail.push("Supabase SDK version is not pinned");
 if (!loader.includes("unpkg.com")) fail.push("Supabase CDN fallback is missing");
+if (/loadServerStatus|SERVER_STATUS_SOURCES|api\\.mcstatus\\.io/.test(script)) fail.push("obsolete server status polling remains");
+if (/server-status-text|server-players|data-server-hero/.test(index)) fail.push("obsolete server statistics markup remains");
+if (!index.includes("hero-art-placeholder") || !index.includes("world-screenshot-placeholder")) fail.push("artwork or screenshot placeholder missing");
 
 for (const token of [
   "enable row level security",
