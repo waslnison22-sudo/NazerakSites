@@ -835,6 +835,17 @@
     renderAuthLinks();
   };
 
+  let backgroundSyncTimer = null;
+
+  const schedulePageAuthStateSync = () => {
+    if (!client || backgroundSyncTimer !== null) return;
+
+    backgroundSyncTimer = window.setTimeout(async () => {
+      backgroundSyncTimer = null;
+      await syncPageAuthState();
+    }, 80);
+  };
+
   const getSessionSafe = async (timeoutMs = 8000) => {
     if (!client) {
       return {
@@ -1065,6 +1076,20 @@
           state.loading = false;
           renderAuthLinks();
         }, 0);
+      }
+    });
+
+    window.addEventListener("pageshow", () => {
+      schedulePageAuthStateSync();
+    });
+
+    document.addEventListener("visibilitychange", () => {
+      if (!document.hidden) schedulePageAuthStateSync();
+    });
+
+    window.addEventListener("storage", (event) => {
+      if (event.key === null || event.key.startsWith("sb-")) {
+        schedulePageAuthStateSync();
       }
     });
 
