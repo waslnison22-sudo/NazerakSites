@@ -4,10 +4,10 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#070708">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; connect-src 'self'; img-src 'self' data: https:; style-src 'self'; style-src-attr 'unsafe-inline'; font-src 'self'; object-src 'none'; base-uri 'self'; frame-src 'none'; form-action 'self';">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://unpkg.com; connect-src 'self' https://ujlbyzvdsncvqbrhasuw.supabase.co; img-src 'self' data: https:; style-src 'self'; style-src-attr 'unsafe-inline'; font-src 'self'; object-src 'none'; base-uri 'self'; frame-src 'none'; form-action 'self';">
   <meta name="robots" content="noindex,nofollow,noarchive">
   <link rel="icon" href="./favicon.svg?v=4" type="image/svg+xml">
-  <link rel="stylesheet" href="./styles.css?v=6">
+  <link rel="stylesheet" href="./styles.css?v=8">
   <title>NaZerak — форум</title>
 </head>
 <body>
@@ -17,7 +17,7 @@
       <a class="brand" href="./" aria-label="NaZerak — на главную"><span class="brand__mark" aria-hidden="true">NZ</span><span class="brand__name">NaZerak</span></a>
       <button class="nav-toggle" type="button" aria-controls="site-nav" aria-expanded="false" aria-label="Открыть меню"><span></span><span></span><span></span><span class="sr-only">Открыть меню</span></button>
       <nav class="nav" id="site-nav" aria-label="Основная навигация">
-        <a href="./#about">Проект</a><a href="./#world">Мир</a><a href="./#start">Старт</a><a class="nav-forum is-active" href="./forum.html" aria-current="page">Форум</a><a class="nav-account" href="./cabinet.html"><span>Войти</span></a>
+        <a href="./#about">Проект</a><a href="./#world">Мир</a><a href="./#start">Старт</a><a class="nav-forum is-active" href="./forum.html" aria-current="page">Форум</a><a class="nav-account" data-auth-link href="./cabinet.html"><span class="nav-account__avatar"><img data-auth-link-avatar alt="" hidden><span data-auth-link-fallback>◉</span></span><span data-auth-link-label>Войти</span></a>
       </nav>
     </div>
   </header>
@@ -38,6 +38,9 @@
     </div>
   </main>
   <footer class="footer"><div class="container footer__inner"><div><a class="brand brand--footer" href="./"><span class="brand__mark" aria-hidden="true">NZ</span><span class="brand__name">NaZerak</span></a><p class="footer__copy">Форум NaZerak.</p></div><div class="footer__right"><span>© <span id="year"></span> NaZerak</span><a href="#top">Наверх ↑</a></div></div></footer>
-  <script src="./script.js?v=5" defer></script>
+  <script src="./auth-config.js?v=5" defer></script>
+  <script src="./supabase-loader.js?v=5" defer></script>
+  <script src="./auth.js?v=8" defer></script>
+  <script src="./script.js?v=8" defer></script>
 </body>
 </html>
