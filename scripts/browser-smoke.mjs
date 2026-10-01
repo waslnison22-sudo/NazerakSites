@@ -183,6 +183,10 @@ const testCabinetAnonymous = async (viewport, name) => {
     if (state.loading || !state.guest || state.user || state.busy === "true") {
       throw new Error(name + " reached an invalid anonymous state: " + JSON.stringify(state));
     }
+    if (state.statusRole !== "status" || state.statusLive !== "polite") {
+      throw new Error(name + " auth status is not accessible: " + JSON.stringify(state));
+      throw new Error(name + " reached an invalid anonymous state: " + JSON.stringify(state));
+    }
 
     await assertAccessibleControls(page, name);
     await testSameOriginLinks(page, name);
@@ -346,7 +350,7 @@ await testStaticPage({
   name: "forum",
   viewport: { width: 1280, height: 900 },
   check: async (page) => {
-    if (!(await page.locator("h1").textContent()).includes("Форум")) throw new Error("forum heading missing");
+    if (!(await page.locator("h1").textContent()).includes("Сообщество")) throw new Error("community heading missing");
     const robots = await page.locator('meta[name="robots"]').getAttribute("content");
     if (!/noindex/.test(robots || "")) throw new Error("forum robots policy missing");
   }
