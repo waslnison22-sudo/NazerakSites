@@ -168,7 +168,7 @@ if (!auth.includes("Сохранение профиля превысило 7 с�
 if (!auth.includes("Отправка заявки превысила 7 секунд.")) fail.push("media submit timeout guard is missing");
 if (!auth.includes('client.auth.onAuthStateChange((event, session) =>')) fail.push("auth listener is missing");
 const listenerIndex = auth.indexOf('client.auth.onAuthStateChange((event, session) =>');
-const initialLookupIndex = auth.indexOf('const sessionResult = await getSessionSafe();\n    const initialSession');
+const initialLookupIndex = auth.indexOf('const callbackSession = await resolveOAuthCallback();');
 if (listenerIndex === -1 || initialLookupIndex === -1 || listenerIndex > initialLookupIndex) fail.push("auth listener registered too late");
 if (!auth.includes("state.user = session?.user || null")) fail.push("global auth link state is not updated from auth events");
 if (auth.indexOf('setAccountView("user")') > auth.indexOf("void hydrateCabinetData")) fail.push("cabinet waits for optional data before showing user view");
