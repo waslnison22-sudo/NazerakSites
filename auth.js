@@ -407,6 +407,7 @@
       );
     } catch (error) {
       clearElementChildren(list);
+      if (sequence !== null && (sequence !== renderSequence || state.user?.id !== user.id)) return;
       if (empty) {
         empty.textContent = "История заявок временно недоступна. Остальной кабинет продолжает работать.";
         empty.hidden = false;
@@ -419,6 +420,10 @@
     }
 
     const { data, error } = result;
+
+    if (sequence !== null && (sequence !== renderSequence || state.user?.id !== user.id)) {
+      return;
+    }
 
     clearElementChildren(list);
 
@@ -483,6 +488,7 @@
     if (!client || !user) return null;
 
     const profile = await loadProfile(user);
+    if (profile === undefined) return null;
     if (profile) return profile;
 
     try {
@@ -791,7 +797,7 @@
     state.profile = profile;
     renderUser(user, profile);
 
-    await loadMediaApplications(user);
+    await loadMediaApplications(user, sequence);
   };
 
   const renderCabinet = async (session = undefined) => {
