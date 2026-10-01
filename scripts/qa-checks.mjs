@@ -143,7 +143,7 @@ for (const [name, page] of [
   ["cabinet.html", cabinet],
   ["forum.html", read("forum.html")]
 ]) {
-  for (const asset of ["auth-config.js?v=5", "supabase-loader.js?v=6", "auth.js?v=22", "styles.css?v=10"]) {
+  for (const asset of ["auth-config.js?v=5", "supabase-loader.js?v=6", "auth.js?v=22", "script.js?v=10", "styles.css?v=10"]) {
     if (!page.includes(asset)) {
       fail.push(`${name} asset include missing: ${asset}`);
     }
@@ -273,6 +273,20 @@ for (const token of [
 ]) {
   if (!schema.includes(token)) fail.push(`schema guard missing: ${token}`);
 }
+
+if (!index.includes('<link rel="canonical" href="https://waslnison22-sudo.github.io/NazerakSites/">')) fail.push("homepage canonical URL is missing");
+if (!index.includes('<meta property="og:url" content="https://waslnison22-sudo.github.io/NazerakSites/">')) fail.push("homepage og:url is missing");
+if (!index.includes('<meta name="twitter:card" content="summary">')) fail.push("homepage twitter card is missing");
+if (index.includes('class="button button--primary magnetic"') || index.includes(' class="button button--ghost magnetic"')) fail.push("dead magnetic classes remain on homepage");
+if (script.includes("isTouch")) fail.push("unused touch detection remains");
+if (auth.includes("authDebug")) fail.push("temporary auth diagnostics remain");
+if (auth.includes("document.body.dataset.cabinet")) fail.push("boolean cabinet attribute is read through dataset");
+if (!auth.includes('if (main) main.setAttribute("aria-busy", String(mode === "loading"));')) fail.push("cabinet aria-busy state sync is missing");
+if (!auth.includes("state.loading = false;")) fail.push("auth error state does not clear loading flag");
+const profileSelectGrantCount = (schema.match(/grant select on public\.profiles to authenticated;/g) || []).length;
+const profileInsertGrantCount = (schema.match(/grant insert \(id, minecraft_username\)/g) || []).length;
+const mediaInsertGrantCount = (schema.match(/grant insert \(user_id, channel_url, message\)/g) || []).length;
+if (profileSelectGrantCount !== 1 || profileInsertGrantCount !== 1 || mediaInsertGrantCount !== 1) fail.push("schema contains duplicate browser grant statements");
 
 if (!index.includes('id="main-content"') || !cabinet.includes('id="main-content"')) {
   fail.push("skip-link target missing");
