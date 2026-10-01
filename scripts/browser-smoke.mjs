@@ -87,7 +87,7 @@ const testSameOriginLinks = async (page, name) => {
 
   for (const route of [...new Set(routes)]) {
     const [pathname, hash] = route.split("#");
-    if (!["/NazerakSites/", "/NazerakSites/cabinet.html", "/NazerakSites/forum.html"].includes(pathname)) {
+    if (!["/NazerakSites/", "/NazerakSites/cabinet.html", "/NazerakSites/forum.html", "/NazerakSites/AUTH_SETUP.md"].includes(pathname)) {
       throw new Error(name + " contains an unexpected local route: " + route);
     }
     if (hash && pathname === new URL(page.url()).pathname) {
