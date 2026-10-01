@@ -250,7 +250,7 @@ const installFakeSupabase = async (context) => {
             update() { return chain; },
             maybeSingle: async () => {
               if (table === "profiles") window.__nazerakFakeMetrics.profileReads += 1;
-              if (smokeMode === "profile-timeout" && table === "profiles") {
+              if (smokeMode === "profile-timeout" && table === "profiles" && window.__nazerakFakeMetrics.profileReads === 1) {
                 return new Promise(() => {});
               }
               if (smokeMode === "profile-error" && table === "profiles") {
@@ -261,7 +261,7 @@ const installFakeSupabase = async (context) => {
             single: async () => ({ data: profile(), error: null }),
             then(resolve, reject) {
               if (table === "media_applications") window.__nazerakFakeMetrics.mediaReads += 1;
-              if (smokeMode === "media-timeout" && table === "media_applications") {
+              if (smokeMode === "media-timeout" && table === "media_applications" && window.__nazerakFakeMetrics.mediaReads === 1) {
                 return new Promise(() => {}).then(resolve, reject);
               }
               return Promise.resolve({ data: table === "media_applications" ? [] : null, error: null }).then(resolve, reject);
@@ -299,6 +299,14 @@ const testCabinetOptionalDataFailures = async () => {
     if (!profileState.userVisible || profileState.busy === "true" || profileState.metrics.profileInserts !== 0) {
       throw new Error("profile timeout changed auth state or attempted INSERT: " + JSON.stringify(profileState));
     }
+    const profileRetry = profilePage.locator("[data-profile-retry]");
+    if (!(await profileRetry.isVisible())) throw new Error("profile retry control is not visible after failure");
+    await profileRetry.click();
+    await profilePage.waitForFunction(() => document.querySelector("[data-minecraft-input]")?.value === "NaZerakTest", { timeout: 5000 });
+    const recoveredProfile = await profilePage.evaluate(() => window.__nazerakFakeMetrics);
+    if (recoveredProfile.profileReads < 2 || recoveredProfile.profileInserts !== 0) {
+      throw new Error("profile retry did not recover without INSERT: " + JSON.stringify(recoveredProfile));
+    }
     profileDiagnostics();
     await profileContext.close();
     console.log("PASS: profile timeout isolation");
@@ -322,6 +330,14 @@ const testCabinetOptionalDataFailures = async () => {
     if (!mediaState.userVisible || mediaState.busy === "true" || mediaState.metrics.mediaReads !== 1) {
       throw new Error("media history timeout blocked cabinet or was not lazy: " + JSON.stringify(mediaState));
     }
+    const mediaRetry = mediaPage.locator("[data-media-retry]");
+    if (!(await mediaRetry.isVisible())) throw new Error("media history retry control is not visible after failure");
+    await mediaRetry.click();
+    await mediaPage.waitForFunction(() =>
+      (document.querySelector("[data-media-empty]")?.textContent || "").includes("Пока нет отправленных заявок")
+    , { timeout: 5000 });
+    const recoveredMedia = await mediaPage.evaluate(() => window.__nazerakFakeMetrics);
+    if (recoveredMedia.mediaReads !== 2) throw new Error("media history retry did not issue exactly one recovery request: " + JSON.stringify(recoveredMedia));
     mediaDiagnostics();
     await mediaContext.close();
     console.log("PASS: media history timeout isolation");
