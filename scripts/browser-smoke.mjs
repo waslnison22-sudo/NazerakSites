@@ -43,6 +43,24 @@ const runRealBrowserSmoke = async () => {
     if (!state.authObject) throw new Error("NaZerakAuth object was not initialized");
     console.log("REAL browser state:", JSON.stringify(state));
   } catch (error) {
+    const diagnostic = await page.evaluate(() => ({
+      readyState: document.readyState,
+      status: document.querySelector("[data-auth-status]")?.textContent || "",
+      loadingVisible: !document.querySelector('[data-account-view="loading"]')?.hidden,
+      guestVisible: !document.querySelector('[data-account-view="guest"]')?.hidden,
+      userVisible: !document.querySelector('[data-account-view="user"]')?.hidden,
+      configVisible: !document.querySelector('[data-account-view="config"]')?.hidden,
+      authObject: Boolean(window.NaZerakAuth),
+      supabaseGlobal: Boolean(window.supabase),
+      createClient: typeof window.supabase?.createClient,
+      supabaseReadyType: typeof window.NAZERAK_SUPABASE_READY,
+      supabaseReadyState: window.NAZERAK_SUPABASE_READY?.constructor?.name || "",
+      localStorageKeys: Object.keys(localStorage),
+      resourceScripts: performance.getEntriesByType("resource")
+        .map((entry) => entry.name)
+        .filter((name) => /auth|supabase|cabinet/i.test(name))
+    }));
+    console.log("REAL browser diagnostic state:", JSON.stringify(diagnostic));
     console.log("REAL browser diagnostic errors:", JSON.stringify(errors));
     console.log("REAL browser failed requests:", JSON.stringify(failedRequests));
     throw error;
