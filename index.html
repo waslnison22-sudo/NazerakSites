@@ -16,7 +16,7 @@
   <meta name="twitter:title" content="NaZerak — Minecraft project">
   <meta name="twitter:description" content="Сервер NaZerak, сообщество, подключение и личный кабинет.">
   <link rel="icon" href="./favicon.svg?v=4" type="image/svg+xml">
-  <link rel="stylesheet" href="./styles.css?v=11">
+  <link rel="stylesheet" href="./styles.css?v=12">
   <title>NaZerak — Minecraft project</title>
 </head>
 <body>
@@ -65,10 +65,12 @@
         </div>
 
         <div class="hero-visual-wrap reveal reveal--delay">
-          <div class="hero-art-placeholder" role="img" aria-label="Место для будущего фирменного изображения NaZerak">
-            <span class="hero-art-placeholder__eyebrow">NAZERAK / WORLD</span>
-            <span class="hero-art-placeholder__mark" aria-hidden="true">NZ</span>
-            <span class="hero-art-placeholder__caption">ИГРОВОЙ МИР БУДЕТ ПОКАЗАН ЗДЕСЬ</span>
+          <div class="hero-art" role="img" aria-label="Фирменная визуализация мира NaZerak">
+            <div class="hero-art__grid" aria-hidden="true"></div>
+            <span class="hero-art__eyebrow">NAZERAK / WORLD</span>
+            <span class="hero-art__mark" aria-hidden="true">NZ</span>
+            <div class="hero-art__nodes" aria-hidden="true"><i></i><i></i><i></i></div>
+            <span class="hero-art__caption">SERVER · WORLD · COMMUNITY</span>
           </div>
         </div>
       </div>
@@ -100,9 +102,13 @@
       <div class="container">
         <div class="world-panel reveal">
           <div class="world-panel__visual">
-            <div class="world-screenshot-placeholder" role="img" aria-label="Место для будущих скриншотов сервера">
-              <strong>СКРИНШОТЫ NAZERAK</strong>
-              <span>Изображения игрового мира появятся здесь</span>
+            <div class="world-visual" role="img" aria-label="Фирменная схема мира NaZerak">
+              <div class="world-visual__grid" aria-hidden="true"></div>
+              <div class="world-visual__core" aria-hidden="true">NZ</div>
+              <div class="world-visual__line world-visual__line--one" aria-hidden="true"></div>
+              <div class="world-visual__line world-visual__line--two" aria-hidden="true"></div>
+              <div class="world-visual__label">WORLD SYSTEM / NZ-01</div>
+              <div class="world-visual__meta">JAVA · 1.21.11 · RUSTIX</div>
             </div>
           </div>
           <div class="world-panel__content">
@@ -183,7 +189,7 @@
 
   <script src="./auth-config.js?v=5" defer></script>
   <script src="./supabase-loader.js?v=6" defer></script>
-  <script src="./auth.js?v=23" defer></script>
-  <script src="./script.js?v=11" defer></script>
+  <script src="./auth.js?v=24" defer></script>
+  <script src="./script.js?v=12" defer></script>
 </body>
 </html>
