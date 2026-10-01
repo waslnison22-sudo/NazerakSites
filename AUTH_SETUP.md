@@ -1,30 +1,24 @@
 # NaZerak — настройка Supabase + Discord
 
-Сейчас проект NaZerak уже подключён к рабочему Supabase project:
+Сайт NaZerak настроен на Supabase project:
 
 - Project ref: `ujlbyzvdsncvqbrhasuw`
 - Project URL: `https://ujlbyzvdsncvqbrhasuw.supabase.co`
-- Регион: EU (eu-west-1)
-- Статус: ACTIVE_HEALTHY
 
-Браузер использует только **Publishable key**. Секретные ключи и Discord Client Secret в GitHub не используются.
+Состояние проекта и настройки Auth нужно подтверждать непосредственно в Supabase Dashboard. Репозиторий хранит только публичную browser-конфигурацию; секреты и Discord Client Secret в GitHub не используются.
 
-## 1. База уже подготовлена
+## 1. Схема базы данных
 
-В проекте Supabase уже созданы таблицы:
+Репозиторий содержит эталонную схему в `supabase/schema.sql` и миграцию для ограничения browser-привилегий.
 
-- `profiles`
-- `media_applications`
+После применения схемы проверь в Supabase Dashboard:
 
-Для обеих таблиц включён RLS.
+- `profiles` и `media_applications`;
+- RLS для обеих таблиц;
+- права ролей `anon` и `authenticated`;
+- Security Advisor.
 
-Права ограничены:
-
-- `profiles`: SELECT / INSERT / UPDATE только своей строки;
-- `media_applications`: SELECT / INSERT только своих заявок;
-- анонимный доступ к этим таблицам запрещён.
-
-Security Advisor после установки схемы не показывает предупреждений.
+Не считай состояние базы подтверждённым только по этому файлу.
 
 ## 2. API Keys
 
