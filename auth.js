@@ -14,6 +14,9 @@
   const authDebug = (stage, detail = "") => {
     window.__NAZERAK_AUTH_STAGE = stage;
     if (detail) window.__NAZERAK_AUTH_DETAIL = detail;
+    const trace = window.__NAZERAK_AUTH_TRACE || (window.__NAZERAK_AUTH_TRACE = []);
+    trace.push({ stage, detail, time: Date.now() });
+    if (trace.length > 80) trace.shift();
   };
   authDebug("SCRIPT_LOADED");
 
@@ -263,6 +266,7 @@
   };
 
   const setAccountView = (mode) => {
+    authDebug("VIEW_SET", mode);
     qsa("[data-account-view]").forEach((view) => {
       view.hidden = view.dataset.accountView !== mode;
     });
@@ -945,7 +949,10 @@
       : { data: { session }, error: null };
 
     authDebug(result.error ? "CABINET_SESSION_ERROR" : "CABINET_SESSION_READY");
-    if (sequence !== renderSequence) return;
+    if (sequence !== renderSequence) {
+      authDebug("CABINET_RENDER_STALE", "sequence=" + sequence + " current=" + renderSequence);
+      return;
+    }
 
     if (result.error) {
       console.warn("[NaZerak Auth] session lookup failed:", result.error.message);
@@ -984,6 +991,7 @@
 
     authDebug("CABINET_USER");
     const user = state.user;
+    authDebug("CABINET_USER", user.id);
 
     // The account shell is rendered immediately. Profile/history are optional
     // data and must never be allowed to hide or block the logged-in cabinet.
