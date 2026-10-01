@@ -1048,10 +1048,10 @@
     renderAuthLinks();
     showOAuthError();
 
-    // Never leave the user on a dead loading screen while the external
-    // Supabase SDK is being fetched. Guest UI is the safe default.
+    // The guest login view is the safe static fallback. Authentication upgrades
+    // it to the signed-in view when a session is confirmed.
     if (document.body.hasAttribute("data-cabinet")) {
-      setAccountView("loading");
+      setAccountView("guest");
       setAuthStatus("CONNECTING AUTH", "loading");
     }
 
