@@ -110,11 +110,9 @@
         showCopied();
       } catch {
         const fallback = document.createElement("textarea");
+        fallback.className = "clipboard-fallback";
         fallback.value = value;
         fallback.setAttribute("readonly", "");
-        fallback.style.position = "fixed";
-        fallback.style.left = "-9999px";
-        fallback.style.opacity = "0";
         document.body.appendChild(fallback);
         fallback.select();
 
