@@ -2,8 +2,8 @@
   "use strict";
 
   const SOURCES = [
-    "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2",
-    "https://unpkg.com/@supabase/supabase-js@2"
+    "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2",
+    "https://unpkg.com/@supabase/supabase-js@2.117.2"
   ];
 
   const loadScript = (src) => new Promise((resolve, reject) => {
