@@ -30,3 +30,10 @@ jobs:
 
       - name: Run Supabase runtime smoke test
         run: node scripts/runtime-smoke.mjs
+      - name: Install browser test runtime
+        run: |
+          npm install --no-save --no-package-lock playwright@1.55.0
+          npx playwright install --with-deps chromium
+
+      - name: Run production browser smoke test
+        run: node scripts/browser-smoke.mjs
