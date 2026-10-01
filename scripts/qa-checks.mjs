@@ -141,7 +141,7 @@ for (const [name, page] of [
   ["cabinet.html", cabinet],
   ["forum.html", read("forum.html")]
 ]) {
-  for (const asset of ["auth-config.js?v=5", "supabase-loader.js?v=5", "auth.js?v=11", "styles.css?v=10"]) {
+  for (const asset of ["auth-config.js?v=5", "supabase-loader.js?v=5", "auth.js?v=12", "styles.css?v=10"]) {
     if (!page.includes(asset)) {
       fail.push(`${name} asset include missing: ${asset}`);
     }
@@ -187,6 +187,13 @@ if (!auth.includes("originalButtonLabel")) fail.push("button markup-preserving b
 if (!auth.includes('event === "USER_UPDATED"')) fail.push("USER_UPDATED auth event is not handled");
 if (!auth.includes("nazerak_auth_return_hash")) fail.push("OAuth return target storage is missing");
 if (auth.includes('redirectTarget.hash = "media-application"')) fail.push("OAuth redirect still carries media fragment");
+
+if (!auth.includes("skipAutoInitialize: true")) fail.push("Supabase auth must disable implicit auto-initialize");
+if (!auth.includes("client.auth.initialize()")) fail.push("explicit Supabase auth initialization is missing");
+if (auth.indexOf("client.auth.onAuthStateChange((event, session) =>") > auth.indexOf("client.auth.initialize()")) {
+  fail.push("auth initialize must run after listener registration");
+}
+if (auth.includes("client.auth.exchangeCodeForSession(code)")) fail.push("manual OAuth code exchange must not race Supabase initialization");
 if (!auth.includes("const getSessionSafe")) fail.push("bounded session lookup is missing");
 if (!auth.includes("renderCabinet(initialSession)")) fail.push("initial session is not reused");
 if (!auth.includes("renderCabinet(session || null)")) fail.push("auth event session is not reused");
