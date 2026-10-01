@@ -388,7 +388,7 @@
     }
   };
 
-  const loadMediaApplications = async (user) => {
+  const loadMediaApplications = async (user, sequence = null) => {
     const list = qs("[data-media-list]");
     const empty = qs("[data-media-empty]");
     if (!client || !user || !list) return;
