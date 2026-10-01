@@ -292,12 +292,23 @@ const testCabinetSignedIn = async () => {
       (document.querySelector("[data-auth-message]")?.textContent || "").includes("сохранён")
     , { timeout: 5000 });
 
-    await page.locator("#media-channel-url").fill("https://youtube.com/@nazerak");
-    await page.locator("#media-message").fill("NaZerak test media application");
-    await page.locator('#media-application-form button[type="submit"]').click();
-    await page.waitForFunction(() =>
-      (document.querySelector("[data-auth-message]")?.textContent || "").includes("Заявка отправлена")
-    , { timeout: 5000 });
+    const mediaDisclosure = page.locator("[data-media-disclosure]");
+    if (await mediaDisclosure.count() !== 1) {
+      throw new Error("media partnership disclosure missing");
+    }
+    if (await mediaDisclosure.evaluate((node) => node.open)) {
+      throw new Error("media partnership section must start collapsed");
+    }
+    await mediaDisclosure.locator("summary").click();
+    if (!(await mediaDisclosure.evaluate((node) => node.open))) {
+      throw new Error("media partnership disclosure did not open");
+    }
+    if (await page.locator("#media-application-form").count() !== 0) {
+      throw new Error("unreviewed media intake form must not be exposed");
+    }
+    if (!(await mediaDisclosure.textContent()).includes("Приём заявок временно приостановлен")) {
+      throw new Error("paused media intake status is not explained");
+    }
 
     const linkLabel = await page.locator("[data-auth-link-label]").textContent();
     if ((linkLabel || "").trim() !== "Кабинет") {
