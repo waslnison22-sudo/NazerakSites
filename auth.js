@@ -976,7 +976,18 @@
       return;
     }
 
-    state.user = result.data?.session?.user || null;
+    const resolvedUser = result.data?.session?.user || null;
+
+    // Do not let a stale null result override a session already confirmed by
+    // an auth event. Only the explicit SIGNED_OUT handler may clear that state.
+    if (!resolvedUser && state.user && !state.loading) {
+      renderAuthLinks();
+      setAuthStatus("SIGNED IN", "signed-in");
+      setAccountView("user");
+      return;
+    }
+
+    state.user = resolvedUser;
     state.loading = false;
     renderAuthLinks();
 
@@ -1102,6 +1113,11 @@
     client.auth.onAuthStateChange((event, session) => {
       if (event === "INITIAL_SESSION" || (event === "SIGNED_IN" && session)) {
         resolveInitialAuthSession?.(session || null);
+        if (session?.user) {
+          state.user = session.user;
+          state.loading = false;
+          renderAuthLinks();
+        }
       }
 
       if (event === "SIGNED_OUT") {
