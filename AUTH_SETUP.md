@@ -93,12 +93,6 @@ https://waslnison22-sudo.github.io/NazerakSites/cabinet.html
 http://localhost:8000/cabinet.html
 ```
 
-После подключения домена добавь:
-
-```text
-https://nazerak.is-a.dev/cabinet.html
-```
-
 Production URL лучше добавлять точным совпадением.
 
 ## 6. Что уже сделано в GitHub
