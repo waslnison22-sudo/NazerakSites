@@ -249,7 +249,7 @@ for (const [name, page] of [["index.html", index], ["cabinet.html", cabinet], ["
 }
 if (!auth.includes('client.auth.signOut({ scope: "local" })')) fail.push("sign-out must be local to current session");
 if (!script.includes("clipboard-fallback")) fail.push("clipboard fallback class missing");
-if (!q.includes('style-src-attr')) fail.push("CSP hardening guard missing");
+if (![index, cabinet, read("forum.html"), read("404.html")].every((page) => !page.includes("style-src-attr 'unsafe-inline'"))) fail.push("CSP hardening guard missing");
 
 if (!css.includes(".scroll-cue{position:absolute;right:0;bottom:22px;")) fail.push("desktop scroll cue is outside hero");
 
