@@ -401,7 +401,8 @@
           .from("media_applications")
           .select("id, channel_url, message, status, created_at")
           .eq("user_id", user.id)
-          .order("created_at", { ascending: false }),
+          .order("created_at", { ascending: false })
+          .limit(20),
         6000,
         "История заявок отвечает слишком долго."
       );
@@ -526,6 +527,13 @@
     setBusy(button, true, "Подключаем Discord…");
     showMessage("");
     setAuthStatus("CONNECTING AUTH", "loading");
+
+    if (navigator.onLine === false) {
+      setBusy(button, false);
+      showMessage("Нет подключения к интернету. Проверь сеть и повтори вход.", "error");
+      setAuthStatus("NETWORK OFFLINE", "error");
+      return;
+    }
 
     // The login button must be self-healing: a slow/failed CDN bootstrap
     // must not turn the visible login control into a dead button.
@@ -677,6 +685,27 @@
         );
         data = insertResult.data;
         error = insertResult.error;
+      }
+
+      if (
+        error &&
+        (error.code === "23505" || /duplicate|unique/i.test(error.message || ""))
+      ) {
+        const retryResult = await withTimeout(
+          client
+            .from("profiles")
+            .update({
+              minecraft_username: value,
+              updated_at: new Date().toISOString()
+            })
+            .eq("id", state.user.id)
+            .select("id, minecraft_username, created_at, updated_at")
+            .maybeSingle(),
+          7000,
+          "Повторное сохранение профиля превысило 7 секунд."
+        );
+        data = retryResult.data;
+        error = retryResult.error;
       }
     } catch (caughtError) {
       error = caughtError;
