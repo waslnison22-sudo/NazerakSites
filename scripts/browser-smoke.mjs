@@ -55,6 +55,8 @@ const runRealBrowserSmoke = async () => {
       createClient: typeof window.supabase?.createClient,
       supabaseReadyType: typeof window.NAZERAK_SUPABASE_READY,
       supabaseReadyState: window.NAZERAK_SUPABASE_READY?.constructor?.name || "",
+      authStage: window.__NAZERAK_AUTH_STAGE || "",
+      authDetail: window.__NAZERAK_AUTH_DETAIL || "",
       localStorageKeys: Object.keys(localStorage),
       resourceScripts: performance.getEntriesByType("resource")
         .map((entry) => entry.name)
