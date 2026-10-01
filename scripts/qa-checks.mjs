@@ -141,7 +141,7 @@ for (const [name, page] of [
   ["cabinet.html", cabinet],
   ["forum.html", read("forum.html")]
 ]) {
-  for (const asset of ["auth-config.js?v=5", "supabase-loader.js?v=5", "auth.js?v=13", "styles.css?v=10"]) {
+  for (const asset of ["auth-config.js?v=5", "supabase-loader.js?v=6", "auth.js?v=13", "styles.css?v=10"]) {
     if (!page.includes(asset)) {
       fail.push(`${name} asset include missing: ${asset}`);
     }
@@ -207,6 +207,8 @@ if (!auth.includes("renderCabinet(initialSession)")) fail.push("initial session 
 if (!auth.includes("renderCabinet(session || null)")) fail.push("auth event session is not reused");
 if (!auth.includes("window.setTimeout(() =>")) fail.push("auth state callback is not deferred");
 if (!loader.includes("@supabase/supabase-js@2.117.2")) fail.push("Supabase SDK version is not pinned to 2.117.2");
+if (!loader.includes("/dist/umd/supabase.js")) fail.push("Supabase loader must use explicit UMD browser bundle");
+
 if (!loader.includes("unpkg.com")) fail.push("Supabase CDN fallback is missing");
 if (script.includes("loadServerStatus") || script.includes("SERVER_STATUS_SOURCES") || script.includes("api.mcstatus.io")) fail.push("obsolete server status polling remains");
 if (/online-статус.*status API/i.test(cabinet)) fail.push("cabinet still promises live server status");
