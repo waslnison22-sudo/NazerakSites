@@ -734,8 +734,23 @@
     }
   };
 
+  let renderSequence = 0;
+
+  const hydrateCabinetData = async (user, sequence) => {
+    const profile = await ensureProfile(user);
+
+    if (sequence !== renderSequence || state.user?.id !== user.id) return;
+
+    state.profile = profile;
+    renderUser(user, profile);
+
+    await loadMediaApplications(user);
+  };
+
   const renderCabinet = async (session = undefined) => {
     if (!document.body.dataset.cabinet) return;
+
+    const sequence = ++renderSequence;
 
     if (!configured) {
       setAuthStatus("AUTH SETUP REQUIRED", "config");
@@ -748,8 +763,8 @@
     if (!client) {
       showLoginFallback(
         "Вход временно недоступен.",
-        "Сервис авторизации не успел загрузиться. Это не должно оставлять страницу в бесконечной загрузке.",
-        "Нажми «Повторить проверку». Если ошибка сохраняется, можно вернуться на главную — аккаунт и данные не потеряются."
+        "Сервис авторизации не успел загрузиться.",
+        "Проверь соединение и нажми «Повторить проверку»."
       );
       state.loading = false;
       return;
@@ -762,11 +777,14 @@
       ? await getSessionSafe()
       : { data: { session }, error: null };
 
+    if (sequence !== renderSequence) return;
+
     if (result.error) {
       console.warn("[NaZerak Auth] session lookup failed:", result.error.message);
       state.user = null;
+      state.profile = null;
       showMessage(
-        "Не удалось получить сессию за отведённое время. Нажми обновить страницу и повтори вход.",
+        "Не удалось проверить авторизацию вовремя. Попробуй повторить проверку.",
         "error"
       );
       setAuthStatus("AUTH TIMEOUT", "error");
@@ -775,6 +793,8 @@
     }
 
     state.user = result.data?.session?.user || null;
+    state.loading = false;
+    renderAuthLinks();
 
     if (!state.user) {
       setAuthStatus("DISCORD READY", "ready");
@@ -782,15 +802,19 @@
       return;
     }
 
-    state.profile = await ensureProfile(state.user);
-    renderUser(state.user, state.profile);
-    await loadMediaApplications(state.user);
+    const user = state.user;
 
+    // The account shell is rendered immediately. Profile/history are optional
+    // data and must never be allowed to hide or block the logged-in cabinet.
+    renderUser(user, null);
     setAuthStatus("SIGNED IN", "signed-in");
     setAccountView("user");
 
+    void hydrateCabinetData(user, sequence);
+
     if (window.location.hash === "#media-application") {
       window.setTimeout(() => {
+        if (sequence !== renderSequence) return;
         document.getElementById("media-application")?.scrollIntoView({
           behavior: "smooth",
           block: "start"
@@ -876,36 +900,48 @@
       return;
     }
 
+    // Subscribe before reading the session so OAuth callback events cannot be
+    // missed during client initialization.
+    client.auth.onAuthStateChange((event, session) => {
+      if (event === "SIGNED_OUT") {
+        renderSequence += 1;
+        state.user = null;
+        state.profile = null;
+        state.loading = false;
+        renderAuthLinks();
+        if (document.body.dataset.cabinet) setAccountView("guest");
+        return;
+      }
+
+      if (session || event === "INITIAL_SESSION" || event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
+        window.setTimeout(() => {
+          void renderCabinet(session || null);
+        }, 0);
+      }
+    });
+
     const sessionResult = await getSessionSafe();
+    const initialSession = sessionResult.data?.session || null;
 
     if (sessionResult.error) {
       console.warn("[NaZerak Auth] initial session lookup failed:", sessionResult.error.message);
-      showMessage(
-        "Не удалось получить сессию вовремя. Можно повторить проверку без перезагрузки.",
-        "error"
-      );
+      if (document.body.dataset.cabinet && !state.user) {
+        showMessage(
+          "Проверка авторизации заняла слишком долго. Можно повторить вход.",
+          "error"
+        );
+      }
     }
 
-    const initialSession = sessionResult.data?.session || null;
-    state.user = initialSession?.user || null;
-    state.loading = false;
-    renderAuthLinks();
-
-    if (document.body.dataset.cabinet) {
+    // getSession is only a bootstrap snapshot. Auth events remain the source
+    // of truth for post-redirect and refresh transitions.
+    if (document.body.dataset.cabinet && !state.user) {
       await renderCabinet(initialSession);
-    }
-
-    client.auth.onAuthStateChange((_event, session) => {
-      state.user = session?.user || null;
-      state.profile = null;
+    } else if (!document.body.dataset.cabinet) {
+      state.user = initialSession?.user || state.user || null;
+      state.loading = false;
       renderAuthLinks();
-
-      window.setTimeout(() => {
-        if (document.body.dataset.cabinet) {
-          void renderCabinet(session || null);
-        }
-      }, 0);
-    });
+    }
   };
 
   window.NaZerakAuth = Object.freeze({
