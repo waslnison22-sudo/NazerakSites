@@ -141,7 +141,7 @@ for (const [name, page] of [
   ["cabinet.html", cabinet],
   ["forum.html", read("forum.html")]
 ]) {
-  for (const asset of ["auth-config.js?v=5", "supabase-loader.js?v=6", "auth.js?v=13", "styles.css?v=10"]) {
+  for (const asset of ["auth-config.js?v=5", "supabase-loader.js?v=6", "auth.js?v=14", "styles.css?v=10"]) {
     if (!page.includes(asset)) {
       fail.push(`${name} asset include missing: ${asset}`);
     }
@@ -191,6 +191,10 @@ if (auth.includes('redirectTarget.hash = "media-application"')) fail.push("OAuth
 if (!auth.includes("skipAutoInitialize: true")) fail.push("Supabase auth must disable implicit auto-initialize");
 if (!auth.includes('setAccountView("loading");')) fail.push("cabinet must start in auth loading state");
 if (!auth.includes('event === "TOKEN_REFRESHED"')) fail.push("token refresh event handling is missing");
+if (!auth.includes(".limit(20)")) fail.push("media history query must be bounded");
+if (!auth.includes("NETWORK OFFLINE")) fail.push("offline auth guard is missing");
+if (!auth.includes("Повторное сохранение профиля превысило 7 секунд.")) fail.push("profile save duplicate-race recovery is missing");
+
 if (!auth.includes("nextUserId === currentUserId && nextUserId")) fail.push("background auth sync must avoid cabinet flicker");
 if (!auth.includes('setAuthStatus("DISCORD READY", "ready")')) fail.push("signed-out cabinet status reset is missing");
 
