@@ -83,6 +83,7 @@ python -m http.server 8000
 - `auth-config.js` — публичная конфигурация Supabase;
 - `supabase/schema.sql` — таблицы и RLS;
 - `supabase/migrations/` — дополнительные миграции безопасности;
-- `AUTH_SETUP.md` — пошаговая настройка Discord + Supabase.
+- `AUTH_SETUP.md` — пошаговая настройка Discord + Supabase;
+- `docs/account-architecture.md` — устройство кабинета, безопасность и план очереди модерации.
 
 Для настоящего входа используется существующий Supabase project NaZerak. Нужно включить Discord Provider и задать корректные OAuth URL; публичный publishable key находится в `auth-config.js`, а Discord Client Secret и Supabase service_role в GitHub не попадают.
