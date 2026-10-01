@@ -11,14 +11,7 @@
   let client = null;
   let bootstrapError = null;
 
-  const authDebug = (stage, detail = "") => {
-    window.__NAZERAK_AUTH_STAGE = stage;
-    if (detail) window.__NAZERAK_AUTH_DETAIL = detail;
-    const trace = window.__NAZERAK_AUTH_TRACE || (window.__NAZERAK_AUTH_TRACE = []);
-    trace.push({ stage, detail, time: Date.now() });
-    if (trace.length > 80) trace.shift();
-  };
-  authDebug("SCRIPT_LOADED");
+  const authDebug = () => {};
 
   const state = {
     user: null,
@@ -860,7 +853,7 @@
         return;
       }
 
-      await renderCabinet(session);
+      await requestCabinetRender(session);
       return;
     }
 
@@ -1013,6 +1006,16 @@
     }
   };
 
+  let cabinetRenderQueue = Promise.resolve();
+
+  const requestCabinetRender = (session = undefined) => {
+    cabinetRenderQueue = cabinetRenderQueue.then(
+      () => renderCabinet(session),
+      () => renderCabinet(session)
+    );
+    return cabinetRenderQueue;
+  };
+
   const bootstrapClient = async () => {
     if (!configured) {
       authDebug("BOOTSTRAP_CONFIG_MISSING");
@@ -1139,7 +1142,7 @@
         renderAuthLinks();
 
         if (document.body.dataset.cabinet && session?.user) {
-          void renderCabinet(session);
+          void requestCabinetRender(session);
         } else if (!document.body.dataset.cabinet) {
           return;
         } else if (event === "USER_UPDATED") {
@@ -1182,7 +1185,7 @@
         setAuthStatus("AUTH TIMEOUT", "error");
         setAccountView("guest");
       } else {
-        await renderCabinet(initialResult.session);
+        await requestCabinetRender(initialResult.session);
       }
     }
     authDebug("INIT_FINISHED");
