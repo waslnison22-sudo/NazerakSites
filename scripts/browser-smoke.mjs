@@ -91,7 +91,7 @@ const testSameOriginLinks = async (page, name) => {
       throw new Error(name + " contains an unexpected local route: " + route);
     }
     if (hash && pathname === "/NazerakSites/") {
-      const exists = await page.locator("#" + CSS.escape(hash)).count();
+      const exists = await page.evaluate((targetId) => Boolean(document.getElementById(targetId)), hash);
       if (!exists) throw new Error(name + " local anchor target missing: " + route);
     }
   }
