@@ -144,14 +144,14 @@ for (const [name, page] of [
   ["cabinet.html", cabinet],
   ["forum.html", read("forum.html")]
 ]) {
-  for (const asset of ["auth-config.js?v=6", "supabase-loader.js?v=7", "auth.js?v=26", "script.js?v=13", "styles.css?v=14"]) {
+  for (const asset of ["auth-config.js?v=6", "supabase-loader.js?v=7", "auth.js?v=27", "script.js?v=13", "styles.css?v=15"]) {
     if (!page.includes(asset)) {
       fail.push(`${name} asset include missing: ${asset}`);
     }
   }
 }
 
-if (!read("404.html").includes("styles.css?v=14")) fail.push("404.html styles cache version is stale");
+if (!read("404.html").includes("styles.css?v=15")) fail.push("404.html styles cache version is stale");
 const sitemap = read("sitemap.xml");
 if (sitemap.includes("cabinet.html") || sitemap.includes("forum.html")) fail.push("sitemap contains a noindex page");
 if (!sitemap.includes("https://waslnison22-sudo.github.io/NazerakSites/")) fail.push("sitemap homepage URL is missing");
@@ -178,6 +178,8 @@ for (const token of [
 }
 
 if (!cabinet.includes('data-media-disclosure')) fail.push("media partnership must be collapsible");
+if (!cabinet.includes("data-profile-retry") || !cabinet.includes("data-media-retry")) fail.push("targeted recovery controls are missing");
+if (!auth.includes("data-profile-retry") || !auth.includes("data-media-retry")) fail.push("targeted recovery handlers are missing");
 if (cabinet.includes('id="media-application-form"')) fail.push("media intake form must remain disabled until review queue exists");
 if (!cabinet.includes("Приём заявок временно приостановлен")) fail.push("paused media intake explanation is missing");
 if (auth.includes("const submitMediaApplication")) fail.push("unreviewed media submission path remains in auth code");
