@@ -12,7 +12,6 @@
     document.getElementById("site-nav") ||
     document.getElementById("cabinet-nav");
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const isTouch = window.matchMedia("(pointer: coarse)").matches;
 
   const updateProgress = () => {
     if (!progress) return;
