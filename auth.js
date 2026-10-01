@@ -606,7 +606,7 @@
     let error = null;
     try {
       ({ error } = await withTimeout(
-        client.auth.signOut(),
+        client.auth.signOut({ scope: "local" }),
         7000,
         "Выход из аккаунта превысил 7 секунд."
       ));
