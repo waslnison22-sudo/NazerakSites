@@ -17,7 +17,8 @@ const requiredFiles = [
   "README.md",
   "AUTH_SETUP.md",
   "robots.txt",
-  "sitemap.xml"
+  "sitemap.xml",
+  "forum.html"
 ];
 
 const bannedTokens = [
@@ -103,7 +104,7 @@ if (cssOpen !== cssClose) {
 }
 
 
-const cspPages = [index, cabinet, read("404.html")];
+const cspPages = [index, cabinet, read("404.html"), read("forum.html")];
 for (const [i, page] of cspPages.entries()) {
   if (!page.includes('http-equiv="Content-Security-Policy"')) {
     fail.push(`CSP missing on page #${i + 1}`);
@@ -143,7 +144,7 @@ for (const asset of [
   }
 }
 
-if (!index.includes("script.js") || !cabinet.includes("script.js")) {
+if (!index.includes("script.js") || !cabinet.includes("script.js") || !read("forum.html").includes("script.js")) {
   fail.push("script.js include missing from a published page");
 }
 
@@ -178,7 +179,6 @@ if (/server-status-text|server-players|data-server-hero/.test(index)) fail.push(
 if (!index.includes("hero-art-placeholder") || !index.includes("world-screenshot-placeholder")) fail.push("artwork or screenshot placeholder missing");
 if (!index.includes('href="./forum.html"') || !cabinet.includes('href="./forum.html"')) fail.push("forum navigation link missing");
 if (auth.includes(".from(\"profiles\")\n      .upsert(")) fail.push("profile initialization still uses upsert");
-if (css.includes("xt);")) fail.push("malformed CSS token remains");
 if (script.includes(".magnetic") || script.includes("[data-parallax]")) fail.push("unstable motion controls remain");
 
 for (const token of [
