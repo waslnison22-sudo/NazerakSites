@@ -174,6 +174,19 @@ const runSignedInFlowSmoke = async () => {
       throw new Error("Signed-in user data did not render");
     }
   } catch (error) {
+    const diagnostic = await page.evaluate(() => ({
+      authObject: Boolean(window.NaZerakAuth),
+      authConfigured: window.NaZerakAuth?.configured ?? null,
+      authUserId: window.NaZerakAuth?.user?.id || null,
+      bodyCabinet: document.body.dataset.cabinet || "",
+      views: [...document.querySelectorAll("[data-account-view]")].map((view) => ({
+        mode: view.dataset.accountView,
+        hidden: view.hidden
+      })),
+      status: document.querySelector("[data-auth-status]")?.textContent || "",
+      trace: window.__NAZERAK_AUTH_TRACE || []
+    }));
+    console.log("SIGNED-IN browser diagnostic state:", JSON.stringify(diagnostic));
     console.log("SIGNED-IN browser errors:", JSON.stringify(errors));
     throw error;
   } finally {
