@@ -47,6 +47,96 @@ const assertNoHorizontalOverflow = async (page, name) => {
   }
 };
 
+const assertAccessibleControls = async (page, name) => {
+  const result = await page.evaluate(() => {
+    const controls = [...document.querySelectorAll("button, a")].filter((el) => !el.hidden);
+    const badControls = controls.filter((el) => {
+      const label = (
+        el.getAttribute("aria-label") ||
+        el.textContent ||
+        el.getAttribute("title") ||
+        ""
+      ).replace(/\s+/g, " ").trim();
+      return !label;
+    });
+    const fields = [...document.querySelectorAll("input, textarea, select")].filter((el) => !el.hidden);
+    const badFields = fields.filter((el) =>
+      !el.labels?.length &&
+      !el.getAttribute("aria-label") &&
+      !el.getAttribute("aria-labelledby")
+    );
+    return {
+      badControls: badControls.map((el) => ({ tag: el.tagName, href: el.getAttribute("href") })),
+      badFields: badFields.map((el) => ({ id: el.id, name: el.getAttribute("name") }))
+    };
+  });
+
+  if (result.badControls.length || result.badFields.length) {
+    throw new Error(name + " accessibility labels invalid: " + JSON.stringify(result));
+  }
+};
+
+const testSameOriginLinks = async (page, name) => {
+  const routes = await page.evaluate(() =>
+    [...document.querySelectorAll("a[href]")]
+      .map((a) => a.href)
+      .filter((href) => href.startsWith(location.origin + "/NazerakSites") || href.startsWith(location.origin + "/NazerakSites/"))
+      .map((href) => new URL(href))
+      .map((url) => url.pathname + url.hash)
+  );
+
+  for (const route of [...new Set(routes)]) {
+    const [pathname, hash] = route.split("#");
+    if (!["/NazerakSites/", "/NazerakSites/cabinet.html", "/NazerakSites/forum.html"].includes(pathname)) {
+      throw new Error(name + " contains an unexpected local route: " + route);
+    }
+    if (hash && pathname === "/NazerakSites/") {
+      const exists = await page.locator("#" + CSS.escape(hash)).count();
+      if (!exists) throw new Error(name + " local anchor target missing: " + route);
+    }
+  }
+};
+
+const testOAuthStart = async () => {
+  const browser = await chromium.launch({ headless: true });
+  const context = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  const page = await context.newPage();
+  let authorizeRequest = null;
+
+  await page.route("https://ujlbyzvdsncvqbrhasuw.supabase.co/auth/v1/authorize**", async (route) => {
+    authorizeRequest = route.request().url();
+    await route.abort();
+  });
+
+  try {
+    await page.goto(BASE + "/cabinet.html", { waitUntil: "networkidle", timeout: TIMEOUT });
+    await page.waitForFunction(() => {
+      const loading = document.querySelector('[data-account-view="loading"]');
+      const guest = document.querySelector('[data-account-view="guest"]');
+      return Boolean(guest && !guest.hidden && loading && loading.hidden);
+    }, { timeout: 15000 });
+
+    await page.locator("[data-discord-login]").click();
+    await page.waitForTimeout(800);
+
+    if (!authorizeRequest) {
+      throw new Error("Discord OAuth authorize endpoint was not requested");
+    }
+
+    const parsed = new URL(authorizeRequest);
+    if (parsed.searchParams.get("provider") !== "discord" && !parsed.pathname.endsWith("/authorize")) {
+      throw new Error("OAuth authorize request does not look like a Discord authorization request: " + authorizeRequest);
+    }
+    if (parsed.searchParams.get("redirect_to") !== BASE + "/cabinet.html") {
+      throw new Error("OAuth redirect_to is not cabinet.html: " + (parsed.searchParams.get("redirect_to") || ""));
+    }
+
+    console.log("PASS: OAuth start");
+  } finally {
+    await browser.close();
+  }
+};
+
 const testStaticPage = async ({ path, name, viewport, check }) => {
   const browser = await chromium.launch({ headless: true });
   const page = await browser.newPage({ viewport });
@@ -55,6 +145,8 @@ const testStaticPage = async ({ path, name, viewport, check }) => {
   try {
     await page.goto(BASE + path, { waitUntil: "networkidle", timeout: TIMEOUT });
     await check(page);
+    await assertAccessibleControls(page, name);
+    await testSameOriginLinks(page, name);
     await assertNoHorizontalOverflow(page, name);
     finishDiagnostics();
     console.log("PASS:", name);
@@ -80,6 +172,8 @@ const testCabinetAnonymous = async (viewport, name) => {
 
     const state = await page.evaluate(() => ({
       status: document.querySelector("[data-auth-status]")?.textContent || "",
+      statusRole: document.querySelector("[data-auth-status]")?.getAttribute("role") || "",
+      statusLive: document.querySelector("[data-auth-status]")?.getAttribute("aria-live") || "",
       loading: !document.querySelector('[data-account-view="loading"]')?.hidden,
       guest: !document.querySelector('[data-account-view="guest"]')?.hidden,
       user: !document.querySelector('[data-account-view="user"]')?.hidden,
@@ -90,6 +184,8 @@ const testCabinetAnonymous = async (viewport, name) => {
       throw new Error(name + " reached an invalid anonymous state: " + JSON.stringify(state));
     }
 
+    await assertAccessibleControls(page, name);
+    await testSameOriginLinks(page, name);
     await assertNoHorizontalOverflow(page, name);
     finishDiagnostics();
     console.log("PASS:", name, JSON.stringify(state));
@@ -265,6 +361,7 @@ await testStaticPage({
   }
 });
 
+await testOAuthStart();
 await testCabinetAnonymous({ width: 1440, height: 1000 }, "cabinet anonymous desktop");
 await testCabinetAnonymous({ width: 390, height: 844 }, "cabinet anonymous mobile");
 await testCabinetSignedIn();
