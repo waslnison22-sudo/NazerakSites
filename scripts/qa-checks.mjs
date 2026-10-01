@@ -113,8 +113,8 @@ for (const [i, page] of cspPages.entries()) {
   if (!page.includes('http-equiv="Content-Security-Policy"')) {
     fail.push(`CSP missing on page #${i + 1}`);
   }
-  if (!page.includes("style-src-attr 'unsafe-inline'")) {
-    fail.push(`style-src-attr missing on page #${i + 1}`);
+  if (page.includes("style-src-attr 'unsafe-inline'")) {
+    fail.push(`style-src-attr must not be enabled on page #${i + 1}`);
   }
   if (/<script(?![^>]*\bsrc=)[^>]*>/i.test(page)) {
     fail.push(`inline script tag found on page #${i + 1}`);
@@ -143,14 +143,14 @@ for (const [name, page] of [
   ["cabinet.html", cabinet],
   ["forum.html", read("forum.html")]
 ]) {
-  for (const asset of ["auth-config.js?v=5", "supabase-loader.js?v=6", "auth.js?v=22", "script.js?v=10", "styles.css?v=10"]) {
+  for (const asset of ["auth-config.js?v=5", "supabase-loader.js?v=6", "auth.js?v=23", "script.js?v=11", "styles.css?v=11"]) {
     if (!page.includes(asset)) {
       fail.push(`${name} asset include missing: ${asset}`);
     }
   }
 }
 
-if (!read("404.html").includes("styles.css?v=10")) fail.push("404.html styles cache version is stale");
+if (!read("404.html").includes("styles.css?v=11")) fail.push("404.html styles cache version is stale");
 const sitemap = read("sitemap.xml");
 if (sitemap.includes("cabinet.html") || sitemap.includes("forum.html")) fail.push("sitemap contains a noindex page");
 if (!sitemap.includes("https://waslnison22-sudo.github.io/NazerakSites/")) fail.push("sitemap homepage URL is missing");
@@ -283,6 +283,9 @@ if (script.includes("isTouch")) fail.push("unused touch detection remains");
 if (auth.includes("authDebug")) fail.push("temporary auth diagnostics remain");
 if (auth.includes("document.body.dataset.cabinet")) fail.push("boolean cabinet attribute is read through dataset");
 if (!auth.includes('if (main) main.setAttribute("aria-busy", String(mode === "loading"));')) fail.push("cabinet aria-busy state sync is missing");
+if (script.includes(".style.position") || script.includes(".style.left") || script.includes(".style.opacity")) fail.push("clipboard fallback must not use inline styles");
+if (!script.includes("clipboard-fallback")) fail.push("clipboard fallback class is missing");
+if (!auth.includes('client.auth.signOut({ scope: "local" })')) fail.push("sign-out must be local to current session");
 if (!auth.includes("state.loading = false;")) fail.push("auth error state does not clear loading flag");
 const profileSelectGrantCount = (schema.match(/grant select on public\.profiles to authenticated;/g) || []).length;
 const profileInsertGrantCount = (schema.match(/grant insert \(id, minecraft_username\)/g) || []).length;
