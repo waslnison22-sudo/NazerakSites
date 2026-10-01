@@ -143,7 +143,7 @@ for (const [name, page] of [
   ["cabinet.html", cabinet],
   ["forum.html", read("forum.html")]
 ]) {
-  for (const asset of ["auth-config.js?v=6", "supabase-loader.js?v=7", "auth.js?v=25", "script.js?v=13", "styles.css?v=13"]) {
+  for (const asset of ["auth-config.js?v=6", "supabase-loader.js?v=7", "auth.js?v=26", "script.js?v=13", "styles.css?v=14"]) {
     if (!page.includes(asset)) {
       fail.push(`${name} asset include missing: ${asset}`);
     }
@@ -180,8 +180,10 @@ if (!auth.includes("const withTimeout")) fail.push("request timeout guard is mis
 if (!auth.includes("Загрузка Supabase SDK превысила 9 секунд.")) fail.push("Supabase SDK bootstrap wait is not bounded");
 if (!auth.includes("profiles read timed out or failed")) fail.push("profile read timeout guard is missing");
 if (!auth.includes("media history timed out or failed")) fail.push("media history timeout guard is missing");
+if (auth.includes("const submitMediaApplication")) fail.push("unreviewed media submission path must stay disabled");
+if (!cabinet.includes("Приём заявок временно приостановлен.")) fail.push("cabinet must explain paused media intake");
+if (!cabinet.includes('data-media-disclosure')) fail.push("media section must be collapsible");
 if (!auth.includes("Сохранение профиля превысило 7 секунд.")) fail.push("profile save timeout guard is missing");
-if (!auth.includes("Отправка заявки превысила 7 секунд.")) fail.push("media submit timeout guard is missing");
 if (!auth.includes('client.auth.onAuthStateChange((event, session) =>')) fail.push("auth listener is missing");
 const listenerIndex = auth.indexOf('client.auth.onAuthStateChange((event, session) =>');
 const clientCreateIndex = auth.indexOf('client = factory(config.url, config.publishableKey');
