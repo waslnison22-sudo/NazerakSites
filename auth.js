@@ -100,6 +100,25 @@
       button.textContent = button.dataset.originalLabel || button.textContent;
       button.disabled = false;
       button.removeAttribute("aria-busy");
+      delete button.dataset.originalLabel;
+    }
+  };
+
+  const withTimeout = async (promise, timeoutMs, message) => {
+    let timer = null;
+
+    try {
+      return await Promise.race([
+        promise,
+        new Promise((_, reject) => {
+          timer = window.setTimeout(
+            () => reject(new Error(message)),
+            timeoutMs
+          );
+        })
+      ]);
+    } finally {
+      if (timer) window.clearTimeout(timer);
     }
   };
 
@@ -308,18 +327,30 @@
   const loadProfile = async (user) => {
     if (!client || !user) return null;
 
-    const { data, error } = await client
-      .from("profiles")
-      .select("id, minecraft_username, created_at, updated_at")
-      .eq("id", user.id)
-      .maybeSingle();
+    try {
+      const { data, error } = await withTimeout(
+        client
+          .from("profiles")
+          .select("id, minecraft_username, created_at, updated_at")
+          .eq("id", user.id)
+          .maybeSingle(),
+        6000,
+        "Загрузка игрового профиля превысила 6 секунд."
+      );
 
-    if (error) {
-      console.warn("[NaZerak Auth] profiles read unavailable:", error.message);
+      if (error) {
+        console.warn("[NaZerak Auth] profiles read unavailable:", error.message);
+        return null;
+      }
+
+      return data;
+    } catch (error) {
+      console.warn(
+        "[NaZerak Auth] profiles read timed out or failed:",
+        error instanceof Error ? error.message : String(error)
+      );
       return null;
     }
-
-    return data;
   };
 
   const loadMediaApplications = async (user) => {
@@ -327,11 +358,32 @@
     const empty = qs("[data-media-empty]");
     if (!client || !user || !list) return;
 
-    const { data, error } = await client
-      .from("media_applications")
-      .select("id, channel_url, message, status, created_at")
-      .eq("user_id", user.id)
-      .order("created_at", { ascending: false });
+    let result;
+
+    try {
+      result = await withTimeout(
+        client
+          .from("media_applications")
+          .select("id, channel_url, message, status, created_at")
+          .eq("user_id", user.id)
+          .order("created_at", { ascending: false }),
+        6000,
+        "История заявок отвечает слишком долго."
+      );
+    } catch (error) {
+      clearElementChildren(list);
+      if (empty) {
+        empty.textContent = "История заявок временно недоступна. Остальной кабинет продолжает работать.";
+        empty.hidden = false;
+      }
+      console.warn(
+        "[NaZerak Auth] media history timed out or failed:",
+        error instanceof Error ? error.message : String(error)
+      );
+      return;
+    }
+
+    const { data, error } = result;
 
     clearElementChildren(list);
 
@@ -398,18 +450,35 @@
     const profile = await loadProfile(user);
     if (profile) return profile;
 
-    const { data, error } = await client
-      .from("profiles")
-      .insert({ id: user.id })
-      .select("id, minecraft_username, created_at, updated_at")
-      .single();
+    try {
+      const { data, error } = await withTimeout(
+        client
+          .from("profiles")
+          .insert({ id: user.id })
+          .select("id, minecraft_username, created_at, updated_at")
+          .single(),
+        6000,
+        "Создание игрового профиля превысило 6 секунд."
+      );
 
-    if (error) {
+      if (!error) return data;
+
+      if (
+        error.code === "23505" ||
+        /duplicate|unique/i.test(error.message || "")
+      ) {
+        return await loadProfile(user);
+      }
+
       console.warn("[NaZerak Auth] profile initialization unavailable:", error.message);
-      return null;
+    } catch (error) {
+      console.warn(
+        "[NaZerak Auth] profile initialization timed out or failed:",
+        error instanceof Error ? error.message : String(error)
+      );
     }
 
-    return data;
+    return null;
   };
 
   const signIn = async (button) => {
@@ -510,27 +579,45 @@
     setBusy(button, true, "Сохраняем…");
     showMessage("");
 
-    let { data, error } = await client
-      .from("profiles")
-      .update({
-        minecraft_username: value,
-        updated_at: new Date().toISOString()
-      })
-      .eq("id", state.user.id)
-      .select("id, minecraft_username, created_at, updated_at")
-      .maybeSingle();
+    let data = null;
+    let error = null;
 
-    if (!error && !data) {
-      const insertResult = await client
-        .from("profiles")
-        .insert({
-          id: state.user.id,
-          minecraft_username: value
-        })
-        .select("id, minecraft_username, created_at, updated_at")
-        .single();
-      data = insertResult.data;
-      error = insertResult.error;
+    try {
+      const result = await withTimeout(
+        client
+          .from("profiles")
+          .update({
+            minecraft_username: value,
+            updated_at: new Date().toISOString()
+          })
+          .eq("id", state.user.id)
+          .select("id, minecraft_username, created_at, updated_at")
+          .maybeSingle(),
+        7000,
+        "Сохранение профиля превысило 7 секунд."
+      );
+
+      data = result.data;
+      error = result.error;
+
+      if (!error && !data) {
+        const insertResult = await withTimeout(
+          client
+            .from("profiles")
+            .insert({
+              id: state.user.id,
+              minecraft_username: value
+            })
+            .select("id, minecraft_username, created_at, updated_at")
+            .single(),
+          7000,
+          "Создание профиля превысило 7 секунд."
+        );
+        data = insertResult.data;
+        error = insertResult.error;
+      }
+    } catch (caughtError) {
+      error = caughtError;
     }
 
     setBusy(button, false);
@@ -583,13 +670,23 @@
     setBusy(button, true, "Отправляем…");
     showMessage("");
 
-    const { error } = await client
-      .from("media_applications")
-      .insert({
-        user_id: state.user.id,
-        channel_url: parsedUrl,
-        message
-      });
+    let error = null;
+
+    try {
+      ({ error } = await withTimeout(
+        client
+          .from("media_applications")
+          .insert({
+            user_id: state.user.id,
+            channel_url: parsedUrl,
+            message
+          }),
+        7000,
+        "Отправка заявки превысила 7 секунд."
+      ));
+    } catch (caughtError) {
+      error = caughtError;
+    }
 
     setBusy(button, false);
 
@@ -616,23 +713,24 @@
   };
 
   const getSessionSafe = async (timeoutMs = 8000) => {
-    if (!client) return { data: { session: null }, error: new Error("Supabase client не инициализирован.") };
+    if (!client) {
+      return {
+        data: { session: null },
+        error: new Error("Supabase client не инициализирован.")
+      };
+    }
 
-    let timer = null;
     try {
-      return await Promise.race([
+      return await withTimeout(
         client.auth.getSession(),
-        new Promise((resolve) => {
-          timer = window.setTimeout(() => {
-            resolve({
-              data: { session: null },
-              error: new Error("Проверка сессии превысила 8 секунд.")
-            });
-          }, timeoutMs);
-        })
-      ]);
-    } finally {
-      if (timer) window.clearTimeout(timer);
+        timeoutMs,
+        "Проверка сессии превысила 8 секунд."
+      );
+    } catch (error) {
+      return {
+        data: { session: null },
+        error: error instanceof Error ? error : new Error(String(error))
+      };
     }
   };
 
