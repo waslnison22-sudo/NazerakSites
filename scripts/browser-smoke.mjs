@@ -184,7 +184,7 @@ const testCabinetSignedIn = async () => {
 
     const input = page.locator("#minecraft-username");
     await input.fill("NaZerakTest");
-    await page.locator("#minecraft-profile-form button[type="submit"]".replace(/"/g, "'")).click();
+    await page.locator('#minecraft-profile-form button[type="submit"]').click();
   } finally {
     await browser.close();
   }
