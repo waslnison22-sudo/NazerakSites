@@ -375,7 +375,7 @@
 
       if (error) {
         console.warn("[NaZerak Auth] profiles read unavailable:", error.message);
-        return null;
+        return undefined;
       }
 
       return data;
@@ -406,8 +406,8 @@
         "История заявок отвечает слишком долго."
       );
     } catch (error) {
-      clearElementChildren(list);
       if (sequence !== null && (sequence !== renderSequence || state.user?.id !== user.id)) return;
+      clearElementChildren(list);
       if (empty) {
         empty.textContent = "История заявок временно недоступна. Остальной кабинет продолжает работать.";
         empty.hidden = false;
