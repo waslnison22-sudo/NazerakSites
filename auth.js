@@ -803,52 +803,56 @@
     await loadMediaApplications(state.user);
   };
 
-  const resolveOAuthCallback = async () => {
+  let initialAuthSession = null;
+  let initialAuthSessionResolved = false;
+  let resolveInitialAuthSession = null;
+  const initialAuthSessionPromise = new Promise((resolve) => {
+    resolveInitialAuthSession = (session) => {
+      if (initialAuthSessionResolved) return;
+      initialAuthSessionResolved = true;
+      initialAuthSession = session || null;
+      resolve(initialAuthSession);
+    };
+  });
+
+  const waitForInitialAuthSession = async () => {
     if (!client) return null;
 
-    const hasOAuthCallback =
-      new URLSearchParams(window.location.search).has("code") ||
-      window.location.hash.includes("access_token=") ||
-      window.location.hash.includes("error=");
-
     try {
-      // OAuth URL handling is deliberately owned by Supabase Auth. The client
-      // is created with skipAutoInitialize so this call happens only after the
-      // onAuthStateChange subscriber is registered. That removes the race where
-      // Supabase could consume the callback before our page listener existed.
-      const result = await withTimeout(
-        client.auth.initialize(),
-        12000,
-        "Инициализация входа через Discord превысила 12 секунд."
+      const session = await withTimeout(
+        initialAuthSessionPromise,
+        10000,
+        "Ожидание состояния авторизации превысило 10 секунд."
       );
-
-      if (result?.error) throw result.error;
-
-      if (hasOAuthCallback || window.location.search) {
-        window.history.replaceState(
-          null,
-          "",
-          window.location.pathname
-        );
-      }
-
-      return result?.data?.session || null;
+      if (session?.user) return session;
     } catch (error) {
       console.warn(
-        "[NaZerak Auth] OAuth/session initialization failed:",
+        "[NaZerak Auth] initial auth event wait failed:",
         error instanceof Error ? error.message : String(error)
       );
-
-      const message = error instanceof Error ? error.message : String(error || "");
-      showMessage(
-        hasOAuthCallback
-          ? "Discord завершил вход, но сайт не смог открыть личный кабинет. Нажми «Повторить вход через Discord» и повтори вход."
-          : message || "Не удалось проверить авторизацию. Попробуй ещё раз.",
-        "error"
-      );
-
-      return null;
     }
+
+    // OAuth callback/session storage can finish just after the initial event.
+    // Re-read the session a few times before falling back to the guest screen.
+    for (const delayMs of [0, 350, 900, 1600]) {
+      if (delayMs) {
+        await new Promise((resolve) => window.setTimeout(resolve, delayMs));
+      }
+
+      const result = await getSessionSafe(4500);
+      if (result.data?.session?.user) {
+        return result.data.session;
+      }
+
+      if (result.error) {
+        console.warn(
+          "[NaZerak Auth] session retry failed:",
+          result.error.message
+        );
+      }
+    }
+
+    return initialAuthSession?.user ? initialAuthSession : null;
   };
 
   const syncPageAuthState = async () => {
@@ -1022,8 +1026,7 @@
           flowType: "pkce",
           persistSession: true,
           autoRefreshToken: true,
-          detectSessionInUrl: true,
-          skipAutoInitialize: true
+          detectSessionInUrl: true
         }
       });
     } catch (error) {
@@ -1094,9 +1097,13 @@
       return;
     }
 
-    // Subscribe before reading the session so OAuth callback events cannot be
-    // missed during client initialization.
+    // Supabase initializes the browser auth client automatically. Subscribe
+    // immediately after client creation so the initial OAuth/session event is captured.
     client.auth.onAuthStateChange((event, session) => {
+      if (event === "INITIAL_SESSION" || (event === "SIGNED_IN" && session)) {
+        resolveInitialAuthSession?.(session || null);
+      }
+
       if (event === "SIGNED_OUT") {
         renderSequence += 1;
         state.user = null;
@@ -1149,23 +1156,7 @@
       }
     });
 
-    const callbackSession = await resolveOAuthCallback();
-    const sessionResult = callbackSession
-      ? { data: { session: callbackSession }, error: null }
-      : await getSessionSafe();
-    const initialSession = sessionResult.data?.session || null;
-
-    if (sessionResult.error) {
-      console.warn("[NaZerak Auth] initial session lookup failed:", sessionResult.error.message);
-      if (document.body.dataset.cabinet && !state.user) {
-        showMessage(
-          "Проверка авторизации заняла слишком долго. Можно повторить вход.",
-          "error"
-        );
-        setAuthStatus("DISCORD READY", "ready");
-        setAccountView("guest");
-      }
-    }
+    const initialSession = await waitForInitialAuthSession();
 
     if (document.body.dataset.cabinet) {
       await renderCabinet(initialSession);
