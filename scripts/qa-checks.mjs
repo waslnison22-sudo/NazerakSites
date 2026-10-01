@@ -149,6 +149,10 @@ for (const [name, page] of [
 }
 
 if (!read("404.html").includes("styles.css?v=10")) fail.push("404.html styles cache version is stale");
+const sitemap = read("sitemap.xml");
+if (sitemap.includes("cabinet.html") || sitemap.includes("forum.html")) fail.push("sitemap contains a noindex page");
+if (!sitemap.includes("https://waslnison22-sudo.github.io/NazerakSites/")) fail.push("sitemap homepage URL is missing");
+
 
 if (!index.includes("script.js") || !cabinet.includes("script.js") || !read("forum.html").includes("script.js")) {
   fail.push("script.js include missing from a published page");
