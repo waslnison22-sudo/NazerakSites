@@ -814,6 +814,27 @@
     }
   };
 
+  const syncPageAuthState = async () => {
+    if (!client) return;
+
+    const result = await getSessionSafe(6000);
+    if (result.error) {
+      console.warn("[NaZerak Auth] background session sync failed:", result.error.message);
+      return;
+    }
+
+    const session = result.data?.session || null;
+
+    if (document.body.dataset.cabinet) {
+      await renderCabinet(session);
+      return;
+    }
+
+    state.user = session?.user || null;
+    state.loading = false;
+    renderAuthLinks();
+  };
+
   const getSessionSafe = async (timeoutMs = 8000) => {
     if (!client) {
       return {
