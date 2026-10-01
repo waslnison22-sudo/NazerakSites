@@ -777,39 +777,47 @@
   const resolveOAuthCallback = async () => {
     if (!client) return null;
 
-    const params = new URLSearchParams(window.location.search);
-    const code = params.get("code");
-
-    if (!code) return null;
+    const hasOAuthCallback =
+      new URLSearchParams(window.location.search).has("code") ||
+      window.location.hash.includes("access_token=") ||
+      window.location.hash.includes("error=");
 
     try {
-      const existing = await client.auth.getSession();
-      if (existing.data?.session) return existing.data.session;
-
-      const { data, error } = await withTimeout(
-        client.auth.exchangeCodeForSession(code),
-        10000,
-        "Обработка входа через Discord превысила 10 секунд."
+      // OAuth URL handling is deliberately owned by Supabase Auth. The client
+      // is created with skipAutoInitialize so this call happens only after the
+      // onAuthStateChange subscriber is registered. That removes the race where
+      // Supabase could consume the callback before our page listener existed.
+      const result = await withTimeout(
+        client.auth.initialize(),
+        12000,
+        "Инициализация входа через Discord превысила 12 секунд."
       );
 
-      if (error) throw error;
+      if (result?.error) throw result.error;
 
-      window.history.replaceState(
-        null,
-        "",
-        window.location.pathname + (window.location.hash || "")
-      );
+      if (hasOAuthCallback || window.location.search) {
+        window.history.replaceState(
+          null,
+          "",
+          window.location.pathname
+        );
+      }
 
-      return data?.session || null;
+      return result?.data?.session || null;
     } catch (error) {
       console.warn(
-        "[NaZerak Auth] OAuth callback exchange failed:",
+        "[NaZerak Auth] OAuth/session initialization failed:",
         error instanceof Error ? error.message : String(error)
       );
+
+      const message = error instanceof Error ? error.message : String(error || "");
       showMessage(
-        "Discord подтвердил вход, но сайт не смог сохранить сессию. Нажми «Повторить вход через Discord».",
+        hasOAuthCallback
+          ? "Discord завершил вход, но сайт не смог открыть личный кабинет. Нажми «Повторить вход через Discord» и повтори вход."
+          : message || "Не удалось проверить авторизацию. Попробуй ещё раз.",
         "error"
       );
+
       return null;
     }
   };
@@ -976,7 +984,8 @@
           flowType: "pkce",
           persistSession: true,
           autoRefreshToken: true,
-          detectSessionInUrl: true
+          detectSessionInUrl: true,
+          skipAutoInitialize: true
         }
       });
     } catch (error) {
