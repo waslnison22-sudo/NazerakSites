@@ -17,7 +17,8 @@ const requiredFiles = [
   "README.md",
   "AUTH_SETUP.md",
   "robots.txt",
-  "sitemap.xml"
+  "sitemap.xml",
+  "CNAME"
 ];
 
 const bannedTokens = [
@@ -50,6 +51,8 @@ const auth = read("auth.js");
 const loader = read("supabase-loader.js");
 const config = read("auth-config.js");
 const schema = read("supabase/schema.sql");
+const cname = read("CNAME").trim();
+if (cname !== "nazerak.is-a.dev") fail.push(`unexpected CNAME: ${cname}`);
 
 const allSource = [index, cabinet, css, script, auth, loader, config, schema].join("\n");
 
