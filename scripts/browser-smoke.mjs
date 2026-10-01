@@ -24,10 +24,14 @@ const attachDiagnostics = (page, name) => {
       /waslnison22-sudo\.github\.io\/NazerakSites\/(?:[^/]+\.(?:css|js)|[^/]+\/[^/]+\.(?:css|js))/.test(item.url)
     );
 
-    if (consoleErrors.length || pageErrors.length || localFailures.length) {
+    const unexpectedConsoleErrors = name === "404"
+      ? consoleErrors.filter((message) => !message.includes("status of 404"))
+      : consoleErrors;
+
+    if (unexpectedConsoleErrors.length || pageErrors.length || localFailures.length) {
       throw new Error(
         name + " diagnostics failed: " +
-        JSON.stringify({ consoleErrors, pageErrors, localFailures })
+        JSON.stringify({ consoleErrors: unexpectedConsoleErrors, pageErrors, localFailures })
       );
     }
   };
