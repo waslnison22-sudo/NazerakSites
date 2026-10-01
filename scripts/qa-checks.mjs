@@ -21,7 +21,8 @@ const requiredFiles = [
   "forum.html",
   "favicon.svg",
   "supabase/migrations/20260930205000_harden_frontend_column_privileges.sql",
-  "scripts/runtime-smoke.mjs"
+  "scripts/runtime-smoke.mjs",
+  "scripts/browser-smoke.mjs"
 ];
 
 const bannedTokens = [
