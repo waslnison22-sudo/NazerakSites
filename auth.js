@@ -755,7 +755,7 @@
 
       window.setTimeout(() => {
         if (document.body.dataset.cabinet) {
-          void renderCabinet();
+          void renderCabinet(session || null);
         }
       }, 0);
     });
