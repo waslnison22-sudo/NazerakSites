@@ -65,7 +65,12 @@
       <section class="account-view" data-account-view="loading">
         <div class="account-loading">
           <span class="account-spinner"></span>
-          <strong>Проверяем сессию…</strong>
+          <strong>Проверяем авторизацию…</strong>
+          <p>Если проверка не завершится, можно сразу повторить её или вернуться на главную.</p>
+          <div class="account-loading__actions">
+            <a class="button button--ghost" href="./"><span>На главную</span><span aria-hidden="true">←</span></a>
+            <button class="button button--primary" type="button" data-auth-retry><span>Повторить проверку</span><span aria-hidden="true">↻</span></button>
+          </div>
         </div>
       </section>
 
