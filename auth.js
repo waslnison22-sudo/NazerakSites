@@ -845,7 +845,7 @@
     const nextUserId = session?.user?.id || null;
     const currentUserId = state.user?.id || null;
 
-    if (document.body.dataset.cabinet) {
+    if (document.body.hasAttribute("data-cabinet")) {
       if (nextUserId === currentUserId && nextUserId) {
         state.user = session.user;
         state.loading = false;
@@ -909,7 +909,7 @@
   };
 
   const renderCabinet = async (session = undefined) => {
-    if (!document.body.dataset.cabinet) return;
+    if (!document.body.hasAttribute("data-cabinet")) return;
 
     authDebug("CABINET_RENDER_START");
     const sequence = ++renderSequence;
@@ -1068,7 +1068,7 @@
 
     // Never leave the user on a dead loading screen while the external
     // Supabase SDK is being fetched. Guest UI is the safe default.
-    if (document.body.dataset.cabinet) {
+    if (document.body.hasAttribute("data-cabinet")) {
       setAccountView("loading");
       setAuthStatus("CONNECTING AUTH", "loading");
     }
@@ -1105,7 +1105,7 @@
     if (!configured || !client) {
       renderAuthLinks();
 
-      if (document.body.dataset.cabinet) {
+      if (document.body.hasAttribute("data-cabinet")) {
         showLoginFallback(
           "Войти в NaZerak.",
           "Авторизация сейчас недоступна. Сам кабинет не блокируется.",
@@ -1125,7 +1125,7 @@
         state.profile = null;
         state.loading = false;
         renderAuthLinks();
-        if (document.body.dataset.cabinet) {
+        if (document.body.hasAttribute("data-cabinet")) {
           setAuthStatus("DISCORD READY", "ready");
           setAccountView("guest");
         }
@@ -1141,9 +1141,9 @@
         state.loading = false;
         renderAuthLinks();
 
-        if (document.body.dataset.cabinet && session?.user) {
+        if (document.body.hasAttribute("data-cabinet") && session?.user) {
           void requestCabinetRender(session);
-        } else if (!document.body.dataset.cabinet) {
+        } else if (!document.body.hasAttribute("data-cabinet")) {
           return;
         } else if (event === "USER_UPDATED") {
           void renderCabinet(null);
@@ -1176,7 +1176,7 @@
 
     const initialResult = await waitForInitialSession();
 
-    if (document.body.dataset.cabinet) {
+    if (document.body.hasAttribute("data-cabinet")) {
       if (initialResult.error) {
         showMessage(
           "Не удалось проверить авторизацию. Нажми «Повторить проверку» и попробуй снова.",
@@ -1189,7 +1189,7 @@
       }
     }
     authDebug("INIT_FINISHED");
-    if (!document.body.dataset.cabinet) {
+    if (!document.body.hasAttribute("data-cabinet")) {
       state.user = initialResult.session?.user || state.user || null;
       state.loading = false;
       renderAuthLinks();
