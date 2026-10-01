@@ -378,6 +378,7 @@ await testStaticPage({
 await testOAuthStart();
 await testCabinetAnonymous({ width: 1440, height: 1000 }, "cabinet anonymous desktop");
 await testCabinetAnonymous({ width: 390, height: 844 }, "cabinet anonymous mobile");
+await testCabinetAnonymous({ width: 768, height: 1024 }, "cabinet tablet");
 await testCabinetSignedIn();
 
 console.log("NaZerak browser smoke PASSED");
