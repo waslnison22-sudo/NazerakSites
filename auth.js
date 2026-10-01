@@ -1011,7 +1011,7 @@
     // Never leave the user on a dead loading screen while the external
     // Supabase SDK is being fetched. Guest UI is the safe default.
     if (document.body.dataset.cabinet) {
-      setAccountView("guest");
+      setAccountView("loading");
       setAuthStatus("CONNECTING AUTH", "loading");
     }
 
