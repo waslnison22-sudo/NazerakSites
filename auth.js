@@ -1010,7 +1010,11 @@
     }
     try {
       if (window.NAZERAK_SUPABASE_READY instanceof Promise) {
-        await window.NAZERAK_SUPABASE_READY;
+        await withTimeout(
+          window.NAZERAK_SUPABASE_READY,
+          9000,
+          "Загрузка Supabase SDK превысила 9 секунд."
+        );
       }
 
       const factory = window.supabase?.createClient;
