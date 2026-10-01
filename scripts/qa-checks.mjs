@@ -136,7 +136,7 @@ duplicateIds(cabinet, "cabinet.html");
 
 for (const asset of [
   "auth-config.js?v=3",
-  "supabase-loader.js?v=2",
+  "supabase-loader.js?v=3",
   "auth.js?v=5"
 ]) {
   if (!cabinet.includes(asset)) {
