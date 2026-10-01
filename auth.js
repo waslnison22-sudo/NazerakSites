@@ -414,13 +414,22 @@
     }
 
     try {
-      const { error } = await client.auth.signInWithOAuth({
-        provider: "discord",
-        options: {
-          redirectTo: redirectTarget.href,
-          scopes: "identify"
-        }
-      });
+      const result = await Promise.race([
+        client.auth.signInWithOAuth({
+          provider: "discord",
+          options: {
+            redirectTo: redirectTarget.href,
+            scopes: "identify"
+          }
+        }),
+        new Promise((resolve) => {
+          window.setTimeout(
+            () => resolve({ error: new Error("Discord OAuth не ответил за 8 секунд.") }),
+            8000
+          );
+        })
+      ]);
+      const { error } = result;
 
       if (error) {
         setBusy(button, false);
