@@ -137,7 +137,7 @@ duplicateIds(cabinet, "cabinet.html");
 for (const asset of [
   "auth-config.js?v=5",
   "supabase-loader.js?v=5",
-  "auth.js?v=9"
+  "auth.js?v=10"
 ]) {
   if (!cabinet.includes(asset)) {
     fail.push(`cabinet auth include missing: ${asset}`);
@@ -187,6 +187,7 @@ if (script.includes("loadServerStatus") || script.includes("SERVER_STATUS_SOURCE
 if (/online-статус.*status API/i.test(cabinet)) fail.push("cabinet still promises live server status");
 if (!cabinet.includes("data-auth-retry") || !cabinet.includes("data-login-title")) fail.push("cabinet auth fallback controls are missing");
 if (!auth.includes("const resolveOAuthCallback")) fail.push("OAuth callback exchange guard is missing");
+if (!auth.includes("const syncPageAuthState")) fail.push("background auth synchronization is missing");
 if (!auth.includes('label.textContent = state.user ? "Кабинет" : "Войти";')) fail.push("global auth link label state is missing");
 if (/https:\/\/minecraftstatus\.com/i.test(read("404.html"))) fail.push("obsolete status host remains in 404 CSP");
 if (/\.live-panel|\.section--live|#server-status-text|\.world-map\\b|\.hero-server-mark\\b/.test(css)) fail.push("obsolete live/dashboard CSS remains");
