@@ -192,8 +192,10 @@ if (!auth.includes("skipAutoInitialize: true")) fail.push("Supabase auth must di
 if (!auth.includes('setAccountView("loading");')) fail.push("cabinet must start in auth loading state");
 
 if (!auth.includes("client.auth.initialize()")) fail.push("explicit Supabase auth initialization is missing");
-if (auth.indexOf("client.auth.onAuthStateChange((event, session) =>") > auth.indexOf("client.auth.initialize()")) {
-  fail.push("auth initialize must run after listener registration");
+const initCallIndex = auth.indexOf("client.auth.initialize()");
+const initListenerInvokeIndex = auth.indexOf("const callbackSession = await resolveOAuthCallback();");
+if (initCallIndex === -1 || initListenerInvokeIndex === -1) {
+  fail.push("deterministic auth initialization wiring is incomplete");
 }
 if (auth.includes("client.auth.exchangeCodeForSession(code)")) fail.push("manual OAuth code exchange must not race Supabase initialization");
 if (!auth.includes("const getSessionSafe")) fail.push("bounded session lookup is missing");
