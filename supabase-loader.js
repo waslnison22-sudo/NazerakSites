@@ -1,10 +1,9 @@
 (() => {
   "use strict";
 
-  const VERSION = "2.117.2";
   const SOURCES = [
-    `https://cdn.jsdelivr.net/npm/@supabase/supabase-js@${VERSION}/dist/umd/supabase.js`,
-    `https://unpkg.com/@supabase/supabase-js@${VERSION}/dist/umd/supabase.js`
+    "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2",
+    "https://unpkg.com/@supabase/supabase-js@2"
   ];
 
   const loadScript = (src) => new Promise((resolve, reject) => {
@@ -12,7 +11,7 @@
     const timeout = window.setTimeout(() => {
       script.remove();
       reject(new Error("Таймаут загрузки " + src));
-    }, 4000);
+    }, 12000);
 
     script.src = src;
     script.async = false;
@@ -30,7 +29,7 @@
 
   window.NAZERAK_SUPABASE_READY = (async () => {
     if (typeof window.supabase?.createClient === "function") {
-      return { source: "preloaded", version: VERSION };
+      return { source: "preloaded" };
     }
 
     const errors = [];
@@ -40,7 +39,7 @@
         await loadScript(source);
 
         if (typeof window.supabase?.createClient === "function") {
-          return { source, version: VERSION };
+          return { source };
         }
 
         errors.push(source + ": global createClient not found");
