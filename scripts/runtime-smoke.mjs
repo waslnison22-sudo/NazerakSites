@@ -48,12 +48,20 @@ if (!fail.length) {
   for (const table of ["profiles", "media_applications"]) {
     try {
       const response = await request(`/rest/v1/${table}?select=*&limit=1`);
+      if (response.status === 401) {
+        info.push(`${table} Data API correctly blocks anonymous access (HTTP 401).`);
+        continue;
+      }
+
       if (!response.ok) {
-        fail.push(`${table} Data API returned HTTP ${response.status}`);
+        fail.push(`${table} Data API returned unexpected HTTP ${response.status}`);
       } else {
         const data = await response.json();
-        if (!Array.isArray(data)) fail.push(`${table} Data API did not return an array`);
-        else info.push(`${table} Data API reachable (${data.length} row(s) visible to public key).`);
+        if (!Array.isArray(data)) {
+          fail.push(`${table} Data API did not return an array`);
+        } else {
+          fail.push(`${table} is publicly readable; expected anonymous access to be blocked`);
+        }
       }
     } catch (error) {
       fail.push(`${table} smoke test failed: ${error instanceof Error ? error.message : String(error)}`);
