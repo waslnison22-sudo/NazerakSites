@@ -215,5 +215,4 @@
     });
   });
 
-  void loadServerStatus();
 })();
