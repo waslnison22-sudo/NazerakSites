@@ -803,56 +803,25 @@
     await loadMediaApplications(state.user);
   };
 
-  let initialAuthSession = null;
-  let initialAuthSessionResolved = false;
-  let resolveInitialAuthSession = null;
-  const initialAuthSessionPromise = new Promise((resolve) => {
-    resolveInitialAuthSession = (session) => {
-      if (initialAuthSessionResolved) return;
-      initialAuthSessionResolved = true;
-      initialAuthSession = session || null;
-      resolve(initialAuthSession);
-    };
-  });
+  const waitForInitialSession = async () => {
+    if (!client) return { session: null, error: new Error("Supabase client не инициализирован.") };
 
-  const waitForInitialAuthSession = async () => {
-    if (!client) return null;
+    const result = await getSessionSafe(9000);
+    if (result.data?.session?.user) {
+      return { session: result.data.session, error: null };
+    }
 
-    try {
-      const session = await withTimeout(
-        initialAuthSessionPromise,
-        10000,
-        "Ожидание состояния авторизации превысило 10 секунд."
-      );
-      if (session?.user) return session;
-    } catch (error) {
+    if (result.error) {
       console.warn(
-        "[NaZerak Auth] initial auth event wait failed:",
-        error instanceof Error ? error.message : String(error)
+        "[NaZerak Auth] initial session lookup failed:",
+        result.error.message
       );
     }
 
-    // OAuth callback/session storage can finish just after the initial event.
-    // Re-read the session a few times before falling back to the guest screen.
-    for (const delayMs of [0, 350, 900, 1600]) {
-      if (delayMs) {
-        await new Promise((resolve) => window.setTimeout(resolve, delayMs));
-      }
-
-      const result = await getSessionSafe(4500);
-      if (result.data?.session?.user) {
-        return result.data.session;
-      }
-
-      if (result.error) {
-        console.warn(
-          "[NaZerak Auth] session retry failed:",
-          result.error.message
-        );
-      }
-    }
-
-    return initialAuthSession?.user ? initialAuthSession : null;
+    return {
+      session: null,
+      error: result.error || null
+    };
   };
 
   const syncPageAuthState = async () => {
@@ -1108,18 +1077,9 @@
       return;
     }
 
-    // Supabase initializes the browser auth client automatically. Subscribe
-    // immediately after client creation so the initial OAuth/session event is captured.
+    // Subscribe immediately after client creation so future OAuth/session events
+    // are captured. The initial page state is resolved from getSession().
     client.auth.onAuthStateChange((event, session) => {
-      if (event === "INITIAL_SESSION" || (event === "SIGNED_IN" && session)) {
-        resolveInitialAuthSession?.(session || null);
-        if (session?.user) {
-          state.user = session.user;
-          state.loading = false;
-          renderAuthLinks();
-        }
-      }
-
       if (event === "SIGNED_OUT") {
         renderSequence += 1;
         state.user = null;
@@ -1138,16 +1098,18 @@
         event === "SIGNED_IN" ||
         event === "USER_UPDATED"
       ) {
-        window.setTimeout(() => {
-          if (document.body.dataset.cabinet) {
-            void renderCabinet(session || null);
-            return;
-          }
+        state.user = session?.user || null;
+        state.loading = false;
+        renderAuthLinks();
 
-          state.user = session?.user || null;
-          state.loading = false;
-          renderAuthLinks();
-        }, 0);
+        if (document.body.dataset.cabinet && session?.user) {
+          void renderCabinet(session);
+        } else if (!document.body.dataset.cabinet) {
+          return;
+        } else if (event === "USER_UPDATED") {
+          void renderCabinet(null);
+        }
+
         return;
       }
 
@@ -1172,12 +1134,21 @@
       }
     });
 
-    const initialSession = await waitForInitialAuthSession();
+    const initialResult = await waitForInitialSession();
 
     if (document.body.dataset.cabinet) {
-      await renderCabinet(initialSession);
+      if (initialResult.error) {
+        showMessage(
+          "Не удалось проверить авторизацию. Нажми «Повторить проверку» и попробуй снова.",
+          "error"
+        );
+        setAuthStatus("AUTH TIMEOUT", "error");
+        setAccountView("guest");
+      } else {
+        await renderCabinet(initialResult.session);
+      }
     } else {
-      state.user = initialSession?.user || state.user || null;
+      state.user = initialResult.session?.user || state.user || null;
       state.loading = false;
       renderAuthLinks();
     }
