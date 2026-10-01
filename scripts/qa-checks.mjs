@@ -153,6 +153,9 @@ if (!read("404.html").includes("styles.css?v=10")) fail.push("404.html styles ca
 const sitemap = read("sitemap.xml");
 if (sitemap.includes("cabinet.html") || sitemap.includes("forum.html")) fail.push("sitemap contains a noindex page");
 if (!sitemap.includes("https://waslnison22-sudo.github.io/NazerakSites/")) fail.push("sitemap homepage URL is missing");
+const robots = read("robots.txt");
+if (!robots.includes("Disallow: /cabinet.html") || !robots.includes("Disallow: /forum.html")) fail.push("robots must block noindex account/forum routes");
+if (!robots.includes("Sitemap: https://waslnison22-sudo.github.io/NazerakSites/sitemap.xml")) fail.push("robots sitemap URL is missing");
 
 
 if (!index.includes("script.js") || !cabinet.includes("script.js") || !read("forum.html").includes("script.js")) {
