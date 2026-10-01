@@ -185,7 +185,6 @@ const testCabinetAnonymous = async (viewport, name) => {
     }
     if (state.statusRole !== "status" || state.statusLive !== "polite") {
       throw new Error(name + " auth status is not accessible: " + JSON.stringify(state));
-      throw new Error(name + " reached an invalid anonymous state: " + JSON.stringify(state));
     }
 
     await assertAccessibleControls(page, name);
