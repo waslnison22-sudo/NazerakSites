@@ -394,3 +394,51 @@ html.js-ready .reveal.is-visible{opacity:1;transform:none}
 
 .account-retry{min-height:36px;margin-top:12px;font-size:9px}
 .button[hidden]{display:none!important}
+
+
+/* Account v2: calm, compact, task-first layout */
+.account-container{max-width:900px}
+.account-page{padding-top:96px}
+.account-hero{padding-bottom:17px;margin-bottom:14px}
+.account-hero h1{font-size:clamp(30px,4vw,42px)}
+.account-hero p{font-size:11px}
+.login-panel--plain{display:block;min-height:0;max-width:680px;margin:12px auto 0}
+.login-panel--plain .login-panel__content{padding:clamp(22px,4vw,38px)}
+.login-panel--plain .login-panel__content h2{font-size:clamp(28px,4vw,38px)}
+.account-layout{grid-template-columns:1fr;gap:10px}
+.account-panel--identity{padding:17px 20px}
+.account-profile{margin:0;gap:13px}
+.account-avatar{width:48px;height:48px;border-radius:12px}
+.account-profile__text{min-width:0}
+.account-profile h2{font-size:18px}
+.account-profile p{margin-top:3px}
+.account-connected{margin-top:5px}
+.account-signout{margin:0 0 0 auto;min-height:36px;flex:0 0 auto}
+.account-panel--minecraft{padding:20px}
+.account-panel--minecraft h2{margin-top:10px}
+.account-panel--minecraft .account-panel__description{max-width:600px}
+.account-panel--media{grid-column:auto}
+.media-disclosure__summary{min-height:64px}
+.media-disclosure__body{padding-top:2px}
+.media-paused{padding:14px 0 16px}
+.media-paused h3{font-size:15px}
+.media-paused p{max-width:600px}
+.media-history{padding-top:12px}
+.account-footer-link{margin-top:12px}
+@media(max-width:760px){
+ .account-container{width:min(calc(100% - 28px),var(--container))}
+ .account-page{padding-top:82px}
+ .account-profile{align-items:center}
+ .account-profile__text{flex:1}
+ .account-signout{padding-inline:10px}
+ .account-panel--identity{padding:14px}
+ .account-panel--minecraft{padding:17px}
+ .media-disclosure__summary{min-height:62px;padding:12px}
+ .media-disclosure__body{padding:0 12px 13px}
+ .media-paused{padding:13px 0 15px}
+}
+@media(max-width:380px){
+ .account-signout{font-size:0;min-width:36px;padding:0;justify-content:center}
+ .account-signout span[aria-hidden="true"]{font-size:13px}
+ .account-profile h2{font-size:16px}
+}
