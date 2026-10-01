@@ -4,14 +4,14 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#08090b">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://unpkg.com; connect-src 'self' https://ujlbyzvdsncvqbrhasuw.supabase.co https://minecraftstatus.com https://api.mcstatus.io; img-src 'self' data: https:; style-src 'self'; style-src-attr 'unsafe-inline'; font-src 'self'; object-src 'none'; base-uri 'self'; frame-src 'none'; form-action 'self';">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://unpkg.com; connect-src 'self' https://ujlbyzvdsncvqbrhasuw.supabase.co; img-src 'self' data: https:; style-src 'self'; style-src-attr 'unsafe-inline'; font-src 'self'; object-src 'none'; base-uri 'self'; frame-src 'none'; form-action 'self';">
   <meta name="description" content="NaZerak — независимый Minecraft-проект, сервер и сообщество.">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <meta property="og:type" content="website">
   <meta property="og:title" content="NaZerak — Minecraft project">
   <meta property="og:description" content="Сервер NaZerak, сообщество, подключение и личный кабинет.">
   <link rel="icon" href="./favicon.svg?v=4" type="image/svg+xml">
-  <link rel="stylesheet" href="./styles.css?v=4">
+  <link rel="stylesheet" href="./styles.css?v=5">
   <title>NaZerak — Minecraft project</title>
 </head>
 <body>
@@ -58,26 +58,13 @@
           <div class="hero__meta"><span><i class="status-dot status-dot--live"></i>NaZerak online info</span><span class="hero__meta-separator">•</span><span>Java / 1.21.11</span></div>
         </div>
 
-        <div class="hero-visual-wrap reveal reveal--delay" data-parallax="0.08">
-          <div class="hero-visual">
-            <div class="hero-visual__header"><span>NAZERAK / SERVER</span><span>01</span></div>
-            <div class="hero-visual__main">
-              <div class="hero-server-mark" aria-hidden="true"><span></span></div>
-              <div class="hero-server-copy">
-                <span class="section-kicker">PRIMARY NODE</span>
-                <strong>nazehard.rustix.cc</strong>
-                <small>Minecraft Java · 1.21.11</small>
-              </div>
-            </div>
-            <div class="hero-visual__stats">
-              <div><span>STATUS</span><strong data-server-hero-status>CHECKING</strong></div>
-              <div><span>PLAYERS</span><strong data-server-hero-players>— / —</strong></div>
-              <div><span>PING</span><strong data-server-hero-ping>—</strong></div>
-            </div>
-            <div class="hero-visual__footer"><span>NAZERAK</span><span>LIVE SERVER DATA</span></div>
+        <div class="hero-visual-wrap reveal reveal--delay" data-parallax="0.04">
+          <div class="hero-art-placeholder" role="img" aria-label="Место для будущего фирменного изображения NaZerak">
+            <span class="hero-art-placeholder__eyebrow">NAZERAK / WORLD</span>
+            <span class="hero-art-placeholder__mark" aria-hidden="true">NZ</span>
+            <span class="hero-art-placeholder__caption">ИГРОВОЙ МИР БУДЕТ ПОКАЗАН ЗДЕСЬ</span>
           </div>
         </div>
-      </div>
       <a class="scroll-cue" href="#about" aria-label="Прокрутить к разделу о проекте"><span>SCROLL</span><span class="scroll-cue__line"></span><span>↓</span></a>
     </section>
 
@@ -106,16 +93,9 @@
       <div class="container">
         <div class="world-panel reveal">
           <div class="world-panel__visual">
-            <div class="world-map" aria-hidden="true">
-              <span class="world-map__grid"></span>
-              <span class="world-map__route world-map__route--one"></span>
-              <span class="world-map__route world-map__route--two"></span>
-              <span class="world-map__point world-map__point--one"></span>
-              <span class="world-map__point world-map__point--two"></span>
-              <span class="world-map__point world-map__point--three"></span>
-              <span class="world-map__label world-map__label--one">SPAWN</span>
-              <span class="world-map__label world-map__label--two">WORLD</span>
-              <span class="world-map__label world-map__label--three">01 / 21</span>
+            <div class="world-screenshot-placeholder" aria-label="Место для будущих скриншотов сервера">
+              <strong>СКРИНШОТЫ NAZERAK</strong>
+              <span>Изображения игрового мира появятся здесь</span>
             </div>
           </div>
           <div class="world-panel__content">
@@ -123,23 +103,6 @@
             <h2>Карта будет расти вместе с проектом.</h2>
             <p>Этот раздел специально оставлен чистым: сюда можно добавить карту, события, сезоны и подтверждённые детали серверной концепции без перелома всей страницы.</p>
             <div class="world-stats"><div><span>VERSION</span><strong>1.21.11</strong></div><div><span>SERVER</span><strong>NAZERAK</strong></div><div><span>ADDRESS</span><strong>RUSTIX.CC</strong></div></div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="section section--live" id="server">
-      <div class="container">
-        <div class="live-panel reveal">
-          <div class="live-panel__main">
-            <div class="live-panel__heading"><span class="section-kicker">03 / SERVER STATUS</span><span class="live-source-dot"><i></i> LIVE DATA</span></div>
-            <h2><span id="server-status-text" role="status" aria-live="polite">Проверяем сервер…</span></h2><p id="server-status-detail" aria-live="polite">Получаем актуальный ответ от Minecraft-сервера.</p>
-            <div class="live-stats"><div class="live-stat"><span>ИГРОКИ</span><strong id="server-players">— / —</strong></div><div class="live-stat"><span>ЗАДЕРЖКА</span><strong id="server-ping">—</strong></div><div class="live-stat"><span>ВЕРСИЯ</span><strong id="server-reported-version">—</strong></div></div>
-          </div>
-          <div class="live-panel__side">
-            <div class="live-panel__server"><span>SERVER</span><strong>nazehard.rustix.cc</strong><small>Java / 1.21.11</small></div>
-            <button class="live-refresh" type="button" id="server-refresh" aria-label="Обновить статус сервера" title="Обновить"><span>Обновить</span><b>↻</b></button>
-            <a class="live-attribution" href="https://minecraftstatus.com" target="_blank" rel="nofollow noopener noreferrer">Status by MinecraftStatus.com</a>
           </div>
         </div>
       </div>
@@ -211,6 +174,6 @@
 
   <noscript><div class="noscript-message">Для интерактивных функций NaZerak требуется включить JavaScript.</div></noscript>
 
-  <script src="./script.js?v=3" defer></script>
+  <script src="./script.js?v=4" defer></script>
 </body>
 </html>
