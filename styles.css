@@ -1948,3 +1948,5 @@ html.js-ready .reveal {
 .nav-forum:hover, .nav-forum:focus-visible { color: var(--text); }
 .button, .icon-button, .copy-button, .nav-toggle { cursor: pointer; }
 .button[disabled], .copy-button[disabled] { opacity: .6; cursor: wait; }
+
+.forum-section { padding-top: 70px; padding-bottom: 100px; }
