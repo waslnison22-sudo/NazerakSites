@@ -365,7 +365,7 @@
   };
 
   const loadProfile = async (user) => {
-    if (!client || !user) return null;
+    if (!client || !user) return { status: "error", data: null };
 
     try {
       const { data, error } = await withTimeout(
@@ -380,16 +380,18 @@
 
       if (error) {
         console.warn("[NaZerak Auth] profiles read unavailable:", error.message);
-        return undefined;
+        return { status: "error", data: null };
       }
 
-      return data;
+      return data
+        ? { status: "found", data }
+        : { status: "missing", data: null };
     } catch (error) {
       console.warn(
         "[NaZerak Auth] profiles read timed out or failed:",
         error instanceof Error ? error.message : String(error)
       );
-      return null;
+      return { status: "error", data: null };
     }
   };
 
@@ -493,9 +495,11 @@
   const ensureProfile = async (user) => {
     if (!client || !user) return null;
 
-    const profile = await loadProfile(user);
-    if (profile === undefined) return null;
-    if (profile) return profile;
+    const lookup = await loadProfile(user);
+    if (lookup.status === "found") return lookup.data;
+    // Never interpret a timeout/RLS/API error as an absent row: doing so could
+    // trigger an unauthorized or duplicate INSERT and obscure the real failure.
+    if (lookup.status !== "missing") return null;
 
     try {
       const { data, error } = await withTimeout(
@@ -514,7 +518,8 @@
         error.code === "23505" ||
         /duplicate|unique/i.test(error.message || "")
       ) {
-        return await loadProfile(user);
+        const retry = await loadProfile(user);
+        return retry.status === "found" ? retry.data : null;
       }
 
       console.warn("[NaZerak Auth] profile initialization unavailable:", error.message);
@@ -805,7 +810,9 @@
       "Заявка отправлена. Мы рассмотрим её через систему NaZerak.",
       "success"
     );
-    await loadMediaApplications(state.user);
+    if (qs("[data-media-disclosure]")?.open) {
+      await loadMediaApplications(state.user, renderSequence);
+    }
   };
 
   const waitForInitialSession = async () => {
@@ -903,7 +910,14 @@
     state.profile = profile;
     renderUser(user, profile);
 
-    await loadMediaApplications(user, sequence);
+    if (profile === null) {
+      showMessage(
+        "Профиль временно не удалось загрузить. Основные данные аккаунта доступны; попробуй обновить кабинет позже.",
+        "error"
+      );
+    } else {
+      showMessage("");
+    }
   };
 
   const renderCabinet = async (session = undefined) => {
@@ -1079,6 +1093,14 @@
 
     qsa("#media-application-form").forEach((form) => {
       form.addEventListener("submit", submitMediaApplication);
+    });
+
+    qsa("[data-media-disclosure]").forEach((disclosure) => {
+      disclosure.addEventListener("toggle", () => {
+        if (disclosure.open && state.user) {
+          void loadMediaApplications(state.user, renderSequence);
+        }
+      });
     });
 
     await bootstrapClient();
