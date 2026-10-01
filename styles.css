@@ -1773,39 +1773,12 @@ xt);
     flex: 1 1 auto;
   }
 
-  .hero-visual__main {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .hero-server-mark {
-    width: 66px;
-    height: 66px;
-  }
-
-  .hero-server-mark::before {
-    left: 14px;
-    right: 14px;
-    top: 31px;
-  }
-
-  .hero-server-mark::after {
-    top: 14px;
-    bottom: 14px;
-    left: 31px;
-  }
-
-  .hero-server-copy strong {
-    font-size: 22px;
-  }
-
   .scroll-cue {
     display: none;
   }
 
   .section-head h2,
   .world-panel__content h2,
-  .live-panel__main h2,
   .connect-head h2,
   .partner-panel__content h2 {
     font-size: 36px;
