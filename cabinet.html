@@ -136,6 +136,9 @@
               </div>
               <div class="account-form__foot"><span class="verification-pill">НЕ ПОДТВЕРЖДЁН</span><span>3–16 символов: A–Z, 0–9, _</span></div>
             </form>
+            <button class="button button--ghost account-retry" type="button" data-profile-retry hidden>
+              <span>Повторить загрузку профиля</span><span aria-hidden="true">↻</span>
+            </button>
           </article>
 
           <details class="account-panel account-panel--media" id="media-application" data-media-disclosure>
@@ -160,6 +163,9 @@
                 <div class="media-history__head"><span>ИСТОРИЯ МОИХ ЗАЯВОК</span><span>ACCOUNT</span></div>
                 <div class="media-history__list" data-media-list></div>
                 <p class="media-history__empty" data-media-empty>История появится здесь, если у аккаунта есть ранее отправленные заявки.</p>
+                <button class="button button--ghost account-retry" type="button" data-media-retry hidden>
+                  <span>Повторить загрузку истории</span><span aria-hidden="true">↻</span>
+                </button>
               </div>
             </div>
           </details>
