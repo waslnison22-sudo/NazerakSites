@@ -196,6 +196,7 @@ if (!/\.from\(["']profiles["']\)[\s\S]{0,220}\.insert\(\{\s*id:\s*user\.id/.test
 if (/nazerak\.is-a\.dev\/cabinet\.html/i.test(read("AUTH_SETUP.md"))) fail.push("obsolete custom-domain auth URL remains");
 if (/server-status-text|server-players|data-server-hero/.test(index)) fail.push("obsolete server statistics markup remains");
 if (!index.includes("hero-art-placeholder") || !index.includes("world-screenshot-placeholder")) fail.push("artwork or screenshot placeholder missing");
+if (!index.includes('data-auth-link-label>Войти')) fail.push("homepage auth link must default to neutral login state");
 if (!index.includes('href="./forum.html"') || !cabinet.includes('href="./forum.html"')) fail.push("forum navigation link missing");
 if (auth.includes(".from(\"profiles\")\n      .upsert(")) fail.push("profile initialization still uses upsert");
 if (script.includes(".magnetic") || script.includes("[data-parallax]")) fail.push("unstable motion controls remain");
@@ -211,6 +212,8 @@ for (const token of [
   "grant insert (id, minecraft_username)",
   "grant update (minecraft_username, updated_at)",
   "grant insert (user_id, channel_url, message)",
+  "grant select on public.profiles to authenticated",
+  "grant select on public.media_applications to authenticated",
   "revoke insert, update, delete, references, trigger, truncate"
 ]) {
   if (!schema.includes(token)) fail.push(`schema guard missing: ${token}`);
