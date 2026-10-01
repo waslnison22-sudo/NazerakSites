@@ -51,6 +51,8 @@ const runRealBrowserSmoke = async () => {
       userVisible: !document.querySelector('[data-account-view="user"]')?.hidden,
       configVisible: !document.querySelector('[data-account-view="config"]')?.hidden,
       authObject: Boolean(window.NaZerakAuth),
+      authConfigured: window.NaZerakAuth?.configured ?? null,
+      authUserId: window.NaZerakAuth?.user?.id || null,
       supabaseGlobal: Boolean(window.supabase),
       createClient: typeof window.supabase?.createClient,
       supabaseReadyType: typeof window.NAZERAK_SUPABASE_READY,
