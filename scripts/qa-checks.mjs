@@ -212,8 +212,8 @@ if (auth.includes("skipAutoInitialize: true")) fail.push("browser auth must use 
 if (auth.includes("client.auth.initialize()")) fail.push("manual browser auth initialization must not be used");
 if (auth.includes("client.auth.exchangeCodeForSession(code)")) fail.push("manual OAuth code exchange must not race Supabase initialization");
 if (!auth.includes("const getSessionSafe")) fail.push("bounded session lookup is missing");
-if (!auth.includes("renderCabinet(initialResult.session)")) fail.push("initial session is not rendered from direct session lookup");
-if (!auth.includes("renderCabinet(session)")) fail.push("auth event session is not rendered");
+if (!auth.includes("requestCabinetRender(initialResult.session)")) fail.push("initial session is not rendered through cabinet render queue");
+if (!auth.includes("requestCabinetRender(session)")) fail.push("auth event session is not rendered through cabinet render queue");
 if (!auth.includes("window.setTimeout(() =>")) fail.push("auth state callback is not deferred");
 if (!loader.includes("@supabase/supabase-js@2.117.2")) fail.push("Supabase SDK version is not pinned to 2.117.2");
 if (!loader.includes("/dist/umd/supabase.js")) fail.push("Supabase loader must use explicit UMD browser bundle");
