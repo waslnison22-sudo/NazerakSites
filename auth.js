@@ -736,85 +736,6 @@
     showMessage("Игровой профиль сохранён.", "success");
   };
 
-  const submitMediaApplication = async (event) => {
-    event.preventDefault();
-
-    const form = event.currentTarget;
-    const urlInput = qs("#media-channel-url", form);
-    const messageInput = qs("#media-message", form);
-    const button = qs("button[type='submit']", form);
-
-    if (!client || !state.user || !urlInput || !messageInput) {
-      showMessage("Сессия пользователя ещё не готова. Обнови страницу и попробуй снова.", "error");
-      return;
-    }
-
-    const channelUrl = escapeText(urlInput.value);
-    const message = escapeText(messageInput.value);
-    const parsedUrl = safeHttpUrl(channelUrl);
-
-    if (!parsedUrl) {
-      showMessage(
-        "Укажи корректную ссылку на канал или площадку с http:// или https://.",
-        "error"
-      );
-      urlInput.focus();
-      return;
-    }
-
-    if (message.length < 10) {
-      showMessage("Добавь хотя бы несколько слов о себе и формате контента.", "error");
-      messageInput.focus();
-      return;
-    }
-
-    setBusy(button, true, "Отправляем…");
-    showMessage("");
-
-    let error = null;
-
-    try {
-      ({ error } = await withTimeout(
-        client
-          .from("media_applications")
-          .insert({
-            user_id: state.user.id,
-            channel_url: parsedUrl,
-            message
-          }),
-        7000,
-        "Отправка заявки превысила 7 секунд."
-      ));
-    } catch (caughtError) {
-      error = caughtError;
-    }
-
-    setBusy(button, false);
-
-    if (error) {
-      const duplicate =
-        error.code === "23505" ||
-        /duplicate|unique/i.test(error.message || "");
-
-      showMessage(
-        duplicate
-          ? "У тебя уже есть заявка на рассмотрении."
-          : "Не удалось отправить заявку. Проверь подключение к базе данных.",
-        "error"
-      );
-      return;
-    }
-
-    form.reset();
-    showMessage(
-      "Заявка отправлена. Мы рассмотрим её через систему NaZerak.",
-      "success"
-    );
-    if (qs("[data-media-disclosure]")?.open) {
-      await loadMediaApplications(state.user, renderSequence);
-    }
-  };
-
   const waitForInitialSession = async () => {
     if (!client) {
       return { session: null, error: new Error("Supabase client не инициализирован.") };
@@ -1089,10 +1010,6 @@
 
     qsa("#minecraft-profile-form").forEach((form) => {
       form.addEventListener("submit", saveProfile);
-    });
-
-    qsa("#media-application-form").forEach((form) => {
-      form.addEventListener("submit", submitMediaApplication);
     });
 
     qsa("[data-media-disclosure]").forEach((disclosure) => {
