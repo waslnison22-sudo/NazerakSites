@@ -257,6 +257,11 @@
   };
 
   const setAccountView = (mode) => {
+    if (document.body.hasAttribute("data-cabinet")) {
+      const main = document.getElementById("main-content");
+      if (main) main.setAttribute("aria-busy", String(mode === "loading"));
+    }
+
     qsa("[data-account-view]").forEach((view) => {
       view.hidden = view.dataset.accountView !== mode;
     });
@@ -937,6 +942,7 @@
       console.warn("[NaZerak Auth] session lookup failed:", result.error.message);
       state.user = null;
       state.profile = null;
+      state.loading = false;
       showMessage(
         "Не удалось проверить авторизацию вовремя. Попробуй повторить проверку.",
         "error"
