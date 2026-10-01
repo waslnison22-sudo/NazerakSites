@@ -229,7 +229,7 @@
       link.title = state.user ? "Личный кабинет" : "Войти через Discord";
 
       if (label) {
-        label.textContent = state.user ? userDisplayName(state.user) : "Войти";
+        label.textContent = state.user ? "Кабинет" : "Войти";
       }
 
       if (avatar) {
@@ -1035,7 +1035,14 @@
         event === "USER_UPDATED"
       ) {
         window.setTimeout(() => {
-          void renderCabinet(session || null);
+          if (document.body.dataset.cabinet) {
+            void renderCabinet(session || null);
+            return;
+          }
+
+          state.user = session?.user || null;
+          state.loading = false;
+          renderAuthLinks();
         }, 0);
       }
     });
