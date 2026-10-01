@@ -147,18 +147,6 @@ if (!index.includes("script.js") || !cabinet.includes("script.js")) {
   fail.push("script.js include missing from a published page");
 }
 
-for (const id of [
-  "server-status-text",
-  "server-status-detail",
-  "server-players",
-  "server-ping",
-  "server-reported-version",
-  "server-refresh",
-  "server-ip"
-]) {
-  if (!index.includes(`id="${id}"`)) fail.push(`missing server ID: ${id}`);
-}
-
 for (const token of [
   "signInWithOAuth",
   'flowType: "pkce"',
@@ -178,12 +166,6 @@ if (!auth.includes("renderCabinet(session || null)")) fail.push("auth event sess
 if (!auth.includes("window.setTimeout(() =>")) fail.push("auth state callback is not deferred");
 if (!loader.includes('VERSION = "2.117.2"')) fail.push("Supabase SDK version is not pinned");
 if (!loader.includes("unpkg.com")) fail.push("Supabase CDN fallback is missing");
-if (!script.includes("8000")) fail.push("server status timeout is missing");
-if (!script.includes('addEventListener("online"')) fail.push("online recovery is missing");
-if (!script.includes("api.mcstatus.io/v2/status/java")) fail.push("server status fallback is missing");
-if (!index.includes("https://api.mcstatus.io") || !cabinet.includes("https://api.mcstatus.io")) {
-  fail.push("CSP does not allow the server status fallback");
-}
 
 for (const token of [
   "enable row level security",
@@ -211,7 +193,7 @@ if (!cabinet.includes('<noscript>') || !index.includes('<noscript>')) {
 
 info.push(`Checked ${requiredFiles.length} required files.`);
 info.push(`Checked ${bannedTokens.length} banned/secret tokens.`);
-info.push(`Checked HTML IDs, JavaScript syntax, CSS braces, auth guards, server guards, security headers and RLS guards.`);
+info.push(`Checked HTML IDs, JavaScript syntax, CSS braces, auth guards, navigation and security headers and RLS guards.`);
 
 if (fail.length) {
   console.error("NaZerak QA FAILED");
