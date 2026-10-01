@@ -174,6 +174,7 @@ for (const token of [
 
 if (!auth.includes("const getSessionSafe")) fail.push("bounded session lookup is missing");
 if (!auth.includes("renderCabinet(initialSession)")) fail.push("initial session is not reused");
+if (!auth.includes("renderCabinet(session || null)")) fail.push("auth event session is not reused");
 if (!auth.includes("window.setTimeout(() =>")) fail.push("auth state callback is not deferred");
 if (!loader.includes('VERSION = "2.117.2"')) fail.push("Supabase SDK version is not pinned");
 if (!loader.includes("unpkg.com")) fail.push("Supabase CDN fallback is missing");
