@@ -177,6 +177,7 @@ for (const token of [
 }
 
 if (!auth.includes("const withTimeout")) fail.push("request timeout guard is missing");
+if (!auth.includes("Загрузка Supabase SDK превысила 9 секунд.")) fail.push("Supabase SDK bootstrap wait is not bounded");
 if (!auth.includes("profiles read timed out or failed")) fail.push("profile read timeout guard is missing");
 if (!auth.includes("media history timed out or failed")) fail.push("media history timeout guard is missing");
 if (!auth.includes("Сохранение профиля превысило 7 секунд.")) fail.push("profile save timeout guard is missing");
