@@ -12,7 +12,7 @@
     const timeout = window.setTimeout(() => {
       script.remove();
       reject(new Error("Таймаут загрузки " + src));
-    }, 6000);
+    }, 4000);
 
     script.src = src;
     script.async = false;
