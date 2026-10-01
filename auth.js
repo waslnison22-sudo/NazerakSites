@@ -22,6 +22,25 @@
   const accountUrl = () => new URL("./cabinet.html", window.location.href).href;
   const escapeText = (value) => String(value ?? "").trim();
 
+  const rememberReturnTarget = (hash) => {
+    if (hash !== "#media-application") return;
+    try {
+      window.sessionStorage?.setItem("nazerak_auth_return_hash", hash);
+    } catch {
+      // Session storage can be unavailable in hardened/private browser contexts.
+    }
+  };
+
+  const consumeReturnTarget = () => {
+    try {
+      const hash = window.sessionStorage?.getItem("nazerak_auth_return_hash") || "";
+      window.sessionStorage?.removeItem("nazerak_auth_return_hash");
+      return hash === "#media-application" ? hash : "";
+    } catch {
+      return "";
+    }
+  };
+
   const safeHttpUrl = (value) => {
     try {
       const url = new URL(String(value || ""));
@@ -513,9 +532,8 @@
     showMessage("");
 
     const redirectTarget = new URL(accountUrl());
-    if (window.location.hash === "#media-application") {
-      redirectTarget.hash = "media-application";
-    }
+    rememberReturnTarget(window.location.hash);
+    redirectTarget.hash = "";
 
     try {
       const result = await Promise.race([
@@ -841,7 +859,8 @@
 
     void hydrateCabinetData(user, sequence);
 
-    if (window.location.hash === "#media-application") {
+    const returnTarget = consumeReturnTarget();
+    if (window.location.hash === "#media-application" || returnTarget === "#media-application") {
       window.setTimeout(() => {
         if (sequence !== renderSequence) return;
         document.getElementById("media-application")?.scrollIntoView({
