@@ -161,6 +161,17 @@ for (const token of [
   if (!auth.includes(token)) fail.push(`auth guard missing: ${token}`);
 }
 
+if (!auth.includes("const withTimeout")) fail.push("request timeout guard is missing");
+if (!auth.includes("profiles read timed out or failed")) fail.push("profile read timeout guard is missing");
+if (!auth.includes("media history timed out or failed")) fail.push("media history timeout guard is missing");
+if (!auth.includes("Сохранение профиля превысило 7 секунд.")) fail.push("profile save timeout guard is missing");
+if (!auth.includes("Отправка заявки превысила 7 секунд.")) fail.push("media submit timeout guard is missing");
+if (!auth.includes('client.auth.onAuthStateChange((event, session) =>')) fail.push("auth listener is missing");
+if (auth.indexOf('client.auth.onAuthStateChange((event, session) =>') > auth.indexOf('const sessionResult = await getSessionSafe()')) fail.push("auth listener registered too late");
+if (auth.indexOf('setAccountView("user")') > auth.indexOf("void hydrateCabinetData")) fail.push("cabinet waits for optional data before showing user view");
+if (!auth.includes("const setButtonLabel")) fail.push("button label helper is missing");
+if (!auth.includes("originalButtonLabel")) fail.push("button markup-preserving busy state is missing");
+if (!auth.includes('event === "USER_UPDATED"')) fail.push("USER_UPDATED auth event is not handled");
 if (!auth.includes("const getSessionSafe")) fail.push("bounded session lookup is missing");
 if (!auth.includes("renderCabinet(initialSession)")) fail.push("initial session is not reused");
 if (!auth.includes("renderCabinet(session || null)")) fail.push("auth event session is not reused");
