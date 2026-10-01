@@ -774,6 +774,46 @@
     await loadMediaApplications(state.user);
   };
 
+  const resolveOAuthCallback = async () => {
+    if (!client) return null;
+
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get("code");
+
+    if (!code) return null;
+
+    try {
+      const existing = await client.auth.getSession();
+      if (existing.data?.session) return existing.data.session;
+
+      const { data, error } = await withTimeout(
+        client.auth.exchangeCodeForSession(code),
+        10000,
+        "Обработка входа через Discord превысила 10 секунд."
+      );
+
+      if (error) throw error;
+
+      window.history.replaceState(
+        null,
+        "",
+        window.location.pathname + (window.location.hash || "")
+      );
+
+      return data?.session || null;
+    } catch (error) {
+      console.warn(
+        "[NaZerak Auth] OAuth callback exchange failed:",
+        error instanceof Error ? error.message : String(error)
+      );
+      showMessage(
+        "Discord подтвердил вход, но сайт не смог сохранить сессию. Нажми «Повторить вход через Discord».",
+        "error"
+      );
+      return null;
+    }
+  };
+
   const getSessionSafe = async (timeoutMs = 8000) => {
     if (!client) {
       return {
@@ -1000,7 +1040,10 @@
       }
     });
 
-    const sessionResult = await getSessionSafe();
+    const callbackSession = await resolveOAuthCallback();
+    const sessionResult = callbackSession
+      ? { data: { session: callbackSession }, error: null }
+      : await getSessionSafe();
     const initialSession = sessionResult.data?.session || null;
 
     if (sessionResult.error) {
