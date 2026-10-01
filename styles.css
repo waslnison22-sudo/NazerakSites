@@ -391,3 +391,6 @@ html.js-ready .reveal.is-visible{opacity:1;transform:none}
  .media-disclosure__icon,.button{transition:none}
  .account-spinner{animation:none}
 }
+
+.account-retry{min-height:36px;margin-top:12px;font-size:9px}
+.button[hidden]{display:none!important}
