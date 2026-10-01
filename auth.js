@@ -398,7 +398,16 @@
   const loadMediaApplications = async (user, sequence = null) => {
     const list = qs("[data-media-list]");
     const empty = qs("[data-media-empty]");
-    if (!client || !user || !list) return;
+    const retry = qs("[data-media-retry]");
+    if (!client || !user || !list || list.dataset.loading === "true") return;
+
+    list.dataset.loading = "true";
+    if (retry) retry.disabled = true;
+    const finish = () => {
+      list.dataset.loading = "false";
+      if (retry) retry.disabled = false;
+    };
+    if (retry) retry.hidden = true;
 
     let result;
 
@@ -414,12 +423,17 @@
         "История заявок отвечает слишком долго."
       );
     } catch (error) {
-      if (sequence !== null && (sequence !== renderSequence || state.user?.id !== user.id)) return;
+      if (sequence !== null && (sequence !== renderSequence || state.user?.id !== user.id)) {
+        finish();
+        return;
+      }
+      finish();
       clearElementChildren(list);
       if (empty) {
         empty.textContent = "История заявок временно недоступна. Остальной кабинет продолжает работать.";
         empty.hidden = false;
       }
+      if (retry) retry.hidden = false;
       console.warn(
         "[NaZerak Auth] media history timed out or failed:",
         error instanceof Error ? error.message : String(error)
@@ -430,16 +444,19 @@
     const { data, error } = result;
 
     if (sequence !== null && (sequence !== renderSequence || state.user?.id !== user.id)) {
+      finish();
       return;
     }
 
+    finish();
     clearElementChildren(list);
 
     if (error) {
       if (empty) {
-        empty.textContent = "Не удалось загрузить историю заявок. Попробуй обновить страницу.";
+        empty.textContent = "Не удалось загрузить историю заявок. Попробуй повторить загрузку.";
         empty.hidden = false;
       }
+      if (retry) retry.hidden = false;
       return;
     }
 
@@ -1017,6 +1034,20 @@
         if (disclosure.open && state.user) {
           void loadMediaApplications(state.user, renderSequence);
         }
+      });
+    });
+
+    qsa("[data-media-retry]").forEach((button) => {
+      button.addEventListener("click", () => {
+        if (state.user && qs("[data-media-disclosure]")?.open) {
+          void loadMediaApplications(state.user, renderSequence);
+        }
+      });
+    });
+
+    qsa("[data-profile-retry]").forEach((button) => {
+      button.addEventListener("click", () => {
+        if (state.user) void hydrateCabinetData(state.user, renderSequence);
       });
     });
 
