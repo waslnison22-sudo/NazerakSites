@@ -1,103 +1,129 @@
 import { chromium } from "playwright";
 
 const BASE = "https://waslnison22-sudo.github.io/NazerakSites";
-const CABINET = BASE + "/cabinet.html";
-const timeout = 25000;
+const TIMEOUT = 20000;
 
-const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-
-const runRealBrowserSmoke = async () => {
-  const browser = await chromium.launch({ headless: true });
-  const page = await browser.newPage();
-  const errors = [];
+const attachDiagnostics = (page, name) => {
+  const consoleErrors = [];
+  const pageErrors = [];
   const failedRequests = [];
 
-  page.on("console", (msg) => {
-    if (msg.type() === "error") errors.push("console: " + msg.text());
+  page.on("console", (message) => {
+    if (message.type() === "error") consoleErrors.push(message.text());
   });
-  page.on("pageerror", (error) => {
-    errors.push("pageerror: " + error.message);
-  });
+  page.on("pageerror", (error) => pageErrors.push(error.message));
   page.on("requestfailed", (request) => {
-    failedRequests.push(
-      request.url() + " :: " + (request.failure()?.errorText || "unknown")
-    );
+    failedRequests.push({
+      url: request.url(),
+      error: request.failure()?.errorText || "unknown"
+    });
   });
+
+  return () => {
+    const localFailures = failedRequests.filter((item) =>
+      /waslnison22-sudo\.github\.io\/NazerakSites\/(?:[^/]+\.(?:css|js)|[^/]+\/[^/]+\.(?:css|js))/.test(item.url)
+    );
+
+    if (consoleErrors.length || pageErrors.length || localFailures.length) {
+      throw new Error(
+        name + " diagnostics failed: " +
+        JSON.stringify({ consoleErrors, pageErrors, localFailures })
+      );
+    }
+  };
+};
+
+const assertNoHorizontalOverflow = async (page, name) => {
+  const result = await page.evaluate(() => ({
+    width: document.documentElement.scrollWidth,
+    viewport: window.innerWidth
+  }));
+  if (result.width > result.viewport + 1) {
+    throw new Error(name + " has horizontal overflow: " + JSON.stringify(result));
+  }
+};
+
+const testStaticPage = async ({ path, name, viewport, check }) => {
+  const browser = await chromium.launch({ headless: true });
+  const page = await browser.newPage({ viewport });
+  const finishDiagnostics = attachDiagnostics(page, name);
 
   try {
-    await page.goto(CABINET, { waitUntil: "domcontentloaded", timeout });
-    await page.waitForFunction(() => {
-      const views = [...document.querySelectorAll("[data-account-view]")];
-      return views.some((view) => !view.hidden && view.dataset.accountView !== "loading");
-    }, null, 20000);
-
-    const state = await page.evaluate(() => ({
-      status: document.querySelector("[data-auth-status]")?.textContent || "",
-      views: [...document.querySelectorAll("[data-account-view]")].map((view) => ({
-        mode: view.dataset.accountView,
-        hidden: view.hidden
-      })),
-      authObject: Boolean(window.NaZerakAuth)
-    }));
-
-    if (!state.authObject) throw new Error("NaZerakAuth object was not initialized");
-    console.log("REAL browser state:", JSON.stringify(state));
-  } catch (error) {
-    const diagnostic = await page.evaluate(() => ({
-      readyState: document.readyState,
-      status: document.querySelector("[data-auth-status]")?.textContent || "",
-      loadingVisible: !document.querySelector('[data-account-view="loading"]')?.hidden,
-      guestVisible: !document.querySelector('[data-account-view="guest"]')?.hidden,
-      userVisible: !document.querySelector('[data-account-view="user"]')?.hidden,
-      configVisible: !document.querySelector('[data-account-view="config"]')?.hidden,
-      authObject: Boolean(window.NaZerakAuth),
-      authConfigured: window.NaZerakAuth?.configured ?? null,
-      authUserId: window.NaZerakAuth?.user?.id || null,
-      supabaseGlobal: Boolean(window.supabase),
-      createClient: typeof window.supabase?.createClient,
-      supabaseReadyType: typeof window.NAZERAK_SUPABASE_READY,
-      supabaseReadyState: window.NAZERAK_SUPABASE_READY?.constructor?.name || "",
-      authStage: window.__NAZERAK_AUTH_STAGE || "",
-      authDetail: window.__NAZERAK_AUTH_DETAIL || "",
-      localStorageKeys: Object.keys(localStorage),
-      resourceScripts: performance.getEntriesByType("resource")
-        .map((entry) => entry.name)
-        .filter((name) => /auth|supabase|cabinet/i.test(name))
-    }));
-    console.log("REAL browser diagnostic state:", JSON.stringify(diagnostic));
-    console.log("REAL browser diagnostic errors:", JSON.stringify(errors));
-    console.log("REAL browser failed requests:", JSON.stringify(failedRequests));
-    throw error;
+    await page.goto(BASE + path, { waitUntil: "networkidle", timeout: TIMEOUT });
+    await check(page);
+    await assertNoHorizontalOverflow(page, name);
+    finishDiagnostics();
+    console.log("PASS:", name);
   } finally {
     await browser.close();
   }
 };
 
-const runSignedInFlowSmoke = async () => {
+const testCabinetAnonymous = async (viewport, name) => {
   const browser = await chromium.launch({ headless: true });
-  const context = await browser.newContext();
+  const context = await browser.newContext({ viewport });
+  const page = await context.newPage();
+  const finishDiagnostics = attachDiagnostics(page, name);
+
+  try {
+    await page.goto(BASE + "/cabinet.html", { waitUntil: "networkidle", timeout: TIMEOUT });
+    await page.waitForSelector("[data-account-view]", { state: "attached", timeout: TIMEOUT });
+    await page.waitForFunction(() => {
+      const loading = document.querySelector('[data-account-view="loading"]');
+      const guest = document.querySelector('[data-account-view="guest"]');
+      return Boolean(guest && !guest.hidden && loading && loading.hidden);
+    }, { timeout: 15000 });
+
+    const state = await page.evaluate(() => ({
+      status: document.querySelector("[data-auth-status]")?.textContent || "",
+      loading: !document.querySelector('[data-account-view="loading"]')?.hidden,
+      guest: !document.querySelector('[data-account-view="guest"]')?.hidden,
+      user: !document.querySelector('[data-account-view="user"]')?.hidden,
+      busy: document.querySelector("main")?.getAttribute("aria-busy") || ""
+    }));
+
+    if (state.loading || !state.guest || state.user || state.busy === "true") {
+      throw new Error(name + " reached an invalid anonymous state: " + JSON.stringify(state));
+    }
+
+    await assertNoHorizontalOverflow(page, name);
+    finishDiagnostics();
+    console.log("PASS:", name, JSON.stringify(state));
+  } finally {
+    await browser.close();
+  }
+};
+
+const installFakeSupabase = async (context) => {
   await context.addInitScript(() => {
-    const fakeSession = {
-      access_token: "fake-access-token",
-      refresh_token: "fake-refresh-token",
-      user: {
-        id: "11111111-1111-1111-1111-111111111111",
-        created_at: "2026-01-01T00:00:00.000Z",
-        last_sign_in_at: "2026-10-01T00:00:00.000Z",
-        user_metadata: {
-          global_name: "NaZerak Test",
-          full_name: "NaZerak Test",
-          user_name: "nazerak_test"
-        }
+    const fakeUser = {
+      id: "11111111-1111-1111-1111-111111111111",
+      created_at: "2026-01-01T00:00:00.000Z",
+      last_sign_in_at: "2026-10-01T00:00:00.000Z",
+      user_metadata: {
+        global_name: "NaZerak Test",
+        full_name: "NaZerak Test",
+        user_name: "nazerak_test"
       }
     };
 
+    const fakeSession = {
+      access_token: "fake-access-token",
+      refresh_token: "fake-refresh-token",
+      user: fakeUser
+    };
+
+    const profile = () => ({
+      id: fakeUser.id,
+      minecraft_username: "NaZerakTest",
+      created_at: "2026-01-01T00:00:00.000Z",
+      updated_at: "2026-01-01T00:00:00.000Z"
+    });
+
     window.supabase = {
       createClient() {
-        let callback = null;
         const auth = {
           onAuthStateChange(handler) {
-            callback = handler;
             window.setTimeout(() => handler("INITIAL_SESSION", fakeSession), 0);
             return { data: { subscription: { unsubscribe() {} } } };
           },
@@ -106,108 +132,119 @@ const runSignedInFlowSmoke = async () => {
           signOut: async () => ({ error: null })
         };
 
-        const chain = (table) => {
-          const api = {
-            select() { return api; },
-            eq() { return api; },
-            order() { return api; },
-            limit() { return api; },
-            maybeSingle: async () =>
-              table === "profiles"
-                ? {
-                    data: {
-                      id: fakeSession.user.id,
-                      minecraft_username: null,
-                      created_at: "2026-01-01T00:00:00.000Z",
-                      updated_at: "2026-01-01T00:00:00.000Z"
-                    },
-                    error: null
-                  }
-                : { data: [], error: null },
-            single: async () => ({
-              data: {
-                id: fakeSession.user.id,
-                minecraft_username: null,
-                created_at: "2026-01-01T00:00:00.000Z",
-                updated_at: "2026-01-01T00:00:00.000Z"
-              },
+        const makeChain = (table) => {
+          const chain = {
+            select() { return chain; },
+            eq() { return chain; },
+            order() { return chain; },
+            limit() { return chain; },
+            insert() { return chain; },
+            update() { return chain; },
+            maybeSingle: async () => ({
+              data: table === "profiles" ? profile() : null,
               error: null
             }),
-            insert() { return api; },
-            update() { return api; }
+            single: async () => ({ data: profile(), error: null })
           };
-          return api;
+          return chain;
         };
 
         return {
           auth,
-          from: (table) => chain(table)
+          from: (table) => makeChain(table)
         };
       }
     };
   });
+};
 
+const testCabinetSignedIn = async () => {
+  const browser = await chromium.launch({ headless: true });
+  const context = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
+  await installFakeSupabase(context);
   const page = await context.newPage();
-  const errors = [];
-  page.on("console", (msg) => {
-    if (msg.type() === "error") errors.push("console: " + msg.text());
-  });
-  page.on("pageerror", (error) => errors.push("pageerror: " + error.message));
+  const finishDiagnostics = attachDiagnostics(page, "cabinet signed-in");
 
   try {
-    await page.goto(CABINET, { waitUntil: "domcontentloaded", timeout });
+    await page.goto(BASE + "/cabinet.html", { waitUntil: "networkidle", timeout: TIMEOUT });
     await page.waitForSelector('[data-account-view="user"]:not([hidden])', { timeout: 10000 });
 
     const state = await page.evaluate(() => ({
       status: document.querySelector("[data-auth-status]")?.textContent || "",
-      userVisible: !document.querySelector('[data-account-view="user"]')?.hidden,
-      guestVisible: !document.querySelector('[data-account-view="guest"]')?.hidden,
-      loadingVisible: !document.querySelector('[data-account-view="loading"]')?.hidden,
-      name: document.querySelector("[data-user-name]")?.textContent || ""
+      name: document.querySelector("[data-user-name]")?.textContent || "",
+      guest: !document.querySelector('[data-account-view="guest"]')?.hidden,
+      loading: !document.querySelector('[data-account-view="loading"]')?.hidden,
+      user: !document.querySelector('[data-account-view="user"]')?.hidden,
+      busy: document.querySelector("main")?.getAttribute("aria-busy") || ""
     }));
 
-    console.log("SIGNED-IN browser state:", JSON.stringify(state));
-    if (!state.userVisible || state.guestVisible || state.loadingVisible) {
-      throw new Error("Signed-in session did not produce a stable user cabinet state");
+    if (!state.user || state.guest || state.loading || state.name !== "NaZerak Test" || state.busy === "true") {
+      throw new Error("signed-in cabinet state invalid: " + JSON.stringify(state));
     }
-    if (state.name !== "NaZerak Test") {
-      throw new Error("Signed-in user data did not render");
-    }
-  } catch (error) {
-    const diagnostic = await page.evaluate(() => ({
-      authObject: Boolean(window.NaZerakAuth),
-      authConfigured: window.NaZerakAuth?.configured ?? null,
-      authUserId: window.NaZerakAuth?.user?.id || null,
-      bodyCabinet: document.body.dataset.cabinet || "",
-      views: [...document.querySelectorAll("[data-account-view]")].map((view) => ({
-        mode: view.dataset.accountView,
-        hidden: view.hidden
-      })),
-      status: document.querySelector("[data-auth-status]")?.textContent || "",
-      trace: window.__NAZERAK_AUTH_TRACE || []
-    }));
-    console.log("SIGNED-IN browser diagnostic state:", JSON.stringify(diagnostic));
-    console.log("SIGNED-IN browser errors:", JSON.stringify(errors));
-    throw error;
+
+    const input = page.locator("#minecraft-username");
+    await input.fill("NaZerakTest");
+    await page.locator("#minecraft-profile-form button[type="submit"]".replace(/"/g, "'")).click();
   } finally {
     await browser.close();
   }
 };
 
-let realFailed = false;
+await testStaticPage({
+  path: "/",
+  name: "homepage desktop",
+  viewport: { width: 1440, height: 1000 },
+  check: async (page) => {
+    if (!(await page.title()).includes("NaZerak")) throw new Error("homepage title missing");
+    if (!(await page.locator("#server-ip").textContent()).includes("nazehard.rustix.cc")) {
+      throw new Error("server IP missing");
+    }
+    const links = await page.locator('a[target="_blank"]').evaluateAll((items) =>
+      items.every((item) => /noopener/.test(item.getAttribute("rel") || ""))
+    );
+    if (!links) throw new Error("external blank links missing noopener");
+  }
+});
 
-try {
-  await runRealBrowserSmoke();
-} catch (error) {
-  realFailed = true;
-  console.log("REAL browser smoke failed:", error instanceof Error ? error.message : String(error));
-}
+await testStaticPage({
+  path: "/",
+  name: "homepage mobile",
+  viewport: { width: 390, height: 844 },
+  check: async (page) => {
+    const toggle = page.locator(".nav-toggle");
+    await toggle.click();
+    if (!(await page.locator(".nav").evaluate((node) => node.classList.contains("is-open")))) {
+      throw new Error("mobile navigation did not open");
+    }
+    await page.keyboard.press("Escape");
+    if (await page.locator(".nav").evaluate((node) => node.classList.contains("is-open"))) {
+      throw new Error("mobile navigation did not close with Escape");
+    }
+  }
+});
 
-try {
-  await runSignedInFlowSmoke();
-} catch (error) {
-  console.log("SIGNED-IN browser smoke failed:", error instanceof Error ? error.message : String(error));
-  process.exitCode = 1;
-}
+await testStaticPage({
+  path: "/forum.html",
+  name: "forum",
+  viewport: { width: 1280, height: 900 },
+  check: async (page) => {
+    if (!(await page.locator("h1").textContent()).includes("Форум")) throw new Error("forum heading missing");
+    const robots = await page.locator('meta[name="robots"]').getAttribute("content");
+    if (!/noindex/.test(robots || "")) throw new Error("forum robots policy missing");
+  }
+});
 
-if (realFailed) process.exitCode = 1;
+await testStaticPage({
+  path: "/not-found-final-audit-route",
+  name: "404",
+  viewport: { width: 1280, height: 900 },
+  check: async (page) => {
+    if (!(await page.locator("h1").textContent()).includes("404")) throw new Error("404 heading missing");
+  }
+});
+
+await testCabinetAnonymous({ width: 1440, height: 1000 }, "cabinet anonymous desktop");
+await testCabinetAnonymous({ width: 390, height: 844 }, "cabinet anonymous mobile");
+await testCabinetSignedIn();
+
+console.log("NaZerak browser smoke PASSED");
