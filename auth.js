@@ -556,11 +556,24 @@
     if (!client) return;
 
     setBusy(button, true, "Выходим…");
-    const { error } = await client.auth.signOut();
+
+    let error = null;
+    try {
+      ({ error } = await withTimeout(
+        client.auth.signOut(),
+        7000,
+        "Выход из аккаунта превысил 7 секунд."
+      ));
+    } catch (caughtError) {
+      error = caughtError;
+    }
 
     if (error) {
       setBusy(button, false);
-      showMessage(error.message || "Не удалось завершить сессию.", "error");
+      showMessage(
+        error.message || "Не удалось завершить сессию. Попробуй ещё раз.",
+        "error"
+      );
       return;
     }
 
@@ -933,7 +946,6 @@
         session ||
         event === "INITIAL_SESSION" ||
         event === "SIGNED_IN" ||
-        event === "TOKEN_REFRESHED" ||
         event === "USER_UPDATED"
       ) {
         window.setTimeout(() => {
