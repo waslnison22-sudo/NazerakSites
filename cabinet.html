@@ -43,7 +43,7 @@
     </div>
   </header>
 
-  <main class="account-page" id="main-content" tabindex="-1">
+  <main class="account-page" id="main-content" tabindex="-1" aria-busy="true">
     <div class="container">
       <section class="account-hero reveal">
         <div>
@@ -53,7 +53,7 @@
         </div>
         <div class="account-hero__badge">
           <i></i>
-          <span data-auth-status>CHECKING AUTH</span>
+          <span data-auth-status>CONNECTING AUTH</span>
         </div>
       </section>
 
@@ -63,7 +63,7 @@
         <button class="button button--primary" type="button" data-auth-retry><span>Повторить проверку</span><span aria-hidden="true">↻</span></button>
       </div>
 
-      <section class="account-view" data-account-view="loading" hidden>
+      <section class="account-view" data-account-view="loading">
         <div class="account-loading">
           <span class="account-spinner"></span>
           <strong>Проверяем авторизацию…</strong>
@@ -92,7 +92,7 @@
         </div>
       </section>
 
-      <section class="account-view" data-account-view="guest">
+      <section class="account-view" data-account-view="guest" hidden>
         <div class="login-panel">
           <div class="login-panel__visual" aria-hidden="true">
             <div class="login-orbit login-orbit--one"></div>
