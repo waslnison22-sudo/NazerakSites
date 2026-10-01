@@ -81,7 +81,6 @@ create policy "media_applications_insert_own"
 
 grant select on public.profiles to authenticated;
 grant select on public.media_applications to authenticated;
-
 grant insert (id, minecraft_username)
   on table public.profiles to authenticated;
 grant update (minecraft_username, updated_at)
@@ -92,24 +91,17 @@ grant insert (user_id, channel_url, message)
 comment on table public.profiles is 'NaZerak user profile, keyed to Supabase Auth user id.';
 comment on table public.media_applications is 'NaZerak media partner applications submitted by authenticated users.';
 
--- The identity sequence is used when authenticated users insert applications.
-grant usage, select on sequence public.media_applications_id_seq to authenticated;
 
-
--- Least-privilege access for the browser client.
-revoke all on table public.profiles, public.media_applications from anon;
-
-revoke insert, update, delete, references, trigger, truncate
-  on table public.profiles
-  from authenticated;
-
-revoke insert, update, delete, references, trigger, truncate
-  on table public.media_applications
-  from authenticated;
-
+-- Re-apply browser privileges after the deny-all hardening above.
+-- Keep these grants at the end so later REVOKE statements cannot remove them.
 grant select on public.profiles to authenticated;
 grant select on public.media_applications to authenticated;
-
+grant insert (id, minecraft_username)
+  on table public.profiles to authenticated;
+grant update (minecraft_username, updated_at)
+  on table public.profiles to authenticated;
+grant insert (user_id, channel_url, message)
+  on table public.media_applications to authenticated;
 
 revoke all on sequence public.media_applications_id_seq from anon;
 grant usage, select on sequence public.media_applications_id_seq to authenticated;
