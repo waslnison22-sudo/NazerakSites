@@ -257,7 +257,8 @@ if (auth.includes(".from(\"profiles\")\n      .upsert(")) fail.push("profile ini
 if (script.includes(".magnetic") || script.includes("[data-parallax]")) fail.push("unstable motion controls remain");
 
 for (const token of [
-  "enable row level security",
+  "alter table public.profiles enable row level security;",
+  "alter table public.media_applications enable row level security;",
   'create policy "profiles_select_own"',
   'create policy "profiles_insert_own"',
   'create policy "profiles_update_own"',
