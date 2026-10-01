@@ -143,7 +143,7 @@ for (const [name, page] of [
   ["cabinet.html", cabinet],
   ["forum.html", read("forum.html")]
 ]) {
-  for (const asset of ["auth-config.js?v=5", "supabase-loader.js?v=6", "auth.js?v=18", "styles.css?v=10"]) {
+  for (const asset of ["auth-config.js?v=5", "supabase-loader.js?v=6", "auth.js?v=19", "styles.css?v=10"]) {
     if (!page.includes(asset)) {
       fail.push(`${name} asset include missing: ${asset}`);
     }
