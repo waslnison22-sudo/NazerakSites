@@ -918,6 +918,13 @@
     renderAuthLinks();
     showOAuthError();
 
+    // Never leave the user on a dead loading screen while the external
+    // Supabase SDK is being fetched. Guest UI is the safe default.
+    if (document.body.dataset.cabinet) {
+      setAccountView("guest");
+      setAuthStatus("CONNECTING AUTH", "loading");
+    }
+
     qsa("[data-discord-login]").forEach((button) => {
       button.addEventListener("click", () => {
         void signIn(button);
@@ -947,10 +954,15 @@
     await bootstrapClient();
 
     if (!configured || !client) {
-      if (document.body.dataset.cabinet) {
-        await renderCabinet();
-      }
       renderAuthLinks();
+
+      if (document.body.dataset.cabinet) {
+        showLoginFallback(
+          "Войти в NaZerak.",
+          "Авторизация сейчас недоступна. Сам кабинет не блокируется.",
+          "Проверь соединение и нажми «Повторить вход через Discord»."
+        );
+      }
       return;
     }
 
@@ -989,14 +1001,14 @@
           "Проверка авторизации заняла слишком долго. Можно повторить вход.",
           "error"
         );
+        setAuthStatus("DISCORD READY", "ready");
+        setAccountView("guest");
       }
     }
 
-    // getSession is only a bootstrap snapshot. Auth events remain the source
-    // of truth for post-redirect and refresh transitions.
-    if (document.body.dataset.cabinet && !state.user) {
+    if (document.body.dataset.cabinet) {
       await renderCabinet(initialSession);
-    } else if (!document.body.dataset.cabinet) {
+    } else {
       state.user = initialSession?.user || state.user || null;
       state.loading = false;
       renderAuthLinks();
