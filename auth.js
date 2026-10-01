@@ -102,7 +102,7 @@
     window.history.replaceState(
       null,
       "",
-      window.location.pathname + window.location.search
+      window.location.pathname
     );
     return true;
   };
