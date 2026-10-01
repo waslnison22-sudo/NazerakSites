@@ -151,7 +151,7 @@ for (const [name, page] of [
   }
 }
 
-if (!read("404.html").includes("styles.css?v=13")) fail.push("404.html styles cache version is stale");
+if (!read("404.html").includes("styles.css?v=14")) fail.push("404.html styles cache version is stale");
 const sitemap = read("sitemap.xml");
 if (sitemap.includes("cabinet.html") || sitemap.includes("forum.html")) fail.push("sitemap contains a noindex page");
 if (!sitemap.includes("https://waslnison22-sudo.github.io/NazerakSites/")) fail.push("sitemap homepage URL is missing");
@@ -181,8 +181,8 @@ if (!cabinet.includes('data-media-disclosure')) fail.push("media partnership mus
 if (cabinet.includes('id="media-application-form"')) fail.push("media intake form must remain disabled until review queue exists");
 if (!cabinet.includes("Приём заявок временно приостановлен")) fail.push("paused media intake explanation is missing");
 if (auth.includes("const submitMediaApplication")) fail.push("unreviewed media submission path remains in auth code");
-if (["index.html", "cabinet.html", "forum.html"].some((file) => /href=\\?v=/.test(read(file)))) fail.push("malformed href cache attributes found");
-if (!read("docs/account-architecture.md").includes("Очередь рассмотрения медиа-заявок")) fail.push("account architecture roadmap is missing");
+if (["index.html", "cabinet.html", "forum.html"].some((file) => /href=\?v=/.test(read(file)))) fail.push("malformed href cache attributes found");
+if (!read("docs/account-architecture.md").includes("очередь рассмотрения медиа-заявок")) fail.push("account architecture roadmap is missing");
 if (!auth.includes("const withTimeout")) fail.push("request timeout guard is missing");
 if (!auth.includes("Загрузка Supabase SDK превысила 9 секунд.")) fail.push("Supabase SDK bootstrap wait is not bounded");
 if (!auth.includes("profiles read timed out or failed")) fail.push("profile read timeout guard is missing");
