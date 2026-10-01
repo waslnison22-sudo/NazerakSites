@@ -142,7 +142,7 @@ for (const [name, page] of [
   ["cabinet.html", cabinet],
   ["forum.html", read("forum.html")]
 ]) {
-  for (const asset of ["auth-config.js?v=5", "supabase-loader.js?v=6", "auth.js?v=14", "styles.css?v=10"]) {
+  for (const asset of ["auth-config.js?v=5", "supabase-loader.js?v=6", "auth.js?v=15", "styles.css?v=10"]) {
     if (!page.includes(asset)) {
       fail.push(`${name} asset include missing: ${asset}`);
     }
@@ -192,7 +192,6 @@ if (!auth.includes('event === "USER_UPDATED"')) fail.push("USER_UPDATED auth eve
 if (!auth.includes("nazerak_auth_return_hash")) fail.push("OAuth return target storage is missing");
 if (auth.includes('redirectTarget.hash = "media-application"')) fail.push("OAuth redirect still carries media fragment");
 
-if (!auth.includes("skipAutoInitialize: true")) fail.push("Supabase auth must disable implicit auto-initialize");
 if (!auth.includes('setAccountView("loading");')) fail.push("cabinet must start in auth loading state");
 if (!auth.includes('event === "TOKEN_REFRESHED"')) fail.push("token refresh event handling is missing");
 if (!auth.includes(".limit(20)")) fail.push("media history query must be bounded");
@@ -203,12 +202,12 @@ if (!auth.includes("nextUserId === currentUserId && nextUserId")) fail.push("bac
 if (!auth.includes('setAuthStatus("DISCORD READY", "ready")')) fail.push("signed-out cabinet status reset is missing");
 
 
-if (!auth.includes("client.auth.initialize()")) fail.push("explicit Supabase auth initialization is missing");
-const initCallIndex = auth.indexOf("client.auth.initialize()");
-const initListenerInvokeIndex = auth.indexOf("const callbackSession = await resolveOAuthCallback();");
-if (initCallIndex === -1 || initListenerInvokeIndex === -1) {
-  fail.push("deterministic auth initialization wiring is incomplete");
-}
+if (!auth.includes("detectSessionInUrl: true")) fail.push("automatic browser OAuth URL detection is missing");
+if (!auth.includes("const waitForInitialAuthSession")) fail.push("initial auth session gate is missing");
+if (!auth.includes("initialAuthSessionPromise")) fail.push("initial auth session promise is missing");
+if (!auth.includes("resolveInitialAuthSession?.(session || null)")) fail.push("initial auth event resolver is missing");
+if (auth.includes("skipAutoInitialize: true")) fail.push("browser auth must use Supabase automatic initialization");
+if (auth.includes("client.auth.initialize()")) fail.push("manual browser auth initialization must not be used");
 if (auth.includes("client.auth.exchangeCodeForSession(code)")) fail.push("manual OAuth code exchange must not race Supabase initialization");
 if (!auth.includes("const getSessionSafe")) fail.push("bounded session lookup is missing");
 if (!auth.includes("renderCabinet(initialSession)")) fail.push("initial session is not reused");
@@ -221,7 +220,6 @@ if (!loader.includes("unpkg.com")) fail.push("Supabase CDN fallback is missing")
 if (script.includes("loadServerStatus") || script.includes("SERVER_STATUS_SOURCES") || script.includes("api.mcstatus.io")) fail.push("obsolete server status polling remains");
 if (/online-статус.*status API/i.test(cabinet)) fail.push("cabinet still promises live server status");
 if (!cabinet.includes("data-auth-retry") || !cabinet.includes("data-login-title")) fail.push("cabinet auth fallback controls are missing");
-if (!auth.includes("const resolveOAuthCallback")) fail.push("OAuth callback exchange guard is missing");
 if (!auth.includes("const syncPageAuthState")) fail.push("background auth synchronization is missing");
 if (!auth.includes('window.addEventListener("pageshow"')) fail.push("pageshow auth resync is missing");
 if (!auth.includes('document.addEventListener("visibilitychange"')) fail.push("visibility auth resync is missing");
