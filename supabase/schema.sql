@@ -107,6 +107,9 @@ revoke insert, update, delete, references, trigger, truncate
   on table public.media_applications
   from authenticated;
 
+grant select on public.profiles to authenticated;
+grant select on public.media_applications to authenticated;
+
 
 revoke all on sequence public.media_applications_id_seq from anon;
 grant usage, select on sequence public.media_applications_id_seq to authenticated;
