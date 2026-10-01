@@ -167,6 +167,8 @@ if (!auth.includes("window.setTimeout(() =>")) fail.push("auth state callback is
 if (!loader.includes('VERSION = "2.117.2"')) fail.push("Supabase SDK version is not pinned");
 if (!loader.includes("unpkg.com")) fail.push("Supabase CDN fallback is missing");
 if (script.includes("loadServerStatus") || script.includes("SERVER_STATUS_SOURCES") || script.includes("api.mcstatus.io")) fail.push("obsolete server status polling remains");
+if (/online-статус.*status API/i.test(cabinet)) fail.push("cabinet still promises live server status");
+if (!cabinet.includes("data-auth-retry") || !cabinet.includes("data-login-title")) fail.push("cabinet auth fallback controls are missing");
 if (/server-status-text|server-players|data-server-hero/.test(index)) fail.push("obsolete server statistics markup remains");
 if (!index.includes("hero-art-placeholder") || !index.includes("world-screenshot-placeholder")) fail.push("artwork or screenshot placeholder missing");
 
