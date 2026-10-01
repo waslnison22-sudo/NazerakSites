@@ -143,14 +143,14 @@ for (const [name, page] of [
   ["cabinet.html", cabinet],
   ["forum.html", read("forum.html")]
 ]) {
-  for (const asset of ["auth-config.js?v=5", "supabase-loader.js?v=6", "auth.js?v=23", "script.js?v=11", "styles.css?v=11"]) {
+  for (const asset of ["auth-config.js?v=5", "supabase-loader.js?v=6", "auth.js?v=24", "script.js?v=12", "styles.css?v=12"]) {
     if (!page.includes(asset)) {
       fail.push(`${name} asset include missing: ${asset}`);
     }
   }
 }
 
-if (!read("404.html").includes("styles.css?v=11")) fail.push("404.html styles cache version is stale");
+if (!read("404.html").includes("styles.css?v=12")) fail.push("404.html styles cache version is stale");
 const sitemap = read("sitemap.xml");
 if (sitemap.includes("cabinet.html") || sitemap.includes("forum.html")) fail.push("sitemap contains a noindex page");
 if (!sitemap.includes("https://waslnison22-sudo.github.io/NazerakSites/")) fail.push("sitemap homepage URL is missing");
@@ -235,7 +235,7 @@ if (!/\.from\(["']profiles["']\)[\s\S]{0,220}\.update\(/.test(auth)) fail.push("
 if (!/\.from\(["']profiles["']\)[\s\S]{0,220}\.insert\(\{\s*id:\s*user\.id/.test(auth)) fail.push("profile initialization insert is missing");
 if (/nazerak\.is-a\.dev\/cabinet\.html/i.test(read("AUTH_SETUP.md"))) fail.push("obsolete custom-domain auth URL remains");
 if (/server-status-text|server-players|data-server-hero/.test(index)) fail.push("obsolete server statistics markup remains");
-if (!index.includes("hero-art-placeholder") || !index.includes("world-screenshot-placeholder")) fail.push("artwork or screenshot placeholder missing");
+if (!index.includes("hero-art") || !index.includes("world-visual")) fail.push("final homepage visual system missing");
 if (!index.includes('data-auth-link-label>Войти')) fail.push("homepage auth link must default to neutral login state");
 if (!cabinet.includes('class="nav-account is-active"') || !cabinet.includes('aria-current="page"')) fail.push("cabinet account route must be marked active");
 if (!auth.includes('document.body.hasAttribute("data-cabinet")')) fail.push("cabinet page detection must use attribute presence");
@@ -243,6 +243,14 @@ if (auth.includes("document.body.dataset.cabinet")) fail.push("cabinet detection
 if (!cabinet.includes('<section class="account-view" data-account-view="loading">')) fail.push("cabinet loading view must be visible before JavaScript starts");
 if (!cabinet.includes('<section class="account-view" data-account-view="guest" hidden>')) fail.push("cabinet guest view must be hidden before auth resolves");
 if (!cabinet.includes('<main class="account-page" id="main-content" tabindex="-1" aria-busy="true">')) fail.push("cabinet main must start in auth-busy state");
+for (const [name, page] of [["index.html", index], ["cabinet.html", cabinet], ["forum.html", read("forum.html")], ["404.html", read("404.html")]]) {
+  if (!page.includes("img-src 'self' data: https://cdn.discordapp.com https://media.discordapp.net")) fail.push(name + " CSP image sources are not restricted");
+  if (page.includes("style-src-attr 'unsafe-inline'")) fail.push(name + " CSP still allows inline style attributes");
+}
+if (!auth.includes('client.auth.signOut({ scope: "local" })')) fail.push("sign-out must be local to current session");
+if (!script.includes("clipboard-fallback")) fail.push("clipboard fallback class missing");
+if (!q.includes('style-src-attr')) fail.push("CSP hardening guard missing");
+
 if (!css.includes(".scroll-cue{position:absolute;right:0;bottom:22px;")) fail.push("desktop scroll cue is outside hero");
 
 const authLinkLabel = /data-auth-link-label[^>]*>\s*([^<]+?)\s*</i;
