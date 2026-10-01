@@ -222,6 +222,8 @@ const installFakeSupabase = async (context) => {
       created_at: "2026-01-01T00:00:00.000Z",
       updated_at: "2026-01-01T00:00:00.000Z"
     });
+    const smokeMode = new URLSearchParams(window.location.search).get("smoke");
+    window.__nazerakFakeMetrics = { profileReads: 0, profileInserts: 0, mediaReads: 0 };
 
     window.supabase = {
       createClient() {
@@ -241,13 +243,29 @@ const installFakeSupabase = async (context) => {
             eq() { return chain; },
             order() { return chain; },
             limit() { return chain; },
-            insert() { return chain; },
+            insert() {
+              if (table === "profiles") window.__nazerakFakeMetrics.profileInserts += 1;
+              return chain;
+            },
             update() { return chain; },
-            maybeSingle: async () => ({
-              data: table === "profiles" ? profile() : null,
-              error: null
-            }),
-            single: async () => ({ data: profile(), error: null })
+            maybeSingle: async () => {
+              if (table === "profiles") window.__nazerakFakeMetrics.profileReads += 1;
+              if (smokeMode === "profile-timeout" && table === "profiles") {
+                return new Promise(() => {});
+              }
+              if (smokeMode === "profile-error" && table === "profiles") {
+                return { data: null, error: { message: "simulated RLS read failure" } };
+              }
+              return { data: table === "profiles" ? profile() : null, error: null };
+            },
+            single: async () => ({ data: profile(), error: null }),
+            then(resolve, reject) {
+              if (table === "media_applications") window.__nazerakFakeMetrics.mediaReads += 1;
+              if (smokeMode === "media-timeout" && table === "media_applications") {
+                return new Promise(() => {}).then(resolve, reject);
+              }
+              return Promise.resolve({ data: table === "media_applications" ? [] : null, error: null }).then(resolve, reject);
+            }
           };
           return chain;
         };
@@ -259,6 +277,57 @@ const installFakeSupabase = async (context) => {
       }
     };
   });
+};
+
+const testCabinetOptionalDataFailures = async () => {
+  const browser = await chromium.launch({ headless: true });
+  try {
+    const profileContext = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+    await installFakeSupabase(profileContext);
+    const profilePage = await profileContext.newPage();
+    const profileDiagnostics = attachDiagnostics(profilePage, "cabinet profile timeout");
+    await profilePage.goto(BASE + "/cabinet.html?smoke=profile-timeout", { waitUntil: "networkidle", timeout: TIMEOUT });
+    await profilePage.waitForSelector('[data-account-view="user"]:not([hidden])', { timeout: 5000 });
+    await profilePage.waitForFunction(() =>
+      (document.querySelector("[data-auth-message]")?.textContent || "").includes("Профиль временно не удалось загрузить")
+    , { timeout: 9000 });
+    const profileState = await profilePage.evaluate(() => ({
+      userVisible: !document.querySelector('[data-account-view="user"]').hidden,
+      busy: document.querySelector("main")?.getAttribute("aria-busy"),
+      metrics: window.__nazerakFakeMetrics
+    }));
+    if (!profileState.userVisible || profileState.busy === "true" || profileState.metrics.profileInserts !== 0) {
+      throw new Error("profile timeout changed auth state or attempted INSERT: " + JSON.stringify(profileState));
+    }
+    profileDiagnostics();
+    await profileContext.close();
+    console.log("PASS: profile timeout isolation");
+
+    const mediaContext = await browser.newContext({ viewport: { width: 390, height: 844 } });
+    await installFakeSupabase(mediaContext);
+    const mediaPage = await mediaContext.newPage();
+    const mediaDiagnostics = attachDiagnostics(mediaPage, "cabinet media timeout");
+    await mediaPage.goto(BASE + "/cabinet.html?smoke=media-timeout", { waitUntil: "networkidle", timeout: TIMEOUT });
+    await mediaPage.waitForSelector('[data-account-view="user"]:not([hidden])', { timeout: 5000 });
+    const disclosure = mediaPage.locator("[data-media-disclosure]");
+    await disclosure.locator("summary").click();
+    await mediaPage.waitForFunction(() =>
+      (document.querySelector("[data-media-empty]")?.textContent || "").includes("История заявок временно недоступна")
+    , { timeout: 9000 });
+    const mediaState = await mediaPage.evaluate(() => ({
+      userVisible: !document.querySelector('[data-account-view="user"]').hidden,
+      busy: document.querySelector("main")?.getAttribute("aria-busy"),
+      metrics: window.__nazerakFakeMetrics
+    }));
+    if (!mediaState.userVisible || mediaState.busy === "true" || mediaState.metrics.mediaReads !== 1) {
+      throw new Error("media history timeout blocked cabinet or was not lazy: " + JSON.stringify(mediaState));
+    }
+    mediaDiagnostics();
+    await mediaContext.close();
+    console.log("PASS: media history timeout isolation");
+  } finally {
+    await browser.close();
+  }
 };
 
 const testCabinetSignedIn = async () => {
@@ -379,6 +448,7 @@ await testOAuthStart();
 await testCabinetAnonymous({ width: 1440, height: 1000 }, "cabinet anonymous desktop");
 await testCabinetAnonymous({ width: 390, height: 844 }, "cabinet anonymous mobile");
 await testCabinetAnonymous({ width: 768, height: 1024 }, "cabinet tablet");
+await testCabinetOptionalDataFailures();
 await testCabinetSignedIn();
 
 console.log("NaZerak browser smoke PASSED");
