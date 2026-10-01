@@ -88,19 +88,35 @@
     return true;
   };
 
+  const setButtonLabel = (button, label) => {
+    if (!button) return;
+    const labelNode = button.querySelector("span:not([aria-hidden='true'])");
+    if (labelNode) {
+      labelNode.textContent = label;
+      return;
+    }
+    button.textContent = label;
+  };
+
   const setBusy = (button, busy, labelWhenBusy = "Загрузка…") => {
     if (!button) return;
 
     if (busy) {
-      button.dataset.originalLabel ||= button.textContent;
-      button.textContent = labelWhenBusy;
+      if (!button.dataset.originalButtonLabel) {
+        const labelNode = button.querySelector("span:not([aria-hidden='true'])");
+        button.dataset.originalButtonLabel =
+          labelNode?.textContent || button.textContent;
+      }
+      setButtonLabel(button, labelWhenBusy);
       button.disabled = true;
       button.setAttribute("aria-busy", "true");
     } else {
-      button.textContent = button.dataset.originalLabel || button.textContent;
+      if (button.dataset.originalButtonLabel) {
+        setButtonLabel(button, button.dataset.originalButtonLabel);
+      }
       button.disabled = false;
       button.removeAttribute("aria-busy");
-      delete button.dataset.originalLabel;
+      delete button.dataset.originalButtonLabel;
     }
   };
 
@@ -240,7 +256,7 @@
     qsa("[data-discord-login]").forEach((button) => {
       button.disabled = false;
       button.removeAttribute("aria-busy");
-      button.textContent = "Повторить вход через Discord ↗";
+      setButtonLabel(button, "Повторить вход через Discord");
     });
     setAccountView("guest");
     setAuthStatus(kind === "error" ? "AUTH UNAVAILABLE" : "DISCORD READY", kind);
@@ -913,7 +929,13 @@
         return;
       }
 
-      if (session || event === "INITIAL_SESSION" || event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
+      if (
+        session ||
+        event === "INITIAL_SESSION" ||
+        event === "SIGNED_IN" ||
+        event === "TOKEN_REFRESHED" ||
+        event === "USER_UPDATED"
+      ) {
         window.setTimeout(() => {
           void renderCabinet(session || null);
         }, 0);
