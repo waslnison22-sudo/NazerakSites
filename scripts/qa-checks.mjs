@@ -172,10 +172,14 @@ if (!cabinet.includes("data-auth-retry") || !cabinet.includes("data-login-title"
 if (/https:\/\/minecraftstatus\.com/i.test(read("404.html"))) fail.push("obsolete status host remains in 404 CSP");
 if (/\.live-panel|\.section--live|#server-status-text|\.world-map\\b|\.hero-server-mark\\b/.test(css)) fail.push("obsolete live/dashboard CSS remains");
 if (!auth.includes('.from("profiles")\n      .update(')) fail.push("profile save must use least-privilege update flow");
-if (!auth.includes('.from("profiles")\n        .insert({')) fail.push("profile save fallback insert is missing");
+if (!auth.includes('.from("profiles")\n      .insert({ id: user.id })')) fail.push("profile initialization insert is missing");
 if (/nazerak\.is-a\.dev\/cabinet\.html/i.test(read("AUTH_SETUP.md"))) fail.push("obsolete custom-domain auth URL remains");
 if (/server-status-text|server-players|data-server-hero/.test(index)) fail.push("obsolete server statistics markup remains");
 if (!index.includes("hero-art-placeholder") || !index.includes("world-screenshot-placeholder")) fail.push("artwork or screenshot placeholder missing");
+if (!index.includes('href="./forum.html"') || !cabinet.includes('href="./forum.html"')) fail.push("forum navigation link missing");
+if (auth.includes(".from(\"profiles\")\n      .upsert(")) fail.push("profile initialization still uses upsert");
+if (css.includes("xt);")) fail.push("malformed CSS token remains");
+if (script.includes(".magnetic") || script.includes("[data-parallax]")) fail.push("unstable motion controls remain");
 
 for (const token of [
   "enable row level security",
