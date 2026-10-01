@@ -185,6 +185,24 @@ const testCabinetSignedIn = async () => {
     const input = page.locator("#minecraft-username");
     await input.fill("NaZerakTest");
     await page.locator('#minecraft-profile-form button[type="submit"]').click();
+    await page.waitForFunction(() =>
+      (document.querySelector("[data-auth-message]")?.textContent || "").includes("сохранён")
+    , { timeout: 5000 });
+
+    await page.locator("#media-channel-url").fill("https://youtube.com/@nazerak");
+    await page.locator("#media-message").fill("NaZerak test media application");
+    await page.locator('#media-application-form button[type="submit"]').click();
+    await page.waitForFunction(() =>
+      (document.querySelector("[data-auth-message]")?.textContent || "").includes("Заявка отправлена")
+    , { timeout: 5000 });
+
+    const linkLabel = await page.locator("[data-auth-link-label]").textContent();
+    if ((linkLabel || "").trim() !== "Кабинет") {
+      throw new Error("signed-in navigation link did not switch to Кабинет");
+    }
+
+    await page.evaluate(() => window.NaZerakAuth.signOut());
+    await page.waitForFunction(() => window.location.pathname.endsWith("/NazerakSites/"), { timeout: 5000 });
   } finally {
     await browser.close();
   }
