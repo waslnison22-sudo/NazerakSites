@@ -55,18 +55,9 @@
     return result.data;
   };
 
-  const positionCard = (trigger) => {
-    if (!hoverCard || hoverCard.hidden) return;
-    const rect = trigger.getBoundingClientRect();
-    const width = Math.min(360, window.innerWidth - 24);
-    let left = rect.left;
-    if (left + width > window.innerWidth - 12) left = window.innerWidth - width - 12;
-    if (left < 12) left = 12;
-    let top = rect.bottom + 10;
-    const height = hoverCard.offsetHeight || 220;
-    if (top + height > window.innerHeight - 12) top = Math.max(12, rect.top - height - 10);
-    hoverCard.style.left = left + "px";
-    hoverCard.style.top = top + "px";
+  const positionCard = () => {
+    // The card is intentionally anchored by CSS at a fixed safe viewport position.
+    // This avoids runtime style attributes and keeps the strict CSP intact.
   };
 
   const renderCard = (profile, trigger) => {
