@@ -33,6 +33,7 @@ const requiredFiles = [
   "supabase/migrations/20261002212000_forum_public_security.sql",
   "supabase/migrations/20261002223000_forum_two_worlds_and_discord_admin.sql",
   "supabase/migrations/20261002224000_forum_topic_world_view.sql",
+  "supabase/migrations/20261002225000_forum_discord_binding_hardening.sql",
   "scripts/runtime-smoke.mjs",
   "scripts/browser-smoke.mjs",
   "assets/images/README.md"
