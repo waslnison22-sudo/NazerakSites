@@ -1,61 +1,359 @@
 (() => {
   "use strict";
-  const state={client:null,user:null,categories:[],topics:[],activeCategory:"all",search:""};
-  const qs=(s,r=document)=>r.querySelector(s);
-  const qsa=(s,r=document)=>Array.from(r.querySelectorAll(s));
-  const escapeHtml=(v)=>String(v==null?"":v).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c];});
-  const safeUrl=(v)=>{try{const u=new URL(String(v||""));return /^https?:$/.test(u.protocol)?u.href:"";}catch{return"";}};
-  const setState=(label,kind)=>{const n=qs("[data-forum-state]");if(!n)return;n.dataset.state=kind||"";const t=qs("span",n);if(t)t.textContent=label;};
-  const showMessage=(message,kind)=>{const n=qs("[data-forum-message]");if(!n)return;n.textContent=message;n.dataset.kind=kind||"info";n.hidden=!message;};
-  const formatDate=(v)=>{const d=new Date(v);if(Number.isNaN(d.getTime()))return"—";return new Intl.DateTimeFormat("ru-RU",{day:"2-digit",month:"short",year:"numeric"}).format(d);};
-  const formatRelative=(v)=>{const d=new Date(v),diff=Math.max(0,Date.now()-d.getTime()),m=Math.floor(diff/60000);if(m<1)return"только что";if(m<60)return m+" мин назад";const h=Math.floor(m/60);if(h<24)return h+" ч назад";const days=Math.floor(h/24);if(days<7)return days+" дн назад";return formatDate(v);};
-  const userName=(u)=>{const m=u&&u.user_metadata||{};return String(m.global_name||m.full_name||m.name||m.user_name||m.preferred_username||"Игрок NaZerak").trim().slice(0,64)||"Игрок NaZerak";};
-  const userAvatar=(u)=>{const m=u&&u.user_metadata||{};const c=safeUrl(m.avatar_url||m.picture);if(!c)return null;try{const h=new URL(c).hostname.toLowerCase();return h==="cdn.discordapp.com"||h==="media.discordapp.net"?c:null;}catch{return null;}};
-  const waitForClient=async()=>{for(let i=0;i<100;i+=1){const c=window.NaZerakAuth&&window.NaZerakAuth.client;if(c)return c;await new Promise(function(r){window.setTimeout(r,100);});}return null;};
-  const syncAuthor=async()=>{if(!state.client||!state.user)return;const r=await state.client.from("forum_authors").upsert({id:state.user.id,display_name:userName(state.user),avatar_url:userAvatar(state.user),updated_at:new Date().toISOString()},{onConflict:"id"});if(r.error)console.warn("[NaZerak Forum] author sync:",r.error.message);};
-  const filteredTopics=()=>state.topics.filter(function(t){const categoryOk=state.activeCategory==="all"||t.category_id===Number(state.activeCategory);const q=state.search.trim().toLowerCase();const text=[t.title,t.body,t.category_name,t.author_name].join(" ").toLowerCase();return categoryOk&&(!q||text.indexOf(q)!==-1);});
-  const renderCategories=()=>{const root=qs("[data-forum-categories]");if(!root)return;root.innerHTML=state.categories.map(function(c){const total=state.topics.filter(function(t){return t.category_id===c.id;}).length;return '<button class="forum-category-filter" type="button" data-category-filter="'+c.id+'"><span><b class="forum-category-icon">'+escapeHtml(c.icon||"•")+'</b>'+escapeHtml(c.name)+'</span><strong>'+total+"</strong></button>";}).join("");qs("[data-forum-category-count]").textContent=String(state.categories.length);qs("[data-category-total]").textContent=String(state.topics.length);};
-  const renderTopics=()=>{
-    const root=qs("[data-forum-topic-list]"),empty=qs("[data-forum-empty]"),topics=filteredTopics();
-    qsa("[data-category-filter]").forEach((b)=>b.classList.toggle("is-active",String(b.dataset.categoryFilter)===String(state.activeCategory)));
-    const noun=topics.length===1?"тема":topics.length<5?"темы":"тем";
-    qs("[data-forum-result-count]").textContent=topics.length+" "+noun;
-    if(!topics.length){root.hidden=true;empty.hidden=false;return;}
-    root.hidden=false;empty.hidden=true;
-    root.innerHTML=topics.map((t)=>{
-      const avatar=safeUrl(t.author_avatar_url);
-      const initial=escapeHtml(String(t.author_name||"N").slice(0,1).toUpperCase());
-      const avatarHtml=avatar?'<img src="'+escapeHtml(avatar)+'" alt="">':initial;
-      const userId=escapeHtml(t.author_public_id||"");
-      const role=t.primary_role_name||"Игрок";
-      const roleSlug=escapeHtml(t.primary_role_slug||"player");
-      const roleBadge=t.primary_role_badge||"•";
-      const prefix=t.prefix?'<span class="forum-topic-row__prefix">'+escapeHtml(t.prefix)+'</span>':"";
-      const locked=t.is_locked?'<span>ЗАКРЫТО</span>':"";
-      return '<article class="forum-topic-row'+(t.is_pinned?" is-pinned":"")+'">'+
-        '<a class="forum-topic-row__open" href="./topic.html?id='+encodeURIComponent(t.id)+'" aria-label="Открыть тему '+escapeHtml(t.title)+'">'+
-          '<div class="forum-topic-row__mark" aria-hidden="true">'+(t.is_pinned?"★":"›")+'</div>'+
-          '<div class="forum-topic-row__copy">'+
-            '<div class="forum-topic-row__tags"><span>'+escapeHtml(t.category_name)+'</span>'+prefix+locked+'</div>'+
-            '<h3>'+escapeHtml(t.title)+'</h3>'+
-            '<p>'+escapeHtml(String(t.body||"").replace(/\s+/g," ").slice(0,150))+'</p>'+
-          '</div>'+
-        '</a>'+
-        '<div class="forum-topic-row__footer">'+
-          '<a class="forum-user-link forum-role--'+roleSlug+'" data-forum-user="'+userId+'" href="./forum-user.html?id='+userId+'">'+
-            '<span class="forum-avatar forum-avatar--small">'+avatarHtml+'</span>'+
-            '<span>'+escapeHtml(t.author_name)+'</span>'+
-            '<span class="forum-user-link__role">'+escapeHtml(roleBadge)+" "+escapeHtml(role)+"</span>"+
-          '</a>'+
-          '<div class="forum-topic-row__activity"><time datetime="'+escapeHtml(t.last_post_at)+'">'+formatRelative(t.last_post_at)+'</time><strong>'+Number(t.reply_count||0)+'</strong><span>ответов</span></div>'+
-        '</div>'+
+
+  const state = {
+    client: null,
+    user: null,
+    categories: [],
+    topics: [],
+    activeCategory: "all",
+    activeArea: "all",
+    search: ""
+  };
+
+  const qs = (s, root = document) => root.querySelector(s);
+  const qsa = (s, root = document) => Array.from(root.querySelectorAll(s));
+  const escapeHtml = (value) => String(value == null ? "" : value).replace(/[&<>"']/g, (c) => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+  }[c]));
+  const safeUrl = (value) => {
+    try {
+      const url = new URL(String(value || ""));
+      return /^https?:$/.test(url.protocol) ? url.href : "";
+    } catch {
+      return "";
+    }
+  };
+  const setState = (label, kind) => {
+    const node = qs("[data-forum-state]");
+    if (!node) return;
+    node.dataset.state = kind || "";
+    const text = qs("span", node);
+    if (text) text.textContent = label;
+  };
+  const showMessage = (message, kind = "info") => {
+    const node = qs("[data-forum-message]");
+    if (!node) return;
+    node.textContent = message;
+    node.dataset.kind = kind;
+    node.hidden = !message;
+  };
+  const formatDate = (value) => {
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return "—";
+    return new Intl.DateTimeFormat("ru-RU", {day:"2-digit", month:"short", year:"numeric"}).format(date);
+  };
+  const formatRelative = (value) => {
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return "—";
+    const diff = Math.max(0, Date.now() - date.getTime());
+    const minutes = Math.floor(diff / 60000);
+    if (minutes < 1) return "только что";
+    if (minutes < 60) return minutes + " мин назад";
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) return hours + " ч назад";
+    const days = Math.floor(hours / 24);
+    if (days < 7) return days + " дн назад";
+    return formatDate(value);
+  };
+  const userName = (user) => {
+    const meta = user?.user_metadata || {};
+    return String(meta.global_name || meta.full_name || meta.name || meta.user_name || meta.preferred_username || "Игрок NaZerak").trim().slice(0, 64) || "Игрок NaZerak";
+  };
+  const userAvatar = (user) => {
+    const meta = user?.user_metadata || {};
+    const url = safeUrl(meta.avatar_url || meta.picture);
+    if (!url) return null;
+    try {
+      const host = new URL(url).hostname.toLowerCase();
+      return host === "cdn.discordapp.com" || host === "media.discordapp.net" ? url : null;
+    } catch {
+      return null;
+    }
+  };
+  const waitForClient = async () => {
+    for (let i = 0; i < 100; i += 1) {
+      const client = window.NaZerakAuth?.client;
+      if (client) return client;
+      await new Promise((resolve) => window.setTimeout(resolve, 100));
+    }
+    return null;
+  };
+
+  const syncAuthor = async () => {
+    if (!state.client || !state.user) return;
+    const result = await state.client.from("forum_authors").upsert({
+      id: state.user.id,
+      display_name: userName(state.user),
+      avatar_url: userAvatar(state.user),
+      updated_at: new Date().toISOString()
+    }, {onConflict:"id"});
+    if (result.error) console.warn("[NaZerak Forum] author sync:", result.error.message);
+  };
+
+  const topicMatches = (topic) => {
+    const categoryOk = state.activeCategory === "all" || String(topic.category_id) === String(state.activeCategory);
+    const areaOk = state.activeArea === "all" || String(topic.area_slug) === String(state.activeArea);
+    const query = state.search.trim().toLowerCase();
+    const haystack = [topic.title, topic.body, topic.category_name, topic.author_name].join(" ").toLowerCase();
+    return categoryOk && areaOk && (!query || haystack.includes(query));
+  };
+
+  const filteredTopics = () => state.topics.filter(topicMatches);
+
+  const categoryCount = (categoryId) => state.topics.filter((topic) => Number(topic.category_id) === Number(categoryId)).length;
+
+  const renderCategoryGroup = (areaSlug) => {
+    const root = qs('[data-forum-categories="' + areaSlug + '"]');
+    const empty = qs('[data-forum-world-empty="' + areaSlug + '"]');
+    if (!root || !empty) return;
+
+    const categories = state.categories.filter((category) => category.area_slug === areaSlug);
+    root.innerHTML = categories.map((category) => {
+      const total = categoryCount(category.id);
+      return '<button class="forum-category-card" type="button" data-category-filter="' + category.id + '" aria-pressed="false">' +
+        '<span class="forum-category-card__icon">' + escapeHtml(category.icon || "•") + '</span>' +
+        '<span class="forum-category-card__body">' +
+          '<strong>' + escapeHtml(category.name) + '</strong>' +
+          '<small>' + escapeHtml(category.description || "Раздел форума") + '</small>' +
+        '</span>' +
+        '<span class="forum-category-card__count">' + total + '</span>' +
+      '</button>';
+    }).join("");
+
+    empty.hidden = categories.length > 0;
+  };
+
+  const renderCategories = () => {
+    renderCategoryGroup("rp");
+    renderCategoryGroup("administration");
+    qsa("[data-category-filter]").forEach((button) => {
+      const active = String(button.dataset.categoryFilter) === String(state.activeCategory);
+      button.classList.toggle("is-active", active);
+      button.setAttribute("aria-pressed", String(active));
+    });
+  };
+
+  const renderTopics = () => {
+    const root = qs("[data-forum-topic-list]");
+    const empty = qs("[data-forum-empty]");
+    if (!root || !empty) return;
+
+    const topics = filteredTopics();
+    const noun = topics.length === 1 ? "тема" : topics.length < 5 ? "темы" : "тем";
+    const count = qs("[data-forum-result-count]");
+    if (count) count.textContent = topics.length + " " + noun;
+
+    qsa("[data-category-filter]").forEach((button) => {
+      const active = String(button.dataset.categoryFilter) === String(state.activeCategory);
+      button.classList.toggle("is-active", active);
+      button.setAttribute("aria-pressed", String(active));
+    });
+
+    if (!topics.length) {
+      root.hidden = true;
+      empty.hidden = false;
+      return;
+    }
+
+    root.hidden = false;
+    empty.hidden = true;
+    root.innerHTML = topics.map((topic) => {
+      const avatar = safeUrl(topic.author_avatar_url);
+      const initial = escapeHtml(String(topic.author_name || "N").slice(0, 1).toUpperCase());
+      const avatarHtml = avatar ? '<img src="' + escapeHtml(avatar) + '" alt="">' : initial;
+      const publicId = escapeHtml(topic.author_public_id || "");
+      const roleSlug = escapeHtml(topic.primary_role_slug || "player");
+      const roleName = escapeHtml(topic.primary_role_name || "Игрок");
+      const roleBadge = escapeHtml(topic.primary_role_badge || "•");
+      const prefix = topic.prefix ? '<span class="forum-topic-row__prefix">' + escapeHtml(topic.prefix) + '</span>' : "";
+      const locked = topic.is_locked ? '<span>ЗАКРЫТО</span>' : "";
+
+      return '<article class="forum-topic-row' + (topic.is_pinned ? " is-pinned" : "") + '">' +
+        '<a class="forum-topic-row__open" href="./topic.html?id=' + encodeURIComponent(topic.id) + '">' +
+          '<div class="forum-topic-row__mark" aria-hidden="true">' + (topic.is_pinned ? "★" : "›") + '</div>' +
+          '<div class="forum-topic-row__copy">' +
+            '<div class="forum-topic-row__tags"><span>' + escapeHtml(topic.category_name) + '</span>' + prefix + locked + '</div>' +
+            '<h3>' + escapeHtml(topic.title) + '</h3>' +
+            '<p>' + escapeHtml(String(topic.body || "").replace(/\s+/g, " ").slice(0, 160)) + '</p>' +
+          '</div>' +
+        '</a>' +
+        '<div class="forum-topic-row__footer">' +
+          '<a class="forum-user-link forum-role--' + roleSlug + '" data-forum-user="' + publicId + '" href="./forum-user.html?id=' + publicId + '">' +
+            '<span class="forum-avatar forum-avatar--small">' + avatarHtml + '</span>' +
+            '<span>' + escapeHtml(topic.author_name || "Игрок NaZerak") + '</span>' +
+            '<span class="forum-user-link__role">' + roleBadge + " " + roleName + '</span>' +
+          '</a>' +
+          '<div class="forum-topic-row__activity">' +
+            '<strong>' + Number(topic.reply_count || 0) + '</strong><span>ответов</span>' +
+            '<time datetime="' + escapeHtml(topic.last_post_at) + '">' + formatRelative(topic.last_post_at) + '</time>' +
+          '</div>' +
+        '</div>' +
       '</article>';
     }).join("");
   };
-  const fillCategorySelect=()=>{const s=qs("#forum-category");if(s)s.innerHTML=state.categories.map(function(c){return '<option value="'+c.id+'">'+escapeHtml(c.name)+"</option>";}).join("");};
-  const loadData=async()=>{setState("ЗАГРУЗКА","loading");const results=await Promise.all([state.client.from("forum_categories").select("id,slug,name,description,sort_order,icon,accent_color").order("sort_order",{ascending:true}),state.client.from("forum_topic_list").select("id,slug,category_id,category_slug,category_name,author_public_id,author_name,author_avatar_url,primary_role_slug,primary_role_name,primary_role_badge,title,body,is_pinned,is_locked,is_archived,prefix,views_count,solution_state,created_at,updated_at,last_post_at,reply_count").order("is_pinned",{ascending:false}).order("last_post_at",{ascending:false}).limit(100)]);if(results[0].error)throw new Error(results[0].error.message||"Не удалось загрузить разделы форума.");if(results[1].error)throw new Error(results[1].error.message||"Не удалось загрузить темы форума.");state.categories=results[0].data||[];state.topics=results[1].data||[];renderCategories();fillCategorySelect();renderTopics();setState("ФОРУМ ГОТОВ","ready");};
-  const openCreate=()=>{if(!state.user){showMessage("Чтобы создать тему, войди через Discord в личном кабинете.","error");window.location.href="./cabinet.html";return;}if(!state.categories.length){showMessage("Разделы форума ещё не загрузились.","error");return;}const modal=qs("[data-forum-modal]");modal&&modal.showModal();};
-  const createTopic=async()=>{const submit=qs("[data-forum-submit]"),form=qs("[data-forum-form]");if(!state.user||!state.client||!form||submit.disabled)return;const data=new FormData(form),categoryId=Number(data.get("category_id")),title=String(data.get("title")||"").trim(),body=String(data.get("body")||"").trim();if(!categoryId||title.length<3||body.length<1){showMessage("Заполни раздел, заголовок и сообщение.","error");return;}submit.disabled=true;submit.querySelector("span").textContent="Публикуем…";showMessage("");await syncAuthor();const r=await state.client.from("forum_topics").insert({category_id:categoryId,author_id:state.user.id,title:title,body:body}).select("id").single();submit.disabled=false;submit.querySelector("span").textContent="Опубликовать";if(r.error||!r.data){showMessage((r.error&&r.error.message)||"Не удалось создать тему.","error");return;}qs("[data-forum-modal]").close();form.reset();window.location.href="./topic.html?id="+encodeURIComponent(r.data.id);};
-  const init=async()=>{state.client=await waitForClient();if(!state.client){setState("AUTH / DATA ERROR","error");showMessage("Форум не смог подключиться к базе данных. Обнови страницу и попробуй снова.","error");return;}const session=await state.client.auth.getSession();state.user=session.data&&session.data.session&&session.data.session.user||null;if(state.user)await syncAuthor();qsa("[data-forum-create]").forEach(function(b){b.addEventListener("click",openCreate);});qs("[data-forum-submit]")&&qs("[data-forum-submit]").addEventListener("click",createTopic);qs("#forum-search")&&qs("#forum-search").addEventListener("input",function(e){state.search=e.target.value||"";renderTopics();});qs("[data-forum-categories]")&&qs("[data-forum-categories]").addEventListener("click",function(e){const b=e.target.closest("[data-category-filter]");if(!b)return;state.activeCategory=b.dataset.categoryFilter||"all";renderTopics();});await loadData();};
-  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",function(){void init();},{once:true});else void init();
+
+  const fillCategorySelect = () => {
+    const select = qs("#forum-category");
+    if (!select) return;
+    const categories = [...state.categories].sort((a, b) => {
+      const area = a.area_slug.localeCompare(b.area_slug);
+      return area || Number(a.sort_order) - Number(b.sort_order);
+    });
+    select.innerHTML = categories.map((category) =>
+      '<option value="' + category.id + '">' + escapeHtml((category.area_slug === "administration" ? "Администрация · " : "РП-мир · ") + category.name) + '</option>'
+    ).join("");
+  };
+
+  const setCategoryFilter = (categoryId) => {
+    state.activeCategory = categoryId || "all";
+    if (state.activeCategory === "all") {
+      state.activeArea = "all";
+    } else {
+      const category = state.categories.find((item) => String(item.id) === String(state.activeCategory));
+      state.activeArea = category?.area_slug || "all";
+    }
+    renderTopics();
+    renderCategories();
+  };
+
+  const setAreaFilter = (areaSlug) => {
+    state.activeArea = areaSlug || "all";
+    state.activeCategory = "all";
+    renderTopics();
+    renderCategories();
+    qs("[data-forum-topic-list]")?.scrollIntoView({behavior:"smooth", block:"start"});
+  };
+
+  const clearSearch = () => {
+    state.search = "";
+    const input = qs("#forum-search");
+    if (input) input.value = "";
+    qsa("[data-forum-search-clear],[data-forum-search-reset]").forEach((node) => { node.hidden = true; });
+    renderTopics();
+  };
+
+  const syncSearchControls = () => {
+    const hasQuery = !!state.search.trim();
+    qsa("[data-forum-search-clear],[data-forum-search-reset]").forEach((node) => { node.hidden = !hasQuery; });
+  };
+
+  const loadData = async () => {
+    setState("ЗАГРУЗКА", "loading");
+    const results = await Promise.all([
+      state.client.from("forum_categories").select("id,slug,name,description,sort_order,icon,accent_color,area_slug").order("sort_order", {ascending:true}),
+      state.client.from("forum_topic_list").select("id,slug,category_id,category_slug,category_name,area_slug,author_public_id,author_name,author_avatar_url,primary_role_slug,primary_role_name,primary_role_badge,title,body,is_pinned,is_locked,is_archived,prefix,views_count,solution_state,created_at,updated_at,last_post_at,reply_count").order("is_pinned", {ascending:false}).order("last_post_at", {ascending:false}).limit(100)
+    ]);
+    if (results[0].error) throw new Error(results[0].error.message || "Не удалось загрузить разделы форума.");
+    if (results[1].error) throw new Error(results[1].error.message || "Не удалось загрузить темы форума.");
+
+    state.categories = results[0].data || [];
+    state.topics = results[1].data || [];
+    renderCategories();
+    fillCategorySelect();
+    renderTopics();
+    setState("ФОРУМ ГОТОВ", "ready");
+  };
+
+  const openCreate = () => {
+    if (!state.user) {
+      showMessage("Чтобы создать тему, войди через Discord в личном кабинете.", "error");
+      window.location.href = "./cabinet.html";
+      return;
+    }
+    if (!state.categories.length) {
+      showMessage("Сначала добавим хотя бы один раздел форума.", "error");
+      return;
+    }
+    const modal = qs("[data-forum-modal]");
+    modal?.showModal();
+  };
+
+  const createTopic = async () => {
+    const submit = qs("[data-forum-submit]");
+    const form = qs("[data-forum-form]");
+    if (!state.user || !state.client || !form || !submit || submit.disabled) return;
+
+    const data = new FormData(form);
+    const categoryId = Number(data.get("category_id"));
+    const title = String(data.get("title") || "").trim();
+    const body = String(data.get("body") || "").trim();
+
+    if (!categoryId || title.length < 3 || body.length < 1) {
+      showMessage("Заполни раздел, заголовок и сообщение.", "error");
+      return;
+    }
+
+    submit.disabled = true;
+    const original = submit.querySelector("span");
+    if (original) original.textContent = "Публикуем…";
+    showMessage("");
+    await syncAuthor();
+
+    const result = await state.client.from("forum_topics").insert({
+      category_id: categoryId,
+      author_id: state.user.id,
+      title,
+      body
+    }).select("id").single();
+
+    submit.disabled = false;
+    if (original) original.textContent = "Опубликовать";
+
+    if (result.error || !result.data) {
+      showMessage(result.error?.message || "Не удалось создать тему.", "error");
+      return;
+    }
+
+    qs("[data-forum-modal]")?.close();
+    form.reset();
+    window.location.href = "./topic.html?id=" + encodeURIComponent(result.data.id);
+  };
+
+  const init = async () => {
+    state.client = await waitForClient();
+    if (!state.client) {
+      setState("ОШИБКА ДАННЫХ", "error");
+      showMessage("Форум не смог подключиться к данным. Обнови страницу и попробуй снова.", "error");
+      return;
+    }
+
+    const session = await state.client.auth.getSession();
+    state.user = session.data?.session?.user || null;
+    if (state.user) await syncAuthor();
+
+    qsa("[data-forum-create]").forEach((button) => button.addEventListener("click", openCreate));
+    qs("[data-forum-submit]")?.addEventListener("click", createTopic);
+
+    qs("#forum-search")?.addEventListener("input", (event) => {
+      state.search = event.target.value || "";
+      syncSearchControls();
+      renderTopics();
+    });
+
+    qs("[data-forum-search-clear]")?.addEventListener("click", clearSearch);
+    qs("[data-forum-search-reset]")?.addEventListener("click", clearSearch);
+    qs("[data-forum-search-form]")?.addEventListener("submit", (event) => {
+      event.preventDefault();
+      qs("#forum-search")?.focus();
+    });
+
+    qsa("[data-forum-area-filter]").forEach((button) => {
+      button.addEventListener("click", () => setAreaFilter(button.dataset.forumAreaFilter));
+    });
+    qs("[data-forum-all]")?.addEventListener("click", () => setCategoryFilter("all"));
+    qs(".forum-page")?.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-category-filter]");
+      if (!button) return;
+      setCategoryFilter(button.dataset.categoryFilter);
+    });
+
+    await loadData();
+  };
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", () => void init(), {once:true});
+  } else {
+    void init();
+  }
 })();
