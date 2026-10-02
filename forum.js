@@ -215,13 +215,13 @@
   const loadData = async () => {
     setState("ЗАГРУЗКА", "loading");
     const results = await Promise.all([
-      state.client.from("forum_categories").select("id,slug,name,description,sort_order,icon,accent_color,area_slug,posting_mode,posting_mode").order("sort_order", {ascending:true}),
-      state.client.from("forum_topic_list").select("id,slug,category_id,category_slug,category_name,area_slug,posting_mode,author_public_id,author_name,author_avatar_url,primary_role_slug,primary_role_name,primary_role_badge,title,body,is_pinned,is_locked,is_archived,prefix,views_count,solution_state,created_at,updated_at,last_post_at,reply_count").order("is_pinned", {ascending:false}).order("last_post_at", {ascending:false}).limit(100),
+      state.client.from("forum_categories").select("id,slug,name,description,sort_order,icon,accent_color,area_slug,posting_mode").order("sort_order", {ascending:true}),
+      state.client.from("forum_topic_list").select("id,slug,category_id,category_slug,category_name,area_slug,author_public_id,author_name,author_avatar_url,primary_role_slug,primary_role_name,primary_role_badge,title,body,is_pinned,is_locked,is_archived,prefix,views_count,solution_state,created_at,updated_at,last_post_at,reply_count").order("is_pinned", {ascending:false}).order("last_post_at", {ascending:false}).limit(100),
       state.client.from("forum_community_stats").select("member_count,online_count").maybeSingle()
     ]);
     if (results[0].error) throw new Error(results[0].error.message || "Не удалось загрузить разделы форума.");
     if (results[1].error) throw new Error(results[1].error.message || "Не удалось загрузить темы форума.");
-    if (results[2].error) throw new Error(results[2].error.message || "Не удалось загрузить статистику сообщества.");
+    if (results[2].error) console.warn("[NaZerak Forum] community stats unavailable:", results[2].error.message);
 
     state.categories = results[0].data || [];
     state.topics = results[1].data || [];
