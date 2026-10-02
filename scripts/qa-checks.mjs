@@ -286,7 +286,6 @@ for (const token of [
   "revoke all on table public.profiles, public.media_applications from anon",
   "grant insert (id, minecraft_username)",
   "grant update (minecraft_username, updated_at)",
-  "grant insert (user_id, channel_url, message)",
   "grant select on public.profiles to authenticated",
   "revoke insert, update, delete, references, trigger, truncate"
 ]) {
