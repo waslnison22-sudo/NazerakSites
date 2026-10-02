@@ -45,7 +45,7 @@ if (!fail.length) {
     fail.push(`Auth smoke test failed: ${error instanceof Error ? error.message : String(error)}`);
   }
 
-  for (const table of ["profiles", "media_applications"]) {
+  for (const table of ["profiles", "media_applications", "forum_user_roles"]) {
     try {
       const response = await request(`/rest/v1/${table}?select=*&limit=1`);
       if (response.status === 401) {
@@ -65,6 +65,25 @@ if (!fail.length) {
       }
     } catch (error) {
       fail.push(`${table} smoke test failed: ${error instanceof Error ? error.message : String(error)}`);
+    }
+  }
+
+  for (const path of [
+    "/rest/v1/forum_categories?select=id,slug,name&limit=1",
+    "/rest/v1/forum_topic_list?select=id,title,author_public_id,primary_role_slug,reply_count&limit=1",
+    "/rest/v1/forum_author_directory?select=public_id,display_name,primary_role_slug,topic_count,post_count&limit=1"
+  ]) {
+    try {
+      const response = await request(path);
+      if (!response.ok) {
+        fail.push(`Forum public API returned HTTP ${response.status} for ${path}`);
+      } else {
+        const data = await response.json();
+        if (!Array.isArray(data)) fail.push(`Forum public API returned non-array for ${path}`);
+        else info.push(`Forum public API is reachable: ${path}`);
+      }
+    } catch (error) {
+      fail.push(`Forum API smoke failed for ${path}: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 }
