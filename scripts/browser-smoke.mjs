@@ -111,9 +111,9 @@ const testOAuthStart = async () => {
   try {
     await page.goto(BASE + "/cabinet.html", { waitUntil: "networkidle", timeout: TIMEOUT });
     await page.waitForFunction(() => {
-      const loading = document.querySelector('[data-account-view="loading"]');
       const guest = document.querySelector('[data-account-view="guest"]');
-      return Boolean(guest && !guest.hidden && loading && loading.hidden);
+      const loading = document.querySelector('[data-account-view="loading"]');
+      return Boolean(guest && !guest.hidden && !loading && document.querySelector("main")?.getAttribute("aria-busy") === "false");
     }, { timeout: 15000 });
 
     await page.locator("[data-discord-login]").click();
@@ -223,7 +223,7 @@ const installFakeSupabase = async (context) => {
       updated_at: "2026-01-01T00:00:00.000Z"
     });
     const smokeMode = new URLSearchParams(window.location.search).get("smoke");
-    window.__nazerakFakeMetrics = { profileReads: 0, profileInserts: 0, mediaReads: 0 };
+    window.__nazerakFakeMetrics = { profileReads: 0, profileInserts: 0 };
 
     window.supabase = {
       createClient() {
@@ -279,68 +279,43 @@ const installFakeSupabase = async (context) => {
   });
 };
 
-const testCabinetOptionalDataFailures = async () => {
+const testCabinetProfileTimeout = async () => {
   const browser = await chromium.launch({ headless: true });
   try {
-    const profileContext = await browser.newContext({ viewport: { width: 1280, height: 900 } });
-    await installFakeSupabase(profileContext);
-    const profilePage = await profileContext.newPage();
-    const profileDiagnostics = attachDiagnostics(profilePage, "cabinet profile timeout");
-    await profilePage.goto(BASE + "/cabinet.html?smoke=profile-timeout", { waitUntil: "networkidle", timeout: TIMEOUT });
-    await profilePage.waitForSelector('[data-account-view="user"]:not([hidden])', { timeout: 5000 });
-    await profilePage.waitForFunction(() =>
-      (document.querySelector("[data-auth-message]")?.textContent || "").includes("Профиль временно не удалось загрузить")
+    const context = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+    await installFakeSupabase(context);
+    const page = await context.newPage();
+    const finishDiagnostics = attachDiagnostics(page, "cabinet profile timeout");
+
+    await page.goto(BASE + "/cabinet.html?smoke=profile-timeout", { waitUntil: "networkidle", timeout: TIMEOUT });
+    await page.waitForSelector('[data-account-view="user"]:not([hidden])', { timeout: 5000 });
+    await page.waitForFunction(() =>
+      (document.querySelector("[data-auth-message]")?.textContent || "").includes("Игровой профиль пока не удалось загрузить")
     , { timeout: 9000 });
-    const profileState = await profilePage.evaluate(() => ({
+
+    const state = await page.evaluate(() => ({
       userVisible: !document.querySelector('[data-account-view="user"]').hidden,
       busy: document.querySelector("main")?.getAttribute("aria-busy"),
       metrics: window.__nazerakFakeMetrics
     }));
-    if (!profileState.userVisible || profileState.busy === "true" || profileState.metrics.profileInserts !== 0) {
-      throw new Error("profile timeout changed auth state or attempted INSERT: " + JSON.stringify(profileState));
+    if (!state.userVisible || state.busy === "true" || state.metrics.profileInserts !== 0) {
+      throw new Error("profile timeout changed auth state or attempted INSERT: " + JSON.stringify(state));
     }
-    const profileRetry = profilePage.locator("[data-profile-retry]");
+
+    const profileRetry = page.locator("[data-profile-retry]");
     if (!(await profileRetry.isVisible())) throw new Error("profile retry control is not visible after failure");
     await profileRetry.click();
-    await profilePage.waitForFunction(() => document.querySelector("[data-minecraft-input]")?.value === "NaZerakTest", { timeout: 5000 });
-    const recoveredProfile = await profilePage.evaluate(() => window.__nazerakFakeMetrics);
+    await page.waitForFunction(() =>
+      document.querySelector("[data-minecraft-input]")?.value === "NaZerakTest"
+    , { timeout: 5000 });
+
+    const recoveredProfile = await page.evaluate(() => window.__nazerakFakeMetrics);
     if (recoveredProfile.profileReads < 2 || recoveredProfile.profileInserts !== 0) {
       throw new Error("profile retry did not recover without INSERT: " + JSON.stringify(recoveredProfile));
     }
-    profileDiagnostics();
-    await profileContext.close();
+    finishDiagnostics();
+    await context.close();
     console.log("PASS: profile timeout isolation");
-
-    const mediaContext = await browser.newContext({ viewport: { width: 390, height: 844 } });
-    await installFakeSupabase(mediaContext);
-    const mediaPage = await mediaContext.newPage();
-    const mediaDiagnostics = attachDiagnostics(mediaPage, "cabinet media timeout");
-    await mediaPage.goto(BASE + "/cabinet.html?smoke=media-timeout", { waitUntil: "networkidle", timeout: TIMEOUT });
-    await mediaPage.waitForSelector('[data-account-view="user"]:not([hidden])', { timeout: 5000 });
-    const disclosure = mediaPage.locator("[data-media-disclosure]");
-    await disclosure.locator("summary").click();
-    await mediaPage.waitForFunction(() =>
-      (document.querySelector("[data-media-empty]")?.textContent || "").includes("История заявок временно недоступна")
-    , { timeout: 9000 });
-    const mediaState = await mediaPage.evaluate(() => ({
-      userVisible: !document.querySelector('[data-account-view="user"]').hidden,
-      busy: document.querySelector("main")?.getAttribute("aria-busy"),
-      metrics: window.__nazerakFakeMetrics
-    }));
-    if (!mediaState.userVisible || mediaState.busy === "true" || mediaState.metrics.mediaReads !== 1) {
-      throw new Error("media history timeout blocked cabinet or was not lazy: " + JSON.stringify(mediaState));
-    }
-    const mediaRetry = mediaPage.locator("[data-media-retry]");
-    if (!(await mediaRetry.isVisible())) throw new Error("media history retry control is not visible after failure");
-    await mediaRetry.click();
-    await mediaPage.waitForFunction(() =>
-      (document.querySelector("[data-media-empty]")?.textContent || "").includes("Пока нет отправленных заявок")
-    , { timeout: 5000 });
-    const recoveredMedia = await mediaPage.evaluate(() => window.__nazerakFakeMetrics);
-    if (recoveredMedia.mediaReads !== 2) throw new Error("media history retry did not issue exactly one recovery request: " + JSON.stringify(recoveredMedia));
-    mediaDiagnostics();
-    await mediaContext.close();
-    console.log("PASS: media history timeout isolation");
   } finally {
     await browser.close();
   }
@@ -377,22 +352,19 @@ const testCabinetSignedIn = async () => {
       (document.querySelector("[data-auth-message]")?.textContent || "").includes("сохранён")
     , { timeout: 5000 });
 
-    const mediaDisclosure = page.locator("[data-media-disclosure]");
-    if (await mediaDisclosure.count() !== 1) {
-      throw new Error("media partnership disclosure missing");
+    const partnerCard = page.locator("#media-partnership");
+    if (await partnerCard.count() !== 1) {
+      throw new Error("media partnership card missing");
     }
-    if (await mediaDisclosure.evaluate((node) => node.open)) {
-      throw new Error("media partnership section must start collapsed");
+    if ((await partnerCard.textContent()).includes("media-application-form")) {
+      throw new Error("obsolete media form markup leaked into cabinet");
     }
-    await mediaDisclosure.locator("summary").click();
-    if (!(await mediaDisclosure.evaluate((node) => node.open))) {
-      throw new Error("media partnership disclosure did not open");
+    if (!(await partnerCard.textContent()).includes("Пока без формы заявки")) {
+      throw new Error("media partnership paused state is not explained");
     }
-    if (await page.locator("#media-application-form").count() !== 0) {
-      throw new Error("unreviewed media intake form must not be exposed");
-    }
-    if (!(await mediaDisclosure.textContent()).includes("Через сайт пока не отправляем")) {
-      throw new Error("paused media intake status is not explained");
+    const discordLink = partnerCard.locator('a[href*="discord.gg"]');
+    if (await discordLink.count() !== 1) {
+      throw new Error("media partnership Discord link missing");
     }
 
     const linkLabel = await page.locator("[data-auth-link-label]").textContent();
@@ -464,7 +436,7 @@ await testOAuthStart();
 await testCabinetAnonymous({ width: 1440, height: 1000 }, "cabinet anonymous desktop");
 await testCabinetAnonymous({ width: 390, height: 844 }, "cabinet anonymous mobile");
 await testCabinetAnonymous({ width: 768, height: 1024 }, "cabinet tablet");
-await testCabinetOptionalDataFailures();
+await testCabinetProfileTimeout();
 await testCabinetSignedIn();
 
 console.log("NaZerak browser smoke PASSED");
