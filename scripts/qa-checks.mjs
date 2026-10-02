@@ -20,7 +20,6 @@ const requiredFiles = [
   "sitemap.xml",
   "forum.html",
   "topic.html",
-  "forum-user.html",
   "forum.js",
   "forum-ui.js",
   "topic.js",
