@@ -243,3 +243,27 @@ alter table public.forum_posts
 
 -- The public forum identity is always keyed by the Supabase Auth user.
 -- Discord OAuth creates/owns that Auth account; no Discord password is stored here.
+
+
+-- Final forum structure overlay.
+alter table public.forum_categories
+  add column if not exists area_slug text not null default 'rp';
+
+alter table public.forum_categories
+  drop constraint if exists forum_categories_area_slug_check;
+
+alter table public.forum_categories
+  add constraint forum_categories_area_slug_check
+  check (area_slug in ('rp','administration'));
+
+create index if not exists forum_categories_area_sort_idx
+  on public.forum_categories(area_slug, sort_order, id);
+
+-- Privileged Discord role bindings live outside exposed schemas.
+create table if not exists private.forum_discord_role_bindings (
+  discord_user_id text primary key,
+  role_slug text not null references public.forum_roles(slug) on delete restrict,
+  assigned_at timestamptz not null default now()
+);
+
+-- Real forum content is created manually; there is no starter-topic block here.
