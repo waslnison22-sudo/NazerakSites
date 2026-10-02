@@ -348,19 +348,26 @@ const testCabinetSignedIn = async () => {
       (document.querySelector("[data-auth-message]")?.textContent || "").includes("сохранён")
     , { timeout: 5000 });
 
-    const partnerCard = page.locator("#media-partnership");
-    if (await partnerCard.count() !== 1) {
-      throw new Error("media partnership card missing");
+    const minecraftPanel = page.locator("#minecraft-profile");
+    const connectionPanel = page.locator("#connection");
+    const securityPanel = page.locator("#security");
+    if (await minecraftPanel.count() !== 1 || await connectionPanel.count() !== 1 || await securityPanel.count() !== 1) {
+      throw new Error("redesigned cabinet sections are incomplete");
     }
-    if ((await partnerCard.textContent()).includes("media-application-form")) {
-      throw new Error("obsolete media form markup leaked into cabinet");
+
+    const serverIp = (await page.locator(".connection-card__ip").textContent() || "").trim();
+    if (serverIp !== "nazehard.rustix.cc") {
+      throw new Error("cabinet server address missing or stale: " + serverIp);
     }
-    if (!(await partnerCard.textContent()).includes("Пока без формы заявки")) {
-      throw new Error("media partnership paused state is not explained");
+
+    const copyButton = page.locator('[data-copy="nazehard.rustix.cc"]');
+    if (await copyButton.count() !== 1 || !(await copyButton.isVisible())) {
+      throw new Error("cabinet server copy control is missing");
     }
-    const discordLink = partnerCard.locator('a[href*="discord.gg"]');
-    if (await discordLink.count() !== 1) {
-      throw new Error("media partnership Discord link missing");
+
+    const logoutButtons = page.locator("[data-sign-out]");
+    if (await logoutButtons.count() < 2) {
+      throw new Error("cabinet security/logout controls are incomplete");
     }
 
     const linkLabel = await page.locator("[data-auth-link-label]").textContent();
