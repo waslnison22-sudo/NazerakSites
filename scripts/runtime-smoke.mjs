@@ -91,6 +91,7 @@ if (!fail.length) {
     }
   }
   for (const path of [
+    "/rest/v1/forum_my_permissions?select=can_publish_official&limit=1",
     "/rest/v1/forum_authors?select=id&limit=1",
     "/rest/v1/forum_posts?select=author_id&limit=1"
   ]) {
