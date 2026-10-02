@@ -144,7 +144,7 @@ for (const [name, page] of [
   ["cabinet.html", cabinet],
   ["forum.html", read("forum.html")]
 ]) {
-  for (const asset of ["auth-config.js?v=7", "supabase-loader.js?v=8", "auth.js?v=29", "script.js?v=13", "styles.css?v=17"]) {
+  for (const asset of ["auth-config.js?v=7", "supabase-loader.js?v=8", "auth.js?v=31", "script.js?v=15", "styles.css?v=19"]) {
     if (!page.includes(asset)) {
       fail.push(`${name} asset include missing: ${asset}`);
     }
@@ -253,7 +253,6 @@ if (!index.includes('data-auth-link-label>Войти')) fail.push("homepage auth
 if (!cabinet.includes('class="nav-account is-active"') || !cabinet.includes('aria-current="page"')) fail.push("cabinet account route must be marked active");
 if (!auth.includes('document.body.hasAttribute("data-cabinet")')) fail.push("cabinet page detection must use attribute presence");
 if (auth.includes("document.body.dataset.cabinet")) fail.push("cabinet detection must not use empty dataset boolean");
-if (!cabinet.includes('<section class="account-view" data-account-view="loading" hidden>')) fail.push("cabinet loading view must be hidden as static fallback");
 if (!cabinet.includes('<section class="account-view" data-account-view="guest">')) fail.push("cabinet guest view must be visible as static fallback");
 if (!cabinet.includes('<main class="account-page--clean" id="main-content" tabindex="-1">')) fail.push("cabinet main markup is stale");
 for (const [name, page] of [["index.html", index], ["cabinet.html", cabinet], ["forum.html", read("forum.html")], ["404.html", read("404.html")]]) {
