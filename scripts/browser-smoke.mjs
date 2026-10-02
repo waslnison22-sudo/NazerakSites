@@ -174,7 +174,7 @@ const testCabinetAnonymous = async (viewport, name) => {
       status: document.querySelector("[data-auth-status]")?.textContent || "",
       statusRole: document.querySelector("[data-auth-status]")?.getAttribute("role") || "",
       statusLive: document.querySelector("[data-auth-status]")?.getAttribute("aria-live") || "",
-      loading: !document.querySelector('[data-account-view="loading"]')?.hidden,
+      loading: Boolean(document.querySelector('[data-account-view="loading"]') && !document.querySelector('[data-account-view="loading"]')?.hidden),
       guest: !document.querySelector('[data-account-view="guest"]')?.hidden,
       user: !document.querySelector('[data-account-view="user"]')?.hidden,
       busy: document.querySelector("main")?.getAttribute("aria-busy") || ""
