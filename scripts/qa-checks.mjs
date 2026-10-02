@@ -35,7 +35,6 @@ const requiredFiles = [
   "site-routes.js",
   "public-routes.json",
   "templates/public-route.html",
- ,
   "docs/public-routes.md",
   "docs/stability-roadmap.md",
   "pravitelstvo/index.html",
