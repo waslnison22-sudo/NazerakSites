@@ -100,6 +100,7 @@ const auth = read("auth.js");
 const loader = read("supabase-loader.js");
 const config = read("auth-config.js");
 const schema = read("supabase/schema.sql");
+const routeManifest = JSON.parse(read("public-routes.json"));
 
 const allSource = [index, cabinet, css, script, auth, loader, config, schema].join("\n");
 
