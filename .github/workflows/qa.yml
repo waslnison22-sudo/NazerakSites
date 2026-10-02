@@ -33,13 +33,17 @@ jobs:
       - name: Wait for GitHub Pages to publish this revision
         run: |
           EXPECTED_AUTH_ASSET=$(grep -o 'auth.js?v=[0-9]*' cabinet.html | head -1)
+          EXPECTED_SCRIPT_ASSET=$(grep -o 'script.js?v=[0-9]*' index.html | head -1)
+          EXPECTED_STYLE_ASSET=$(grep -o 'styles.css?v=[0-9]*' index.html | head -1)
           for i in {1..18}; do
-            if curl -fsSL https://waslnison22-sudo.github.io/NazerakSites/cabinet.html | grep -q "$EXPECTED_AUTH_ASSET"; then
+            if curl -fsSL https://waslnison22-sudo.github.io/NazerakSites/cabinet.html | grep -q "$EXPECTED_AUTH_ASSET" &&
+               curl -fsSL https://waslnison22-sudo.github.io/NazerakSites/index.html | grep -q "$EXPECTED_SCRIPT_ASSET" &&
+               curl -fsSL https://waslnison22-sudo.github.io/NazerakSites/index.html | grep -q "$EXPECTED_STYLE_ASSET"; then
               exit 0
             fi
             sleep 5
           done
-          echo "GitHub Pages did not expose $EXPECTED_AUTH_ASSET within 90 seconds."
+          echo "GitHub Pages did not expose current auth/script/style assets within 90 seconds."
           exit 1
 
       - name: Install browser test runtime
