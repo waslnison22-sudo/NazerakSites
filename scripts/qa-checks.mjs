@@ -23,7 +23,7 @@ const requiredFiles = [
   "supabase/migrations/20260930205000_harden_frontend_column_privileges.sql",
   "scripts/runtime-smoke.mjs",
   "scripts/browser-smoke.mjs",
-  "docs/account-architecture.md"
+  "assets/images/README.md"
 ];
 
 const bannedTokens = [
@@ -151,7 +151,7 @@ for (const [name, page] of [
   }
 }
 
-if (!read("404.html").includes("styles.css?v=17")) fail.push("404.html styles cache version is stale");
+if (!read("404.html").includes("styles.css?v=19")) fail.push("404.html styles cache version is stale");
 const sitemap = read("sitemap.xml");
 if (sitemap.includes("cabinet.html") || sitemap.includes("forum.html")) fail.push("sitemap contains a noindex page");
 if (!sitemap.includes("https://waslnison22-sudo.github.io/NazerakSites/")) fail.push("sitemap homepage URL is missing");
@@ -177,25 +177,18 @@ for (const token of [
   if (!auth.includes(token)) fail.push(`auth guard missing: ${token}`);
 }
 
-if (!cabinet.includes('data-media-disclosure')) fail.push("media partnership must be collapsible");
-if (!cabinet.includes('class="login-panel login-panel--compact login-panel--plain"')) fail.push("compact login layout missing");
-if (!cabinet.includes("Форма пока закрыта")) fail.push("media intake availability status missing");
-if (cabinet.includes('id="media-application-form"')) fail.push("media intake must remain disabled until moderation is available");
-if (!cabinet.includes("data-profile-retry") || !cabinet.includes("data-media-retry")) fail.push("targeted recovery controls are missing");
-if (!auth.includes("data-profile-retry") || !auth.includes("data-media-retry")) fail.push("targeted recovery handlers are missing");
-if (cabinet.includes('id="media-application-form"')) fail.push("media intake form must remain disabled until review queue exists");
-if (!cabinet.includes("Приём заявок временно приостановлен")) fail.push("paused media intake explanation is missing");
-if (auth.includes("const submitMediaApplication")) fail.push("unreviewed media submission path remains in auth code");
-if (["index.html", "cabinet.html", "forum.html"].some((file) => /href=\?v=/.test(read(file)))) fail.push("malformed href cache attributes found");
-if (!read("docs/account-architecture.md").includes("очередь рассмотрения медиа-заявок")) fail.push("account architecture roadmap is missing");
+if (!cabinet.includes('class="account-login-clean"')) fail.push("clean login layout missing");
+if (!cabinet.includes('id="media-partnership"')) fail.push("media partnership section missing");
+if (!cabinet.includes("Пока без формы заявки.")) fail.push("media partnership availability status missing");
+if (cabinet.includes('id="media-application-form"')) fail.push("media intake form must remain disabled until moderation is available");
+if (cabinet.includes("data-media-disclosure") || cabinet.includes("account-page--v3")) fail.push("obsolete cabinet architecture markup remains");
+if (auth.includes("data-media-retry") || auth.includes("data-media-disclosure") || auth.includes("const submitMediaApplication")) fail.push("obsolete media workflow remains in auth code");
+if (css.includes("data-media-disclosure") || /\.login-panel\b|\.account-container\b|\.account-layout\b|\.account-panel--/.test(css)) fail.push("legacy cabinet CSS remains");
+if (!cabinet.includes("На сайте ещё нет очереди")) fail.push("cabinet must explain why media intake is paused");
+if (!cabinet.includes("Через сайт пока не отправляем." ) && !cabinet.includes("заявки в базу")) fail.push("cabinet paused media explanation is missing");
 if (!auth.includes("const withTimeout")) fail.push("request timeout guard is missing");
 if (!auth.includes("Загрузка Supabase SDK превысила 9 секунд.")) fail.push("Supabase SDK bootstrap wait is not bounded");
 if (!auth.includes("profiles read timed out or failed")) fail.push("profile read timeout guard is missing");
-if (!auth.includes("media history timed out or failed")) fail.push("media history timeout guard is missing");
-if (auth.includes("const submitMediaApplication")) fail.push("unreviewed media submission path must stay disabled");
-if (!cabinet.includes("Через сайт пока не отправляем.")) fail.push("cabinet must explain paused media intake");
-if (!cabinet.includes('data-media-disclosure')) fail.push("media section must be collapsible");
-if (!auth.includes("Сохранение профиля превысило 7 секунд.")) fail.push("profile save timeout guard is missing");
 if (!auth.includes('client.auth.onAuthStateChange((event, session) =>')) fail.push("auth listener is missing");
 const listenerIndex = auth.indexOf('client.auth.onAuthStateChange((event, session) =>');
 const clientCreateIndex = auth.indexOf('client = factory(config.url, config.publishableKey');
@@ -205,9 +198,6 @@ if (!auth.includes("state.user = session?.user || null")) fail.push("global auth
 if (auth.indexOf('setAccountView("user")') > auth.indexOf("void hydrateCabinetData")) fail.push("cabinet waits for optional data before showing user view");
 if (!auth.includes("const setButtonLabel")) fail.push("button label helper is missing");
 if (!auth.includes('const text = qs("span", element);')) fail.push("status text helper is missing");
-if (!cabinet.includes("account-page--v3")) fail.push("cabinet v3 layout is missing");
-if (!cabinet.includes("account-card-v3--minecraft")) fail.push("cabinet v3 Minecraft card is missing");
-if (!cabinet.includes("data-media-disclosure")) fail.push("cabinet media disclosure is missing");
 
 if (!auth.includes("originalButtonLabel")) fail.push("button markup-preserving busy state is missing");
 if (!auth.includes('event === "USER_UPDATED"')) fail.push("USER_UPDATED auth event is not handled");
@@ -216,7 +206,6 @@ if (auth.includes('redirectTarget.hash = "media-application"')) fail.push("OAuth
 
 if (!auth.includes('setAccountView("guest");')) fail.push("cabinet must expose guest login as safe fallback");
 if (!auth.includes('event === "TOKEN_REFRESHED"')) fail.push("token refresh event handling is missing");
-if (!auth.includes(".limit(20)")) fail.push("media history query must be bounded");
 if (!auth.includes("NETWORK OFFLINE")) fail.push("offline auth guard is missing");
 if (!auth.includes("Повторное сохранение профиля превысило 7 секунд.")) fail.push("profile save duplicate-race recovery is missing");
 
@@ -256,13 +245,17 @@ if (!/\.from\(["']profiles["']\)[\s\S]{0,220}\.insert\(\{\s*id:\s*user\.id/.test
 if (/nazerak\.is-a\.dev\/cabinet\.html/i.test(read("AUTH_SETUP.md"))) fail.push("obsolete custom-domain auth URL remains");
 if (/server-status-text|server-players|data-server-hero/.test(index)) fail.push("obsolete server statistics markup remains");
 if (!index.includes("hero-art") || !index.includes("world-visual")) fail.push("final homepage visual system missing");
+if (!index.includes('data-image-slot="hero"') || !index.includes('data-image-slot="world"') || !index.includes('data-image-slot="partnership"')) fail.push("generated image slots are missing");
+if (!script.includes("const optionalMedia") || !script.includes("./assets/images/hero.webp")) fail.push("optional generated image loader is missing");
+if (!index.includes("Как подключиться")) fail.push("homepage connection CTA is misleading or stale");
+if (!index.includes("Обсудить в Discord")) fail.push("homepage media CTA is misleading or stale");
 if (!index.includes('data-auth-link-label>Войти')) fail.push("homepage auth link must default to neutral login state");
 if (!cabinet.includes('class="nav-account is-active"') || !cabinet.includes('aria-current="page"')) fail.push("cabinet account route must be marked active");
 if (!auth.includes('document.body.hasAttribute("data-cabinet")')) fail.push("cabinet page detection must use attribute presence");
 if (auth.includes("document.body.dataset.cabinet")) fail.push("cabinet detection must not use empty dataset boolean");
 if (!cabinet.includes('<section class="account-view" data-account-view="loading" hidden>')) fail.push("cabinet loading view must be hidden as static fallback");
 if (!cabinet.includes('<section class="account-view" data-account-view="guest">')) fail.push("cabinet guest view must be visible as static fallback");
-if (!cabinet.includes('<main class="account-page" id="main-content" tabindex="-1" aria-busy="false">')) fail.push("cabinet main must not start in auth-busy state");
+if (!cabinet.includes('<main class="account-page--clean" id="main-content" tabindex="-1">')) fail.push("cabinet main markup is stale");
 for (const [name, page] of [["index.html", index], ["cabinet.html", cabinet], ["forum.html", read("forum.html")], ["404.html", read("404.html")]]) {
   if (!page.includes("img-src 'self' data: https://cdn.discordapp.com https://media.discordapp.net")) fail.push(name + " CSP image sources are not restricted");
   if (page.includes("style-src-attr 'unsafe-inline'")) fail.push(name + " CSP still allows inline style attributes");
