@@ -167,7 +167,7 @@ const testCabinetAnonymous = async (viewport, name) => {
     await page.waitForFunction(() => {
       const loading = document.querySelector('[data-account-view="loading"]');
       const guest = document.querySelector('[data-account-view="guest"]');
-      return Boolean(guest && !guest.hidden && loading && loading.hidden);
+      return Boolean(guest && !guest.hidden && !loading && document.querySelector("main")?.getAttribute("aria-busy") === "false");
     }, { timeout: 15000 });
 
     const state = await page.evaluate(() => ({
