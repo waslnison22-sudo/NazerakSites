@@ -87,7 +87,7 @@ const testSameOriginLinks = async (page, name) => {
 
   for (const route of [...new Set(routes)]) {
     const [pathname, hash] = route.split("#");
-    if (!["/NazerakSites/", "/NazerakSites/cabinet.html", "/NazerakSites/forum.html", "/NazerakSites/topic.html", "/NazerakSites/AUTH_SETUP.md"].includes(pathname)) {
+    if (!["/NazerakSites/", "/NazerakSites/cabinet.html", "/NazerakSites/forum.html", "/NazerakSites/topic.html", "/NazerakSites/forum-user.html", "/NazerakSites/AUTH_SETUP.md"].includes(pathname)) {
       throw new Error(name + " contains an unexpected local route: " + route);
     }
     if (hash && pathname === new URL(page.url()).pathname) {
@@ -441,6 +441,17 @@ await testStaticPage({
     if (!(await page.locator("h1").textContent()).includes("Сообщество")) throw new Error("community heading missing");
     const robots = await page.locator('meta[name="robots"]').getAttribute("content");
     if (!/noindex/.test(robots || "")) throw new Error("forum robots policy missing");
+  }
+});
+
+await testStaticPage({
+  path: "/forum-user.html?id=3ebdafdc-f119-40ba-a145-e21416849913",
+  name: "forum user profile",
+  viewport: { width: 1280, height: 900 },
+  check: async (page) => {
+    if (!(await page.locator("[data-user-profile]").isVisible())) throw new Error("forum profile did not load");
+    if (!(await page.locator("[data-user-name]").textContent()).trim()) throw new Error("forum profile name missing");
+    if (await page.locator("[data-user-roles] .forum-role").count() < 1) throw new Error("forum profile role missing");
   }
 });
 
