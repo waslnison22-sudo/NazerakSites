@@ -42,7 +42,7 @@
     const client = window.NaZerakAuth && window.NaZerakAuth.client;
     if (!client) return null;
     const request = client.from("forum_author_directory")
-      .select("public_id,display_name,avatar_url,bio,minecraft_username,joined_at,last_seen_at,topic_count,post_count,roles,primary_role_slug,primary_role_name,primary_role_color,primary_role_badge")
+      .select("public_id,display_name,avatar_url,bio,minecraft_username,joined_at,last_seen_at,topic_count,post_count,role_slugs,primary_role_slug,primary_role_name,primary_role_color,primary_role_badge")
       .eq("public_id", publicId)
       .maybeSingle();
     cache.set(publicId, request);
@@ -73,7 +73,7 @@
     const card = ensureCard();
     const avatar = profile && profile.avatar_url ? '<img src="' + escapeHtml(profile.avatar_url) + '" alt="">' : "";
     const initial = escapeHtml(String(profile && profile.display_name || "N").slice(0,1).toUpperCase());
-    const roles = Array.isArray(profile && profile.roles) ? profile.roles : [];
+    const roles = Array.isArray(profile && profile.role_slugs) ? profile.role_slugs : [];
     const roleHtml = roles.length
       ? roles.slice(0,3).map((r) => roleBadge(r.slug, r.name, r.badge)).join("")
       : roleBadge("player", "Игрок", "•");
