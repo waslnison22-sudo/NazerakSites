@@ -69,10 +69,12 @@ if (!fail.length) {
   }
 
   for (const path of [
-    "/rest/v1/forum_categories?select=id,slug,name&limit=1",
-    "/rest/v1/forum_topic_list?select=id,title,author_public_id,primary_role_slug,reply_count&limit=1",
-    "/rest/v1/forum_topic_detail?select=id,title,author_public_id,primary_role_slug,reply_count&limit=1",
-    "/rest/v1/forum_author_directory?select=public_id,display_name,primary_role_slug,topic_count,post_count&limit=1"
+    "/rest/v1/forum_categories?select=id,slug,name,area_slug&limit=1",
+    "/rest/v1/forum_roles?select=slug,name,color,priority&limit=1",
+    "/rest/v1/forum_topic_list?select=id,title,author_public_id,primary_role_slug,reply_count,area_slug&limit=1",
+    "/rest/v1/forum_topic_detail?select=id,title,author_public_id,primary_role_slug,reply_count,area_slug&limit=1",
+    "/rest/v1/forum_author_directory?select=public_id,display_name,primary_role_slug,topic_count,post_count&limit=1",
+    "/rest/v1/forum_posts?select=id,topic_id,body,author_public_id,author_role_name&limit=1"
   ]) {
     try {
       const response = await request(path);
