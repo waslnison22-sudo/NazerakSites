@@ -115,7 +115,7 @@ for (const [name, page] of [
   }
 }
 
-for (const file of ["script.js", "auth.js", "supabase-loader.js", "forum.js", "forum-ui.js", "topic.js", "user.js"]) {
+for (const file of ["script.js", "auth.js", "supabase-loader.js", "forum.js", "forum-ui.js", "forum-category.js", "forum-members.js", "forum-search.js", "topic.js", "user.js"]) {
   try {
     new Function(read(file));
   } catch (error) {
@@ -177,7 +177,6 @@ for (const [name, page] of [
   if (name === "forum-search.html") { assets.push("site-config.js?v=1", "forum-ui.js?v=1", "forum-search.js?v=1"); }
   if (name === "topic.html") { assets.push("site-config.js?v=1", "forum-ui.js?v=1", "topic.js?v=2"); }
   if (name === "forum-user.html") { assets.push("site-config.js?v=1", "forum-ui.js?v=1", "user.js?v=1"); }
-  if (name === "topic.html") { assets.push("forum-ui.js?v=1", "topic.js?v=2"); }
   for (const asset of assets) {
     if (!page.includes(asset)) {
       fail.push(`${name} asset include missing: ${asset}`);
@@ -185,7 +184,7 @@ for (const [name, page] of [
   }
 }
 
-if (!read("404.html").includes("styles.css?v=24")) fail.push("404.html styles cache version is stale");
+if (!read("404.html").includes("styles.css?v=25")) fail.push("404.html styles cache version is stale");
 const sitemap = read("sitemap.xml");
 if (sitemap.includes("cabinet.html") || sitemap.includes("forum.html")) fail.push("sitemap contains a noindex page");
 if (!sitemap.includes("https://waslnison22-sudo.github.io/NazerakSites/")) fail.push("sitemap homepage URL is missing");
