@@ -327,11 +327,6 @@
     });
   };
 
-  const clearElementChildren = (element) => {
-    if (!element) return;
-    while (element.firstChild) element.removeChild(element.firstChild);
-  };
-
   const loadProfile = async (user) => {
     if (!client || !user) return { status: "error", data: null };
 
