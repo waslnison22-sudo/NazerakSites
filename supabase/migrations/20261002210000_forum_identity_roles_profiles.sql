@@ -122,13 +122,33 @@ drop trigger if exists forum_user_roles_refresh_author on public.forum_user_role
 create trigger forum_user_roles_refresh_author after insert or update or delete on public.forum_user_roles
 for each row execute function private.refresh_author_role_cache();
 
-insert into public.forum_authors(id,display_name,avatar_url,minecraft_username,last_seen_at)
-values('d71f025e-f045-4778-8b53-db519f8f4955','hell_nlrp','https://cdn.discordapp.com/avatars/1129741865646837812/a_210a486713acdd8193ee122fc0b18dfd.gif','Hellsaiz',now())
-on conflict(id) do update set display_name=excluded.display_name,avatar_url=excluded.avatar_url,minecraft_username=excluded.minecraft_username,last_seen_at=excluded.last_seen_at;
+do $$
+declare
+  v_user_id uuid;
+  v_display_name text;
+  v_avatar_url text;
+begin
+  select i.user_id,
+         coalesce(i.identity_data->'custom_claims'->>'global_name', i.identity_data->>'full_name', i.identity_data->>'name', 'Игрок NaZerak'),
+         i.identity_data->>'avatar_url'
+    into v_user_id,v_display_name,v_avatar_url
+  from auth.identities i
+  where i.provider='discord'
+    and i.provider_id='1129741865646837812'
+  order by i.created_at
+  limit 1;
 
-insert into public.forum_user_roles(user_id,role_slug,assigned_by)
-values('d71f025e-f045-4778-8b53-db519f8f4955','administrator','d71f025e-f045-4778-8b53-db519f8f4955')
-on conflict(user_id,role_slug) do nothing;
+  if v_user_id is not null then
+    insert into public.forum_authors(id,display_name,avatar_url,minecraft_username,last_seen_at)
+    values(v_user_id,v_display_name,v_avatar_url,'Hellsaiz',now())
+    on conflict(id) do update set display_name=excluded.display_name,avatar_url=excluded.avatar_url,minecraft_username=excluded.minecraft_username,last_seen_at=excluded.last_seen_at;
 
-select private.sync_forum_author_roles('d71f025e-f045-4778-8b53-db519f8f4955');
+    insert into public.forum_user_roles(user_id,role_slug,assigned_by)
+    values(v_user_id,'administrator',v_user_id)
+    on conflict(user_id,role_slug) do nothing;
+
+    perform private.sync_forum_author_roles(v_user_id);
+  end if;
+end $$;
+
 commit;
