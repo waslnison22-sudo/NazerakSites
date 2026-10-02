@@ -3,6 +3,7 @@ import path from "node:path";
 import process from "node:process";
 
 const root = process.cwd();
+// Production cabinet verification trigger.
 
 const requiredFiles = [
   "index.html",
