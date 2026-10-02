@@ -144,14 +144,14 @@ for (const [name, page] of [
   ["cabinet.html", cabinet],
   ["forum.html", read("forum.html")]
 ]) {
-  for (const asset of ["auth-config.js?v=6", "supabase-loader.js?v=7", "auth.js?v=28", "script.js?v=13", "styles.css?v=16"]) {
+  for (const asset of ["auth-config.js?v=7", "supabase-loader.js?v=8", "auth.js?v=29", "script.js?v=13", "styles.css?v=17"]) {
     if (!page.includes(asset)) {
       fail.push(`${name} asset include missing: ${asset}`);
     }
   }
 }
 
-if (!read("404.html").includes("styles.css?v=16")) fail.push("404.html styles cache version is stale");
+if (!read("404.html").includes("styles.css?v=17")) fail.push("404.html styles cache version is stale");
 const sitemap = read("sitemap.xml");
 if (sitemap.includes("cabinet.html") || sitemap.includes("forum.html")) fail.push("sitemap contains a noindex page");
 if (!sitemap.includes("https://waslnison22-sudo.github.io/NazerakSites/")) fail.push("sitemap homepage URL is missing");
@@ -193,7 +193,7 @@ if (!auth.includes("Загрузка Supabase SDK превысила 9 секу�
 if (!auth.includes("profiles read timed out or failed")) fail.push("profile read timeout guard is missing");
 if (!auth.includes("media history timed out or failed")) fail.push("media history timeout guard is missing");
 if (auth.includes("const submitMediaApplication")) fail.push("unreviewed media submission path must stay disabled");
-if (!cabinet.includes("Приём заявок временно приостановлен.")) fail.push("cabinet must explain paused media intake");
+if (!cabinet.includes("Через сайт пока не отправляем.")) fail.push("cabinet must explain paused media intake");
 if (!cabinet.includes('data-media-disclosure')) fail.push("media section must be collapsible");
 if (!auth.includes("Сохранение профиля превысило 7 секунд.")) fail.push("profile save timeout guard is missing");
 if (!auth.includes('client.auth.onAuthStateChange((event, session) =>')) fail.push("auth listener is missing");
@@ -204,6 +204,11 @@ if (auth.indexOf('client.auth.onAuthStateChange((event, session) =>') === -1) fa
 if (!auth.includes("state.user = session?.user || null")) fail.push("global auth link state is not updated from auth events");
 if (auth.indexOf('setAccountView("user")') > auth.indexOf("void hydrateCabinetData")) fail.push("cabinet waits for optional data before showing user view");
 if (!auth.includes("const setButtonLabel")) fail.push("button label helper is missing");
+if (!auth.includes('const text = qs("span", element);')) fail.push("status text helper is missing");
+if (!cabinet.includes("account-page--v3")) fail.push("cabinet v3 layout is missing");
+if (!cabinet.includes("account-card-v3--minecraft")) fail.push("cabinet v3 Minecraft card is missing");
+if (!cabinet.includes("data-media-disclosure")) fail.push("cabinet media disclosure is missing");
+
 if (!auth.includes("originalButtonLabel")) fail.push("button markup-preserving busy state is missing");
 if (!auth.includes('event === "USER_UPDATED"')) fail.push("USER_UPDATED auth event is not handled");
 if (!auth.includes("nazerak_auth_return_hash")) fail.push("OAuth return target storage is missing");
