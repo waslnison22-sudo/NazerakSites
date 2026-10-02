@@ -333,7 +333,7 @@ const testCabinetSignedIn = async () => {
       status: document.querySelector("[data-auth-status]")?.textContent || "",
       name: document.querySelector("[data-user-name]")?.textContent || "",
       guest: !document.querySelector('[data-account-view="guest"]')?.hidden,
-      loading: !document.querySelector('[data-account-view="loading"]')?.hidden,
+      loading: Boolean(document.querySelector('[data-account-view="loading"]') && !document.querySelector('[data-account-view="loading"]')?.hidden),
       user: !document.querySelector('[data-account-view="user"]')?.hidden,
       busy: document.querySelector("main")?.getAttribute("aria-busy") || ""
     }));
