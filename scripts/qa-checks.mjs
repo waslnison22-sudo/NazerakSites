@@ -19,12 +19,20 @@ const requiredFiles = [
   "robots.txt",
   "sitemap.xml",
   "forum.html",
+  "forum-category.html",
+  "forum-members.html",
+  "forum-search.html",
   "topic.html",
   "forum.js",
+  "forum-category.js",
+  "forum-members.js",
+  "forum-search.js",
   "forum-ui.js",
   "topic.js",
   "forum-user.html",
   "user.js",
+  "site-config.js",
+  "DOMAIN_MIGRATION.md",
   "favicon.svg",
   "supabase/migrations/20260930205000_harden_frontend_column_privileges.sql",
   "supabase/migrations/20261002200000_forum_foundation.sql",
@@ -156,6 +164,9 @@ for (const [name, page] of [
   ["index.html", index],
   ["cabinet.html", cabinet],
   ["forum.html", read("forum.html")],
+  ["forum-category.html", read("forum-category.html")],
+  ["forum-members.html", read("forum-members.html")],
+  ["forum-search.html", read("forum-search.html")],
   ["topic.html", read("topic.html")],
   ["forum-user.html", read("forum-user.html")]
 ]) {
@@ -285,6 +296,23 @@ for (const [name, page] of [["index.html", index], ["cabinet.html", cabinet], ["
   }
 }
 if (!index.includes('href="./forum.html"') || !cabinet.includes('href="./forum.html"') || !read("topic.html").includes('href="./forum.html"') || !read("forum-user.html").includes('href="./forum.html"')) fail.push("forum navigation link missing");
+const forumPages = [
+  ["forum.html", read("forum.html")],
+  ["forum-category.html", read("forum-category.html")],
+  ["forum-members.html", read("forum-members.html")],
+  ["forum-search.html", read("forum-search.html")],
+  ["topic.html", read("topic.html")],
+  ["forum-user.html", read("forum-user.html")]
+];
+for (const [name, page] of forumPages) {
+  if (!page.includes('href="./forum.html"')) fail.push(name + " forum navigation link missing");
+  if (!page.includes('href="./forum-members.html"')) fail.push(name + " members navigation link missing");
+  if (!page.includes('href="./forum-search.html"')) fail.push(name + " search navigation link missing");
+  if (!page.includes("site-config.js?v=1")) fail.push(name + " site config include missing");
+}
+if (!read("site-config.js").includes('plannedOrigin: "https://nazerak.ru"')) fail.push("planned Nazerak.ru origin missing from site config");
+if (!read("DOMAIN_MIGRATION.md").includes("https://nazerak.ru/cabinet.html")) fail.push("domain migration guide missing Supabase redirect URL");
+
 const forumPage = read("forum.html");
 if (!forumPage.includes("data-forum-world=\"rp\"") || !forumPage.includes("data-forum-world=\"administration\"")) fail.push("forum must expose exactly the two top-level worlds");
 if (!forumPage.includes("data-forum-search-form") || !forumPage.includes("data-forum-search-clear")) fail.push("forum search controls are incomplete");
