@@ -337,7 +337,12 @@
     qs("[data-forum-search-reset]")?.addEventListener("click", clearSearch);
     qs("[data-forum-search-form]")?.addEventListener("submit", (event) => {
       event.preventDefault();
-      qs("#forum-search")?.focus();
+      const query = String(qs("#forum-search")?.value || "").trim();
+      if (query) {
+        window.location.href = "./forum-search.html?q=" + encodeURIComponent(query);
+      } else {
+        qs("#forum-search")?.focus();
+      }
     });
 
     qsa("[data-forum-area-filter]").forEach((button) => {
