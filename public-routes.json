@@ -28,5 +28,17 @@
     "title": "Военная база",
     "description": "Публичный раздел военной структуры NaZerak. Страница подготовлена под будущую структуру, документы и новости.",
     "forumRoute": "voennaya-baza"
+  },
+  "organizations": {
+    "slug": "organizatsii",
+    "title": "Организации",
+    "description": "Публичный каталог организаций NaZerak. Здесь будет собираться информация об организациях и их официальных разделах.",
+    "forumRoute": "organizatsii"
+  },
+  "about": {
+    "slug": "o-proekte",
+    "title": "О проекте",
+    "description": "Публичная информация о NaZerak, устройстве проекта и его развитии.",
+    "forumRoute": "o-proekte"
   }
 }
