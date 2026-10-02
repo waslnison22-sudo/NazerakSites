@@ -30,6 +30,7 @@ const requiredFiles = [
   "supabase/migrations/20261002200000_forum_foundation.sql",
   "supabase/migrations/20261002210000_forum_identity_roles_profiles.sql",
   "supabase/migrations/20261002211000_forum_structure_seed.sql",
+  "supabase/migrations/20261002212000_forum_public_security.sql",
   "scripts/runtime-smoke.mjs",
   "scripts/browser-smoke.mjs",
   "assets/images/README.md"
