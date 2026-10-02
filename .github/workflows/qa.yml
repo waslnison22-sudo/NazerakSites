@@ -9,7 +9,7 @@ permissions:
   contents: read
 
 env:
-  NAZERAK_BASE_URL: https://waslnison22-sudo.github.io/NazerakSites
+  NAZERAK_BASE_URL: http://127.0.0.1:4173/NazerakSites
 
 concurrency:
   group: nazerak-qa-${{ github.ref }}
@@ -33,20 +33,18 @@ jobs:
 
       - name: Run Supabase runtime smoke test
         run: node scripts/runtime-smoke.mjs
-      - name: Wait for GitHub Pages to publish this revision
+      - name: Start local production server for browser smoke
         run: |
-          EXPECTED_AUTH_ASSET=$(grep -o 'auth.js?v=[0-9]*' cabinet.html | head -1)
-          EXPECTED_SCRIPT_ASSET=$(grep -o 'script.js?v=[0-9]*' index.html | head -1)
-          EXPECTED_STYLE_ASSET=$(grep -o 'styles.css?v=[0-9]*' index.html | head -1)
+          python3 -m http.server 4173 --directory .. > /tmp/nazerak-http.log 2>&1 &
+          echo $! > /tmp/nazerak-http.pid
           for i in {1..18}; do
-            if curl -fsSL https://waslnison22-sudo.github.io/NazerakSites/cabinet.html | grep -q "$EXPECTED_AUTH_ASSET" &&
-               curl -fsSL https://waslnison22-sudo.github.io/NazerakSites/index.html | grep -q "$EXPECTED_SCRIPT_ASSET" &&
-               curl -fsSL https://waslnison22-sudo.github.io/NazerakSites/index.html | grep -q "$EXPECTED_STYLE_ASSET"; then
+            if curl -fsSL "$NAZERAK_BASE_URL/index.html" | grep -q "NaZerak"; then
               exit 0
             fi
-            sleep 5
+            sleep 1
           done
-          echo "GitHub Pages did not expose current auth/script/style assets within 90 seconds."
+          echo "Local NaZerak static server did not become ready."
+          cat /tmp/nazerak-http.log
           exit 1
 
       - name: Install browser test runtime
