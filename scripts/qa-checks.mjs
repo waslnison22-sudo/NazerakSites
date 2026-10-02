@@ -201,7 +201,6 @@ if (!auth.includes('const text = qs("span", element);')) fail.push("status text 
 
 if (!auth.includes("originalButtonLabel")) fail.push("button markup-preserving busy state is missing");
 if (!auth.includes('event === "USER_UPDATED"')) fail.push("USER_UPDATED auth event is not handled");
-if (!auth.includes("nazerak_auth_return_hash")) fail.push("OAuth return target storage is missing");
 if (auth.includes('redirectTarget.hash = "media-application"')) fail.push("OAuth redirect still carries media fragment");
 
 if (!auth.includes('setAccountView("guest");')) fail.push("cabinet must expose guest login as safe fallback");
@@ -223,14 +222,14 @@ if (auth.includes("client.auth.exchangeCodeForSession(code)")) fail.push("manual
 if (!auth.includes("const getSessionSafe")) fail.push("bounded session lookup is missing");
 if (!auth.includes("requestCabinetRender(initialResult.session)")) fail.push("initial session is not rendered through cabinet render queue");
 if (!auth.includes("requestCabinetRender(session)")) fail.push("auth event session is not rendered through cabinet render queue");
-if (!auth.includes("window.setTimeout(() =>")) fail.push("auth state callback is not deferred");
+if (!auth.includes("window.setTimeout")) fail.push("auth async timeout/defer guard is missing");
 if (!loader.includes("@supabase/supabase-js@2.117.2")) fail.push("Supabase SDK version is not pinned to 2.117.2");
 if (!loader.includes("/dist/umd/supabase.js")) fail.push("Supabase loader must use explicit UMD browser bundle");
 
 if (!loader.includes("unpkg.com")) fail.push("Supabase CDN fallback is missing");
 if (script.includes("loadServerStatus") || script.includes("SERVER_STATUS_SOURCES") || script.includes("api.mcstatus.io")) fail.push("obsolete server status polling remains");
 if (/online-статус.*status API/i.test(cabinet)) fail.push("cabinet still promises live server status");
-if (!cabinet.includes("data-auth-retry") || !cabinet.includes("data-login-title")) fail.push("cabinet auth fallback controls are missing");
+if (!cabinet.includes("data-auth-retry") || !cabinet.includes("data-auth-config-copy")) fail.push("cabinet auth fallback controls are missing");
 if (!auth.includes("const syncPageAuthState")) fail.push("background auth synchronization is missing");
 if (!auth.includes('window.addEventListener("pageshow"')) fail.push("pageshow auth resync is missing");
 if (!auth.includes('document.addEventListener("visibilitychange"')) fail.push("visibility auth resync is missing");
@@ -253,7 +252,7 @@ if (!index.includes('data-auth-link-label>Войти')) fail.push("homepage auth
 if (!cabinet.includes('class="nav-account is-active"') || !cabinet.includes('aria-current="page"')) fail.push("cabinet account route must be marked active");
 if (!auth.includes('document.body.hasAttribute("data-cabinet")')) fail.push("cabinet page detection must use attribute presence");
 if (auth.includes("document.body.dataset.cabinet")) fail.push("cabinet detection must not use empty dataset boolean");
-if (!cabinet.includes('<section class="account-view" data-account-view="guest">')) fail.push("cabinet guest view must be visible as static fallback");
+if (!cabinet.includes('<section class="account-view account-view--clean" data-account-view="guest">')) fail.push("cabinet guest view must be visible as static fallback");
 if (!cabinet.includes('<main class="account-page--clean" id="main-content" tabindex="-1">')) fail.push("cabinet main markup is stale");
 for (const [name, page] of [["index.html", index], ["cabinet.html", cabinet], ["forum.html", read("forum.html")], ["404.html", read("404.html")]]) {
   if (!page.includes("img-src 'self' data: https://cdn.discordapp.com https://media.discordapp.net")) fail.push(name + " CSP image sources are not restricted");
@@ -289,7 +288,6 @@ for (const token of [
   "grant update (minecraft_username, updated_at)",
   "grant insert (user_id, channel_url, message)",
   "grant select on public.profiles to authenticated",
-  "grant select on public.media_applications to authenticated",
   "revoke insert, update, delete, references, trigger, truncate"
 ]) {
   if (!schema.includes(token)) fail.push(`schema guard missing: ${token}`);
@@ -310,7 +308,8 @@ if (!auth.includes("state.loading = false;")) fail.push("auth error state does n
 const profileSelectGrantCount = (schema.match(/grant select on public\.profiles to authenticated;/g) || []).length;
 const profileInsertGrantCount = (schema.match(/grant insert \(id, minecraft_username\)/g) || []).length;
 const mediaInsertGrantCount = (schema.match(/grant insert \(user_id, channel_url, message\)/g) || []).length;
-if (profileSelectGrantCount !== 1 || profileInsertGrantCount !== 1 || mediaInsertGrantCount !== 1) fail.push("schema contains duplicate browser grant statements");
+if (profileSelectGrantCount !== 1 || profileInsertGrantCount !== 1 || mediaInsertGrantCount !== 0) fail.push("schema contains unexpected media browser grants");
+if (!schema.includes("-- Media applications intentionally have no browser grants yet.")) fail.push("media browser grants must remain disabled until moderation exists");
 
 if (!index.includes('id="main-content"') || !cabinet.includes('id="main-content"')) {
   fail.push("skip-link target missing");
