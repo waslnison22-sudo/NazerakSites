@@ -31,6 +31,9 @@ const requiredFiles = [
   "supabase/migrations/20261002210000_forum_identity_roles_profiles.sql",
   "supabase/migrations/20261002211000_forum_structure_seed.sql",
   "supabase/migrations/20261002212000_forum_public_security.sql",
+  "supabase/migrations/20261002223000_forum_two_worlds_and_discord_admin.sql",
+  "supabase/migrations/20261002224000_forum_topic_world_view.sql",
+  "supabase/migrations/20261002223000_forum_two_worlds_and_discord_admin.sql",
   "scripts/runtime-smoke.mjs",
   "scripts/browser-smoke.mjs",
   "assets/images/README.md"
@@ -104,7 +107,7 @@ for (const [name, page] of [
   }
 }
 
-for (const file of ["script.js", "auth.js", "supabase-loader.js"]) {
+for (const file of ["script.js", "auth.js", "supabase-loader.js", "forum.js", "forum-ui.js", "topic.js", "user.js"]) {
   try {
     new Function(read(file));
   } catch (error) {
@@ -156,8 +159,8 @@ for (const [name, page] of [
   ["topic.html", read("topic.html")],
   ["forum-user.html", read("forum-user.html")]
 ]) {
-  const assets = ["auth-config.js?v=8", "supabase-loader.js?v=9", "auth.js?v=33", "script.js?v=17", "styles.css?v=24"];
-  if (name === "forum.html") { assets.push("forum-ui.js?v=1", "forum.js?v=2"); }
+  const assets = ["auth-config.js?v=8", "supabase-loader.js?v=9", "auth.js?v=33", "script.js?v=17", "styles.css?v=25"];
+  if (name === "forum.html") { assets.push("forum-ui.js?v=1", "forum.js?v=3"); }
   if (name === "topic.html") { assets.push("forum-ui.js?v=1", "topic.js?v=2"); }
   for (const asset of assets) {
     if (!page.includes(asset)) {
@@ -282,7 +285,13 @@ for (const [name, page] of [["index.html", index], ["cabinet.html", cabinet], ["
   }
 }
 if (!index.includes('href="./forum.html"') || !cabinet.includes('href="./forum.html"') || !read("topic.html").includes('href="./forum.html"') || !read("forum-user.html").includes('href="./forum.html"')) fail.push("forum navigation link missing");
+const forumPage = read("forum.html");
+if (!forumPage.includes("data-forum-world=\"rp\"") || !forumPage.includes("data-forum-world=\"administration\"")) fail.push("forum must expose exactly the two top-level worlds");
+if (!forumPage.includes("data-forum-search-form") || !forumPage.includes("data-forum-search-clear")) fail.push("forum search controls are incomplete");
+if (!forumPage.includes("button--primary") || !forumPage.includes("button--ghost")) fail.push("forum must use common site button classes");
+if (s.includes("20261002211000_forum_structure_seed.sql") && s.includes("welcome-to-nazerak")) fail.push("QA script must not require legacy seeded forum content");
 if (!read("forum-user.html").includes("data-user-profile")) fail.push("full forum profile markup missing");
+if (s.includes("welcome-to-nazerak") || s.includes("forum-rules") && s.includes("Добро пожаловать на форум NaZerak")) fail.push("starter forum messages must not be embedded in QA");
 if (!read("forum-ui.js").includes("data-forum-user")) fail.push("forum hover profile interaction missing");
 if (!read("user.js").includes('from("forum_author_directory")')) fail.push("forum user directory query missing");
 if (auth.includes(".from(\"profiles\")\n      .upsert(")) fail.push("profile initialization still uses upsert");
