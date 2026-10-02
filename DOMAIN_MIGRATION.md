@@ -30,3 +30,40 @@
 ## Важное правило
 
 Не добавляй `nazerak.ru` в `CNAME` GitHub Pages заранее: пока DNS и новый хостинг не готовы, это может преждевременно переключить публикацию.
+
+
+## Автоматический деплой после Git push
+
+Production публикуется не напрямую из `push`. Сначала workflow `NaZerak QA` проверяет текущий commit. После успешного QA workflow `NaZerak Production Deploy` забирает именно `head_sha` успешно проверенного прогона и загружает его на хостинг по SSH/rsync.
+
+Перед включением задаются GitHub Actions secrets в environment `production`:
+
+- `DEPLOY_ENABLED=true`
+- `DEPLOY_HOST` — SSH/SFTP hostname хостинга
+- `DEPLOY_PORT` — обычно `22`
+- `DEPLOY_USER` — отдельный deploy-пользователь, не root
+- `DEPLOY_PATH` — document root сайта
+- `DEPLOY_PRIVATE_KEY` — приватный SSH ключ deploy-пользователя
+
+Приватный ключ не хранится в репозитории. GitHub Actions Secrets предназначены именно для такого подключения; доступ к секретам должен иметь минимально необходимый scope. 
+
+Текущий deploy workflow использует rsync over SSH и исключает из web-root `.git`, `.github`, `supabase`, `scripts`, `docs`, `templates` и служебные markdown-файлы.
+
+До включения `DEPLOY_ENABLED=true` production deployment остаётся выключенным, поэтому текущая публикация GitHub Pages продолжает работать как резерв.
+
+## DNS и HTTPS
+
+На хостинге сначала создаётся сайт для `nazerak.ru` и назначается его document root. Затем DNS домена направляется на выданный хостингом A/AAAA или CNAME target. Для `www` обычно настраивается отдельный CNAME или redirect на основной домен. После проверки DNS включается TLS/HTTPS и желательно принудительно перенаправляется HTTP → HTTPS.
+
+## Supabase Auth
+
+После появления сайта на `https://nazerak.ru` в Supabase Auth URL Configuration нужно установить Site URL и разрешить точные redirect URLs:
+
+- `https://nazerak.ru/`
+- `https://nazerak.ru/cabinet.html`
+
+Старые GitHub Pages redirect URLs лучше оставить на переходный период, а удалить уже после подтверждения нового production.
+
+## Если хостинг даёт только FTP/FTPS
+
+Текущий production workflow рассчитан на SSH. Для FTP/FTPS deploy-адаптер меняется на актуальный FTP Deploy action; код сайта и QA-цепочка при этом не меняются.
