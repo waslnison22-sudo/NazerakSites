@@ -632,3 +632,5 @@ html.js-ready .reveal.is-visible{opacity:1;transform:none}
   .forum-user__meta>div:last-child{border-bottom:0}
   .forum-user-topic{grid-template-columns:1fr;gap:5px;padding:15px 18px}
 }
+
+.forum-category-icon{display:inline-grid;place-items:center;width:18px;height:18px;border:1px solid var(--line);border-radius:6px;color:var(--text);font-size:9px;font-weight:900;line-height:1}
