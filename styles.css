@@ -198,9 +198,6 @@ html.js-ready .reveal.is-visible{opacity:1;transform:none}
   .world-panel__visual,.world-visual{min-height:340px}
   .partner-panel__visual{min-height:300px}
   .account-grid{grid-template-columns:1fr}
-  .account-panel--media{grid-column:auto}
-  .login-panel{grid-template-columns:1fr}
-  .login-panel__visual{min-height:250px;border-right:0;border-bottom:1px solid var(--line)}
 }
 @media(max-width:760px){
   .container,.hero__grid{width:min(calc(100% - 32px),var(--container))}
