@@ -13,7 +13,7 @@
     const slug=String(new URLSearchParams(location.search).get("slug")||"").toLowerCase();
     if(!slug)throw new Error("Раздел не указан.");
     const [cat,topics]=await Promise.all([
-      state.client.from("forum_categories").select("id,slug,name,description,area_slug,sort_order,icon,accent_color").eq("slug",slug).maybeSingle(),
+      state.client.from("forum_categories").select("id,slug,name,description,area_slug,sort_order,icon,accent_color,posting_mode").eq("slug",slug).maybeSingle(),
       state.client.from("forum_topic_list").select("id,slug,category_id,category_name,area_slug,author_public_id,author_name,author_avatar_url,primary_role_slug,primary_role_name,primary_role_badge,title,body,is_pinned,is_locked,is_archived,prefix,created_at,last_post_at,reply_count").eq("category_slug",slug).order("is_pinned",{ascending:false}).order("last_post_at",{ascending:false}).limit(100)
     ]);
     if(cat.error)throw new Error(cat.error.message);if(!cat.data)throw new Error("Раздел не найден.");
@@ -23,6 +23,15 @@
     qs("[data-category-name]").textContent=state.category.name;
     qs("[data-category-title]").innerHTML=escapeHtml(state.category.name)+"<span>.</span>";
     qs("[data-category-description]").textContent=state.category.description||"";
+    const policy=qs("[data-category-policy]");
+    if(policy){
+      policy.hidden=false;
+      policy.textContent=state.category.posting_mode==="official"
+        ? "Официальный раздел · публикация доступна команде с правом publish_official."
+        : state.category.posting_mode==="restricted"
+          ? "Ограниченный раздел · публикация доступна только ответственным ролям."
+          : "Открытый раздел · темы доступны участникам форума.";
+    }
     const count=qs("[data-category-result-count]");const n=state.topics.length;n===1?count.textContent="1 тема":n<5?count.textContent=n+" темы":count.textContent=n+" тем";
     const root=qs("[data-category-topic-list]");const empty=qs("[data-category-empty]");
     root.innerHTML=state.topics.map(t=>{
