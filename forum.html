@@ -5,11 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#07070a">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://unpkg.com; connect-src 'self' https://ujlbyzvdsncvqbrhasuw.supabase.co; img-src 'self' data: https://cdn.discordapp.com https://media.discordapp.net; style-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; frame-src 'none'; form-action 'self';">
-  <meta name="description" content="NaZerak — официальный форум проекта.">
+  <meta name="description" content="NaZerak — официальный форум проекта: РП-мир и мир администрации.">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <meta name="robots" content="noindex,nofollow,noarchive">
   <link rel="icon" href="./favicon.svg?v=5" type="image/svg+xml">
-  <link rel="stylesheet" href="./styles.css?v=24">
+  <link rel="stylesheet" href="./styles.css?v=25">
   <title>NaZerak — форум</title>
 </head>
 <body data-forum>
@@ -39,10 +39,10 @@
   <main class="forum-page" id="main-content" tabindex="-1">
     <div class="container forum">
       <header class="forum-hero">
-        <div>
+        <div class="forum-hero__copy">
           <span class="section-kicker">NAZERAK / FORUM</span>
           <h1>Форум<span>.</span></h1>
-          <p>Обсуждай проект, задавай вопросы и оставляй предложения. Темы и ответы уже работают через Supabase.</p>
+          <p>Два пространства проекта: <strong>РП-мир</strong> для жизни сервера и <strong>мир администрации</strong> для официальных документов, обращений и управления проектом.</p>
         </div>
         <div class="forum-hero__actions">
           <span class="forum-state" data-forum-state role="status" aria-live="polite"><i aria-hidden="true"></i><span>ЗАГРУЗКА</span></span>
@@ -54,51 +54,84 @@
 
       <div class="forum-message auth-message" data-forum-message role="status" aria-live="polite" hidden></div>
 
-      <section class="forum-layout">
-        <aside class="forum-sidebar">
-          <div class="forum-search">
-            <label for="forum-search">Поиск по темам</label>
-            <div class="forum-search__field">
-              <input id="forum-search" type="search" autocomplete="off" placeholder="Например: вход, город, идея">
-              <span aria-hidden="true">⌕</span>
-            </div>
+      <section class="forum-toolbar" aria-label="Инструменты форума">
+        <form class="forum-search" data-forum-search-form role="search">
+          <label class="sr-only" for="forum-search">Поиск по форуму</label>
+          <div class="forum-search__field">
+            <span class="forum-search__icon" aria-hidden="true">⌕</span>
+            <input id="forum-search" type="search" autocomplete="off" enterkeyhint="search" placeholder="Поиск по темам и разделам…">
+            <button class="forum-search__clear" type="button" data-forum-search-clear aria-label="Очистить поиск" hidden>×</button>
           </div>
+          <button class="button button--ghost forum-search__reset" type="button" data-forum-search-reset hidden>Сбросить</button>
+        </form>
+        <span class="forum-result-count" data-forum-result-count>0 тем</span>
+      </section>
 
-          <div class="forum-category-nav">
-            <div class="forum-block-head"><span>РАЗДЕЛЫ</span><span data-forum-category-count>—</span></div>
-            <button class="forum-category-filter is-active" type="button" data-category-filter="all">
-              <span><i aria-hidden="true"></i>Все темы</span><strong data-category-total>0</strong>
-            </button>
-            <div data-forum-categories></div>
-          </div>
-        </aside>
-
-        <section class="forum-main" aria-labelledby="forum-topics-title">
-          <div class="forum-main__head">
+      <section class="forum-worlds" aria-label="Разделы форума">
+        <article class="forum-world forum-world--rp" data-forum-world="rp">
+          <header class="forum-world__head">
             <div>
-              <span class="section-kicker">DISCUSSIONS</span>
-              <h2 id="forum-topics-title">Последние обсуждения</h2>
+              <span class="section-kicker">01 / ROLEPLAY</span>
+              <h2>РП-мир<span>.</span></h2>
+              <p>Игровая часть форума: мир NaZerak, государство, организации, помощь игрокам, предложения и обращения.</p>
             </div>
-            <span class="forum-result-count" data-forum-result-count>0 тем</span>
+            <button class="button button--ghost forum-world__filter" type="button" data-forum-area-filter="rp">
+              <span>Все темы</span><span aria-hidden="true">→</span>
+            </button>
+          </header>
+          <div class="forum-category-grid" data-forum-categories="rp"></div>
+          <div class="forum-world__empty" data-forum-world-empty="rp" hidden>
+            <span class="forum-world__empty-mark" aria-hidden="true">RP</span>
+            <div><strong>Разделы пока не добавлены.</strong><span>Категории этого мира будут создаваться отдельно, без автоматически написанных тем.</span></div>
           </div>
+        </article>
 
-          <div class="forum-topic-list" data-forum-topic-list aria-live="polite">
-            <div class="forum-loading-row"><span></span><span></span><span></span></div>
-            <div class="forum-loading-row"><span></span><span></span><span></span></div>
-            <div class="forum-loading-row"><span></span><span></span><span></span></div>
-          </div>
-
-          <div class="forum-empty" data-forum-empty hidden>
-            <span class="forum-empty__mark" aria-hidden="true">NZ</span>
-            <span class="section-kicker">NO TOPICS YET</span>
-            <h3>Первое обсуждение может появиться здесь.</h3>
-            <p>Создай тему или зайди в Discord, чтобы начать разговор с сообществом.</p>
-            <div class="forum-empty__actions">
-              <button class="button button--primary" type="button" data-forum-create><span>Создать тему</span><span aria-hidden="true">+</span></button>
-              <a class="button button--ghost" href="https://discord.gg/2KvsYYDHN6" target="_blank" rel="noopener noreferrer"><span>Discord</span><span aria-hidden="true">↗</span></a>
+        <article class="forum-world forum-world--admin" data-forum-world="administration">
+          <header class="forum-world__head">
+            <div>
+              <span class="section-kicker">02 / ADMINISTRATION</span>
+              <h2>Мир администрации<span>.</span></h2>
+              <p>Официальная часть форума: законы, правила, документы, новости проекта и обращения к команде.</p>
             </div>
+            <button class="button button--ghost forum-world__filter" type="button" data-forum-area-filter="administration">
+              <span>Все темы</span><span aria-hidden="true">→</span>
+            </button>
+          </header>
+          <div class="forum-category-grid" data-forum-categories="administration"></div>
+          <div class="forum-resource">
+            <a class="forum-resource__link" href="https://discord.gg/2KvsYYDHN6" target="_blank" rel="noopener noreferrer">
+              <span class="forum-resource__icon" aria-hidden="true">↗</span>
+              <span><strong>Официальный Discord</strong><small>Сервер сообщества и оперативные объявления</small></span>
+            </a>
           </div>
-        </section>
+          <div class="forum-world__empty" data-forum-world-empty="administration" hidden>
+            <span class="forum-world__empty-mark" aria-hidden="true">ADM</span>
+            <div><strong>Разделы пока не добавлены.</strong><span>Здесь появятся официальные разделы, когда их создадём вручную.</span></div>
+          </div>
+        </article>
+      </section>
+
+      <section class="forum-discussions" aria-labelledby="forum-topics-title">
+        <div class="forum-main__head">
+          <div>
+            <span class="section-kicker">DISCUSSIONS</span>
+            <h2 id="forum-topics-title">Последние обсуждения</h2>
+          </div>
+          <button class="button button--ghost forum-main__all" type="button" data-forum-all>Все темы</button>
+        </div>
+
+        <div class="forum-topic-list" data-forum-topic-list aria-live="polite"></div>
+
+        <div class="forum-empty" data-forum-empty hidden>
+          <span class="forum-empty__mark" aria-hidden="true">NZ</span>
+          <span class="section-kicker">NO TOPICS YET</span>
+          <h3>Тем пока нет — и это нормально.</h3>
+          <p>Форум оставлен без заранее написанных сообщений. Мы сами заполним его реальными правилами, законами, заявками и обсуждениями.</p>
+          <div class="forum-empty__actions">
+            <button class="button button--primary" type="button" data-forum-create><span>Создать тему</span><span aria-hidden="true">+</span></button>
+            <a class="button button--ghost" href="https://discord.gg/2KvsYYDHN6" target="_blank" rel="noopener noreferrer"><span>Discord</span><span aria-hidden="true">↗</span></a>
+          </div>
+        </div>
       </section>
     </div>
   </main>
@@ -108,7 +141,7 @@
       <button class="forum-modal__close" type="submit" value="cancel" aria-label="Закрыть">×</button>
       <span class="section-kicker">NEW TOPIC</span>
       <h2 id="forum-modal-title">Создать тему.</h2>
-      <p class="forum-modal__copy">Будь конкретнее в заголовке и опиши вопрос или идею в первом сообщении.</p>
+      <p class="forum-modal__copy">Выбери готовый раздел и заполни первое сообщение. Официальные документы и закреплённые темы будем создавать вручную.</p>
 
       <div class="forum-form-field">
         <label for="forum-category">Раздел</label>
@@ -116,11 +149,11 @@
       </div>
       <div class="forum-form-field">
         <label for="forum-title">Заголовок</label>
-        <input id="forum-title" name="title" maxlength="120" minlength="3" required placeholder="Например: Какой район строим следующим?">
+        <input id="forum-title" name="title" maxlength="120" minlength="3" required placeholder="Например: Обсуждение нового района">
       </div>
       <div class="forum-form-field">
         <label for="forum-body">Сообщение</label>
-        <textarea id="forum-body" name="body" maxlength="12000" rows="8" required placeholder="Опиши вопрос, предложение или тему подробнее…"></textarea>
+        <textarea id="forum-body" name="body" maxlength="12000" rows="8" required placeholder="Опиши вопрос, предложение или ситуацию…"></textarea>
         <small>1–12 000 символов</small>
       </div>
       <div class="forum-modal__footer">
@@ -148,8 +181,8 @@
   <script src="./auth-config.js?v=8" defer></script>
   <script src="./supabase-loader.js?v=9" defer></script>
   <script src="./auth.js?v=33" defer></script>
-  <script src="./forum-ui.js?v=1" defer></script>
-  <script src="./forum.js?v=2" defer></script>
+  <script src="./forum-ui.js?v=2" defer></script>
+  <script src="./forum.js?v=3" defer></script>
   <script src="./script.js?v=17" defer></script>
 </body>
 </html>
