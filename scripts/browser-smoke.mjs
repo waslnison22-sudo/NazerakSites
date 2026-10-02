@@ -222,7 +222,6 @@ const installFakeSupabase = async (context) => {
       created_at: "2026-01-01T00:00:00.000Z",
       updated_at: "2026-01-01T00:00:00.000Z"
     });
-    const smokeMode = new URLSearchParams(window.location.search).get("smoke");
     window.__nazerakFakeMetrics = { profileReads: 0, profileInserts: 0 };
 
     window.supabase = {
@@ -250,6 +249,7 @@ const installFakeSupabase = async (context) => {
             update() { return chain; },
             maybeSingle: async () => {
               if (table === "profiles") window.__nazerakFakeMetrics.profileReads += 1;
+              const smokeMode = new URLSearchParams(window.location.search).get("smoke");
               if (smokeMode === "profile-timeout" && table === "profiles" && window.__nazerakFakeMetrics.profileReads === 1) {
                 return new Promise(() => {});
               }
