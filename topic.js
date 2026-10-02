@@ -14,7 +14,7 @@
     const id=Number(new URLSearchParams(window.location.search).get("id"));
     if(!Number.isSafeInteger(id)||id<1)throw new Error("Некорректная тема форума.");
     const results=await Promise.all([
-      state.client.from("forum_topic_detail").select("id,slug,category_id,category_slug,category_name,author_public_id,author_name,author_avatar_url,primary_role_slug,primary_role_name,primary_role_badge,title,body,is_pinned,is_locked,is_archived,prefix,views_count,solution_state,created_at,updated_at,last_post_at,reply_count").eq("id",id).maybeSingle(),
+      state.client.from("forum_topic_detail").select("id,slug,category_id,category_slug,category_route_slug,category_name,parent_name,author_public_id,author_name,author_avatar_url,primary_role_slug,primary_role_name,primary_role_badge,title,body,is_pinned,is_locked,is_archived,prefix,views_count,solution_state,created_at,updated_at,last_post_at,reply_count").eq("id",id).maybeSingle(),
       state.client.from("forum_posts").select("id,topic_id,body,created_at,updated_at,edited_at,author_public_id,author_display_name,author_avatar_url,author_role_slug,author_role_name,author_role_badge").eq("topic_id",id).order("created_at",{ascending:true})
     ]);
     if(results[0].error)throw new Error(results[0].error.message);
@@ -29,7 +29,7 @@
   const renderTopic=(topic,posts)=>{
     const avatar=safeUrl(topic.author_avatar_url);
     const categoryLink=qs("[data-topic-category-link]");
-    if(categoryLink){categoryLink.textContent=topic.category_name||"Форум";categoryLink.href="./forum-category.html?slug="+encodeURIComponent(topic.category_slug||"");}
+    if(categoryLink){categoryLink.textContent=topic.parent_name ? topic.parent_name+" / "+(topic.category_name||"Форум") : (topic.category_name||"Форум");categoryLink.href="./forum-category.html?slug="+encodeURIComponent(topic.category_route_slug||topic.category_slug||"");}
     qs("[data-topic-category-badge]").textContent=topic.category_name||"Форум";
     qs("[data-topic-title]").textContent=topic.title;
     qs("[data-topic-date]").textContent=formatDateTime(topic.created_at);
