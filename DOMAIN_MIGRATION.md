@@ -21,6 +21,12 @@
 6. Проверить Discord login, cabinet, forum index, category, topic, member profile and search from a fresh browser session.
 7. Только после этого удалить старые redirect URLs и старую публикацию, если она больше не нужна.
 
+## Человекочитаемые публичные URL
+
+Публичные страницы генерируются из public-routes.json. Базовые адреса вида /pravitelstvo, /sud, /prokuratura и /fsb не зависят от GitHub Pages или Supabase. Внутри репозитория они представлены как каталоги со своим index.html, поэтому после переноса на новый хостинг пути сохраняются.
+
+Генератор: node scripts/generate-public-routes.mjs. Для новых разделов сначала добавляется запись в public-routes.json, затем генератор создаёт соответствующий каталог и страницу.
+
 ## Важное правило
 
 Не добавляй `nazerak.ru` в `CNAME` GitHub Pages заранее: пока DNS и новый хостинг не готовы, это может преждевременно переключить публикацию.
