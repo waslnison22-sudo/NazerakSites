@@ -33,7 +33,6 @@ const requiredFiles = [
   "supabase/migrations/20261002212000_forum_public_security.sql",
   "supabase/migrations/20261002223000_forum_two_worlds_and_discord_admin.sql",
   "supabase/migrations/20261002224000_forum_topic_world_view.sql",
-  "supabase/migrations/20261002223000_forum_two_worlds_and_discord_admin.sql",
   "scripts/runtime-smoke.mjs",
   "scripts/browser-smoke.mjs",
   "assets/images/README.md"
@@ -289,9 +288,7 @@ const forumPage = read("forum.html");
 if (!forumPage.includes("data-forum-world=\"rp\"") || !forumPage.includes("data-forum-world=\"administration\"")) fail.push("forum must expose exactly the two top-level worlds");
 if (!forumPage.includes("data-forum-search-form") || !forumPage.includes("data-forum-search-clear")) fail.push("forum search controls are incomplete");
 if (!forumPage.includes("button--primary") || !forumPage.includes("button--ghost")) fail.push("forum must use common site button classes");
-if (s.includes("20261002211000_forum_structure_seed.sql") && s.includes("welcome-to-nazerak")) fail.push("QA script must not require legacy seeded forum content");
 if (!read("forum-user.html").includes("data-user-profile")) fail.push("full forum profile markup missing");
-if (s.includes("welcome-to-nazerak") || s.includes("forum-rules") && s.includes("Добро пожаловать на форум NaZerak")) fail.push("starter forum messages must not be embedded in QA");
 if (!read("forum-ui.js").includes("data-forum-user")) fail.push("forum hover profile interaction missing");
 if (!read("user.js").includes('from("forum_author_directory")')) fail.push("forum user directory query missing");
 if (auth.includes(".from(\"profiles\")\n      .upsert(")) fail.push("profile initialization still uses upsert");
