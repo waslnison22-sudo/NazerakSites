@@ -190,6 +190,35 @@
     }
   };
 
+
+  const syncForumAccount = async (user) => {
+    if (!client || !user) return;
+    try {
+      const displayName = userDisplayName(user).slice(0, 64) || "Игрок NaZerak";
+      const avatar = userAvatar(user) || null;
+      const result = await withTimeout(
+        client
+          .from("forum_authors")
+          .upsert({
+            id: user.id,
+            display_name: displayName,
+            avatar_url: avatar,
+            last_seen_at: new Date().toISOString()
+          }, { onConflict: "id", ignoreDuplicates: false }),
+        5000,
+        "Синхронизация форумного профиля превысила 5 секунд."
+      );
+      if (result.error) {
+        console.warn("[NaZerak Auth] forum account sync unavailable:", result.error.message);
+      }
+    } catch (error) {
+      console.warn(
+        "[NaZerak Auth] forum account sync failed:",
+        error instanceof Error ? error.message : String(error)
+      );
+    }
+  };
+
   const formatDate = (value) => {
     if (!value) return "—";
     const date = new Date(value);
@@ -768,6 +797,7 @@
     state.user = resolvedUser;
     state.loading = false;
     renderAuthLinks();
+    void syncForumAccount(state.user);
 
     if (!state.user) {
       setAuthStatus("DISCORD READY", "ready");
