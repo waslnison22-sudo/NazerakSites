@@ -94,16 +94,23 @@
     const slot = document.querySelector(selector);
     if (!slot) return;
 
-    const image = new Image();
-    image.className = "media-slot__image";
-    image.alt = "";
-    image.setAttribute("aria-hidden", "true");
-    image.decoding = "async";
-    image.addEventListener("load", () => {
-      slot.appendChild(image);
-      slot.classList.add("has-image");
-    }, { once: true });
-    image.src = src;
+    fetch(src, { method: "HEAD", cache: "no-store" })
+      .then((response) => {
+        if (!response.ok) return null;
+
+        const image = new Image();
+        image.className = "media-slot__image";
+        image.alt = "";
+        image.setAttribute("aria-hidden", "true");
+        image.decoding = "async";
+        image.addEventListener("load", () => {
+          slot.appendChild(image);
+          slot.classList.add("has-image");
+        }, { once: true });
+        image.src = src;
+        return image;
+      })
+      .catch(() => null);
   });
 
   document.querySelectorAll("[data-copy]").forEach((button) => {
