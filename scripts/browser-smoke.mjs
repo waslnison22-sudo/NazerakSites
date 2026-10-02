@@ -471,7 +471,7 @@ await testStaticPage({
 });
 
 await testStaticPage({
-  path: "/forum-category.html?slug=rules",
+  path: "/forum-category.html?slug=pravila-i-dokumenty",
   name: "official forum category",
   viewport: { width: 1280, height: 900 },
   check: async (page) => {
