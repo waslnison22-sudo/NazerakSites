@@ -47,6 +47,7 @@ const requiredFiles = [
   "supabase/migrations/20261002228000_forum_public_post_select_policy.sql",
   "supabase/migrations/20261002229000_forum_community_stats.sql",
   "supabase/migrations/20261002232000_forum_section_map_v2.sql",
+  "supabase/migrations/20261002233000_forum_category_posting_modes.sql",
   "supabase/migrations/20261002231000_forum_locked_topic_insert_guard.sql",
   "supabase/migrations/20261002230000_forum_permission_function_hardening.sql",
   "scripts/runtime-smoke.mjs",
@@ -337,6 +338,7 @@ if (!forumPage.includes("data-forum-board-rows=\"rp\"") || !forumPage.includes("
 if (!forumPage.includes("data-forum-search-form") || !forumPage.includes("data-forum-search-clear")) fail.push("forum search controls are incomplete");
 if (!forumPage.includes("button--primary") || !forumPage.includes("button--ghost")) fail.push("forum must use common site button classes");
 if (!read("forum-user.html").includes("data-user-profile")) fail.push("full forum profile markup missing");
+if (!read("forum-category.html").includes("data-category-policy")) fail.push("forum category posting policy markup missing");
 if (!read("forum-ui.js").includes("data-forum-user")) fail.push("forum hover profile interaction missing");
 if (!read("user.js").includes('from("forum_author_directory")')) fail.push("forum user directory query missing");
 if (auth.includes(".from(\"profiles\")\n      .upsert(")) fail.push("profile initialization still uses upsert");
