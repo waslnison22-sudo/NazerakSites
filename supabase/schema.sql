@@ -196,3 +196,50 @@ grant update (body, updated_at) on public.forum_posts to authenticated;
 grant delete on public.forum_posts to authenticated;
 grant insert (id, display_name, avatar_url) on public.forum_authors to authenticated;
 grant update (display_name, avatar_url, updated_at) on public.forum_authors to authenticated;
+
+
+-- Forum identity, roles and public profiles.
+create table if not exists public.forum_roles (
+  slug text primary key,
+  name text not null,
+  short_name text not null,
+  color text not null,
+  badge text not null default '',
+  description text not null default '',
+  priority integer not null default 0,
+  permissions text[] not null default '{}'
+);
+
+create table if not exists public.forum_user_roles (
+  user_id uuid not null references auth.users(id) on delete cascade,
+  role_slug text not null references public.forum_roles(slug) on delete restrict,
+  assigned_at timestamptz not null default now(),
+  assigned_by uuid references auth.users(id) on delete set null,
+  primary key (user_id, role_slug)
+);
+
+alter table public.forum_authors
+  add column if not exists public_id uuid not null default gen_random_uuid(),
+  add column if not exists bio text not null default '',
+  add column if not exists minecraft_username text,
+  add column if not exists joined_at timestamptz not null default now(),
+  add column if not exists last_seen_at timestamptz,
+  add column if not exists role_slugs jsonb not null default '[]'::jsonb,
+  add column if not exists primary_role_slug text not null default 'player',
+  add column if not exists primary_role_name text not null default 'Игрок',
+  add column if not exists primary_role_color text not null default '#a9adb7',
+  add column if not exists primary_role_badge text not null default '•';
+
+alter table public.forum_topics
+  add column if not exists slug text,
+  add column if not exists views_count integer not null default 0,
+  add column if not exists prefix text not null default '',
+  add column if not exists is_archived boolean not null default false,
+  add column if not exists solution_state text not null default 'none';
+
+alter table public.forum_posts
+  add column if not exists is_hidden boolean not null default false,
+  add column if not exists edited_at timestamptz;
+
+-- The public forum identity is always keyed by the Supabase Auth user.
+-- Discord OAuth creates/owns that Auth account; no Discord password is stored here.
