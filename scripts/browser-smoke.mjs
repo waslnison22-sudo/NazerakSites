@@ -260,10 +260,8 @@ const installFakeSupabase = async (context) => {
             },
             single: async () => ({ data: profile(), error: null }),
             then(resolve, reject) {
-              if (table === "media_applications") window.__nazerakFakeMetrics.mediaReads += 1;
-              if (smokeMode === "media-timeout" && table === "media_applications" && window.__nazerakFakeMetrics.mediaReads === 1) {
-                return new Promise(() => {}).then(resolve, reject);
-              }
+              return Promise.resolve({ data: null, error: null }).then(resolve, reject);
+            }
               return Promise.resolve({ data: table === "media_applications" ? [] : null, error: null }).then(resolve, reject);
             }
           };
