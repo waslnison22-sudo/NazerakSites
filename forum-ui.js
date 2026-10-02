@@ -104,33 +104,38 @@
     renderCard(profile, trigger);
   };
 
+  const getUserTrigger = (event) => {
+    const target = event && event.target;
+    return target instanceof Element ? target.closest("[data-forum-user]") : null;
+  };
+
   const bind = (root = document) => {
     root.addEventListener("mouseenter", (event) => {
-      const trigger = event.target.closest("[data-forum-user]");
+      const trigger = getUserTrigger(event);
       if (!trigger) return;
       window.clearTimeout(openTimer);
       openTimer = window.setTimeout(() => void open(trigger), 280);
     }, true);
 
     root.addEventListener("mouseleave", (event) => {
-      const trigger = event.target.closest("[data-forum-user]");
+      const trigger = getUserTrigger(event);
       if (!trigger) return;
       window.clearTimeout(openTimer);
       scheduleClose();
     }, true);
 
     root.addEventListener("focusin", (event) => {
-      const trigger = event.target.closest("[data-forum-user]");
+      const trigger = getUserTrigger(event);
       if (trigger) void open(trigger);
     });
 
     root.addEventListener("focusout", (event) => {
-      const trigger = event.target.closest("[data-forum-user]");
+      const trigger = getUserTrigger(event);
       if (trigger) scheduleClose();
     });
 
     root.addEventListener("click", (event) => {
-      const trigger = event.target.closest("[data-forum-user]");
+      const trigger = getUserTrigger(event);
       if (!trigger) return;
       if (trigger.tagName !== "A") {
         event.preventDefault();
