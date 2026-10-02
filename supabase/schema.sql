@@ -274,3 +274,11 @@ alter table public.forum_categories
   add column if not exists posting_mode text not null default 'open';
 
 -- Official publication is protected by the database permission layer.
+
+
+-- Forum node tree
+-- forum_categories is a hierarchical node table:
+-- node_type=category is a non-posting container;
+-- node_type=forum is a topic-bearing child node.
+-- route_slug is the stable public forum slug used by forum-category.html.
+-- parent_id references the immediate parent category.
