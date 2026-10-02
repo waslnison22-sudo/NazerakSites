@@ -267,3 +267,10 @@ create table if not exists private.forum_discord_role_bindings (
 );
 
 -- Real forum content is created manually; there is no starter-topic block here.
+
+
+-- Forum category publication mode: open, official, or restricted.
+alter table public.forum_categories
+  add column if not exists posting_mode text not null default 'open';
+
+-- Official publication is protected by the database permission layer.
