@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#07070a">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://unpkg.com; connect-src 'self' https://ujlbyzvdsncvqbrhasuw.supabase.co; img-src 'self' data: https://cdn.discordapp.com https://media.discordapp.net; style-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; frame-src 'none'; form-action 'self';">
-  <meta name="description" content="NaZerak — официальный форум проекта: РП-мир и мир администрации.">
+  <meta name="description" content="NaZerak — официальный форум проекта. Правила, государственные структуры, игровой мир, обращения, развитие и сообщество.">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <meta name="robots" content="noindex,nofollow,noarchive">
   <link rel="icon" href="./favicon.svg?v=5" type="image/svg+xml">
@@ -41,7 +41,7 @@
         <div class="forum-hero__copy">
           <span class="section-kicker">NAZERAK / FORUM</span>
           <h1>Форум<span>.</span></h1>
-          <p>Два пространства проекта: <strong>РП-мир</strong> для жизни сервера и <strong>мир администрации</strong> для официальных документов, обращений и управления проектом.</p>
+          <p>Единое пространство проекта: официальная информация, государственные структуры, игровой мир, обращения, развитие и общение.</p>
         </div>
         <div class="forum-hero__actions">
           <span class="forum-state" data-forum-state role="status" aria-live="polite"><i aria-hidden="true"></i><span>ЗАГРУЗКА</span></span>
@@ -68,19 +68,10 @@
 
       <section class="forum-boards" aria-labelledby="forum-boards-title">
         <header class="forum-list-head forum-list-head--board">
-          <div><span class="section-kicker">FORUM INDEX</span><h2 id="forum-boards-title">Список форумов</h2></div>
-          <span class="forum-result-count" data-forum-board-count>0 разделов</span>
+          <div><span class="section-kicker">FORUM INDEX</span><h2 id="forum-boards-title">Разделы форума</h2></div>
+          <span class="forum-result-count" data-forum-board-count>0 форумов</span>
         </header>
-        <div class="forum-board" data-forum-board="rp">
-          <header class="forum-board__head"><div><span class="section-kicker">01 / ROLEPLAY</span><h3>РП-мир<span>.</span></h3></div><span>Игровая часть</span></header>
-          <div class="forum-board__columns" aria-hidden="true"><span>Форум</span><span>Темы</span><span>Сообщения</span><span>Последнее сообщение</span></div>
-          <div class="forum-board__rows" data-forum-board-rows="rp"></div>
-        </div>
-        <div class="forum-board" data-forum-board="administration">
-          <header class="forum-board__head"><div><span class="section-kicker">02 / ADMINISTRATION</span><h3>Мир администрации<span>.</span></h3></div><span>Официальная часть</span></header>
-          <div class="forum-board__columns" aria-hidden="true"><span>Форум</span><span>Темы</span><span>Сообщения</span><span>Последнее сообщение</span></div>
-          <div class="forum-board__rows" data-forum-board-rows="administration"></div>
-        </div>
+        <div class="forum-node-tree" data-forum-node-tree aria-live="polite"></div>
       </section>
       
       <section class="forum-discussions" aria-labelledby="forum-topics-title">
@@ -114,7 +105,7 @@
       <button class="forum-modal__close" type="submit" value="cancel" aria-label="Закрыть">×</button>
       <span class="section-kicker">NEW TOPIC</span>
       <h2 id="forum-modal-title">Создать тему.</h2>
-      <p class="forum-modal__copy">Выбери готовый раздел и заполни первое сообщение. Официальные документы и закреплённые темы будем создавать вручную.</p>
+      <p class="forum-modal__copy">Выбери открытый форум и заполни первое сообщение. Официальные разделы публикует команда проекта.</p>
 
       <div class="forum-form-field">
         <label for="forum-category">Раздел</label>
