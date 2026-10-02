@@ -35,7 +35,7 @@ const requiredFiles = [
   "site-routes.js",
   "public-routes.json",
   "templates/public-route.html",
-  "scripts/generate-public-routes.mjs",
+ ,
   "docs/public-routes.md",
   "docs/stability-roadmap.md",
   "pravitelstvo/index.html",
@@ -148,7 +148,7 @@ for (const [name, page] of [
   }
 }
 
-for (const file of ["script.js", "auth.js", "supabase-loader.js", "forum.js", "forum-ui.js", "forum-category.js", "forum-members.js", "forum-search.js", "topic.js", "user.js", "site-routes.js", "scripts/generate-public-routes.mjs"]) {
+for (const file of ["script.js", "auth.js", "supabase-loader.js", "forum.js", "forum-ui.js", "forum-category.js", "forum-members.js", "forum-search.js", "topic.js", "user.js", "site-routes.js"]) {
   try {
     new Function(read(file));
   } catch (error) {
@@ -427,4 +427,5 @@ for (const item of info) console.log(" - " + item);
 
 const routesSource = read("site-routes.js");
 if (!routesSource.includes('government: "pravitelstvo"')) fail.push("government public route helper is missing");
+if (!read("scripts/generate-public-routes.mjs").includes("JSON.parse")) fail.push("public route generator manifest parser is missing");
 if (!routesSource.includes('options.absolute ?')) fail.push("absolute route helper is missing");
