@@ -84,6 +84,28 @@
     revealItems.forEach((item) => observer.observe(item));
   }
 
+  const optionalMedia = [
+    { selector: '[data-image-slot="hero"]', src: "./assets/images/hero.webp" },
+    { selector: '[data-image-slot="world"]', src: "./assets/images/world.webp" },
+    { selector: '[data-image-slot="partnership"]', src: "./assets/images/partnership.webp" }
+  ];
+
+  optionalMedia.forEach(({ selector, src }) => {
+    const slot = document.querySelector(selector);
+    if (!slot) return;
+
+    const image = new Image();
+    image.className = "media-slot__image";
+    image.alt = "";
+    image.setAttribute("aria-hidden", "true");
+    image.decoding = "async";
+    image.addEventListener("load", () => {
+      slot.appendChild(image);
+      slot.classList.add("has-image");
+    }, { once: true });
+    image.src = src;
+  });
+
   document.querySelectorAll("[data-copy]").forEach((button) => {
     button.addEventListener("click", async () => {
       const value = button.getAttribute("data-copy");
