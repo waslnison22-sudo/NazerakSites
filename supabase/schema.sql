@@ -4,7 +4,8 @@
 -- Security model:
 -- 1) Discord authentication is handled by Supabase Auth.
 -- 2) Users can only read/write their own profile row.
--- 3) Media partner applications are insert/select-only for their owner.
+-- 3) Media partner applications are a future moderation foundation; the public
+--    site does not accept submissions until a review workflow exists.
 -- 4) No browser client receives a service_role key.
 
 create table if not exists public.profiles (
@@ -86,26 +87,23 @@ revoke all on table public.profiles, public.media_applications from anon;
 revoke insert, update, delete, references, trigger, truncate
   on table public.profiles
   from authenticated;
-revoke insert, update, delete, references, trigger, truncate
-  on table public.media_applications
+revoke all on table public.media_applications
   from authenticated;
 
 revoke all on sequence public.media_applications_id_seq from anon;
 
 grant select on public.profiles to authenticated;
-grant select on public.media_applications to authenticated;
+-- Media applications intentionally have no browser grants yet.
+-- Add narrow SELECT/INSERT grants only when a real moderation workflow exists.
 
 grant insert (id, minecraft_username)
   on table public.profiles to authenticated;
 grant update (minecraft_username, updated_at)
   on table public.profiles to authenticated;
 
-grant insert (user_id, channel_url, message)
-  on table public.media_applications to authenticated;
-
 grant usage, select
   on sequence public.media_applications_id_seq
   to authenticated;
 
 comment on table public.profiles is 'NaZerak user profile, keyed to Supabase Auth user id.';
-comment on table public.media_applications is 'NaZerak media partner applications submitted by authenticated users.';
+comment on table public.media_applications is 'Future NaZerak media partner application queue; browser intake is disabled until moderation exists.';
