@@ -35,7 +35,7 @@
 ### Gate 4 — Runtime QA
 - [x] Static release checks
 - [x] Supabase runtime smoke
-- [x] GitHub Pages publication check
+- [x] Local production-server publication check for browser smoke
 - [x] Desktop forum smoke
 - [x] Mobile forum smoke
 - [x] Section/members/search/profile browser smoke coverage
@@ -51,6 +51,10 @@
 - [ ] Switch DNS
 - [ ] Update canonical/OG/robots/sitemap
 - [ ] Run full fresh-session authentication and forum smoke on `https://nazerak.ru`
+
+## CI deployment separation
+
+Browser QA runs against a local HTTP server built from the exact checked-out commit. GitHub Pages deployment is monitored separately and does not gate application correctness.
 
 ## Design rule
 
