@@ -46,6 +46,7 @@ const requiredFiles = [
   "supabase/migrations/20261002227000_forum_cached_public_views.sql",
   "supabase/migrations/20261002228000_forum_public_post_select_policy.sql",
   "supabase/migrations/20261002229000_forum_community_stats.sql",
+  "supabase/migrations/20261002230000_forum_permission_function_hardening.sql",
   "scripts/runtime-smoke.mjs",
   "scripts/browser-smoke.mjs",
   "assets/images/README.md"
