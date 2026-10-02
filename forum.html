@@ -3,47 +3,152 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#070708">
+  <meta name="theme-color" content="#07070a">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://unpkg.com; connect-src 'self' https://ujlbyzvdsncvqbrhasuw.supabase.co; img-src 'self' data: https://cdn.discordapp.com https://media.discordapp.net; style-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; frame-src 'none'; form-action 'self';">
+  <meta name="description" content="NaZerak — официальный форум проекта.">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
   <meta name="robots" content="noindex,nofollow,noarchive">
   <link rel="icon" href="./favicon.svg?v=5" type="image/svg+xml">
-  <link rel="stylesheet" href="./styles.css?v=21">
-  <title>NaZerak — сообщество</title>
+  <link rel="stylesheet" href="./styles.css?v=22">
+  <title>NaZerak — форум</title>
 </head>
-<body>
+<body data-forum>
   <a class="skip-link" href="#main-content">К содержимому</a>
+
   <header class="topbar" id="top">
     <div class="container topbar__inner">
-      <a class="brand" href="./" aria-label="NaZerak — на главную"><span class="brand__mark" aria-hidden="true">NZ</span><span class="brand__name">NaZerak</span></a>
-      <button class="nav-toggle" type="button" aria-controls="site-nav" aria-expanded="false" aria-label="Открыть меню"><span></span><span></span><span></span><span class="sr-only">Открыть меню</span></button>
-      <nav class="nav" id="site-nav" aria-label="Основная навигация">
-        <a href="./#about">Проект</a><a href="./#world">Мир</a><a href="./#start">Старт</a><a class="nav-forum is-active" href="./forum.html" aria-current="page">Сообщество</a><a class="nav-account" data-auth-link href="./cabinet.html"><span class="nav-account__avatar"><img data-auth-link-avatar alt="" hidden><span data-auth-link-fallback>◉</span></span><span data-auth-link-label>Войти</span></a>
+      <a class="brand" href="./" aria-label="NaZerak — на главную">
+        <span class="brand__mark" aria-hidden="true">NZ</span><span class="brand__name">NaZerak</span>
+      </a>
+      <button class="nav-toggle" type="button" aria-controls="forum-nav" aria-expanded="false" aria-label="Открыть меню">
+        <span></span><span></span><span></span><span class="sr-only">Открыть меню</span>
+      </button>
+      <nav class="nav" id="forum-nav" aria-label="Основная навигация">
+        <a href="./#about">Проект</a>
+        <a href="./#world">Мир</a>
+        <a href="./#start">Старт</a>
+        <a class="nav-forum is-active" href="./forum.html" aria-current="page">Форум</a>
+        <a class="nav-account" data-auth-link href="./cabinet.html">
+          <span class="nav-account__avatar"><img data-auth-link-avatar alt="" hidden><span data-auth-link-fallback>◉</span></span>
+          <span data-auth-link-label>Войти</span>
+        </a>
       </nav>
     </div>
   </header>
-  <main class="community-page" id="main-content" tabindex="-1">
-    <div class="container">
-      <section class="community-hero reveal is-visible">
-        <div><span class="section-kicker">NAZERAK / COMMUNITY</span><h1>Сообщество.</h1><p>Точка входа в сообщество NaZerak. Основные обсуждения и связь с игроками сейчас проходят в официальном Discord.</p></div>
-        <div class="community-hero__badge"><i></i><span>FOUNDATION READY</span></div>
-      </section>
-      <section class="section forum-section">
-        <div class="community-panel">
-          <span class="section-kicker">COMMUNITY HUB</span>
-          <h2>Обсуждения — в Discord.</h2>
-          <p class="community-panel__description">Новости, вопросы, помощь игрокам и живое общение собраны в официальном Discord NaZerak. Здесь нет выдуманных тем и статистики.</p>
-          <div class="forum-actions">
-            <a class="button button--primary" href="https://discord.gg/2KvsYYDHN6" target="_blank" rel="noopener noreferrer"><span>Открыть Discord</span><span aria-hidden="true">↗</span></a>
-            <a class="button button--ghost" href="./"><span>Вернуться на сайт</span><span aria-hidden="true">←</span></a>
-          </div>
+
+  <main class="forum-page" id="main-content" tabindex="-1">
+    <div class="container forum">
+      <header class="forum-hero">
+        <div>
+          <span class="section-kicker">NAZERAK / FORUM</span>
+          <h1>Форум<span>.</span></h1>
+          <p>Обсуждай проект, задавай вопросы и оставляй предложения. Темы и ответы уже работают через Supabase.</p>
         </div>
+        <div class="forum-hero__actions">
+          <span class="forum-state" data-forum-state role="status" aria-live="polite"><i aria-hidden="true"></i><span>ЗАГРУЗКА</span></span>
+          <button class="button button--primary" type="button" data-forum-create>
+            <span>Новая тема</span><span aria-hidden="true">+</span>
+          </button>
+        </div>
+      </header>
+
+      <div class="forum-message auth-message" data-forum-message role="status" aria-live="polite" hidden></div>
+
+      <section class="forum-layout">
+        <aside class="forum-sidebar">
+          <div class="forum-search">
+            <label for="forum-search">Поиск по темам</label>
+            <div class="forum-search__field">
+              <input id="forum-search" type="search" autocomplete="off" placeholder="Например: вход, город, идея">
+              <span aria-hidden="true">⌕</span>
+            </div>
+          </div>
+
+          <div class="forum-category-nav">
+            <div class="forum-block-head"><span>РАЗДЕЛЫ</span><span data-forum-category-count>—</span></div>
+            <button class="forum-category-filter is-active" type="button" data-category-filter="all">
+              <span><i aria-hidden="true"></i>Все темы</span><strong data-category-total>0</strong>
+            </button>
+            <div data-forum-categories></div>
+          </div>
+        </aside>
+
+        <section class="forum-main" aria-labelledby="forum-topics-title">
+          <div class="forum-main__head">
+            <div>
+              <span class="section-kicker">DISCUSSIONS</span>
+              <h2 id="forum-topics-title">Последние обсуждения</h2>
+            </div>
+            <span class="forum-result-count" data-forum-result-count>0 тем</span>
+          </div>
+
+          <div class="forum-topic-list" data-forum-topic-list aria-live="polite">
+            <div class="forum-loading-row"><span></span><span></span><span></span></div>
+            <div class="forum-loading-row"><span></span><span></span><span></span></div>
+            <div class="forum-loading-row"><span></span><span></span><span></span></div>
+          </div>
+
+          <div class="forum-empty" data-forum-empty hidden>
+            <span class="forum-empty__mark" aria-hidden="true">NZ</span>
+            <span class="section-kicker">NO TOPICS YET</span>
+            <h3>Первое обсуждение может появиться здесь.</h3>
+            <p>Создай тему или зайди в Discord, чтобы начать разговор с сообществом.</p>
+            <div class="forum-empty__actions">
+              <button class="button button--primary" type="button" data-forum-create><span>Создать тему</span><span aria-hidden="true">+</span></button>
+              <a class="button button--ghost" href="https://discord.gg/2KvsYYDHN6" target="_blank" rel="noopener noreferrer"><span>Discord</span><span aria-hidden="true">↗</span></a>
+            </div>
+          </div>
+        </section>
       </section>
     </div>
   </main>
-  <footer class="footer"><div class="container footer__inner"><div><a class="brand brand--footer" href="./"><span class="brand__mark" aria-hidden="true">NZ</span><span class="brand__name">NaZerak</span></a><p class="footer__copy">Сообщество NaZerak.</p></div><div class="footer__right"><span>© <span id="year"></span> NaZerak</span><a href="#top">Наверх ↑</a></div></div></footer>
+
+  <dialog class="forum-modal" data-forum-modal aria-labelledby="forum-modal-title">
+    <form class="forum-modal__dialog" method="dialog" data-forum-form>
+      <button class="forum-modal__close" type="submit" value="cancel" aria-label="Закрыть">×</button>
+      <span class="section-kicker">NEW TOPIC</span>
+      <h2 id="forum-modal-title">Создать тему.</h2>
+      <p class="forum-modal__copy">Будь конкретнее в заголовке и опиши вопрос или идею в первом сообщении.</p>
+
+      <div class="forum-form-field">
+        <label for="forum-category">Раздел</label>
+        <select id="forum-category" name="category_id" required></select>
+      </div>
+      <div class="forum-form-field">
+        <label for="forum-title">Заголовок</label>
+        <input id="forum-title" name="title" maxlength="120" minlength="3" required placeholder="Например: Какой район строим следующим?">
+      </div>
+      <div class="forum-form-field">
+        <label for="forum-body">Сообщение</label>
+        <textarea id="forum-body" name="body" maxlength="12000" rows="8" required placeholder="Опиши вопрос, предложение или тему подробнее…"></textarea>
+        <small>1–12 000 символов</small>
+      </div>
+      <div class="forum-modal__footer">
+        <span data-forum-auth-hint>Для публикации нужна авторизация через Discord.</span>
+        <div class="forum-modal__buttons">
+          <button class="button button--ghost" type="submit" value="cancel"><span>Отмена</span><span aria-hidden="true">×</span></button>
+          <button class="button button--primary" type="button" data-forum-submit><span>Опубликовать</span><span aria-hidden="true">→</span></button>
+        </div>
+      </div>
+    </form>
+  </dialog>
+
+  <footer class="footer">
+    <div class="container footer__inner">
+      <div>
+        <a class="brand brand--footer" href="./"><span class="brand__mark" aria-hidden="true">NZ</span><span class="brand__name">NaZerak</span></a>
+        <p class="footer__copy">Официальный форум NaZerak.</p>
+        <p class="footer__legal">NaZerak — независимый Minecraft-проект. Не связан с Mojang Studios или Microsoft.</p>
+      </div>
+      <div class="footer__right"><span>© <span id="year"></span> NaZerak</span><a href="#top">Наверх ↑</a></div>
+    </div>
+  </footer>
+
+  <noscript><div class="noscript-message">Для форума требуется включить JavaScript.</div></noscript>
   <script src="./auth-config.js?v=8" defer></script>
   <script src="./supabase-loader.js?v=9" defer></script>
   <script src="./auth.js?v=32" defer></script>
+  <script src="./forum.js?v=1" defer></script>
   <script src="./script.js?v=17" defer></script>
 </body>
 </html>
