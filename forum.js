@@ -6,8 +6,6 @@
     user: null,
     categories: [],
     topics: [],
-    activeCategory: "all",
-    activeArea: "all",
     search: ""
   };
 
@@ -92,11 +90,10 @@
   };
 
   const topicMatches = (topic) => {
-    const categoryOk = state.activeCategory === "all" || String(topic.category_id) === String(state.activeCategory);
-    const areaOk = state.activeArea === "all" || String(topic.area_slug) === String(state.activeArea);
     const query = state.search.trim().toLowerCase();
+    if (!query) return true;
     const haystack = [topic.title, topic.body, topic.category_name, topic.author_name].join(" ").toLowerCase();
-    return categoryOk && areaOk && (!query || haystack.includes(query));
+    return haystack.includes(query);
   };
 
   const filteredTopics = () => state.topics.filter(topicMatches);
@@ -145,12 +142,6 @@
     const noun = topics.length === 1 ? "тема" : topics.length < 5 ? "темы" : "тем";
     const count = qs("[data-forum-result-count]");
     if (count) count.textContent = topics.length + " " + noun;
-
-    qsa("[data-category-filter]").forEach((button) => {
-      const active = String(button.dataset.categoryFilter) === String(state.activeCategory);
-      button.classList.toggle("is-active", active);
-      button.setAttribute("aria-pressed", String(active));
-    });
 
     if (!topics.length) {
       root.hidden = true;
@@ -205,26 +196,6 @@
     select.innerHTML = categories.map((category) =>
       '<option value="' + category.id + '">' + escapeHtml((category.area_slug === "administration" ? "Администрация · " : "РП-мир · ") + category.name) + '</option>'
     ).join("");
-  };
-
-  const setCategoryFilter = (categoryId) => {
-    state.activeCategory = categoryId || "all";
-    if (state.activeCategory === "all") {
-      state.activeArea = "all";
-    } else {
-      const category = state.categories.find((item) => String(item.id) === String(state.activeCategory));
-      state.activeArea = category?.area_slug || "all";
-    }
-    renderTopics();
-    renderCategories();
-  };
-
-  const setAreaFilter = (areaSlug) => {
-    state.activeArea = areaSlug || "all";
-    state.activeCategory = "all";
-    renderTopics();
-    renderCategories();
-    qs("[data-forum-topic-list]")?.scrollIntoView({behavior:"smooth", block:"start"});
   };
 
   const clearSearch = () => {
@@ -350,16 +321,6 @@
       } else {
         qs("#forum-search")?.focus();
       }
-    });
-
-    qsa("[data-forum-area-filter]").forEach((button) => {
-      button.addEventListener("click", () => setAreaFilter(button.dataset.forumAreaFilter));
-    });
-    qs("[data-forum-all]")?.addEventListener("click", () => setCategoryFilter("all"));
-    qs(".forum-page")?.addEventListener("click", (event) => {
-      const button = event.target.closest("[data-category-filter]");
-      if (!button) return;
-      setCategoryFilter(button.dataset.categoryFilter);
     });
 
     await loadData();
