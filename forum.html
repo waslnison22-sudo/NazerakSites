@@ -23,11 +23,10 @@
       <button class="nav-toggle" type="button" aria-controls="forum-nav" aria-expanded="false" aria-label="Открыть меню">
         <span></span><span></span><span></span><span class="sr-only">Открыть меню</span>
       </button>
-      <nav class="nav" id="forum-nav" aria-label="Основная навигация">
-        <a href="./#about">Проект</a>
-        <a href="./#world">Мир</a>
-        <a href="./#start">Старт</a>
+      <nav class="nav" id="forum-nav" aria-label="Навигация форума">
         <a class="nav-forum is-active" href="./forum.html" aria-current="page">Форум</a>
+        <a href="./forum-members.html">Участники</a>
+        <a href="./forum-search.html">Поиск</a>
         <a class="nav-account" data-auth-link href="./cabinet.html">
           <span class="nav-account__avatar"><img data-auth-link-avatar alt="" hidden><span data-auth-link-fallback>◉</span></span>
           <span data-auth-link-label>Войти</span>
@@ -67,71 +66,43 @@
         <span class="forum-result-count" data-forum-result-count>0 тем</span>
       </section>
 
-      <section class="forum-worlds" aria-label="Разделы форума">
-        <article class="forum-world forum-world--rp" data-forum-world="rp">
-          <header class="forum-world__head">
-            <div>
-              <span class="section-kicker">01 / ROLEPLAY</span>
-              <h2>РП-мир<span>.</span></h2>
-              <p>Игровая часть форума: мир NaZerak, государство, организации, помощь игрокам, предложения и обращения.</p>
-            </div>
-            <button class="button button--ghost forum-world__filter" type="button" data-forum-area-filter="rp">
-              <span>Все темы</span><span aria-hidden="true">→</span>
-            </button>
-          </header>
-          <div class="forum-category-grid" data-forum-categories="rp"></div>
-          <div class="forum-world__empty" data-forum-world-empty="rp" hidden>
-            <span class="forum-world__empty-mark" aria-hidden="true">RP</span>
-            <div><strong>Разделы пока не добавлены.</strong><span>Категории этого мира будут создаваться отдельно, без автоматически написанных тем.</span></div>
-          </div>
-        </article>
-
-        <article class="forum-world forum-world--admin" data-forum-world="administration">
-          <header class="forum-world__head">
-            <div>
-              <span class="section-kicker">02 / ADMINISTRATION</span>
-              <h2>Мир администрации<span>.</span></h2>
-              <p>Официальная часть форума: законы, правила, документы, новости проекта и обращения к команде.</p>
-            </div>
-            <button class="button button--ghost forum-world__filter" type="button" data-forum-area-filter="administration">
-              <span>Все темы</span><span aria-hidden="true">→</span>
-            </button>
-          </header>
-          <div class="forum-category-grid" data-forum-categories="administration"></div>
-          <div class="forum-resource">
-            <a class="forum-resource__link" href="https://discord.gg/2KvsYYDHN6" target="_blank" rel="noopener noreferrer">
-              <span class="forum-resource__icon" aria-hidden="true">↗</span>
-              <span><strong>Официальный Discord</strong><small>Сервер сообщества и оперативные объявления</small></span>
-            </a>
-          </div>
-          <div class="forum-world__empty" data-forum-world-empty="administration" hidden>
-            <span class="forum-world__empty-mark" aria-hidden="true">ADM</span>
-            <div><strong>Разделы пока не добавлены.</strong><span>Здесь появятся официальные разделы, когда их создадём вручную.</span></div>
-          </div>
-        </article>
+      <section class="forum-boards" aria-labelledby="forum-boards-title">
+        <header class="forum-list-head forum-list-head--board">
+          <div><span class="section-kicker">FORUM INDEX</span><h2 id="forum-boards-title">Список форумов</h2></div>
+          <span class="forum-result-count" data-forum-board-count>0 разделов</span>
+        </header>
+        <div class="forum-board" data-forum-board="rp">
+          <header class="forum-board__head"><div><span class="section-kicker">01 / ROLEPLAY</span><h3>РП-мир<span>.</span></h3></div><span>Игровая часть</span></header>
+          <div class="forum-board__columns" aria-hidden="true"><span>Форум</span><span>Темы</span><span>Сообщения</span><span>Последнее сообщение</span></div>
+          <div class="forum-board__rows" data-forum-board-rows="rp"></div>
+        </div>
+        <div class="forum-board" data-forum-board="administration">
+          <header class="forum-board__head"><div><span class="section-kicker">02 / ADMINISTRATION</span><h3>Мир администрации<span>.</span></h3></div><span>Официальная часть</span></header>
+          <div class="forum-board__columns" aria-hidden="true"><span>Форум</span><span>Темы</span><span>Сообщения</span><span>Последнее сообщение</span></div>
+          <div class="forum-board__rows" data-forum-board-rows="administration"></div>
+        </div>
       </section>
-
+      
       <section class="forum-discussions" aria-labelledby="forum-topics-title">
         <div class="forum-main__head">
-          <div>
-            <span class="section-kicker">DISCUSSIONS</span>
-            <h2 id="forum-topics-title">Последние обсуждения</h2>
-          </div>
-          <button class="button button--ghost forum-main__all" type="button" data-forum-all>Все темы</button>
+          <div><span class="section-kicker">LATEST ACTIVITY</span><h2 id="forum-topics-title">Последние темы</h2></div>
+          <a class="button button--ghost forum-main__all" href="./forum-search.html">Открыть поиск</a>
         </div>
-
         <div class="forum-topic-list" data-forum-topic-list aria-live="polite"></div>
-
         <div class="forum-empty" data-forum-empty hidden>
           <span class="forum-empty__mark" aria-hidden="true">NZ</span>
-          <span class="section-kicker">NO TOPICS YET</span>
-          <h3>Тем пока нет — и это нормально.</h3>
-          <p>Форум оставлен без заранее написанных сообщений. Мы сами заполним его реальными правилами, законами, заявками и обсуждениями.</p>
-          <div class="forum-empty__actions">
-            <button class="button button--primary" type="button" data-forum-create><span>Создать тему</span><span aria-hidden="true">+</span></button>
-            <a class="button button--ghost" href="https://discord.gg/2KvsYYDHN6" target="_blank" rel="noopener noreferrer"><span>Discord</span><span aria-hidden="true">↗</span></a>
-          </div>
+          <span class="section-kicker">NO THREADS YET</span>
+          <h3>Тем пока нет.</h3>
+          <p>Структура форума готова. Реальные темы, законы, правила, заявки и обсуждения создаются вручную.</p>
         </div>
+      </section>
+      
+      <section class="forum-resources" aria-label="Ресурсы сообщества">
+        <div class="forum-resource-block"><span class="section-kicker">COMMUNITY</span><h2>Сообщество</h2><div class="forum-resource-grid">
+          <a class="forum-resource__link" href="https://discord.gg/2KvsYYDHN6" target="_blank" rel="noopener noreferrer"><span class="forum-resource__icon">↗</span><span><strong>Discord</strong><small>Официальный сервер сообщества</small></span></a>
+          <a class="forum-resource__link" href="./forum-members.html"><span class="forum-resource__icon">◎</span><span><strong>Участники</strong><small>Публичные профили и роли</small></span></a>
+          <a class="forum-resource__link" href="./forum-search.html"><span class="forum-resource__icon">⌕</span><span><strong>Поиск</strong><small>Темы, документы и обсуждения</small></span></a>
+        </div></div>
       </section>
     </div>
   </main>
@@ -178,6 +149,7 @@
   </footer>
 
   <noscript><div class="noscript-message">Для форума требуется включить JavaScript.</div></noscript>
+  <script src="./site-config.js?v=1" defer></script>
   <script src="./auth-config.js?v=8" defer></script>
   <script src="./supabase-loader.js?v=9" defer></script>
   <script src="./auth.js?v=33" defer></script>
