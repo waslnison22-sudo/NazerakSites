@@ -817,12 +817,22 @@
   };
 
   let cabinetRenderQueue = Promise.resolve();
+  let queuedCabinetRenderKey = null;
 
   const requestCabinetRender = (session = undefined) => {
-    cabinetRenderQueue = cabinetRenderQueue.then(
-      () => renderCabinet(session),
-      () => renderCabinet(session)
-    );
+    const key = session?.user?.id || (session === null ? "signed-out" : "session-lookup");
+    if (queuedCabinetRenderKey === key) return cabinetRenderQueue;
+
+    queuedCabinetRenderKey = key;
+    cabinetRenderQueue = cabinetRenderQueue
+      .then(
+        () => renderCabinet(session),
+        () => renderCabinet(session)
+      )
+      .finally(() => {
+        if (queuedCabinetRenderKey === key) queuedCabinetRenderKey = null;
+      });
+
     return cabinetRenderQueue;
   };
 
