@@ -104,34 +104,36 @@
   const categoryCount = (categoryId) => state.topics.filter((topic) => Number(topic.category_id) === Number(categoryId)).length;
 
   const renderCategoryGroup = (areaSlug) => {
-    const root = qs('[data-forum-categories="' + areaSlug + '"]');
-    const empty = qs('[data-forum-world-empty="' + areaSlug + '"]');
-    if (!root || !empty) return;
-
+    const root = qs('[data-forum-board-rows="' + areaSlug + '"]');
+    if (!root) return;
     const categories = state.categories.filter((category) => category.area_slug === areaSlug);
     root.innerHTML = categories.map((category) => {
-      const total = categoryCount(category.id);
-      return '<button class="forum-category-card" type="button" data-category-filter="' + category.id + '" aria-pressed="false">' +
-        '<span class="forum-category-card__icon">' + escapeHtml(category.icon || "•") + '</span>' +
-        '<span class="forum-category-card__body">' +
-          '<strong>' + escapeHtml(category.name) + '</strong>' +
-          '<small>' + escapeHtml(category.description || "Раздел форума") + '</small>' +
-        '</span>' +
-        '<span class="forum-category-card__count">' + total + '</span>' +
-      '</button>';
+      const topics = state.topics.filter((topic) => Number(topic.category_id) === Number(category.id));
+      const postCount = topics.reduce((total, topic) => total + 1 + Number(topic.reply_count || 0), 0);
+      const latest = [...topics].sort((a,b) => new Date(b.last_post_at).getTime() - new Date(a.last_post_at).getTime())[0];
+      const latestHtml = latest
+        ? '<a class="forum-board-row__last" href="./topic.html?id=' + encodeURIComponent(latest.id) + '"><strong>' + escapeHtml(latest.title) + '</strong><span>' + escapeHtml(latest.author_name || "Игрок NaZerak") + ' · ' + formatRelative(latest.last_post_at) + '</span></a>'
+        : '<span class="forum-board-row__last forum-board-row__last--empty">Нет сообщений</span>';
+      return '<article class="forum-board-row">' +
+        '<a class="forum-board-row__forum" href="./forum-category.html?slug=' + encodeURIComponent(category.slug) + '">' +
+          '<span class="forum-category-card__icon">' + escapeHtml(category.icon || "•") + '</span>' +
+          '<span><strong>' + escapeHtml(category.name) + '</strong><small>' + escapeHtml(category.description || "Раздел форума") + '</small></span>' +
+        '</a>' +
+        '<span class="forum-board-row__stat">' + topics.length + '</span>' +
+        '<span class="forum-board-row__stat">' + postCount + '</span>' +
+        latestHtml +
+      '</article>';
     }).join("");
-
-    empty.hidden = categories.length > 0;
   };
 
   const renderCategories = () => {
     renderCategoryGroup("rp");
     renderCategoryGroup("administration");
-    qsa("[data-category-filter]").forEach((button) => {
-      const active = String(button.dataset.categoryFilter) === String(state.activeCategory);
-      button.classList.toggle("is-active", active);
-      button.setAttribute("aria-pressed", String(active));
-    });
+    const count = qs("[data-forum-board-count]");
+    if (count) {
+      const n = state.categories.length;
+      count.textContent = n + " " + (n === 1 ? "раздел" : n < 5 ? "раздела" : "разделов");
+    }
   };
 
   const renderTopics = () => {
