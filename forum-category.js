@@ -13,13 +13,13 @@
     const slug=String(new URLSearchParams(location.search).get("slug")||"").toLowerCase();
     if(!slug)throw new Error("Раздел не указан.");
     const [cat,topics]=await Promise.all([
-      state.client.from("forum_categories").select("id,slug,name,description,area_slug,sort_order,icon,accent_color,posting_mode").eq("slug",slug).maybeSingle(),
-      state.client.from("forum_topic_list").select("id,slug,category_id,category_name,area_slug,author_public_id,author_name,author_avatar_url,primary_role_slug,primary_role_name,primary_role_badge,title,body,is_pinned,is_locked,is_archived,prefix,created_at,last_post_at,reply_count").eq("category_slug",slug).order("is_pinned",{ascending:false}).order("last_post_at",{ascending:false}).limit(100)
+      state.client.from("forum_categories").select("id,slug,name,description,area_slug,sort_order,icon,accent_color,posting_mode,node_type,parent_id,route_slug").eq("route_slug",slug).maybeSingle(),
+      state.client.from("forum_topic_list").select("id,slug,category_id,category_name,category_route_slug,parent_name,area_slug,author_public_id,author_name,author_avatar_url,primary_role_slug,primary_role_name,primary_role_badge,title,body,is_pinned,is_locked,is_archived,prefix,created_at,last_post_at,reply_count").eq("category_route_slug",slug).order("is_pinned",{ascending:false}).order("last_post_at",{ascending:false}).limit(100)
     ]);
     if(cat.error)throw new Error(cat.error.message);if(!cat.data)throw new Error("Раздел не найден.");
     if(topics.error)throw new Error(topics.error.message);
     state.category=cat.data;state.topics=topics.data||[];
-    qs("[data-category-area]").textContent=state.category.area_slug==="administration"?"Мир администрации":"РП-мир";
+    qs("[data-category-area]").textContent=state.category.parent_name||"Форумы";
     qs("[data-category-name]").textContent=state.category.name;
     qs("[data-category-title]").innerHTML=escapeHtml(state.category.name)+"<span>.</span>";
     qs("[data-category-description]").textContent=state.category.description||"";
