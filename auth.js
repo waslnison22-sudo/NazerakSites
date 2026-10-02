@@ -273,34 +273,12 @@
   };
 
   const configureSetupView = (runtimeFailure) => {
-    const title = qs("[data-auth-config-title]") || qs("[data-auth-config-copy]");
     const copy = qs("[data-auth-config-copy]");
-    const steps = qs("[data-auth-setup-steps]");
-    const action = qs("[data-auth-config-link]");
 
-    if (runtimeFailure) {
-      if (title) title.textContent = "Не удалось загрузить авторизацию.";
-      if (copy) {
-        copy.textContent =
-          "Supabase настроен, но библиотека авторизации не загрузилась. Страница автоматически попробовала два CDN-источника. Обнови её через Ctrl+F5 и повтори вход.";
-      }
-      if (steps) steps.hidden = true;
-      if (action) {
-        action.href = "./cabinet.html?retry=1";
-        action.textContent = "Повторить проверку";
-      }
-      return;
-    }
-
-    if (title) title.textContent = "Авторизация ещё не подключена.";
     if (copy) {
-      copy.textContent =
-        "Код Discord OAuth уже встроен в сайт. Проверь публичный URL Supabase, publishable key и включённый Discord Provider.";
-    }
-    if (steps) steps.hidden = false;
-    if (action) {
-      action.href = "./AUTH_SETUP.md";
-      action.textContent = "Открыть инструкцию";
+      copy.textContent = runtimeFailure
+        ? "Сервис авторизации не загрузился. Проверь соединение и повтори попытку."
+        : "Авторизация через Discord ещё не настроена. Проверь настройки Supabase и Discord Provider.";
     }
   };
 
