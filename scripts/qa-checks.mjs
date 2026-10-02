@@ -177,7 +177,7 @@ for (const [name, page] of [
   ["topic.html", read("topic.html")],
   ["forum-user.html", read("forum-user.html")]
 ]) {
-  const assets = ["site-config.js?v=1", "auth-config.js?v=8", "supabase-loader.js?v=9", "auth.js?v=33", "script.js?v=17", "styles.css?v=25"];
+  const assets = ["site-config.js?v=1", "auth-config.js?v=8", "supabase-loader.js?v=9", "auth.js?v=34", "script.js?v=17", "styles.css?v=25"];
   if (name === "forum.html") { assets.push("site-config.js?v=1", "forum-ui.js?v=1", "forum.js?v=3"); }
   if (name === "forum-category.html") { assets.push("site-config.js?v=1", "forum-ui.js?v=1", "forum-category.js?v=1"); }
   if (name === "forum-members.html") { assets.push("site-config.js?v=1", "forum-ui.js?v=1", "forum-members.js?v=1"); }
