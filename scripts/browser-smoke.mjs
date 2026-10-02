@@ -391,7 +391,7 @@ const testCabinetSignedIn = async () => {
     if (await page.locator("#media-application-form").count() !== 0) {
       throw new Error("unreviewed media intake form must not be exposed");
     }
-    if (!(await mediaDisclosure.textContent()).includes("Приём заявок временно приостановлен")) {
+    if (!(await mediaDisclosure.textContent()).includes("Через сайт пока не отправляем")) {
       throw new Error("paused media intake status is not explained");
     }
 
