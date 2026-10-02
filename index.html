@@ -3,39 +3,42 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#08090b">
+  <meta name="theme-color" content="#09090b">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://unpkg.com; connect-src 'self' https://ujlbyzvdsncvqbrhasuw.supabase.co; img-src 'self' data: https://cdn.discordapp.com https://media.discordapp.net; style-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; frame-src 'none'; form-action 'self';">
-  <meta name="description" content="NaZerak — независимый Minecraft-проект, сервер и сообщество.">
+  <meta name="description" content="NaZerak — современный Minecraft-проект с собственным миром, сообществом и личным кабинетом.">
   <link rel="canonical" href="https://waslnison22-sudo.github.io/NazerakSites/">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <meta property="og:type" content="website">
   <meta property="og:title" content="NaZerak — Minecraft project">
-  <meta property="og:description" content="Сервер NaZerak, сообщество, подключение и личный кабинет.">
+  <meta property="og:description" content="Собственный мир, сервер и сообщество NaZerak.">
   <meta property="og:url" content="https://waslnison22-sudo.github.io/NazerakSites/">
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="NaZerak — Minecraft project">
-  <meta name="twitter:description" content="Сервер NaZerak, сообщество, подключение и личный кабинет.">
-  <link rel="icon" href="./favicon.svg?v=4" type="image/svg+xml">
-  <link rel="stylesheet" href="./styles.css?v=19">
+  <meta name="twitter:description" content="Собственный мир, сервер и сообщество NaZerak.">
+  <link rel="icon" href="./favicon.svg?v=5" type="image/svg+xml">
+  <link rel="stylesheet" href="./styles.css?v=20">
   <title>NaZerak — Minecraft project</title>
 </head>
 <body>
   <a class="skip-link" href="#main-content">К содержимому</a>
   <div class="scroll-progress" aria-hidden="true"><span></span></div>
+
   <header class="topbar" id="top">
     <div class="container topbar__inner">
       <a class="brand" href="#top" aria-label="NaZerak — на главную">
         <span class="brand__mark" aria-hidden="true">NZ</span>
         <span class="brand__name">NaZerak</span>
       </a>
-      <button class="nav-toggle" type="button" aria-controls="site-nav" aria-expanded="false">
+
+      <button class="nav-toggle" type="button" aria-controls="site-nav" aria-expanded="false" aria-label="Открыть меню">
         <span></span><span></span><span></span><span class="sr-only">Открыть меню</span>
       </button>
+
       <nav class="nav" id="site-nav" aria-label="Основная навигация">
         <a href="#about">Проект</a>
         <a href="#world">Мир</a>
         <a href="#start">Старт</a>
-        <a class="nav-forum" href="./forum.html">Сообщество</a>
+        <a href="./forum.html">Сообщество</a>
         <a class="nav-discord" href="https://discord.gg/2KvsYYDHN6" target="_blank" rel="noopener noreferrer" aria-label="Официальный Discord NaZerak" title="Официальный Discord">
           <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M19.54 4.99A16.7 16.7 0 0 0 15.2 3.64l-.53 1.08a15.8 15.8 0 0 0-5.34 0L8.8 3.64a16.73 16.73 0 0 0-4.34 1.35C1.7 9.22 1.02 13.35 1.36 17.43a16.9 16.9 0 0 0 5.27 2.69l1.27-1.72c-.69-.25-1.36-.57-1.98-.96l.48-.37a11.9 11.9 0 0 0 10.2 0l.48.37c-.62.39-1.29.71-1.98.96l1.27 1.72a16.88 16.88 0 0 0 5.27-2.69c.4-4.73-.68-8.82-2.62-12.44ZM8.12 15.2c-1.03 0-1.88-.94-1.88-2.09s.83-2.1 1.88-2.1 1.89.94 1.88 2.1c0 1.15-.84 2.09-1.88 2.09Zm7.76 0c-1.03 0-1.88-.94-1.88-2.09s.83-2.1 1.88-2.1 1.89.94 1.88 2.1c0 1.15-.84 2.09-1.88 2.09Z"/></svg>
         </a>
@@ -48,52 +51,78 @@
   </header>
 
   <main id="main-content" tabindex="-1">
-    <section class="hero">
+    <section class="hero hero--red">
+      <div class="hero__backdrop" aria-hidden="true"></div>
       <div class="hero__grid container">
         <div class="hero__content reveal">
-          <div class="eyebrow"><span class="eyebrow__dot"></span>Independent Minecraft project</div>
-          <h1 class="hero-title">NaZerak<em>.</em></h1>
-          <p class="hero__lead">Свой сервер, своё сообщество и одна понятная точка входа. Здесь собраны подключение, сообщество и основные разделы проекта.</p>
+          <div class="eyebrow"><span class="eyebrow__dot"></span>NAZERAK / SURVIVAL WORLD</div>
+          <h1 class="hero-title">Мир, в который хочется вернуться<em>.</em></h1>
+          <p class="hero__lead">NaZerak — современный Minecraft-проект с собственным миром, живым сообществом и понятным входом в игру. Здесь не нужно пробираться через десятки экранов: всё важное находится рядом.</p>
           <div class="hero__actions">
-            <a class="button button--primary" href="#start"><span>Как подключиться</span><span aria-hidden="true">↓</span></a>
-            <a class="button button--ghost" href="#about"><span>О проекте</span><span aria-hidden="true">↓</span></a>
+            <a class="button button--primary" href="#start"><span>Начать играть</span><span aria-hidden="true">↓</span></a>
+            <a class="button button--ghost" href="#world"><span>Посмотреть мир</span><span aria-hidden="true">↘</span></a>
             <a class="icon-button icon-button--discord" href="https://discord.gg/2KvsYYDHN6" target="_blank" rel="noopener noreferrer" aria-label="Официальный Discord NaZerak" title="Официальный Discord NaZerak">
               <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M19.54 4.99A16.7 16.7 0 0 0 15.2 3.64l-.53 1.08a15.8 15.8 0 0 0-5.34 0L8.8 3.64a16.73 16.73 0 0 0-4.34 1.35C1.7 9.22 1.02 13.35 1.36 17.43a16.9 16.9 0 0 0 5.27 2.69l1.27-1.72c-.69-.25-1.36-.57-1.98-.96l.48-.37a11.9 11.9 0 0 0 10.2 0l.48.37c-.62.39-1.29.71-1.98.96l1.27 1.72a16.88 16.88 0 0 0 5.27-2.69c.4-4.73-.68-8.82-2.62-12.44ZM8.12 15.2c-1.03 0-1.88-.94-1.88-2.09s.83-2.1 1.88-2.1 1.89.94 1.88 2.1c0 1.15-.84 2.09-1.88 2.09Zm7.76 0c-1.03 0-1.88-.94-1.88-2.09s.83-2.1 1.88-2.1 1.89.94 1.88 2.1c0 1.15-.84 2.09-1.88 2.09Z"/></svg>
             </a>
           </div>
-          <div class="hero__meta"><span>ОФИЦИАЛЬНЫЙ СЕРВЕР</span><span class="hero__meta-separator">•</span><span>Java / 1.21.11</span></div>
+          <div class="hero__meta">
+            <span>JAVA EDITION</span><span class="hero__meta-separator">•</span><span>1.21.11</span><span class="hero__meta-separator">•</span><span>RUSTIX NETWORK</span>
+          </div>
         </div>
 
         <div class="hero-visual-wrap reveal reveal--delay">
-          <div class="hero-art media-slot" role="img" aria-label="Фирменная визуализация мира NaZerak" data-image-slot="hero">
+          <div class="hero-art media-slot" role="img" aria-label="Главная иллюстрация мира NaZerak" data-image-slot="hero">
             <div class="hero-art__grid" aria-hidden="true"></div>
-            <span class="hero-art__eyebrow">NAZERAK / WORLD</span>
+            <div class="hero-art__glow" aria-hidden="true"></div>
+            <span class="hero-art__eyebrow">NAZERAK / WORLD 01</span>
             <span class="hero-art__mark" aria-hidden="true">NZ</span>
             <div class="hero-art__nodes" aria-hidden="true"><i></i><i></i><i></i></div>
-            <span class="hero-art__caption">SERVER · WORLD · COMMUNITY</span>
+            <span class="hero-art__caption">SURVIVE · EXPLORE · BUILD</span>
+            <span class="hero-art__tag">MINECRAFT 1.21.11</span>
           </div>
         </div>
       </div>
-      <a class="scroll-cue" href="#about" aria-label="Прокрутить к разделу о проекте"><span>SCROLL</span><span class="scroll-cue__line"></span><span>↓</span></a>
+      <a class="scroll-cue" href="#about" aria-label="Прокрутить к информации о проекте"><span>SCROLL</span><span class="scroll-cue__line"></span><span>↓</span></a>
     </section>
 
-    <section class="ticker" aria-label="NaZerak"><div class="ticker__track"><span>NAZERAK</span><b>—</b><span>MINECRAFT</span><b>—</b><span>COMMUNITY</span><b>—</b><span>NAZERAK</span><b>—</b><span>MINECRAFT</span><b>—</b><span>COMMUNITY</span><b>—</b></div></section>
+    <section class="ticker" aria-label="NaZerak">
+      <div class="ticker__track">
+        <span>NAZERAK</span><b>×</b><span>SURVIVAL</span><b>×</b><span>WORLD</span><b>×</b><span>COMMUNITY</span><b>×</b>
+        <span>NAZERAK</span><b>×</b><span>SURVIVAL</span><b>×</b><span>WORLD</span><b>×</b><span>COMMUNITY</span>
+      </div>
+    </section>
 
-    <section class="section" id="about">
+    <section class="section section--about" id="about">
       <div class="container">
         <div class="section-head reveal">
           <span class="section-kicker">01 / ПРОЕКТ</span>
-          <h2>Всё важное — без визуального шума.</h2>
-          <p>NaZerak строится как центральная площадка проекта: сервер, сообщество, события и личный кабинет собраны в одном месте.</p>
+          <h2>Не просто сервер. Свой мир.</h2>
+          <p>Мы строим проект вокруг самого важного — мира, игроков и ощущения, что у игры есть собственная среда, а не только адрес для подключения.</p>
         </div>
+
         <div class="feature-grid">
-          <article class="feature-card feature-card--large reveal"><div class="feature-card__top"><span>01</span><span>PLAY</span></div><div><h3>Играть.</h3><p>Адрес сервера, версия и всё необходимое для первого входа.</p></div><span class="feature-card__arrow" aria-hidden="true">↗</span></article>
-          <article class="feature-card reveal reveal--delay"><div class="feature-card__top"><span>02</span><span>INFO</span></div><div><h3>Знать.</h3><p>Подтверждённая информация о проекте без выдуманных live-данных.</p></div><span class="feature-card__arrow" aria-hidden="true">↗</span></article>
-          <article class="feature-card reveal reveal--delay-2"><div class="feature-card__top"><span>03</span><span>JOIN</span></div><div><h3>Общаться.</h3><p>Discord, медиа и остальные точки сообщества в одной структуре.</p></div><span class="feature-card__arrow" aria-hidden="true">↗</span></article>
+          <article class="feature-card feature-card--large reveal">
+            <div class="feature-card__top"><span>01</span><span>WORLD</span></div>
+            <div class="feature-card__visual feature-card__visual--red" aria-hidden="true"><span>NZ</span></div>
+            <div><h3>Живой мир.</h3><p>Город, дороги, районы и пространства, которые можно постепенно развивать без перестройки всей концепции.</p></div>
+          </article>
+
+          <article class="feature-card reveal reveal--delay">
+            <div class="feature-card__top"><span>02</span><span>COMMUNITY</span></div>
+            <div class="feature-card__icon" aria-hidden="true">↗</div>
+            <div><h3>Свои люди.</h3><p>Новости, помощь и общение собраны вокруг официального Discord и проекта.</p></div>
+          </article>
+
+          <article class="feature-card reveal reveal--delay-2">
+            <div class="feature-card__top"><span>03</span><span>ACCOUNT</span></div>
+            <div class="feature-card__icon feature-card__icon--square" aria-hidden="true">◫</div>
+            <div><h3>Один кабинет.</h3><p>Discord-аккаунт и игровой ник доступны из одной компактной панели.</p></div>
+          </article>
         </div>
+
         <div class="identity-strip reveal">
-          <div class="identity-strip__heading"><span class="section-kicker">ВИЗУАЛЬНОЕ ЯДРО</span><span>RED / BLACK / WHITE</span></div>
-          <div class="identity-strip__line"><span class="identity-line__accent"></span><strong>NAZERAK</strong><span class="identity-line__copy">Минимальная система вместо набора случайных Minecraft-иконок.</span></div>
+          <div class="identity-strip__heading"><span>СИСТЕМА ДИЗАЙНА</span><span>RED / BLACK / WHITE</span></div>
+          <div class="identity-strip__line"><span class="identity-line__accent"></span><strong>NAZERAK</strong><span class="identity-line__copy">Яркий акцент, глубокий фон и пространство для настоящего контента.</span></div>
         </div>
       </div>
     </section>
@@ -102,32 +131,42 @@
       <div class="container">
         <div class="world-panel reveal">
           <div class="world-panel__visual">
-            <div class="world-visual media-slot" role="img" aria-label="Фирменная схема мира NaZerak" data-image-slot="world">
+            <div class="world-visual media-slot" role="img" aria-label="Иллюстрация мира NaZerak" data-image-slot="world">
               <div class="world-visual__grid" aria-hidden="true"></div>
               <div class="world-visual__core" aria-hidden="true">NZ</div>
               <div class="world-visual__line world-visual__line--one" aria-hidden="true"></div>
               <div class="world-visual__line world-visual__line--two" aria-hidden="true"></div>
               <div class="world-visual__label">WORLD SYSTEM / NZ-01</div>
-              <div class="world-visual__meta">JAVA · 1.21.11 · RUSTIX</div>
+              <div class="world-visual__meta">JAVA · 1.21.11</div>
             </div>
           </div>
           <div class="world-panel__content">
             <span class="section-kicker">02 / МИР</span>
-            <h2>Карта будет расти вместе с проектом.</h2>
-            <p>Этот раздел специально оставлен чистым: сюда можно добавить карту, события, сезоны и подтверждённые детали серверной концепции без перелома всей страницы.</p>
-            <div class="world-stats"><div><span>VERSION</span><strong>1.21.11</strong></div><div><span>SERVER</span><strong>NAZERAK</strong></div><div><span>ADDRESS</span><strong>RUSTIX.CC</strong></div></div>
+            <h2>Большой с виду. Удобный внутри.</h2>
+            <p>NaZerak проектируется так, чтобы город и окружающий мир можно было расширять поэтапно: добавлять новые районы, инфраструктуру и события без потери общей логики.</p>
+
+            <div class="world-stats">
+              <div><span>ЕДИНОЕ ПРОСТРАНСТВО</span><strong>Город + округа</strong></div>
+              <div><span>ПЛАТФОРМА</span><strong>Java Edition</strong></div>
+              <div><span>ВЕРСИЯ</span><strong>1.21.11</strong></div>
+            </div>
+
+            <div class="world-actions">
+              <a class="button button--primary" href="#start"><span>Перейти к подключению</span><span aria-hidden="true">↓</span></a>
+            </div>
           </div>
         </div>
       </div>
     </section>
 
-    <section class="section section--connect" id="start">
+    <section class="section section--start" id="start">
       <div class="container">
         <div class="connect-head reveal">
-          <span class="section-kicker">03 / ПОДКЛЮЧЕНИЕ</span>
-          <h2>Заходи в NaZerak.</h2>
-          <p>Один адрес, одна версия и официальный Discord. Без лишних экранов.</p>
+          <span class="section-kicker">03 / СТАРТ</span>
+          <h2>Подключиться можно за минуту.</h2>
+          <p>Нужна Java Edition и указанная версия. Остальное — один адрес и официальный Discord.</p>
         </div>
+
         <div class="connect-grid">
           <article class="connect-card connect-card--ip reveal">
             <div class="connect-card__top"><span>SERVER ADDRESS</span><span>01</span></div>
@@ -136,39 +175,64 @@
               <span class="connect-card__label">IP СЕРВЕРА</span>
               <strong class="server-ip" id="server-ip">nazehard.rustix.cc</strong>
               <div class="server-meta"><span class="server-chip">JAVA</span><span class="server-chip">1.21.11</span><span class="server-chip">RUSTIX</span></div>
-              <button class="copy-button" type="button" data-copy="nazehard.rustix.cc" aria-label="Скопировать IP сервера" title="Скопировать IP"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 8h10a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2V10a2 2 0 0 1 2-2Zm0 2v9h10v-9H9ZM5 4h10a2 2 0 0 1 2 2v1h-2V6H5v9h1v2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"/></svg><span>Копировать IP</span></button>
+              <button class="copy-button" type="button" data-copy="nazehard.rustix.cc" aria-label="Скопировать IP сервера" title="Скопировать IP">
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 8h10a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2V10a2 2 0 0 1 2-2Zm0 2v9h10v-9H9ZM5 4h10a2 2 0 0 1 2 2v1h-2V6H5v9h1v2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"/></svg>
+                <span>Скопировать IP</span>
+              </button>
             </div>
           </article>
+
           <article class="connect-card connect-card--version reveal reveal--delay">
             <div class="connect-card__top"><span>REQUIRED VERSION</span><span>02</span></div>
             <div class="connect-card__version">1.21.11</div>
-            <p>Подключайся на Java и используй эту версию клиента.</p>
+            <p>Java Edition. Для подключения используй указанную версию клиента.</p>
           </article>
+
           <a class="connect-card connect-card--discord reveal reveal--delay-2" aria-label="Открыть официальный Discord NaZerak" href="https://discord.gg/2KvsYYDHN6" target="_blank" rel="noopener noreferrer">
             <div class="connect-card__top"><span>COMMUNITY</span><span>03</span></div>
             <div class="discord-mark" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M19.54 4.99A16.7 16.7 0 0 0 15.2 3.64l-.53 1.08a15.8 15.8 0 0 0-5.34 0L8.8 3.64a16.73 16.73 0 0 0-4.34 1.35C1.7 9.22 1.02 13.35 1.36 17.43a16.9 16.9 0 0 0 5.27 2.69l1.27-1.72c-.69-.25-1.36-.57-1.98-.96l.48-.37a11.9 11.9 0 0 0 10.2 0l.48.37c-.62.39-1.29.71-1.98.96l1.27 1.72a16.88 16.88 0 0 0 5.27-2.69c.4-4.73-.68-8.82-2.62-12.44ZM8.12 15.2c-1.03 0-1.88-.94-1.88-2.09s.83-2.1 1.88-2.1 1.89.94 1.88 2.1c0 1.15-.84 2.09-1.88 2.09Zm7.76 0c-1.03 0-1.88-.94-1.88-2.09s.83-2.1 1.88-2.1 1.89.94 1.88 2.1c0 1.15-.84 2.09-1.88 2.09Z"/></svg></div>
-            <div class="connect-card__discord-copy"><strong>Официальный Discord</strong><span>Присоединиться к сообществу ↗</span></div>
+            <div class="connect-card__discord-copy"><strong>Официальный Discord</strong><span>Войти в сообщество ↗</span></div>
           </a>
         </div>
-        <div class="connect-note reveal"><span>JAVA EDITION · 1.21.11</span><a class="button button--ghost" href="#top"><span>Наверх</span><span aria-hidden="true">↑</span></a></div>
+
+        <div class="start-note reveal">
+          <span>СНАЧАЛА DISCORD — ПОТОМ В ИГРУ</span>
+          <a class="button button--ghost" href="./cabinet.html"><span>Открыть кабинет</span><span aria-hidden="true">↗</span></a>
+        </div>
       </div>
     </section>
 
-    <section class="section section--partner" id="media">
+    <section class="section section--community" id="community">
       <div class="container">
         <div class="partner-panel reveal">
           <div class="partner-panel__visual media-slot" aria-hidden="true" data-image-slot="partnership">
             <div class="partner-panel__bar"></div>
             <div class="partner-panel__grid"></div>
-            <span>MEDIA / NAZERAK</span>
+            <span>COMMUNITY / NAZERAK</span>
           </div>
           <div class="partner-panel__content">
-            <span class="section-kicker">04 / ПАРТНЁРСТВО</span>
-            <h2>Медиа-партнёрство без лишней бюрократии.</h2>
-            <p>Для блогеров, стримеров и авторов контента. Заявка открывается в личном кабинете после входа через Discord.</p>
-            <a class="button button--ghost partner-button" href="https://discord.gg/2KvsYYDHN6" target="_blank" rel="noopener noreferrer"><span>Обсудить в Discord</span><span aria-hidden="true">↗</span></a>
-            <small class="partner-panel__note">Пока связь с командой проходит через официальный Discord. Форму заявок добавим вместе с модерацией.</small>
+            <span class="section-kicker">04 / СООБЩЕСТВО</span>
+            <h2>Проект живёт не на одной странице.</h2>
+            <p>Discord — место для новостей, вопросов, общения и будущих событий. Сайт остаётся центральной точкой входа и хранит только то, что действительно относится к проекту.</p>
+            <div class="partner-actions">
+              <a class="button button--primary partner-button" href="https://discord.gg/2KvsYYDHN6" target="_blank" rel="noopener noreferrer"><span>Открыть Discord</span><span aria-hidden="true">↗</span></a>
+              <a class="button button--ghost" href="./forum.html"><span>Центр сообщества</span><span aria-hidden="true">→</span></a>
+            </div>
           </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="final-cta reveal" aria-labelledby="final-cta-title">
+      <div class="container final-cta__inner">
+        <div>
+          <span class="section-kicker">NAZERAK / NEXT STEP</span>
+          <h2 id="final-cta-title">Увидимся в мире.</h2>
+          <p>Подключайся, заходи в Discord и следи за развитием проекта.</p>
+        </div>
+        <div class="final-cta__actions">
+          <a class="button button--primary" href="#start"><span>Подключиться</span><span aria-hidden="true">↓</span></a>
+          <a class="button button--ghost" href="./cabinet.html"><span>Личный кабинет</span><span aria-hidden="true">↗</span></a>
         </div>
       </div>
     </section>
@@ -178,7 +242,7 @@
     <div class="container footer__inner">
       <div>
         <a class="brand brand--footer" href="#top"><span class="brand__mark" aria-hidden="true">NZ</span><span class="brand__name">NaZerak</span></a>
-        <p class="footer__copy">Независимый Minecraft-проект.</p>
+        <p class="footer__copy">Minecraft-проект с собственным миром и сообществом.</p>
         <p class="footer__legal">NaZerak не связан с Mojang Studios или Microsoft.</p>
       </div>
       <div class="footer__right"><span>© <span id="year"></span> NaZerak</span><a href="#top">Наверх ↑</a></div>
@@ -190,6 +254,6 @@
   <script src="./auth-config.js?v=7" defer></script>
   <script src="./supabase-loader.js?v=8" defer></script>
   <script src="./auth.js?v=31" defer></script>
-  <script src="./script.js?v=16" defer></script>
+  <script src="./script.js?v=15" defer></script>
 </body>
 </html>
