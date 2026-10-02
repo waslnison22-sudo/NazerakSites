@@ -262,8 +262,6 @@ const installFakeSupabase = async (context) => {
             then(resolve, reject) {
               return Promise.resolve({ data: null, error: null }).then(resolve, reject);
             }
-              return Promise.resolve({ data: table === "media_applications" ? [] : null, error: null }).then(resolve, reject);
-            }
           };
           return chain;
         };
