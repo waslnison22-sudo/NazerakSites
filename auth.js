@@ -22,25 +22,6 @@
   const accountUrl = () => new URL("./cabinet.html", window.location.href).href;
   const escapeText = (value) => String(value ?? "").trim();
 
-  const rememberReturnTarget = (hash) => {
-    if (hash !== "#media-application") return;
-    try {
-      window.sessionStorage?.setItem("nazerak_auth_return_hash", hash);
-    } catch {
-      // Session storage can be unavailable in hardened/private browser contexts.
-    }
-  };
-
-  const consumeReturnTarget = () => {
-    try {
-      const hash = window.sessionStorage?.getItem("nazerak_auth_return_hash") || "";
-      window.sessionStorage?.removeItem("nazerak_auth_return_hash");
-      return hash === "#media-application" ? hash : "";
-    } catch {
-      return "";
-    }
-  };
-
   const safeHttpUrl = (value) => {
     try {
       const url = new URL(String(value || ""));
@@ -292,7 +273,7 @@
   };
 
   const configureSetupView = (runtimeFailure) => {
-    const title = qs("[data-auth-config-title]");
+    const title = qs("[data-auth-config-title]") || qs("[data-auth-config-copy]");
     const copy = qs("[data-auth-config-copy]");
     const steps = qs("[data-auth-setup-steps]");
     const action = qs("[data-auth-config-link]");
@@ -347,6 +328,10 @@
     qsa("[data-minecraft-input]").forEach((input) => {
       input.value = profile?.minecraft_username || "";
     });
+    qsa("[data-profile-state]").forEach((el) => {
+      el.textContent = profile?.minecraft_username ? "ЗАПОЛНЕН" : "НЕ ЗАПОЛНЕН";
+      el.dataset.state = profile?.minecraft_username ? "ready" : "empty";
+    });
 
     qsa("[data-user-avatar]").forEach((img) => {
       img.hidden = !avatar;
@@ -398,120 +383,6 @@
       );
       return { status: "error", data: null };
     }
-  };
-
-  const loadMediaApplications = async (user, sequence = null) => {
-    const list = qs("[data-media-list]");
-    const empty = qs("[data-media-empty]");
-    const retry = qs("[data-media-retry]");
-    if (!client || !user || !list || list.dataset.loading === "true") return;
-
-    list.dataset.loading = "true";
-    if (retry) retry.disabled = true;
-    const finish = () => {
-      list.dataset.loading = "false";
-      if (retry) retry.disabled = false;
-    };
-    if (retry) retry.hidden = true;
-
-    let result;
-
-    try {
-      result = await withTimeout(
-        client
-          .from("media_applications")
-          .select("id, channel_url, message, status, created_at")
-          .eq("user_id", user.id)
-          .order("created_at", { ascending: false })
-          .limit(20),
-        6000,
-        "История заявок отвечает слишком долго."
-      );
-    } catch (error) {
-      if (sequence !== null && (sequence !== renderSequence || state.user?.id !== user.id)) {
-        finish();
-        return;
-      }
-      finish();
-      clearElementChildren(list);
-      if (empty) {
-        empty.textContent = "История заявок временно недоступна. Остальной кабинет продолжает работать.";
-        empty.hidden = false;
-      }
-      if (retry) retry.hidden = false;
-      console.warn(
-        "[NaZerak Auth] media history timed out or failed:",
-        error instanceof Error ? error.message : String(error)
-      );
-      return;
-    }
-
-    const { data, error } = result;
-
-    if (sequence !== null && (sequence !== renderSequence || state.user?.id !== user.id)) {
-      finish();
-      return;
-    }
-
-    finish();
-    clearElementChildren(list);
-
-    if (error) {
-      if (empty) {
-        empty.textContent = "Не удалось загрузить историю заявок. Попробуй повторить загрузку.";
-        empty.hidden = false;
-      }
-      if (retry) retry.hidden = false;
-      return;
-    }
-
-    if (!data?.length) {
-      if (empty) {
-        empty.textContent = "Пока нет отправленных заявок.";
-        empty.hidden = false;
-      }
-      return;
-    }
-
-    if (empty) empty.hidden = true;
-
-    const fragment = document.createDocumentFragment();
-
-    data.forEach((item) => {
-      const card = document.createElement("article");
-      card.className = "media-application";
-
-      const status = document.createElement("span");
-      status.className = "media-application__status";
-      status.textContent =
-        item.status === "approved"
-          ? "Одобрено"
-          : item.status === "rejected"
-            ? "Отклонено"
-            : "На рассмотрении";
-
-      const safeUrl = safeHttpUrl(item.channel_url);
-      if (safeUrl) {
-        const url = document.createElement("a");
-        url.href = safeUrl;
-        url.target = "_blank";
-        url.rel = "noopener noreferrer";
-        url.textContent = safeUrl;
-        card.appendChild(url);
-      }
-
-      const date = document.createElement("time");
-      date.dateTime = item.created_at || "";
-      date.textContent = formatDate(item.created_at);
-
-      const message = document.createElement("p");
-      message.textContent = item.message || "Без сообщения.";
-
-      card.append(status, message, date);
-      fragment.appendChild(card);
-    });
-
-    list.appendChild(fragment);
   };
 
   const ensureProfile = async (user) => {
@@ -587,7 +458,6 @@
     setBusy(button, true, "Переходим в Discord…");
 
     const redirectTarget = new URL(accountUrl());
-    rememberReturnTarget(window.location.hash);
     redirectTarget.hash = "";
 
     try {
@@ -888,8 +758,7 @@
       return;
     }
 
-    setAccountView("loading");
-    setAuthStatus("CHECKING AUTH", "loading");
+    setAuthStatus("ПРОВЕРЯЕМ DISCORD", "loading");
 
     const result = session === undefined
       ? await getSessionSafe()
@@ -942,16 +811,6 @@
 
     void hydrateCabinetData(user, sequence);
 
-    const returnTarget = consumeReturnTarget();
-    if (window.location.hash === "#media-application" || returnTarget === "#media-application") {
-      window.setTimeout(() => {
-        if (sequence !== renderSequence) return;
-        document.getElementById("media-application")?.scrollIntoView({
-          behavior: "smooth",
-          block: "start"
-        });
-      }, 80);
-    }
   };
 
   let cabinetRenderQueue = Promise.resolve();
@@ -1012,7 +871,7 @@
     // it to the signed-in view when a session is confirmed.
     if (document.body.hasAttribute("data-cabinet")) {
       setAccountView("guest");
-      setAuthStatus("CONNECTING AUTH", "loading");
+      setAuthStatus("ПОДКЛЮЧЕНИЕ", "loading");
     }
 
     qsa("[data-discord-login]").forEach((button) => {
@@ -1037,22 +896,6 @@
       form.addEventListener("submit", saveProfile);
     });
 
-    qsa("[data-media-disclosure]").forEach((disclosure) => {
-      disclosure.addEventListener("toggle", () => {
-        if (disclosure.open && state.user) {
-          void loadMediaApplications(state.user, renderSequence);
-        }
-      });
-    });
-
-    qsa("[data-media-retry]").forEach((button) => {
-      button.addEventListener("click", () => {
-        if (state.user && qs("[data-media-disclosure]")?.open) {
-          void loadMediaApplications(state.user, renderSequence);
-        }
-      });
-    });
-
     qsa("[data-profile-retry]").forEach((button) => {
       button.addEventListener("click", () => {
         if (state.user) void hydrateCabinetData(state.user, renderSequence);
@@ -1067,7 +910,7 @@
       if (document.body.hasAttribute("data-cabinet")) {
         showLoginFallback(
           "Войти в NaZerak.",
-          "Авторизация сейчас недоступна. Сам кабинет не блокируется.",
+          "Авторизация сейчас недоступна.",
           "Проверь соединение и нажми «Повторить вход через Discord»."
         );
       }
