@@ -6,10 +6,22 @@
   let closeTimer = null;
   let openTimer = null;
 
-  const qs = (s, r = document) => r.querySelector(s);
-  const escapeHtml = (value) => String(value == null ? "" : value).replace(/[&<>"']/g, (c) => ({
-    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"
+  const escapeHtml = (value) => String(value == null ? "" : value).replace(/[&<>\"']/g, (c) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#039;"
   }[c]));
+
+  const safeUrl = (value) => {
+    try {
+      const url = new URL(String(value || ""));
+      return /^https?:$/.test(url.protocol) ? url.href : "";
+    } catch {
+      return "";
+    }
+  };
 
   const roleBadge = (slug, name, badge) => {
     const safeSlug = String(slug || "player").replace(/[^a-z0-9-]/gi, "");
@@ -38,49 +50,64 @@
   };
 
   const fetchProfile = async (publicId) => {
+    if (!publicId) return null;
     if (cache.has(publicId)) return cache.get(publicId);
+
     const client = window.NaZerakAuth && window.NaZerakAuth.client;
     if (!client) return null;
-    const request = client.from("forum_author_directory")
-      .select("public_id,display_name,avatar_url,bio,minecraft_username,joined_at,last_seen_at,topic_count,post_count,role_slugs,primary_role_slug,primary_role_name,primary_role_color,primary_role_badge")
+
+    const request = client
+      .from("forum_author_directory")
+      .select("*")
       .eq("public_id", publicId)
       .maybeSingle();
+
     cache.set(publicId, request);
     const result = await request;
+
     if (result.error) {
       cache.delete(publicId);
       return null;
     }
+
     cache.set(publicId, Promise.resolve(result.data));
     return result.data;
   };
 
   const positionCard = () => {
-    // The card is intentionally anchored by CSS at a fixed safe viewport position.
-    // This avoids runtime style attributes and keeps the strict CSP intact.
+    // The card is intentionally positioned by CSS and stays away from inline style injection.
   };
 
   const renderCard = (profile, trigger) => {
     const card = ensureCard();
-    const avatar = profile && profile.avatar_url ? '<img src="' + escapeHtml(profile.avatar_url) + '" alt="">' : "";
-    const initial = escapeHtml(String(profile && profile.display_name || "N").slice(0,1).toUpperCase());
-    const roles = Array.isArray(profile && profile.role_slugs) ? profile.role_slugs : [];
+    if (!profile) {
+      card.innerHTML = '<div class="forum-user-card__loading">Профиль недоступен.</div>';
+      card.hidden = false;
+      positionCard(trigger);
+      return;
+    }
+
+    const avatar = profile.avatar_url ? '<img src="' + escapeHtml(safeUrl(profile.avatar_url) || "") + '" alt="">' : "";
+    const initial = escapeHtml(String(profile.display_name || "N").slice(0, 1).toUpperCase());
+    const roles = Array.isArray(profile.role_slugs) ? profile.role_slugs : [];
     const roleHtml = roles.length
-      ? roles.slice(0,3).map((r) => roleBadge(r.slug, r.name, r.badge)).join("")
+      ? roles.slice(0, 3).map((role) => roleBadge(role.slug || role.role_slug || "player", role.name || "Игрок", role.badge || "•")).join("")
       : roleBadge("player", "Игрок", "•");
+
+    const username = escapeHtml(profile.display_name || "Игрок NaZerak");
+    const bio = escapeHtml(profile.bio || "Участник форума NaZerak.");
+    const minecraft = profile.minecraft_username ? '<span><strong>' + escapeHtml(profile.minecraft_username) + '</strong> Minecraft</span>' : "";
 
     card.innerHTML =
       '<div class="forum-user-card__top">' +
         '<div class="forum-user-card__avatar">' + (avatar || initial) + '</div>' +
         '<div class="forum-user-card__identity">' +
-          '<a href="./forum-user.html?id=' + encodeURIComponent(profile.public_id) + '" class="forum-user-card__name forum-role--' + escapeHtml(profile.primary_role_slug || "player") + '">' + escapeHtml(profile.display_name || "Игрок NaZerak") + '</a>' +
+          '<a href="./forum-user.html?id=' + encodeURIComponent(profile.public_id) + '" class="forum-user-card__name forum-role--' + escapeHtml(profile.primary_role_slug || "player") + '">' + username + '</a>' +
           '<div class="forum-user-card__roles">' + roleHtml + '</div>' +
         '</div>' +
       '</div>' +
-      '<p class="forum-user-card__bio">' + escapeHtml(profile.bio || "Участник форума NaZerak.") + '</p>' +
-      '<div class="forum-user-card__stats"><span><strong>' + Number(profile.topic_count || 0) + '</strong> тем</span><span><strong>' + Number(profile.post_count || 0) + '</strong> сообщений</span>' +
-      (profile.minecraft_username ? '<span><strong>' + escapeHtml(profile.minecraft_username) + '</strong> Minecraft</span>' : "") +
-      '</div>' +
+      '<p class="forum-user-card__bio">' + bio + '</p>' +
+      '<div class="forum-user-card__stats"><span><strong>' + Number(profile.topic_count || 0) + '</strong> тем</span><span><strong>' + Number(profile.post_count || 0) + '</strong> сообщений</span>' + minecraft + '</div>' +
       '<a class="forum-user-card__open" href="./forum-user.html?id=' + encodeURIComponent(profile.public_id) + '">Открыть профиль <span aria-hidden="true">→</span></a>';
 
     card.hidden = false;
@@ -91,16 +118,13 @@
     window.clearTimeout(closeTimer);
     const publicId = trigger.getAttribute("data-forum-user");
     if (!publicId) return;
+
     const card = ensureCard();
     card.innerHTML = '<div class="forum-user-card__loading">Загрузка профиля…</div>';
     card.hidden = false;
     positionCard(trigger);
+
     const profile = await fetchProfile(publicId);
-    if (!profile) {
-      card.innerHTML = '<div class="forum-user-card__loading">Профиль недоступен.</div>';
-      positionCard(trigger);
-      return;
-    }
     renderCard(profile, trigger);
   };
 
