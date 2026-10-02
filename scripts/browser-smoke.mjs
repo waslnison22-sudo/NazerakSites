@@ -508,14 +508,41 @@ await testStaticPage({
   }
 });
 
-await testStaticPage({
-  path: "/not-found-final-audit-route",
-  name: "404",
-  viewport: { width: 1280, height: 900 },
-  check: async (page) => {
-    if (!(await page.locator("h1").textContent()).includes("404")) throw new Error("404 heading missing");
+const test404 = async () => {
+  const browser = await chromium.launch({ headless: true });
+  const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+  const finishDiagnostics = attachDiagnostics(page, "404");
+  try {
+    const missingResponse = await page.goto(
+      BASE + "/__nazerak_missing_route__.html",
+      { waitUntil: "networkidle", timeout: TIMEOUT }
+    );
+    if (!missingResponse || missingResponse.status() !== 404) {
+      throw new Error("missing route did not return HTTP 404");
+    }
+
+    const customResponse = await page.goto(
+      BASE + "/404.html",
+      { waitUntil: "networkidle", timeout: TIMEOUT }
+    );
+    if (!customResponse || customResponse.status() !== 200) {
+      throw new Error("custom 404.html page is not directly reachable");
+    }
+    if (!(await page.locator("h1").textContent()).includes("404")) {
+      throw new Error("custom 404 heading missing");
+    }
+
+    await assertAccessibleControls(page, "404");
+    await testSameOriginLinks(page, "404");
+    await assertNoHorizontalOverflow(page, "404");
+    finishDiagnostics();
+    console.log("PASS: 404");
+  } finally {
+    await browser.close();
   }
-});
+};
+
+await test404();
 
 await testOAuthStart();
 await testCabinetAnonymous({ width: 1440, height: 1000 }, "cabinet anonymous desktop");
