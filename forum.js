@@ -111,10 +111,11 @@
       const latestHtml = latest
         ? '<a class="forum-board-row__last" href="./topic.html?id=' + encodeURIComponent(latest.id) + '"><strong>' + escapeHtml(latest.title) + '</strong><span>' + escapeHtml(latest.author_name || "Игрок NaZerak") + ' · ' + formatRelative(latest.last_post_at) + '</span></a>'
         : '<span class="forum-board-row__last forum-board-row__last--empty">Нет сообщений</span>';
+      const mode = category.posting_mode === "official" ? "Официальный" : category.posting_mode === "restricted" ? "Ограниченный" : "";
       return '<article class="forum-board-row">' +
         '<a class="forum-board-row__forum" href="./forum-category.html?slug=' + encodeURIComponent(category.slug) + '">' +
           '<span class="forum-category-card__icon">' + escapeHtml(category.icon || "•") + '</span>' +
-          '<span><strong>' + escapeHtml(category.name) + '</strong><small>' + escapeHtml(category.description || "Раздел форума") + '</small></span>' +
+          '<span><strong>' + escapeHtml(category.name) + '</strong><small>' + escapeHtml(category.description || "Раздел форума") + (mode ? " · " + escapeHtml(mode) : "") + '</small></span>' +
         '</a>' +
         '<span class="forum-board-row__stat">' + topics.length + '</span>' +
         '<span class="forum-board-row__stat">' + postCount + '</span>' +
