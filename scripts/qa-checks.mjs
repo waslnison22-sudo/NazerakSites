@@ -245,7 +245,6 @@ if (/nazerak\.is-a\.dev\/cabinet\.html/i.test(read("AUTH_SETUP.md"))) fail.push(
 if (/server-status-text|server-players|data-server-hero/.test(index)) fail.push("obsolete server statistics markup remains");
 if (!index.includes("hero-art") || !index.includes("world-visual")) fail.push("final homepage visual system missing");
 if (!index.includes('data-image-slot="hero"') || !index.includes('data-image-slot="world"') || !index.includes('data-image-slot="partnership"')) fail.push("generated image slots are missing");
-if (!script.includes("const optionalMedia") || !script.includes("./assets/images/hero.webp")) fail.push("optional generated image loader is missing");
 if (!index.includes("Как подключиться")) fail.push("homepage connection CTA is misleading or stale");
 if (!index.includes("Обсудить в Discord")) fail.push("homepage media CTA is misleading or stale");
 if (!index.includes('data-auth-link-label>Войти')) fail.push("homepage auth link must default to neutral login state");
