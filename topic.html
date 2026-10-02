@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#07070a">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://unpkg.com; connect-src 'self' https://ujlbyzvdsncvqbrhasuw.supabase.co; img-src 'self' data: https://cdn.discordapp.com https://media.discordapp.net; style-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; frame-src 'none'; form-action 'self';">
+  <meta name="description" content="NaZerak — обсуждение на форуме.">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <link rel="icon" href="./favicon.svg?v=5" type="image/svg+xml">
+  <link rel="stylesheet" href="./styles.css?v=22">
+  <title>NaZerak — тема форума</title>
+</head>
+<body data-forum-topic>
+  <a class="skip-link" href="#main-content">К содержимому</a>
+  <header class="topbar" id="top">
+    <div class="container topbar__inner">
+      <a class="brand" href="./" aria-label="NaZerak — на главную"><span class="brand__mark" aria-hidden="true">NZ</span><span class="brand__name">NaZerak</span></a>
+      <button class="nav-toggle" type="button" aria-controls="topic-nav" aria-expanded="false" aria-label="Открыть меню"><span></span><span></span><span></span><span class="sr-only">Открыть меню</span></button>
+      <nav class="nav" id="topic-nav" aria-label="Основная навигация">
+        <a href="./#about">Проект</a><a href="./#world">Мир</a><a href="./#start">Старт</a>
+        <a class="nav-forum is-active" href="./forum.html" aria-current="page">Форум</a>
+        <a class="nav-account" data-auth-link href="./cabinet.html"><span class="nav-account__avatar"><img data-auth-link-avatar alt="" hidden><span data-auth-link-fallback>◉</span></span><span data-auth-link-label>Войти</span></a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="topic-page" id="main-content" tabindex="-1">
+    <div class="container topic">
+      <div class="topic-breadcrumbs"><a href="./forum.html">Форум</a><span>/</span><span data-topic-category>Загрузка</span></div>
+      <div class="topic-message auth-message" data-topic-message role="status" aria-live="polite" hidden></div>
+
+      <article class="topic-head" data-topic-head>
+        <div class="topic-head__meta">
+          <span class="forum-topic-badge" data-topic-category-badge>—</span>
+          <span data-topic-date>—</span>
+        </div>
+        <h1 data-topic-title>Загрузка темы…</h1>
+        <div class="topic-head__author">
+          <div class="forum-avatar"><img data-topic-author-avatar alt="" hidden><span data-topic-author-initial>NZ</span></div>
+          <div><span class="topic-author-label">АВТОР</span><strong data-topic-author>Игрок NaZerak</strong></div>
+        </div>
+      </article>
+
+      <section class="topic-posts" data-topic-posts aria-live="polite"></section>
+
+      <section class="topic-reply" data-topic-reply hidden>
+        <div>
+          <span class="section-kicker">REPLY</span>
+          <h2>Ответить в теме.</h2>
+        </div>
+        <textarea data-topic-reply-input maxlength="12000" rows="7" placeholder="Напиши ответ…"></textarea>
+        <div class="topic-reply__footer">
+          <span data-topic-lock-note>Ответы доступны авторизованным пользователям.</span>
+          <button class="button button--primary" type="button" data-topic-reply-submit><span>Ответить</span><span aria-hidden="true">→</span></button>
+        </div>
+      </section>
+
+      <section class="topic-login" data-topic-login hidden>
+        <div><span class="section-kicker">DISCORD</span><h2>Хочешь ответить?</h2><p>Войди через Discord, чтобы участвовать в обсуждении.</p></div>
+        <a class="button button--primary" href="./cabinet.html"><span>Войти в кабинет</span><span aria-hidden="true">↗</span></a>
+      </section>
+
+      <div class="topic-footer-links"><a href="./forum.html">← Все темы</a><a href="./cabinet.html">Личный кабинет →</a></div>
+    </div>
+  </main>
+
+  <footer class="footer"><div class="container footer__inner"><div><a class="brand brand--footer" href="./"><span class="brand__mark" aria-hidden="true">NZ</span><span class="brand__name">NaZerak</span></a><p class="footer__copy">Тема форума NaZerak.</p></div><div class="footer__right"><span>© <span id="year"></span> NaZerak</span><a href="#top">Наверх ↑</a></div></div></footer>
+
+  <noscript><div class="noscript-message">Для темы форума требуется включить JavaScript.</div></noscript>
+  <script src="./auth-config.js?v=8" defer></script>
+  <script src="./supabase-loader.js?v=9" defer></script>
+  <script src="./auth.js?v=32" defer></script>
+  <script src="./topic.js?v=1" defer></script>
+  <script src="./script.js?v=17" defer></script>
+</body>
+</html>
