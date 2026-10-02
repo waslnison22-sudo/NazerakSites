@@ -809,3 +809,11 @@ html.js-ready .reveal.is-visible{opacity:1;transform:none}
 /* Hover profile card: CSP-safe fixed anchor. */
 .forum-user-card{max-height:min(520px,calc(100vh - 98px));overflow:auto}
 @media (max-width:700px){.forum-user-card{top:76px;right:12px;left:12px;width:auto}}
+
+.forum-community-head{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;padding-bottom:13px}
+.forum-community-head h2{margin:7px 0 0;font-size:22px;letter-spacing:-.04em}
+.forum-community-stats{display:flex;gap:7px}
+.forum-community-stats span{min-width:66px;display:grid;gap:1px;padding:8px 10px;border:1px solid var(--line);background:rgba(255,255,255,.018);text-align:right}
+.forum-community-stats strong{font-size:13px;line-height:1}
+.forum-community-stats small{color:var(--dim);font-size:7px;font-weight:850;letter-spacing:.08em;text-transform:uppercase}
+@media (max-width:700px){.forum-community-head{align-items:flex-start;flex-direction:column}.forum-community-stats{width:100%}.forum-community-stats span{flex:1;text-align:left}}
