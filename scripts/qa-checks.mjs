@@ -24,6 +24,7 @@ const requiredFiles = [
   "topic.js",
   "favicon.svg",
   "supabase/migrations/20260930205000_harden_frontend_column_privileges.sql",
+  "supabase/migrations/20261002200000_forum_foundation.sql",
   "scripts/runtime-smoke.mjs",
   "scripts/browser-smoke.mjs",
   "assets/images/README.md"
@@ -158,12 +159,12 @@ for (const [name, page] of [
   }
 }
 
-if (!read("404.html").includes("styles.css?v=21")) fail.push("404.html styles cache version is stale");
+if (!read("404.html").includes("styles.css?v=22")) fail.push("404.html styles cache version is stale");
 const sitemap = read("sitemap.xml");
 if (sitemap.includes("cabinet.html") || sitemap.includes("forum.html")) fail.push("sitemap contains a noindex page");
 if (!sitemap.includes("https://waslnison22-sudo.github.io/NazerakSites/")) fail.push("sitemap homepage URL is missing");
 const robots = read("robots.txt");
-if (!robots.includes("Disallow: /cabinet.html") || !robots.includes("Disallow: /forum.html")) fail.push("robots must block noindex account/forum routes");
+if (!robots.includes("Disallow: /cabinet.html") || !robots.includes("Disallow: /forum.html") || !robots.includes("Disallow: /topic.html")) fail.push("robots must block noindex account/forum routes");
 if (!robots.includes("Sitemap: https://waslnison22-sudo.github.io/NazerakSites/sitemap.xml")) fail.push("robots sitemap URL is missing");
 
 
@@ -272,7 +273,7 @@ for (const [name, page] of [["index.html", index], ["cabinet.html", cabinet], ["
     fail.push(`unexpected auth link label in ${name}: ${labels.join(", ")}`);
   }
 }
-if (!index.includes('href="./forum.html"') || !cabinet.includes('href="./forum.html"')) fail.push("forum navigation link missing");
+if (!index.includes('href="./forum.html"') || !cabinet.includes('href="./forum.html"') || !read("topic.html").includes('href="./forum.html"')) fail.push("forum navigation link missing");
 if (auth.includes(".from(\"profiles\")\n      .upsert(")) fail.push("profile initialization still uses upsert");
 if (script.includes(".magnetic") || script.includes("[data-parallax]")) fail.push("unstable motion controls remain");
 
