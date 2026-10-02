@@ -51,7 +51,6 @@
         '</div>'+
       '</article>';
     }).join("");
-    window.NaZerakForumUI&&window.NaZerakForumUI.bind(root);
   };
   const fillCategorySelect=()=>{const s=qs("#forum-category");if(s)s.innerHTML=state.categories.map(function(c){return '<option value="'+c.id+'">'+escapeHtml(c.name)+"</option>";}).join("");};
   const loadData=async()=>{setState("ЗАГРУЗКА","loading");const results=await Promise.all([state.client.from("forum_categories").select("id,slug,name,description,sort_order").order("sort_order",{ascending:true}),state.client.from("forum_topic_list").select("id,slug,category_id,category_slug,category_name,author_public_id,author_name,author_avatar_url,primary_role_slug,primary_role_name,primary_role_badge,title,body,is_pinned,is_locked,is_archived,prefix,views_count,solution_state,created_at,updated_at,last_post_at,reply_count").order("is_pinned",{ascending:false}).order("last_post_at",{ascending:false}).limit(100)]);if(results[0].error)throw new Error(results[0].error.message||"Не удалось загрузить разделы форума.");if(results[1].error)throw new Error(results[1].error.message||"Не удалось загрузить темы форума.");state.categories=results[0].data||[];state.topics=results[1].data||[];renderCategories();fillCategorySelect();renderTopics();setState("ФОРУМ ГОТОВ","ready");};
