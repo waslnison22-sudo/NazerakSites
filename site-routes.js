@@ -9,7 +9,9 @@
     court: "sud",
     prosecutor: "prokuratura",
     security: "fsb",
-    military: "voennaya-baza"
+    military: "voennaya-baza",
+    organizations: "organizatsii",
+    about: "o-proekte"
   });
 
   const currentBasePath = () => {
