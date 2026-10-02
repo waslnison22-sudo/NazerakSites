@@ -1,6 +1,6 @@
 (() => {
   "use strict";
-  const state={client:null,user:null,category:null,topics:[]};
+  const state={client:null,user:null,category:null,topics:[],permissions:null};
   const qs=(s,r=document)=>r.querySelector(s);
   const escapeHtml=(v)=>String(v==null?"":v).replace(/[&<>"']/g,(c)=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
   const safeUrl=(v)=>{try{const u=new URL(String(v||""));return /^https?:$/.test(u.protocol)?u.href:"";}catch{return"";}};
@@ -12,17 +12,21 @@
   const load=async()=>{
     const slug=String(new URLSearchParams(location.search).get("slug")||"").toLowerCase();
     if(!slug)throw new Error("Раздел не указан.");
-    const [cat,topics]=await Promise.all([
+    const requests=[
       state.client.from("forum_node_directory").select("id,slug,name,description,area_slug,sort_order,icon,accent_color,posting_mode,node_type,parent_id,route_slug,parent_slug,parent_name,topic_count,post_count").eq("route_slug",slug).maybeSingle(),
       state.client.from("forum_topic_list").select("id,slug,category_id,category_name,category_route_slug,parent_name,area_slug,author_public_id,author_name,author_avatar_url,primary_role_slug,primary_role_name,primary_role_badge,title,body,is_pinned,is_locked,is_archived,prefix,created_at,last_post_at,reply_count").eq("category_route_slug",slug).order("is_pinned",{ascending:false}).order("last_post_at",{ascending:false}).limit(100)
-    ]);
+    ];
+    if(state.user) requests.push(state.client.from("forum_my_permissions").select("can_publish_official,can_moderate_forum").maybeSingle());
+    const [cat,topics,permissions]=await Promise.all(requests);
     if(cat.error)throw new Error(cat.error.message);if(!cat.data)throw new Error("Раздел не найден.");
-    if(topics.error)throw new Error(topics.error.message);
-    state.category=cat.data;state.topics=topics.data||[];
-    qs("[data-category-area]").textContent=state.category.parent_name||"Форумы";
+    if(topics.error)throw new Error(topics.error.message); if(permissions?.error) console.warn("[NaZerak Forum] permission lookup:",permissions.error.message);
+    state.category=cat.data;state.topics=topics.data||[];state.permissions=permissions?.data||null;
+    qs("[data-category-parent]").textContent=state.category.parent_name||"Форумы";
     qs("[data-category-name]").textContent=state.category.name;
     qs("[data-category-title]").innerHTML=escapeHtml(state.category.name)+"<span>.</span>";
     qs("[data-category-description]").textContent=state.category.description||"";
+    const canCreate = state.category.posting_mode==="open" || Boolean(state.permissions?.can_publish_official);
+    document.querySelectorAll("[data-category-create]").forEach((button)=>{button.hidden=!canCreate;});
     const policy=qs("[data-category-policy]");
     if(policy){
       policy.hidden=false;
