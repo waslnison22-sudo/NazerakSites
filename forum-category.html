@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#07070a">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://unpkg.com; connect-src 'self' https://ujlbyzvdsncvqbrhasuw.supabase.co; img-src 'self' data: https://cdn.discordapp.com https://media.discordapp.net; style-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; frame-src 'none'; form-action 'self';">
+  <meta name="description" content="NaZerak — раздел форума.">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <link rel="icon" href="./favicon.svg?v=5" type="image/svg+xml">
+  <link rel="stylesheet" href="./styles.css?v=25">
+  <title>NaZerak — раздел форума</title>
+</head>
+<body data-forum-category-page>
+  <a class="skip-link" href="#main-content">К содержимому</a>
+  <header class="topbar" id="top">
+    <div class="container topbar__inner">
+      <a class="brand" href="./" aria-label="NaZerak — на главную"><span class="brand__mark" aria-hidden="true">NZ</span><span class="brand__name">NaZerak</span></a>
+      <button class="nav-toggle" type="button" aria-controls="forum-nav" aria-expanded="false" aria-label="Открыть меню"><span></span><span></span><span></span><span class="sr-only">Открыть меню</span></button>
+      <nav class="nav" id="forum-nav" aria-label="Основная навигация">
+        <a class="nav-forum is-active" href="./forum.html" aria-current="page">Форум</a>
+        <a href="./forum-members.html">Участники</a>
+        <a href="./forum-search.html">Поиск</a>
+        <a class="nav-account" data-auth-link href="./cabinet.html"><span class="nav-account__avatar"><img data-auth-link-avatar alt="" hidden><span data-auth-link-fallback>◉</span></span><span data-auth-link-label>Войти</span></a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="forum-page" id="main-content" tabindex="-1">
+    <div class="container forum">
+      <div class="forum-breadcrumbs"><a href="./forum.html">Форум</a><span>/</span><span data-category-area>Загрузка</span><span>/</span><strong data-category-name>Загрузка</strong></div>
+      <header class="forum-section-head">
+        <div>
+          <span class="section-kicker">FORUM / SECTION</span>
+          <h1 data-category-title>Загрузка<span>.</span></h1>
+          <p data-category-description>Загрузка раздела…</p>
+        </div>
+        <button class="button button--primary" type="button" data-category-create><span>Новая тема</span><span aria-hidden="true">+</span></button>
+      </header>
+
+      <div class="forum-message auth-message" data-category-message role="status" aria-live="polite" hidden></div>
+
+      <section class="forum-list-shell" aria-labelledby="category-topics-title">
+        <header class="forum-list-head">
+          <div>
+            <span class="section-kicker">THREADS</span>
+            <h2 id="category-topics-title">Темы раздела</h2>
+          </div>
+          <span class="forum-result-count" data-category-result-count>0 тем</span>
+        </header>
+        <div class="forum-thread-table">
+          <div class="forum-thread-table__header"><span>Тема</span><span>Ответы</span><span>Последнее сообщение</span></div>
+          <div data-category-topic-list aria-live="polite"></div>
+        </div>
+        <div class="forum-empty" data-category-empty hidden>
+          <span class="forum-empty__mark" aria-hidden="true">NZ</span>
+          <span class="section-kicker">NO THREADS</span>
+          <h3>В этом разделе пока нет тем.</h3>
+          <p>Раздел готов. Реальные темы создаются вручную участниками и командой проекта.</p>
+          <button class="button button--primary" type="button" data-category-create><span>Создать тему</span><span aria-hidden="true">+</span></button>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <dialog class="forum-modal" data-category-modal aria-labelledby="category-modal-title">
+    <form class="forum-modal__dialog" method="dialog" data-category-form>
+      <button class="forum-modal__close" type="submit" value="cancel" aria-label="Закрыть">×</button>
+      <span class="section-kicker">NEW TOPIC</span>
+      <h2 id="category-modal-title">Создать тему.</h2>
+      <p class="forum-modal__copy">Первое сообщение станет стартовым постом темы.</p>
+      <div class="forum-form-field"><label for="category-title-input">Заголовок</label><input id="category-title-input" name="title" maxlength="120" minlength="3" required placeholder="Заголовок темы"></div>
+      <div class="forum-form-field"><label for="category-body-input">Сообщение</label><textarea id="category-body-input" name="body" maxlength="12000" rows="8" required placeholder="Текст сообщения…"></textarea><small>1–12 000 символов</small></div>
+      <div class="forum-modal__footer">
+        <span>Авторизация выполняется через Discord.</span>
+        <div class="forum-modal__buttons"><button class="button button--ghost" type="submit" value="cancel">Отмена</button><button class="button button--primary" type="button" data-category-submit>Опубликовать <span aria-hidden="true">→</span></button></div>
+      </div>
+    </form>
+  </dialog>
+
+  <footer class="footer"><div class="container footer__inner"><div><a class="brand brand--footer" href="./"><span class="brand__mark" aria-hidden="true">NZ</span><span class="brand__name">NaZerak</span></a><p class="footer__copy">Раздел форума NaZerak.</p></div><div class="footer__right"><span>© <span id="year"></span> NaZerak</span><a href="#top">Наверх ↑</a></div></div></footer>
+  <noscript><div class="noscript-message">Для форума требуется JavaScript.</div></noscript>
+  <script src="./site-config.js?v=1" defer></script>
+  <script src="./auth-config.js?v=8" defer></script>
+  <script src="./supabase-loader.js?v=9" defer></script>
+  <script src="./auth.js?v=33" defer></script>
+  <script src="./forum-ui.js?v=1" defer></script>
+  <script src="./forum-category.js?v=1" defer></script>
+  <script src="./script.js?v=17" defer></script>
+</body>
+</html>
