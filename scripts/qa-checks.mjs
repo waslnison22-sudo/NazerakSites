@@ -46,6 +46,8 @@ const requiredFiles = [
   "supabase/migrations/20261002227000_forum_cached_public_views.sql",
   "supabase/migrations/20261002228000_forum_public_post_select_policy.sql",
   "supabase/migrations/20261002229000_forum_community_stats.sql",
+  "supabase/migrations/20261002232000_forum_section_map_v2.sql",
+  "supabase/migrations/20261002231000_forum_locked_topic_insert_guard.sql",
   "supabase/migrations/20261002230000_forum_permission_function_hardening.sql",
   "scripts/runtime-smoke.mjs",
   "scripts/browser-smoke.mjs",
@@ -331,7 +333,7 @@ for (const file of forumSurfaceFiles) {
   if (/\sstyle=/i.test(page) || page.includes("style-src-attr 'unsafe-inline'")) fail.push(file + " contains inline style/CSP allowance");
 }
 const forumPage = read("forum.html");
-if (!forumPage.includes("data-forum-world=\"rp\"") || !forumPage.includes("data-forum-world=\"administration\"")) fail.push("forum must expose exactly the two top-level worlds");
+if (!forumPage.includes("data-forum-board-rows=\"rp\"") || !forumPage.includes("data-forum-board-rows=\"administration\"")) fail.push("forum must expose exactly the two top-level worlds");
 if (!forumPage.includes("data-forum-search-form") || !forumPage.includes("data-forum-search-clear")) fail.push("forum search controls are incomplete");
 if (!forumPage.includes("button--primary") || !forumPage.includes("button--ghost")) fail.push("forum must use common site button classes");
 if (!read("forum-user.html").includes("data-user-profile")) fail.push("full forum profile markup missing");
