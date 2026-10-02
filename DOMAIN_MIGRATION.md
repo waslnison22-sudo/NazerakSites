@@ -43,11 +43,11 @@ Production публикуется не напрямую из `push`. Снача�
 - `DEPLOY_PORT` — обычно `22`
 - `DEPLOY_USER` — отдельный deploy-пользователь, не root
 - `DEPLOY_PATH` — document root сайта
-- `DEPLOY_PRIVATE_KEY` — приватный SSH ключ deploy-пользователя
+- `DEPLOY_PASSWORD` — пароль SSH/SFTP пользователя хостинга
 
 Приватный ключ не хранится в репозитории. GitHub Actions Secrets предназначены именно для такого подключения; доступ к секретам должен иметь минимально необходимый scope. 
 
-Текущий deploy workflow использует rsync over SSH и исключает из web-root `.git`, `.github`, `supabase`, `scripts`, `docs`, `templates` и служебные markdown-файлы.
+Текущий deploy workflow использует SFTP поверх SSH. Перед загрузкой он собирает отдельный web-root и исключает `.git`, `.github`, `supabase`, `scripts`, `docs`, `templates` и служебные markdown-файлы.
 
 До включения `DEPLOY_ENABLED=true` production deployment остаётся выключенным, поэтому текущая публикация GitHub Pages продолжает работать как резерв.
 
