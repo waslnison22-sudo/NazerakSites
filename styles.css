@@ -817,3 +817,5 @@ html.js-ready .reveal.is-visible{opacity:1;transform:none}
 .forum-community-stats strong{font-size:13px;line-height:1}
 .forum-community-stats small{color:var(--dim);font-size:7px;font-weight:850;letter-spacing:.08em;text-transform:uppercase}
 @media (max-width:700px){.forum-community-head{align-items:flex-start;flex-direction:column}.forum-community-stats{width:100%}.forum-community-stats span{flex:1;text-align:left}}
+
+.forum-category-policy{display:inline-flex;align-items:center;width:max-content;max-width:100%;margin-top:12px;padding:7px 9px;border:1px solid var(--line);background:rgba(255,255,255,.018);color:var(--dim);font-size:8px;font-weight:800;line-height:1.45}
