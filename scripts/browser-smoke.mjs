@@ -87,7 +87,7 @@ const testSameOriginLinks = async (page, name) => {
 
   for (const route of [...new Set(routes)]) {
     const [pathname, hash] = route.split("#");
-    if (!["/NazerakSites/", "/NazerakSites/cabinet.html", "/NazerakSites/forum.html", "/NazerakSites/topic.html", "/NazerakSites/forum-user.html", "/NazerakSites/AUTH_SETUP.md"].includes(pathname)) {
+    if (!["/NazerakSites/", "/NazerakSites/cabinet.html", "/NazerakSites/forum.html", "/NazerakSites/forum-category.html", "/NazerakSites/forum-members.html", "/NazerakSites/forum-search.html", "/NazerakSites/topic.html", "/NazerakSites/forum-user.html", "/NazerakSites/AUTH_SETUP.md", "/NazerakSites/DOMAIN_MIGRATION.md"].includes(pathname)) {
       throw new Error(name + " contains an unexpected local route: " + route);
     }
     if (hash && pathname === new URL(page.url()).pathname) {
@@ -417,41 +417,66 @@ await testStaticPage({
 
 await testStaticPage({
   path: "/forum.html",
-  name: "forum",
+  name: "forum index",
   viewport: { width: 1280, height: 900 },
   check: async (page) => {
     if (!(await page.locator("h1").textContent()).includes("Форум")) throw new Error("forum heading missing");
-    if (await page.locator("[data-forum-categories] .forum-category-filter").count() < 5) {
-      throw new Error("forum category directory did not load");
+    if (await page.locator('[data-forum-board-rows="rp"] .forum-board-row').count() < 1) {
+      throw new Error("RP forum board did not load");
     }
-    if (!(await page.locator("[data-forum-state]").textContent()).includes("ФОРУМ ГОТОВ")) {
-      throw new Error("forum data layer did not reach ready state");
+    if (await page.locator('[data-forum-board-rows="administration"] .forum-board-row').count() < 1) {
+      throw new Error("administration forum board did not load");
     }
+    if (await page.locator("[data-forum-state]").textContent() === "") throw new Error("forum state missing");
     if (await page.locator('[data-forum-create]').count() < 1) throw new Error("forum create control missing");
+    if (!(await page.locator('a[href="./forum-members.html"]').count() >= 1)) throw new Error("members navigation missing");
+    if (!(await page.locator('a[href="./forum-search.html"]').count() >= 1)) throw new Error("search navigation missing");
     const robots = await page.locator('meta[name="robots"]').getAttribute("content");
     if (!/noindex/.test(robots || "")) throw new Error("forum robots policy missing");
   }
 });
 
 await testStaticPage({
-  path: "/forum.html",
-  name: "forum",
+  path: "/forum-category.html?slug=minecraft",
+  name: "forum category",
   viewport: { width: 1280, height: 900 },
   check: async (page) => {
-    if (!(await page.locator("h1").textContent()).includes("Сообщество")) throw new Error("community heading missing");
-    const robots = await page.locator('meta[name="robots"]').getAttribute("content");
-    if (!/noindex/.test(robots || "")) throw new Error("forum robots policy missing");
+    if (!(await page.locator("h1").textContent()).includes("Игровой мир")) throw new Error("forum category heading missing");
+    if (!(await page.locator(".forum-thread-table").count())) throw new Error("forum thread table missing");
   }
 });
 
 await testStaticPage({
-  path: "/forum-user.html?id=3ebdafdc-f119-40ba-a145-e21416849913",
+  path: "/forum-members.html",
+  name: "forum members",
+  viewport: { width: 1280, height: 900 },
+  check: async (page) => {
+    if (!(await page.locator("h1").textContent()).includes("Участники")) throw new Error("members heading missing");
+    if (!(await page.locator("[data-members-list]").count())) throw new Error("members list missing");
+  }
+});
+
+await testStaticPage({
+  path: "/forum-search.html",
+  name: "forum search",
+  viewport: { width: 1280, height: 900 },
+  check: async (page) => {
+    if (!(await page.locator("h1").textContent()).includes("Поиск")) throw new Error("search heading missing");
+    if (!(await page.locator("#global-forum-search").count())) throw new Error("search field missing");
+    await page.locator("#global-forum-search").fill("na");
+    await page.locator('[data-forum-search-form]').evaluate((form) => form.requestSubmit());
+    if (!page.url().includes("/forum-search.html?q=na")) throw new Error("search did not update query URL");
+  }
+});
+
+await testStaticPage({
+  path: "/forum-user.html",
   name: "forum user profile",
   viewport: { width: 1280, height: 900 },
   check: async (page) => {
-    if (!(await page.locator("[data-user-profile]").isVisible())) throw new Error("forum profile did not load");
-    if (!(await page.locator("[data-user-name]").textContent()).trim()) throw new Error("forum profile name missing");
-    if (await page.locator("[data-user-roles] .forum-role").count() < 1) throw new Error("forum profile role missing");
+    if (!(await page.locator("h1").textContent()).includes("Профиль")) throw new Error("forum profile page heading missing");
+    const robots = await page.locator('meta[name="robots"]').getAttribute("content");
+    if (!/noindex/.test(robots || "")) throw new Error("forum profile robots policy missing");
   }
 });
 
