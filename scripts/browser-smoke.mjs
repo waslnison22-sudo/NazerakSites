@@ -87,7 +87,7 @@ const testSameOriginLinks = async (page, name) => {
 
   for (const route of [...new Set(routes)]) {
     const [pathname, hash] = route.split("#");
-    if (!["/NazerakSites/", "/NazerakSites/cabinet.html", "/NazerakSites/forum.html", "/NazerakSites/AUTH_SETUP.md"].includes(pathname)) {
+    if (!["/NazerakSites/", "/NazerakSites/cabinet.html", "/NazerakSites/forum.html", "/NazerakSites/topic.html", "/NazerakSites/AUTH_SETUP.md"].includes(pathname)) {
       throw new Error(name + " contains an unexpected local route: " + route);
     }
     if (hash && pathname === new URL(page.url()).pathname) {
@@ -412,6 +412,24 @@ await testStaticPage({
     if (await page.locator(".nav").evaluate((node) => node.classList.contains("is-open"))) {
       throw new Error("mobile navigation did not close with Escape");
     }
+  }
+});
+
+await testStaticPage({
+  path: "/forum.html",
+  name: "forum",
+  viewport: { width: 1280, height: 900 },
+  check: async (page) => {
+    if (!(await page.locator("h1").textContent()).includes("Форум")) throw new Error("forum heading missing");
+    if (await page.locator("[data-forum-categories] .forum-category-filter").count() < 5) {
+      throw new Error("forum category directory did not load");
+    }
+    if (!(await page.locator("[data-forum-state]").textContent()).includes("ФОРУМ ГОТОВ")) {
+      throw new Error("forum data layer did not reach ready state");
+    }
+    if (await page.locator('[data-forum-create]').count() < 1) throw new Error("forum create control missing");
+    const robots = await page.locator('meta[name="robots"]').getAttribute("content");
+    if (!/noindex/.test(robots || "")) throw new Error("forum robots policy missing");
   }
 });
 
