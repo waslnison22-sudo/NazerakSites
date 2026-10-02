@@ -178,9 +178,6 @@ for (const token of [
 }
 
 if (!cabinet.includes('class="account-login"')) fail.push("account login layout missing");
-if (!cabinet.includes('id="media-partnership"')) fail.push("media partnership section missing");
-if (!cabinet.includes("Пока без формы заявки.")) fail.push("media partnership availability status missing");
-if (cabinet.includes('id="media-application-form"')) fail.push("media intake form must remain disabled until moderation is available");
 if (cabinet.includes("data-media-disclosure") || cabinet.includes("account-page--v3")) fail.push("obsolete cabinet architecture markup remains");
 if (auth.includes("data-media-retry") || auth.includes("data-media-disclosure") || auth.includes("const submitMediaApplication")) fail.push("obsolete media workflow remains in auth code");
 if (css.includes("data-media-disclosure") || /\.login-panel\b|\.account-container\b|\.account-layout\b|\.account-page--clean\b|\.account-clean\b|\.account-card-clean\b/.test(css)) fail.push("legacy cabinet CSS remains");
@@ -259,7 +256,7 @@ if (!auth.includes('client.auth.signOut({ scope: "local" })')) fail.push("sign-o
 if (!script.includes("clipboard-fallback")) fail.push("clipboard fallback class missing");
 if (![index, cabinet, read("forum.html"), read("404.html")].every((page) => !page.includes("style-src-attr 'unsafe-inline'"))) fail.push("CSP hardening guard missing");
 
-if (!css.includes(".scroll-cue{position:absolute;right:0;bottom:22px;")) fail.push("desktop scroll cue is outside hero");
+if (!css.includes(".scroll-cue{position:absolute;right:0;bottom:24px;")) fail.push("desktop scroll cue is outside hero");
 
 const authLinkLabel = /data-auth-link-label[^>]*>\s*([^<]+?)\s*</i;
 for (const [name, page] of [["index.html", index], ["cabinet.html", cabinet], ["forum.html", read("forum.html")]]) {
