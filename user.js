@@ -10,7 +10,7 @@
     if(!publicId){showMessage("Профиль не указан.");return;}
     const client=await waitForClient();
     if(!client){showMessage("Не удалось подключиться к форуму.");return;}
-    const result=await client.from("forum_author_directory").select("public_id,display_name,avatar_url,bio,minecraft_username,joined_at,last_seen_at,topic_count,post_count,roles,primary_role_slug,primary_role_name,primary_role_badge").eq("public_id",publicId).maybeSingle();
+    const result=await client.from("forum_author_directory").select("public_id,display_name,avatar_url,bio,minecraft_username,joined_at,last_seen_at,topic_count,post_count,role_slugs,primary_role_slug,primary_role_name,primary_role_badge").eq("public_id",publicId).maybeSingle();
     if(result.error||!result.data){showMessage("Профиль не найден.");return;}
     const p=result.data;
     qs("[data-user-profile]").hidden=false;
@@ -25,7 +25,7 @@
     qs("[data-user-initial]").textContent=(p.display_name||"N").slice(0,1).toUpperCase();
     const img=qs("[data-user-avatar]");
     if(p.avatar_url){img.hidden=false;img.src=p.avatar_url;img.alt="";}
-    const roles=Array.isArray(p.roles)?p.roles:[];
+    const roles=Array.isArray(p.role_slugs)?p.role_slugs:[];
     qs("[data-user-roles]").innerHTML=roles.map(r=>window.NaZerakForumUI.roleBadge(r.slug,r.name,r.badge)).join("");
     const topics=await client.from("forum_topic_list").select("id,title,category_name,last_post_at,reply_count,is_pinned,author_public_id,primary_role_slug").eq("author_public_id",publicId).order("last_post_at",{ascending:false}).limit(10);
     const root=qs("[data-user-topics]");
