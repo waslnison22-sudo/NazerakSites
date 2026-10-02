@@ -42,6 +42,9 @@ const requiredFiles = [
   "supabase/migrations/20261002223000_forum_two_worlds_and_discord_admin.sql",
   "supabase/migrations/20261002224000_forum_topic_world_view.sql",
   "supabase/migrations/20261002225000_forum_discord_binding_hardening.sql",
+  "supabase/migrations/20261002226000_forum_cached_public_counters.sql",
+  "supabase/migrations/20261002227000_forum_cached_public_views.sql",
+  "supabase/migrations/20261002228000_forum_public_post_select_policy.sql",
   "scripts/runtime-smoke.mjs",
   "scripts/browser-smoke.mjs",
   "assets/images/README.md"
@@ -189,7 +192,7 @@ const sitemap = read("sitemap.xml");
 if (sitemap.includes("cabinet.html") || sitemap.includes("forum.html")) fail.push("sitemap contains a noindex page");
 if (!sitemap.includes("https://waslnison22-sudo.github.io/NazerakSites/")) fail.push("sitemap homepage URL is missing");
 const robots = read("robots.txt");
-if (!robots.includes("Disallow: /cabinet.html") || !robots.includes("Disallow: /forum.html") || !robots.includes("Disallow: /topic.html") || !robots.includes("Disallow: /forum-user.html")) fail.push("robots must block noindex account/forum routes");
+if (!robots.includes("Disallow: /cabinet.html") || !robots.includes("Disallow: /forum.html") || !robots.includes("Disallow: /topic.html") || !robots.includes("Disallow: /forum-user.html") || !robots.includes("Disallow: /forum-category.html") || !robots.includes("Disallow: /forum-members.html") || !robots.includes("Disallow: /forum-search.html")) fail.push("robots must block all noindex account/forum routes");
 if (!robots.includes("Sitemap: https://waslnison22-sudo.github.io/NazerakSites/sitemap.xml")) fail.push("robots sitemap URL is missing");
 
 
@@ -317,6 +320,14 @@ for (const [name, page] of forumPages) {
 if (!read("site-config.js").includes('plannedOrigin: "https://nazerak.ru"')) fail.push("planned Nazerak.ru origin missing from site config");
 if (!read("DOMAIN_MIGRATION.md").includes("https://nazerak.ru/cabinet.html")) fail.push("domain migration guide missing Supabase redirect URL");
 
+const forumSurfaceFiles = ["forum.html","forum-category.html","forum-members.html","forum-search.html","topic.html","forum-user.html"];
+for (const file of forumSurfaceFiles) {
+  const page = read(file);
+  if (!page.includes("styles.css?v=25")) fail.push(file + " styles cache revision is stale");
+  if (!page.includes("site-config.js?v=1")) fail.push(file + " site configuration include is missing");
+  if (!page.includes('Content-Security-Policy')) fail.push(file + " CSP is missing");
+  if (/\sstyle=/i.test(page) || page.includes("style-src-attr 'unsafe-inline'")) fail.push(file + " contains inline style/CSP allowance");
+}
 const forumPage = read("forum.html");
 if (!forumPage.includes("data-forum-world=\"rp\"") || !forumPage.includes("data-forum-world=\"administration\"")) fail.push("forum must expose exactly the two top-level worlds");
 if (!forumPage.includes("data-forum-search-form") || !forumPage.includes("data-forum-search-clear")) fail.push("forum search controls are incomplete");
