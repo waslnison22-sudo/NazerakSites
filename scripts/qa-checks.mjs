@@ -19,6 +19,9 @@ const requiredFiles = [
   "robots.txt",
   "sitemap.xml",
   "forum.html",
+  "topic.html",
+  "forum.js",
+  "topic.js",
   "favicon.svg",
   "supabase/migrations/20260930205000_harden_frontend_column_privileges.sql",
   "scripts/runtime-smoke.mjs",
@@ -142,9 +145,13 @@ duplicateIds(cabinet, "cabinet.html");
 for (const [name, page] of [
   ["index.html", index],
   ["cabinet.html", cabinet],
-  ["forum.html", read("forum.html")]
+  ["forum.html", read("forum.html")],
+  ["topic.html", read("topic.html")]
 ]) {
-  for (const asset of ["auth-config.js?v=8", "supabase-loader.js?v=9", "auth.js?v=32", "script.js?v=17", "styles.css?v=21"]) {
+  const assets = ["auth-config.js?v=8", "supabase-loader.js?v=9", "auth.js?v=32", "script.js?v=17", "styles.css?v=22"];
+  if (name === "forum.html") assets.push("forum.js?v=1");
+  if (name === "topic.html") assets.push("topic.js?v=1");
+  for (const asset of assets) {
     if (!page.includes(asset)) {
       fail.push(`${name} asset include missing: ${asset}`);
     }
