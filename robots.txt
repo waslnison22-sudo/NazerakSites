@@ -4,5 +4,8 @@ Disallow: /cabinet.html
 Disallow: /forum.html
 Disallow: /topic.html
 Disallow: /forum-user.html
+Disallow: /forum-search.html
+Disallow: /forum-members.html
+Disallow: /forum-category.html
 
 Sitemap: https://waslnison22-sudo.github.io/NazerakSites/sitemap.xml
