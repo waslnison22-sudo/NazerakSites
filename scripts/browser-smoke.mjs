@@ -447,6 +447,18 @@ await testStaticPage({
 });
 
 await testStaticPage({
+  path: "/forum-category.html?slug=rules",
+  name: "official forum category",
+  viewport: { width: 1280, height: 900 },
+  check: async (page) => {
+    if (!(await page.locator("[data-category-policy]").textContent()).includes("Официальный")) {
+      throw new Error("official category policy badge missing");
+    }
+    if (await page.locator(".forum-list-shell").count() < 1) throw new Error("official category shell missing");
+  }
+});
+
+await testStaticPage({
   path: "/forum-category.html?slug=minecraft",
   name: "forum category",
   viewport: { width: 1280, height: 900 },
