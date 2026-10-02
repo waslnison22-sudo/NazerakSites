@@ -3,5 +3,6 @@ Allow: /
 Disallow: /cabinet.html
 Disallow: /forum.html
 Disallow: /topic.html
+Disallow: /forum-user.html
 
 Sitemap: https://waslnison22-sudo.github.io/NazerakSites/sitemap.xml
