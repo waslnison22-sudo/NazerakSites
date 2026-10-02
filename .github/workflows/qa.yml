@@ -8,6 +8,9 @@ on:
 permissions:
   contents: read
 
+env:
+  NAZERAK_BASE_URL: https://waslnison22-sudo.github.io/NazerakSites
+
 concurrency:
   group: nazerak-qa-${{ github.ref }}
   cancel-in-progress: true
