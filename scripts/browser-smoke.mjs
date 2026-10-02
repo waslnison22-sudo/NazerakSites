@@ -470,13 +470,18 @@ await testStaticPage({
 });
 
 await testStaticPage({
-  path: "/forum-user.html",
+  path: "/forum-members.html",
   name: "forum user profile",
   viewport: { width: 1280, height: 900 },
   check: async (page) => {
-    if (!(await page.locator("h1").textContent()).includes("Профиль")) throw new Error("forum profile page heading missing");
-    const robots = await page.locator('meta[name="robots"]').getAttribute("content");
-    if (!/noindex/.test(robots || "")) throw new Error("forum profile robots policy missing");
+    const firstMember = page.locator("[data-members-list] a[data-forum-user]").first();
+    await firstMember.waitFor({ state: "visible", timeout: 10000 });
+    const publicId = await firstMember.getAttribute("data-forum-user");
+    if (!publicId) throw new Error("member public id missing");
+    await page.goto(BASE + "/forum-user.html?id=" + encodeURIComponent(publicId), { waitUntil: "networkidle", timeout: TIMEOUT });
+    if (!(await page.locator("[data-user-profile]").isVisible())) throw new Error("forum profile did not load");
+    if (!(await page.locator("[data-user-name]").textContent()).trim()) throw new Error("forum profile name missing");
+    if (await page.locator("[data-user-roles] .forum-role").count() < 1) throw new Error("forum profile role missing");
   }
 });
 
