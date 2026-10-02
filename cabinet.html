@@ -9,12 +9,11 @@
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <meta name="robots" content="noindex,nofollow,noarchive">
   <link rel="icon" href="./favicon.svg?v=4" type="image/svg+xml">
-  <link rel="stylesheet" href="./styles.css?v=16">
+  <link rel="stylesheet" href="./styles.css?v=17">
   <title>NaZerak — личный кабинет</title>
 </head>
 <body data-cabinet>
   <a class="skip-link" href="#main-content">К содержимому</a>
-  <div class="scroll-progress" aria-hidden="true"><span></span></div>
 
   <header class="topbar" id="top">
     <div class="container topbar__inner">
@@ -41,28 +40,29 @@
     </div>
   </header>
 
-  <main class="account-page" id="main-content" tabindex="-1" aria-busy="false">
-    <div class="container account-container">
-      <section class="account-hero">
+  <main class="account-page account-page--v3" id="main-content" tabindex="-1" aria-busy="false">
+    <div class="container account-container account-container--v3">
+      <header class="account-header-v3">
         <div>
           <span class="section-kicker">NAZERAK / ACCOUNT</span>
           <h1>Личный кабинет.</h1>
-          <p>Профиль игрока и настройки аккаунта NaZerak.</p>
+          <p>Один аккаунт для Discord и игрового профиля.</p>
         </div>
-        <div class="account-hero__badge">
-          <i></i>
-          <span data-auth-status role="status" aria-live="polite" aria-atomic="true">CONNECTING</span>
-        </div>
-      </section>
+        <span class="account-state-v3" data-auth-status role="status" aria-live="polite" aria-atomic="true">
+          <i aria-hidden="true"></i><span>CONNECTING</span>
+        </span>
+      </header>
 
       <div class="auth-message" data-auth-message role="status" aria-live="polite" hidden></div>
 
       <section class="account-view" data-account-view="loading" hidden>
-        <div class="account-loading">
-          <span class="account-spinner" aria-hidden="true"></span>
-          <strong>Проверяем аккаунт…</strong>
-          <p>Это обычно занимает несколько секунд.</p>
-          <div class="account-loading__actions">
+        <div class="account-state-panel">
+          <span class="account-state-panel__icon" aria-hidden="true">↻</span>
+          <div>
+            <strong>Проверяем аккаунт…</strong>
+            <p>Если проверка зависла, её можно запустить заново.</p>
+          </div>
+          <div class="account-state-panel__actions">
             <a class="button button--ghost" href="./"><span>На главную</span><span aria-hidden="true">←</span></a>
             <button class="button button--primary" type="button" data-auth-retry><span>Повторить</span><span aria-hidden="true">↻</span></button>
           </div>
@@ -70,93 +70,96 @@
       </section>
 
       <section class="account-view" data-account-view="config" id="auth-config" hidden>
-        <div class="account-panel account-panel--setup">
+        <div class="account-simple-card">
           <span class="section-kicker">ACCOUNT SETUP</span>
-          <h2 data-auth-config-title>Авторизация ещё не подключена.</h2>
+          <h2>Авторизация не настроена.</h2>
           <p data-auth-config-copy>Проверь конфигурацию Supabase и Discord Provider.</p>
-          <div class="setup-steps" data-auth-setup-steps>
-            <div><b>01</b><span>Настрой Supabase project.</span></div>
-            <div><b>02</b><span>Примени <code>supabase/schema.sql</code>.</span></div>
-            <div><b>03</b><span>Включи Discord Provider и OAuth callback.</span></div>
-            <div><b>04</b><span>Проверь публичную конфигурацию сайта.</span></div>
-          </div>
-          <a class="button button--primary" data-auth-config-link href="./AUTH_SETUP.md"><span>Инструкция</span><span aria-hidden="true">↗</span></a>
+          <a class="button button--primary" data-auth-config-link href="./AUTH_SETUP.md"><span>Открыть инструкцию</span><span aria-hidden="true">↗</span></a>
         </div>
       </section>
 
       <section class="account-view" data-account-view="guest">
-        <div class="login-panel login-panel--compact login-panel--plain">
-          <div class="login-panel__content">
+        <div class="account-login-v3">
+          <div class="account-login-v3__copy">
             <span class="section-kicker">DISCORD ACCOUNT</span>
-            <h2 data-login-title>Войти в NaZerak.</h2>
-            <p data-login-copy>Войди через Discord, чтобы управлять игровым профилем. Отдельный пароль для NaZerak не нужен.</p>
+            <h2>Войти в NaZerak.</h2>
+            <p>Подключи Discord, чтобы сохранить свой игровой ник и пользоваться личным кабинетом.</p>
+          </div>
+          <div class="account-login-v3__action">
             <button class="button button--primary" type="button" data-discord-login>
               <span>Продолжить с Discord</span><span aria-hidden="true">↗</span>
             </button>
-            <small data-login-note>Пароль Discord остаётся у Discord и не передаётся сайту.</small>
+            <small>Пароль Discord не передаётся NaZerak.</small>
           </div>
         </div>
       </section>
 
       <section class="account-view" data-account-view="user" hidden>
-        <div class="account-layout">
-          <article class="account-panel account-panel--identity">
-            <div class="account-profile">
-              <div class="account-avatar">
+        <div class="account-stack-v3">
+          <section class="account-card-v3 account-card-v3--identity">
+            <div class="account-identity-v3">
+              <div class="account-avatar account-avatar--v3">
                 <img data-user-avatar alt="" hidden>
                 <span data-user-initial>NZ</span>
               </div>
-              <div class="account-profile__text">
-                <span class="section-kicker">АККАУНТ DISCORD</span>
+              <div class="account-identity-v3__copy">
+                <span class="section-kicker">DISCORD</span>
                 <h2 data-user-name>Игрок NaZerak</h2>
                 <p data-discord-name>Discord</p>
-                <span class="account-connected"><i></i> Аккаунт подключён</span>
               </div>
-              <button class="button button--ghost account-signout" type="button" data-sign-out>
+              <span class="account-connected-v3"><i aria-hidden="true"></i> Подключён</span>
+              <button class="button button--ghost account-signout-v3" type="button" data-sign-out>
                 <span>Выйти</span><span aria-hidden="true">↗</span>
               </button>
             </div>
-          </article>
+          </section>
 
-          <article class="account-panel account-panel--minecraft" id="minecraft-profile">
-            <div class="account-panel__top"><span>ИГРОВОЙ ПРОФИЛЬ</span><span>MINECRAFT</span></div>
-            <h2>Твой игровой ник</h2>
-            <p class="account-panel__description">Укажи ник Minecraft, который используешь на сервере. Сейчас он сохраняется в профиле, но владение аккаунтом ещё не подтверждается.</p>
-            <form class="account-form" id="minecraft-profile-form">
-              <label for="minecraft-username"><span>Игровой ник</span></label>
+          <section class="account-card-v3 account-card-v3--minecraft" id="minecraft-profile">
+            <div class="account-card-v3__heading">
+              <div>
+                <span class="section-kicker">ИГРОВОЙ ПРОФИЛЬ</span>
+                <h2>Minecraft</h2>
+              </div>
+              <span class="account-card-v3__status">НЕ ПОДТВЕРЖДЁН</span>
+            </div>
+            <p class="account-card-v3__description">Укажи ник, который используешь в игре. Сейчас сайт сохраняет только введённое значение — подтверждения владения аккаунтом пока нет.</p>
+
+            <form class="account-form account-form--v3" id="minecraft-profile-form">
+              <label for="minecraft-username"><span>Minecraft ник</span></label>
               <div class="account-inline-form">
                 <input id="minecraft-username" name="minecraft_username" maxlength="16" minlength="3" pattern="[A-Za-z0-9_]{3,16}" autocomplete="off" spellcheck="false" data-minecraft-input placeholder="Например, Steve_01">
                 <button class="button button--primary" type="submit"><span>Сохранить</span><span aria-hidden="true">→</span></button>
               </div>
-              <div class="account-form__foot"><span class="verification-pill">НЕ ПОДТВЕРЖДЁН</span><span>3–16 символов: латиница, цифры, _</span></div>
+              <div class="account-form__foot"><span>3–16 символов · A–Z · 0–9 · _</span></div>
             </form>
+
             <button class="button button--ghost account-retry" type="button" data-profile-retry hidden>
               <span>Повторить загрузку</span><span aria-hidden="true">↻</span>
             </button>
-          </article>
+          </section>
 
-          <details class="account-panel account-panel--media" id="media-application" data-media-disclosure>
-            <summary class="media-disclosure__summary">
-              <span class="media-disclosure__icon" aria-hidden="true">+</span>
-              <span class="media-disclosure__copy">
+          <details class="account-card-v3 account-card-v3--media" id="media-application" data-media-disclosure>
+            <summary class="media-summary-v3">
+              <span class="media-summary-v3__icon" aria-hidden="true">+</span>
+              <span class="media-summary-v3__copy">
                 <strong>Медиа-партнёрство</strong>
-                <small>Статус приёма и история заявок</small>
+                <small>Заявки сейчас принимаются через Discord</small>
               </span>
-              <span class="media-disclosure__action">Подробнее <span aria-hidden="true">↗</span></span>
+              <span class="media-summary-v3__action">Открыть <span aria-hidden="true">→</span></span>
             </summary>
-            <div class="media-disclosure__body">
-              <div class="media-paused">
+            <div class="media-body-v3">
+              <div class="media-status-v3">
                 <span class="section-kicker">ПРИЁМ ЗАЯВОК</span>
-                <h3>Форма пока закрыта</h3>
-                <p>Сейчас у команды нет подключённой очереди для обработки заявок с сайта. Поэтому отправка отключена — обращение не потеряется в неотслеживаемой базе. Чтобы обсудить партнёрство, напиши в официальный Discord.</p>
-                <a class="button button--primary" href="https://discord.gg/2KvsYYDHN6" target="_blank" rel="noopener noreferrer">
-                  <span>Связаться с командой</span><span aria-hidden="true">↗</span>
+                <h3>Через сайт пока не отправляем.</h3>
+                <p>На сайте ещё нет очереди и ответственного интерфейса для команды. Поэтому форма отключена: отправленная запись не должна попадать в базу без гарантии, что её увидят и обработают.</p>
+                <a class="button button--ghost" href="https://discord.gg/2KvsYYDHN6" target="_blank" rel="noopener noreferrer">
+                  <span>Написать команде в Discord</span><span aria-hidden="true">↗</span>
                 </a>
               </div>
               <div class="media-history">
-                <div class="media-history__head"><span>ПРЕДЫДУЩИЕ ЗАЯВКИ</span><span>ЛИЧНАЯ ИСТОРИЯ</span></div>
+                <div class="media-history__head"><span>ИСТОРИЯ</span><span>ТОЛЬКО ВАШИ ЗАЯВКИ</span></div>
                 <div class="media-history__list" data-media-list></div>
-                <p class="media-history__empty" data-media-empty>Здесь отобразятся ранее отправленные заявки, если они есть.</p>
+                <p class="media-history__empty" data-media-empty>История появится здесь после того, как заявки будут принимать через сайт.</p>
                 <button class="button button--ghost account-retry" type="button" data-media-retry hidden>
                   <span>Обновить историю</span><span aria-hidden="true">↻</span>
                 </button>
@@ -165,8 +168,10 @@
           </details>
         </div>
       </section>
-      <div class="account-footer-link">
-        <a class="button button--ghost" href="./"><span>Вернуться на сайт</span><span aria-hidden="true">←</span></a>
+
+      <div class="account-footer-v3">
+        <a class="button button--ghost" href="./"><span>На главную</span><span aria-hidden="true">←</span></a>
+        <a class="button button--ghost" href="./forum.html"><span>Сообщество</span><span aria-hidden="true">→</span></a>
       </div>
     </div>
   </main>
@@ -183,9 +188,9 @@
   </footer>
 
   <noscript><div class="noscript-message">Для входа в личный кабинет требуется включить JavaScript.</div></noscript>
-  <script src="./auth-config.js?v=6" defer></script>
-  <script src="./supabase-loader.js?v=7" defer></script>
-  <script src="./auth.js?v=28" defer></script>
+  <script src="./auth-config.js?v=7" defer></script>
+  <script src="./supabase-loader.js?v=8" defer></script>
+  <script src="./auth.js?v=29" defer></script>
   <script src="./script.js?v=13" defer></script>
 </body>
 </html>
