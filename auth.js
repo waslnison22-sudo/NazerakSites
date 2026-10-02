@@ -818,12 +818,16 @@
 
   let cabinetRenderQueue = Promise.resolve();
   let queuedCabinetRenderKey = null;
+  let lastCabinetRenderKey = null;
 
   const requestCabinetRender = (session = undefined) => {
     const key = session?.user?.id || (session === null ? "signed-out" : "session-lookup");
-    if (queuedCabinetRenderKey === key) return cabinetRenderQueue;
+    if (queuedCabinetRenderKey === key || lastCabinetRenderKey === key) {
+      return cabinetRenderQueue;
+    }
 
     queuedCabinetRenderKey = key;
+    lastCabinetRenderKey = key;
     cabinetRenderQueue = cabinetRenderQueue
       .then(
         () => renderCabinet(session),
