@@ -69,7 +69,7 @@ if (!fail.length) {
   }
 
   for (const path of [
-    "/rest/v1/forum_categories?select=id,slug,name,area_slug&limit=1",
+    "/rest/v1/forum_categories?select=id,slug,name,area_slug,posting_mode&limit=1",
     "/rest/v1/forum_roles?select=slug,name,color,priority&limit=1",
     "/rest/v1/forum_topic_list?select=id,title,author_public_id,primary_role_slug,reply_count,area_slug&limit=1",
     "/rest/v1/forum_topic_detail?select=id,title,author_public_id,primary_role_slug,reply_count,area_slug&limit=1",
