@@ -135,7 +135,10 @@ for (const [name, page] of [
   ["404.html", read("404.html")]
 ]) {
   const refs = [...page.matchAll(/\b(?:href|src)="(\.\/[^"#?]+)"/g)].map((m) => m[1].slice(2));
-  const missing = [...new Set(refs.filter((ref) => !publishedFiles.has(ref)))];
+  const missing = [...new Set(refs.filter((ref) => {
+    if (publishedFiles.has(ref)) return false;
+    return !fs.existsSync(path.join(root, ref, "index.html"));
+  }))];
   if (missing.length) {
     fail.push(`missing local reference(s) in ${name}: ${missing.join(", ")}`);
   }
@@ -203,12 +206,12 @@ for (const [name, page] of [
   ["topic.html", read("topic.html")],
   ["forum-user.html", read("forum-user.html")]
 ]) {
-  const assets = ["site-config.js?v=1", "auth-config.js?v=8", "supabase-loader.js?v=9", "auth.js?v=35", "script.js?v=17", "styles.css?v=25"];
-  if (name === "forum.html") { assets.push("site-config.js?v=1", "forum-ui.js?v=1", "forum.js?v=3"); }
-  if (name === "forum-category.html") { assets.push("site-config.js?v=1", "forum-ui.js?v=1", "forum-category.js?v=1"); }
+  const assets = ["site-config.js?v=1", "auth-config.js?v=8", "supabase-loader.js?v=9", "auth.js?v=35", "script.js?v=17", "styles.css?v=26"];
+  if (name === "forum.html") { assets.push("site-config.js?v=1", "forum-ui.js?v=1", "forum.js?v=4"); }
+  if (name === "forum-category.html") { assets.push("site-config.js?v=1", "forum-ui.js?v=1", "forum-category.js?v=2"); }
   if (name === "forum-members.html") { assets.push("site-config.js?v=1", "forum-ui.js?v=1", "forum-members.js?v=1"); }
   if (name === "forum-search.html") { assets.push("site-config.js?v=1", "forum-ui.js?v=1", "forum-search.js?v=1"); }
-  if (name === "topic.html") { assets.push("site-config.js?v=1", "forum-ui.js?v=1", "topic.js?v=2"); }
+  if (name === "topic.html") { assets.push("site-config.js?v=1", "forum-ui.js?v=1", "topic.js?v=3"); }
   if (name === "forum-user.html") { assets.push("site-config.js?v=1", "forum-ui.js?v=1", "user.js?v=1"); }
   for (const asset of assets) {
     if (!page.includes(asset)) {
@@ -359,7 +362,8 @@ for (const file of forumSurfaceFiles) {
   if (/\sstyle=/i.test(page) || page.includes("style-src-attr 'unsafe-inline'")) fail.push(file + " contains inline style/CSP allowance");
 }
 const forumPage = read("forum.html");
-if (!forumPage.includes("data-forum-board-rows=\"rp\"") || !forumPage.includes("data-forum-board-rows=\"administration\"")) fail.push("forum must expose exactly the two top-level worlds");
+if (!forumPage.includes("data-forum-node-tree")) fail.push("forum node tree markup is missing");
+if (forumPage.includes("Мир администрации</h3>") || forumPage.includes("РП-мир</h3>")) fail.push("legacy two-world forum presentation remains");
 if (!forumPage.includes("data-forum-search-form") || !forumPage.includes("data-forum-search-clear")) fail.push("forum search controls are incomplete");
 if (!forumPage.includes("button--primary") || !forumPage.includes("button--ghost")) fail.push("forum must use common site button classes");
 if (!read("forum-user.html").includes("data-user-profile")) fail.push("full forum profile markup missing");
