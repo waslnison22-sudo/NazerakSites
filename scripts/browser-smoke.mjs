@@ -20,9 +20,10 @@ const attachDiagnostics = (page, name) => {
   });
 
   return () => {
-    const localFailures = failedRequests.filter((item) =>
-      /waslnison22-sudo\.github\.io\/NazerakSites\/(?:[^/]+\.(?:css|js)|[^/]+\/[^/]+\.(?:css|js))/.test(item.url)
-    );
+    const localFailures = failedRequests.filter((item) => {
+      const localBase = new URL(BASE);
+      return item.url.startsWith(localBase.origin + localBase.pathname);
+    });
 
     const unexpectedConsoleErrors = name === "404"
       ? consoleErrors.filter((message) => !message.includes("status of 404"))
