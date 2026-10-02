@@ -28,6 +28,8 @@ const requiredFiles = [
   "favicon.svg",
   "supabase/migrations/20260930205000_harden_frontend_column_privileges.sql",
   "supabase/migrations/20261002200000_forum_foundation.sql",
+  "supabase/migrations/20261002210000_forum_identity_roles_profiles.sql",
+  "supabase/migrations/20261002211000_forum_structure_seed.sql",
   "scripts/runtime-smoke.mjs",
   "scripts/browser-smoke.mjs",
   "assets/images/README.md"
@@ -162,7 +164,7 @@ for (const [name, page] of [
   }
 }
 
-if (!read("404.html").includes("styles.css?v=23")) fail.push("404.html styles cache version is stale");
+if (!read("404.html").includes("styles.css?v=24")) fail.push("404.html styles cache version is stale");
 const sitemap = read("sitemap.xml");
 if (sitemap.includes("cabinet.html") || sitemap.includes("forum.html")) fail.push("sitemap contains a noindex page");
 if (!sitemap.includes("https://waslnison22-sudo.github.io/NazerakSites/")) fail.push("sitemap homepage URL is missing");
@@ -193,6 +195,7 @@ if (cabinet.includes("data-media-disclosure") || cabinet.includes("account-page-
 if (auth.includes("data-media-retry") || auth.includes("data-media-disclosure") || auth.includes("const submitMediaApplication")) fail.push("obsolete media workflow remains in auth code");
 if (css.includes("data-media-disclosure") || /\.login-panel\b|\.account-container\b|\.account-layout\b|\.account-page--clean\b|\.account-clean\b|\.account-card-clean\b/.test(css)) fail.push("legacy cabinet CSS remains");
 if (!auth.includes("const withTimeout")) fail.push("request timeout guard is missing");
+if (!auth.includes("const syncForumAccount")) fail.push("Discord forum-account sync is missing");
 if (!auth.includes("Загрузка Supabase SDK превысила 9 секунд.")) fail.push("Supabase SDK bootstrap wait is not bounded");
 if (!auth.includes("profiles read timed out or failed")) fail.push("profile read timeout guard is missing");
 if (!auth.includes('client.auth.onAuthStateChange((event, session) =>')) fail.push("auth listener is missing");
