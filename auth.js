@@ -86,7 +86,12 @@
 
   const setAuthStatus = (label, stateName = "") => {
     qsa("[data-auth-status]").forEach((element) => {
-      element.textContent = label;
+      const text = qs("span", element);
+      if (text) {
+        text.textContent = label;
+      } else {
+        element.textContent = label;
+      }
       element.dataset.state = stateName;
     });
   };
@@ -848,9 +853,12 @@
     state.profile = profile;
     renderUser(user, profile);
 
+    const retry = qs("[data-profile-retry]");
+    if (retry) retry.hidden = profile !== null;
+
     if (profile === null) {
       showMessage(
-        "Профиль временно не удалось загрузить. Основные данные аккаунта доступны; попробуй обновить кабинет позже.",
+        "Игровой профиль пока не удалось загрузить. Сам аккаунт работает; можно повторить загрузку позже.",
         "error"
       );
     } else {
