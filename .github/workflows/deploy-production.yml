@@ -19,17 +19,31 @@ jobs:
       github.event.workflow_run.conclusion == 'success' &&
       github.event.workflow_run.head_branch == 'main'
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     environment: production
+    env:
+      DEPLOY_ENABLED: ${{ secrets.DEPLOY_ENABLED }}
 
     steps:
+      - name: Check production deployment gate
+        id: gate
+        run: |
+          if [ "$DEPLOY_ENABLED" != "true" ]; then
+            echo "Production deploy is disabled. Set DEPLOY_ENABLED=true when DNS, HTTPS and hosting credentials are ready."
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo "enabled=true" >> "$GITHUB_OUTPUT"
+
       - name: Checkout tested commit
+        if: steps.gate.outputs.enabled == 'true'
         uses: actions/checkout@v6
         with:
           ref: ${{ github.event.workflow_run.head_sha }}
           fetch-depth: 1
 
       - name: Verify deploy target
+        if: steps.gate.outputs.enabled == 'true'
         env:
           DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
           DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
@@ -41,10 +55,16 @@ jobs:
           test -n "$DEPLOY_PATH" || { echo "DEPLOY_PATH is not configured"; exit 1; }
           test -n "$DEPLOY_PRIVATE_KEY" || { echo "DEPLOY_PRIVATE_KEY is not configured"; exit 1; }
 
+      - name: Prepare production domain metadata
+        if: steps.gate.outputs.enabled == 'true'
+        run: node scripts/prepare-production.mjs
+
       - name: Generate public route pages
+        if: steps.gate.outputs.enabled == 'true'
         run: node scripts/generate-public-routes.mjs
 
       - name: Deploy public files over SSH
+        if: steps.gate.outputs.enabled == 'true'
         uses: burnett01/rsync-deployments@v9.0.1
         with:
           switches: >-
@@ -69,6 +89,7 @@ jobs:
           remote_key: ${{ secrets.DEPLOY_PRIVATE_KEY }}
 
       - name: Verify production routes
+        if: steps.gate.outputs.enabled == 'true'
         env:
           SITE_URL: https://nazerak.ru
         run: |
