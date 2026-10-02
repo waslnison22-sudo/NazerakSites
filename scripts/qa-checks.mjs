@@ -32,6 +32,21 @@ const requiredFiles = [
   "forum-user.html",
   "user.js",
   "site-config.js",
+  "site-routes.js",
+  "public-routes.json",
+  "templates/public-route.html",
+  "scripts/generate-public-routes.mjs",
+  "docs/public-routes.md",
+  "docs/stability-roadmap.md",
+  "pravitelstvo/index.html",
+  "sud/index.html",
+  "prokuratura/index.html",
+  "fsb/index.html",
+  "voennaya-baza/index.html",
+  "organizatsii/index.html",
+  "o-proekte/index.html",
+  "supabase/migrations/20261002234000_forum_node_tree_refactor.sql",
+  "supabase/migrations/20261002235000_forum_node_directory_safe_counts.sql",
   "DOMAIN_MIGRATION.md",
   "favicon.svg",
   "supabase/migrations/20260930205000_harden_frontend_column_privileges.sql",
@@ -104,6 +119,16 @@ if (/clientSecret\s*[:=]/i.test(config)) {
 
 
 const publishedFiles = new Set(requiredFiles.filter((file) => fs.existsSync(path.join(root, file))));
+for (const [key, route] of Object.entries(routeManifest)) {
+  if (!/^\/[a-z0-9-]+(?:\/[a-z0-9-]+)*$/.test("/" + route.slug)) fail.push(`invalid public route slug: ${key}`);
+  const routeFile = path.join(root, route.slug, "index.html");
+  if (!fs.existsSync(routeFile)) fail.push(`missing generated public route: ${route.slug}`);
+  else {
+    const routePage = fs.readFileSync(routeFile, "utf8");
+    if (!routePage.includes(`<h1>${route.title}<span>.</span></h1>`)) fail.push(`public route title mismatch: ${route.slug}`);
+    if (!routePage.includes(`https://nazerak.ru/${route.slug}`)) fail.push(`public route canonical missing: ${route.slug}`);
+  }
+}
 for (const [name, page] of [
   ["index.html", index],
   ["cabinet.html", cabinet],
@@ -123,7 +148,7 @@ for (const [name, page] of [
   }
 }
 
-for (const file of ["script.js", "auth.js", "supabase-loader.js", "forum.js", "forum-ui.js", "forum-category.js", "forum-members.js", "forum-search.js", "topic.js", "user.js"]) {
+for (const file of ["script.js", "auth.js", "supabase-loader.js", "forum.js", "forum-ui.js", "forum-category.js", "forum-members.js", "forum-search.js", "topic.js", "user.js", "site-routes.js", "scripts/generate-public-routes.mjs"]) {
   try {
     new Function(read(file));
   } catch (error) {
@@ -192,7 +217,7 @@ for (const [name, page] of [
   }
 }
 
-if (!read("404.html").includes("styles.css?v=25")) fail.push("404.html styles cache version is stale");
+if (!read("404.html").includes("styles.css?v=26")) fail.push("404.html styles cache version is stale");
 const sitemap = read("sitemap.xml");
 if (sitemap.includes("cabinet.html") || sitemap.includes("forum.html")) fail.push("sitemap contains a noindex page");
 if (!sitemap.includes("https://waslnison22-sudo.github.io/NazerakSites/")) fail.push("sitemap homepage URL is missing");
@@ -399,3 +424,7 @@ if (fail.length) {
 
 console.log("NaZerak QA PASSED");
 for (const item of info) console.log(" - " + item);
+
+const routesSource = read("site-routes.js");
+if (!routesSource.includes('government: "pravitelstvo"')) fail.push("government public route helper is missing");
+if (!routesSource.includes('options.absolute ?')) fail.push("absolute route helper is missing");
