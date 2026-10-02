@@ -16,7 +16,7 @@
   <meta name="twitter:title" content="NaZerak — Minecraft project">
   <meta name="twitter:description" content="Сервер NaZerak, сообщество, подключение и личный кабинет.">
   <link rel="icon" href="./favicon.svg?v=4" type="image/svg+xml">
-  <link rel="stylesheet" href="./styles.css?v=18">
+  <link rel="stylesheet" href="./styles.css?v=19">
   <title>NaZerak — Minecraft project</title>
 </head>
 <body>
@@ -55,8 +55,8 @@
           <h1 class="hero-title">NaZerak<em>.</em></h1>
           <p class="hero__lead">Свой сервер, своё сообщество и одна понятная точка входа. Здесь собраны подключение, сообщество и основные разделы проекта.</p>
           <div class="hero__actions">
-            <a class="button button--primary" href="#start"><span>Подключиться</span><span aria-hidden="true">↘</span></a>
-            <a class="button button--ghost" href="#world"><span>О проекте</span><span aria-hidden="true">↓</span></a>
+            <a class="button button--primary" href="#start"><span>Как подключиться</span><span aria-hidden="true">↓</span></a>
+            <a class="button button--ghost" href="#about"><span>О проекте</span><span aria-hidden="true">↓</span></a>
             <a class="icon-button icon-button--discord" href="https://discord.gg/2KvsYYDHN6" target="_blank" rel="noopener noreferrer" aria-label="Официальный Discord NaZerak" title="Официальный Discord NaZerak">
               <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M19.54 4.99A16.7 16.7 0 0 0 15.2 3.64l-.53 1.08a15.8 15.8 0 0 0-5.34 0L8.8 3.64a16.73 16.73 0 0 0-4.34 1.35C1.7 9.22 1.02 13.35 1.36 17.43a16.9 16.9 0 0 0 5.27 2.69l1.27-1.72c-.69-.25-1.36-.57-1.98-.96l.48-.37a11.9 11.9 0 0 0 10.2 0l.48.37c-.62.39-1.29.71-1.98.96l1.27 1.72a16.88 16.88 0 0 0 5.27-2.69c.4-4.73-.68-8.82-2.62-12.44ZM8.12 15.2c-1.03 0-1.88-.94-1.88-2.09s.83-2.1 1.88-2.1 1.89.94 1.88 2.1c0 1.15-.84 2.09-1.88 2.09Zm7.76 0c-1.03 0-1.88-.94-1.88-2.09s.83-2.1 1.88-2.1 1.89.94 1.88 2.1c0 1.15-.84 2.09-1.88 2.09Z"/></svg>
             </a>
@@ -65,7 +65,7 @@
         </div>
 
         <div class="hero-visual-wrap reveal reveal--delay">
-          <div class="hero-art" role="img" aria-label="Фирменная визуализация мира NaZerak">
+          <div class="hero-art media-slot" role="img" aria-label="Фирменная визуализация мира NaZerak" data-image-slot="hero">
             <div class="hero-art__grid" aria-hidden="true"></div>
             <span class="hero-art__eyebrow">NAZERAK / WORLD</span>
             <span class="hero-art__mark" aria-hidden="true">NZ</span>
@@ -102,7 +102,7 @@
       <div class="container">
         <div class="world-panel reveal">
           <div class="world-panel__visual">
-            <div class="world-visual" role="img" aria-label="Фирменная схема мира NaZerak">
+            <div class="world-visual media-slot" role="img" aria-label="Фирменная схема мира NaZerak" data-image-slot="world">
               <div class="world-visual__grid" aria-hidden="true"></div>
               <div class="world-visual__core" aria-hidden="true">NZ</div>
               <div class="world-visual__line world-visual__line--one" aria-hidden="true"></div>
@@ -157,7 +157,7 @@
     <section class="section section--partner" id="media">
       <div class="container">
         <div class="partner-panel reveal">
-          <div class="partner-panel__visual" aria-hidden="true">
+          <div class="partner-panel__visual media-slot" aria-hidden="true" data-image-slot="partnership">
             <div class="partner-panel__bar"></div>
             <div class="partner-panel__grid"></div>
             <span>MEDIA / NAZERAK</span>
@@ -166,7 +166,7 @@
             <span class="section-kicker">04 / ПАРТНЁРСТВО</span>
             <h2>Медиа-партнёрство без лишней бюрократии.</h2>
             <p>Для блогеров, стримеров и авторов контента. Заявка открывается в личном кабинете после входа через Discord.</p>
-            <a class="button button--primary partner-button" href="./cabinet.html#media-partnership"><span>Условия партнёрства</span><span aria-hidden="true">↗</span></a>
+            <a class="button button--ghost partner-button" href="https://discord.gg/2KvsYYDHN6" target="_blank" rel="noopener noreferrer"><span>Обсудить в Discord</span><span aria-hidden="true">↗</span></a>
             <small class="partner-panel__note">Пока связь с командой проходит через официальный Discord. Форму заявок добавим вместе с модерацией.</small>
           </div>
         </div>
@@ -189,7 +189,7 @@
 
   <script src="./auth-config.js?v=7" defer></script>
   <script src="./supabase-loader.js?v=8" defer></script>
-  <script src="./auth.js?v=30" defer></script>
-  <script src="./script.js?v=14" defer></script>
+  <script src="./auth.js?v=31" defer></script>
+  <script src="./script.js?v=15" defer></script>
 </body>
 </html>
