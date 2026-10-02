@@ -442,3 +442,98 @@ html.js-ready .reveal.is-visible{opacity:1;transform:none}
  .account-signout span[aria-hidden="true"]{font-size:13px}
  .account-profile h2{font-size:16px}
 }
+
+
+/* Account v3 — single-column, task-first cabinet */
+.account-page--v3{padding:96px 0 54px}
+.account-container--v3{width:min(calc(100% - 40px),900px)}
+.account-header-v3{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;padding-bottom:18px;margin-bottom:14px;border-bottom:1px solid var(--line)}
+.account-header-v3 h1{margin:7px 0 0;font-size:clamp(31px,4vw,43px);line-height:.95;letter-spacing:-.055em}
+.account-header-v3 p{margin:8px 0 0;color:var(--muted);font-size:11px}
+.account-state-v3{display:inline-flex;align-items:center;gap:7px;flex:0 0 auto;padding:8px 10px;border:1px solid var(--line);border-radius:999px;color:var(--muted);font-size:8px;font-weight:850;letter-spacing:.11em}
+.account-state-v3 i{width:6px;height:6px;border-radius:50%;background:#666}
+.account-state-v3[data-state="signed-in"] i,.account-state-v3[data-state="ready"] i{background:#63c681}
+.account-state-v3[data-state="error"] i{background:var(--accent-2)}
+.account-stack-v3{display:grid;gap:9px}
+.account-card-v3{min-width:0;border:1px solid var(--line);border-radius:12px;background:rgba(14,16,19,.92)}
+.account-card-v3--identity{padding:15px 17px}
+.account-identity-v3{display:flex;align-items:center;gap:12px;min-width:0}
+.account-avatar--v3{width:46px;height:46px;flex:0 0 46px;border-radius:11px}
+.account-identity-v3__copy{min-width:0;flex:1}
+.account-identity-v3__copy h2{margin:3px 0 0;font-size:17px;letter-spacing:-.03em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.account-identity-v3__copy p{margin:2px 0 0;color:var(--muted);font-size:10px}
+.account-connected-v3{display:inline-flex;align-items:center;gap:6px;color:#9bd5aa;font-size:9px;white-space:nowrap}
+.account-connected-v3 i{width:6px;height:6px;border-radius:50%;background:#61c47e}
+.account-signout-v3{min-height:35px;flex:0 0 auto;font-size:9px}
+.account-card-v3--minecraft{padding:19px}
+.account-card-v3__heading{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.account-card-v3__heading h2{margin:5px 0 0;font-size:21px;letter-spacing:-.04em}
+.account-card-v3__status{padding:5px 8px;border:1px solid rgba(217,35,54,.24);border-radius:999px;background:rgba(217,35,54,.07);color:#ffadb6;font-size:7px;font-weight:850;letter-spacing:.08em;white-space:nowrap}
+.account-card-v3__description{max-width:690px;margin:8px 0 0;color:var(--muted);font-size:10px;line-height:1.65}
+.account-form--v3{margin-top:14px}
+.account-form--v3 label>span{font-size:8px}
+.account-form--v3 input{height:42px}
+.account-form--v3 .account-form__foot{color:var(--dim);font-size:8px}
+.account-login-v3{display:flex;align-items:center;justify-content:space-between;gap:28px;padding:24px 26px;border:1px solid var(--line);border-radius:12px;background:rgba(14,16,19,.92)}
+.account-login-v3__copy{min-width:0}
+.account-login-v3__copy h2{margin:6px 0 0;font-size:30px;letter-spacing:-.05em}
+.account-login-v3__copy p{max-width:550px;margin:8px 0 0;color:var(--muted);font-size:11px;line-height:1.6}
+.account-login-v3__action{display:grid;justify-items:end;gap:7px;flex:0 0 auto}
+.account-login-v3__action small{color:var(--dim);font-size:8px}
+.account-simple-card{padding:26px;border:1px solid var(--line);border-radius:12px;background:rgba(14,16,19,.92)}
+.account-simple-card h2{margin:8px 0;font-size:28px;letter-spacing:-.045em}
+.account-simple-card p{margin:0 0 16px;color:var(--muted);font-size:11px}
+.account-state-panel{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:14px;padding:18px;border:1px solid var(--line);border-radius:12px;background:rgba(14,16,19,.92)}
+.account-state-panel__icon{width:34px;height:34px;display:grid;place-items:center;border:1px solid var(--line);border-radius:9px;color:var(--accent-2)}
+.account-state-panel strong{font-size:12px}
+.account-state-panel p{margin:3px 0 0;color:var(--muted);font-size:10px}
+.account-state-panel__actions{display:flex;gap:7px}
+.media-summary-v3{display:flex;align-items:center;gap:12px;min-height:62px;padding:12px 15px;cursor:pointer;list-style:none}
+.media-summary-v3::-webkit-details-marker{display:none}
+.media-summary-v3::marker{content:""}
+.media-summary-v3:hover{background:rgba(255,255,255,.018)}
+.media-summary-v3__icon{width:30px;height:30px;display:grid;place-items:center;border:1px solid var(--line);border-radius:8px;color:var(--accent-2);font-size:17px;transition:transform .18s ease}
+.account-card-v3--media[open] .media-summary-v3__icon{transform:rotate(45deg)}
+.media-summary-v3__copy{display:grid;gap:2px;min-width:0}
+.media-summary-v3__copy strong{font-size:12px}
+.media-summary-v3__copy small{color:var(--muted);font-size:9px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.media-summary-v3__action{margin-left:auto;color:var(--muted);font-size:9px;white-space:nowrap}
+.media-body-v3{padding:0 15px 16px;border-top:1px solid var(--line)}
+.media-status-v3{padding:15px 0}
+.media-status-v3 h3{margin:6px 0 0;font-size:16px;letter-spacing:-.025em}
+.media-status-v3 p{max-width:680px;margin:7px 0 12px;color:var(--muted);font-size:10px;line-height:1.65}
+.media-status-v3 .button{min-height:37px;font-size:9px}
+.media-history{margin:0;padding-top:13px}
+.media-history__head{font-size:7px}
+.account-footer-v3{display:flex;justify-content:space-between;gap:8px;margin-top:10px}
+.account-footer-v3 .button{min-height:37px;font-size:9px}
+@media(max-width:700px){
+ .account-page--v3{padding-top:82px}
+ .account-container--v3{width:min(calc(100% - 28px),900px)}
+ .account-header-v3{align-items:flex-start;flex-direction:column;gap:11px}
+ .account-login-v3{align-items:stretch;flex-direction:column;padding:20px}
+ .account-login-v3__action{justify-items:stretch}
+ .account-login-v3__action .button{width:100%}
+ .account-identity-v3{flex-wrap:wrap}
+ .account-identity-v3__copy{min-width:calc(100% - 120px)}
+ .account-connected-v3{margin-left:58px;margin-top:-7px}
+ .account-signout-v3{margin-left:auto}
+ .account-card-v3--minecraft{padding:17px}
+ .account-card-v3__heading{align-items:flex-start;flex-direction:column;gap:8px}
+ .account-inline-form{grid-template-columns:1fr}
+ .account-inline-form .button{width:100%}
+ .account-state-panel{grid-template-columns:auto 1fr}
+ .account-state-panel__actions{grid-column:1/-1}
+ .account-state-panel__actions .button{flex:1}
+ .media-summary-v3{padding:11px}
+ .media-summary-v3__action{font-size:0}
+ .media-summary-v3__action span{font-size:13px}
+ .account-footer-v3{flex-direction:column}
+ .account-footer-v3 .button{width:100%}
+}
+@media(max-width:390px){
+ .account-identity-v3__copy{min-width:0}
+ .account-connected-v3{margin-left:0}
+ .account-signout-v3{font-size:0;width:35px;padding:0;justify-content:center}
+ .account-signout-v3 span[aria-hidden="true"]{font-size:13px}
+}
