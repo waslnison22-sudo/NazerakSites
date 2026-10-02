@@ -28,7 +28,8 @@
     : escapeHtml(name||"Игрок NaZerak");
   const renderTopic=(topic,posts)=>{
     const avatar=safeUrl(topic.author_avatar_url);
-    qs("[data-topic-category]").textContent=topic.category_name||"Форум";
+    const categoryLink=qs("[data-topic-category-link]");
+    if(categoryLink){categoryLink.textContent=topic.category_name||"Форум";categoryLink.href="./forum-category.html?slug="+encodeURIComponent(topic.category_slug||"");}
     qs("[data-topic-category-badge]").textContent=topic.category_name||"Форум";
     qs("[data-topic-title]").textContent=topic.title;
     qs("[data-topic-date]").textContent=formatDateTime(topic.created_at);
