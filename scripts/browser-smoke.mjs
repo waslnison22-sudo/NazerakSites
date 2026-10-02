@@ -437,6 +437,16 @@ await testStaticPage({
 });
 
 await testStaticPage({
+  path: "/forum.html",
+  name: "forum mobile",
+  viewport: { width: 390, height: 844 },
+  check: async (page) => {
+    if (!(await page.locator("h1").textContent()).includes("Форум")) throw new Error("mobile forum heading missing");
+    if (await page.locator(".forum-board__columns").count() < 1) throw new Error("mobile forum board missing");
+  }
+});
+
+await testStaticPage({
   path: "/forum-category.html?slug=minecraft",
   name: "forum category",
   viewport: { width: 1280, height: 900 },
