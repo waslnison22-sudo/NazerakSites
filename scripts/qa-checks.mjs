@@ -144,14 +144,14 @@ for (const [name, page] of [
   ["cabinet.html", cabinet],
   ["forum.html", read("forum.html")]
 ]) {
-  for (const asset of ["auth-config.js?v=7", "supabase-loader.js?v=8", "auth.js?v=31", "script.js?v=16", "styles.css?v=19"]) {
+  for (const asset of ["auth-config.js?v=7", "supabase-loader.js?v=8", "auth.js?v=31", "script.js?v=16", "styles.css?v=20"]) {
     if (!page.includes(asset)) {
       fail.push(`${name} asset include missing: ${asset}`);
     }
   }
 }
 
-if (!read("404.html").includes("styles.css?v=19")) fail.push("404.html styles cache version is stale");
+if (!read("404.html").includes("styles.css?v=20")) fail.push("404.html styles cache version is stale");
 const sitemap = read("sitemap.xml");
 if (sitemap.includes("cabinet.html") || sitemap.includes("forum.html")) fail.push("sitemap contains a noindex page");
 if (!sitemap.includes("https://waslnison22-sudo.github.io/NazerakSites/")) fail.push("sitemap homepage URL is missing");
