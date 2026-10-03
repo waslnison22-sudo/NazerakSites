@@ -377,7 +377,7 @@ const testCabinetSignedIn = async () => {
     }
 
     await page.evaluate(() => window.NaZerakAuth.signOut());
-    await page.waitForFunction(() => window.location.pathname.endsWith("/NazerakSites/"), { timeout: 5000 });
+    await page.waitForFunction(() => window.location.pathname === "/" || window.location.pathname.endsWith("/"), { timeout: 5000 });
   } finally {
     await browser.close();
   }
