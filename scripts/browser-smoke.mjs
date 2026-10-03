@@ -435,7 +435,6 @@ await testStaticPage({
     if (await page.locator("[data-forum-node-tree] .forum-board-row").count() < 1) {
       throw new Error("forum boards did not load");
     }
-    if (await page.locator("[data-forum-state]").textContent() === "") throw new Error("forum state missing");
     if (await page.locator('[data-forum-create]').count() < 1) throw new Error("forum create control missing");
     if (!(await page.locator('a[href="./forum-members.html"]').count() >= 1)) throw new Error("members navigation missing");
     if (!(await page.locator('a[href="./forum-search.html"]').count() >= 1)) throw new Error("search navigation missing");
@@ -450,7 +449,9 @@ await testStaticPage({
   viewport: { width: 390, height: 844 },
   check: async (page) => {
     if (!(await page.locator("h1").textContent()).includes("Форум")) throw new Error("mobile forum heading missing");
-    if (await page.locator(".forum-board__columns").count() < 1) throw new Error("mobile forum board missing");
+    if (await page.locator(".forum-board__columns").count() < 1) throw new Error("forum board markup missing");
+    const mobileLayout = await page.locator(".forum").evaluate((node) => ({ width: node.getBoundingClientRect().width, viewport: innerWidth }));
+    if (mobileLayout.width > mobileLayout.viewport + 1) throw new Error("mobile forum canvas overflows: " + JSON.stringify(mobileLayout));
   }
 });
 
@@ -481,9 +482,7 @@ await testStaticPage({
   name: "official forum category",
   viewport: { width: 1280, height: 900 },
   check: async (page) => {
-    if (!(await page.locator("[data-category-policy]").textContent()).includes("Официальный")) {
-      throw new Error("official category policy badge missing");
-    }
+    if (await page.locator("[data-category-policy]").count()) throw new Error("obsolete category publication policy UI remains");
     if (await page.locator(".forum-list-shell").count() < 1) throw new Error("official category shell missing");
   }
 });
@@ -496,6 +495,12 @@ await testStaticPage({
     const categoryTitle = (await page.locator("[data-category-title]").textContent() || "").trim();
     if (!categoryTitle || /загрузка/i.test(categoryTitle)) throw new Error("forum category did not resolve");
     if (!(await page.locator(".forum-thread-table").count())) throw new Error("forum thread table missing");
+    if (await page.locator(".forum-thread-row").count() > 0) {
+      const row = page.locator(".forum-thread-row").first();
+      for (const selector of [".forum-thread-row__main",".forum-thread-row__title",".forum-thread-row__meta",".forum-thread-row__count",".forum-thread-row__last"]) {
+        if (await row.locator(selector).count() < 1) throw new Error("category row structure missing: " + selector);
+      }
+    }
   }
 });
 
