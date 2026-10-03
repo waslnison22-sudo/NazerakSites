@@ -43,11 +43,13 @@
         ? '<a class="forum-user-link forum-thread-row__author" data-forum-user="'+publicId+'" href="./forum-user.html?id='+publicId+'"><span class="forum-avatar forum-avatar--small">'+av+'</span><span>'+escapeHtml(t.author_name||"Игрок NaZerak")+'</span></a>'
         : '<span class="forum-thread-row__author"><span class="forum-avatar forum-avatar--small">'+av+'</span><span>'+escapeHtml(t.author_name||"Игрок NaZerak")+'</span></span>';
       return '<article class="forum-thread-row">'+
-        '<div class="forum-thread-row__main"><a class="forum-thread-row__link" href="./topic.html?id='+encodeURIComponent(t.id)+'">'+
-          tags+
-          '<div class="forum-thread-row__title">'+escapeHtml(t.title)+'</div>'+
+        '<div class="forum-thread-row__main">'+
+          '<a class="forum-thread-row__link" href="./topic.html?id='+encodeURIComponent(t.id)+'">'+
+            tags+
+            '<div class="forum-thread-row__title">'+escapeHtml(t.title)+'</div>'+
+          '</a>'+
           '<div class="forum-thread-row__meta">'+author+'<span aria-hidden="true">·</span><time datetime="'+escapeHtml(t.last_post_at||"")+'">'+relative(t.last_post_at)+'</time></div>'+
-        '</a></div>'+
+        '</div>'+
         '<div class="forum-thread-row__count"><strong>'+Number(t.reply_count||0)+'</strong><span>ответов</span></div>'+
         '<div class="forum-thread-row__last"><strong>Последняя активность</strong><time datetime="'+escapeHtml(t.last_post_at||"")+'">'+relative(t.last_post_at)+'</time></div>'+
       '</article>';
