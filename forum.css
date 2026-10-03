@@ -1676,6 +1676,13 @@
 }
 
 @media(max-width:760px){
+  .forum-form-field input,
+  .forum-form-field textarea,
+  .forum-form-field select{
+    font-size:16px;
+  }
+
+
   .forum-page,
   .topic-page,
   .forum-user-page{
