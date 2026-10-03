@@ -10,7 +10,8 @@
   const toggle = document.querySelector(".nav-toggle");
   const nav =
     document.getElementById("site-nav") ||
-    document.getElementById("cabinet-nav");
+    document.getElementById("cabinet-nav") ||
+    document.getElementById("forum-nav");
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   const updateProgress = () => {
@@ -52,18 +53,20 @@
   const navLinks = [...document.querySelectorAll(".nav a")];
 
   if ("IntersectionObserver" in window && sections.length && navLinks.length) {
-    const sectionObserver = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) return;
-        navLinks.forEach((link) => {
-          const isActive =
-            link.getAttribute("href") === "#" + entry.target.id;
-          link.classList.toggle("is-active", isActive);
-          if (isActive) link.setAttribute("aria-current", "location");
-          else link.removeAttribute("aria-current");
+    const sectionObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          navLinks.forEach((link) => {
+            const isActive = link.getAttribute("href") === "#" + entry.target.id;
+            link.classList.toggle("is-active", isActive);
+            if (isActive) link.setAttribute("aria-current", "location");
+            else link.removeAttribute("aria-current");
+          });
         });
-      });
-    }, { rootMargin: "-35% 0px -55% 0px", threshold: 0 });
+      },
+      { rootMargin: "-35% 0px -55% 0px", threshold: 0 }
+    );
 
     sections.forEach((section) => sectionObserver.observe(section));
   }
@@ -73,13 +76,16 @@
   if (!("IntersectionObserver" in window) || reduceMotion) {
     revealItems.forEach((item) => item.classList.add("is-visible"));
   } else {
-    const observer = new IntersectionObserver((entries, currentObserver) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) return;
-        entry.target.classList.add("is-visible");
-        currentObserver.unobserve(entry.target);
-      });
-    }, { threshold: 0.13 });
+    const observer = new IntersectionObserver(
+      (entries, currentObserver) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add("is-visible");
+          currentObserver.unobserve(entry.target);
+        });
+      },
+      { threshold: 0.12, rootMargin: "0px 0px -40px 0px" }
+    );
 
     revealItems.forEach((item) => observer.observe(item));
   }
@@ -89,9 +95,8 @@
       const value = button.getAttribute("data-copy");
       if (!value || button.disabled) return;
 
-      const label = button.querySelector("span");
-      const originalLabel =
-        label?.textContent || "Копировать";
+      const label = button.querySelector("span:not([aria-hidden])") || button.querySelector("span");
+      const originalLabel = label?.textContent || "Копировать";
 
       const showCopied = () => {
         button.classList.add("is-copied");
@@ -138,5 +143,4 @@
       img.setAttribute("aria-hidden", "true");
     });
   });
-
 })();
