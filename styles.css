@@ -2158,3 +2158,7 @@ html.js-ready .reveal.is-visible{opacity:1;transform:none}
 }
 @media(max-width:380px){.forum{width:calc(100% - 24px)}.forum-hero__actions{display:grid;grid-template-columns:1fr}.forum-node-section__head h3{font-size:16px}.forum-board-row{padding-inline:9px}.forum-board-row__forum{grid-template-columns:32px minmax(0,1fr);gap:8px}.forum-board-row__forum .forum-category-card__icon{width:32px;height:32px}}
 @media(prefers-reduced-motion:reduce){.forum *, .forum *::before,.forum *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+/* Keep internal forum routes single-column; the two-column index is exclusive to forum.html. */
+body:not([data-forum]) .forum{display:block;width:min(calc(100% - 48px),1120px);max-width:1120px}
+@media(max-width:1000px){body:not([data-forum]) .forum{width:min(calc(100% - 36px),900px);max-width:900px}}
