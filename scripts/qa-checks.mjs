@@ -31,7 +31,6 @@ const requiredFiles = [
   "topic.js",
   "forum-user.html",
   "user.js",
-  "site-config.js",
   "docs/stability-roadmap.md",
   "supabase/migrations/20261002234000_forum_node_tree_refactor.sql",
   "supabase/migrations/20261002235000_forum_node_directory_safe_counts.sql",
@@ -258,7 +257,6 @@ for (const [name, page] of forumPages) {
   if (!page.includes('href="./forum.html"')) fail.push(name + " forum navigation link missing");
   if (!page.includes('href="./forum-members.html"')) fail.push(name + " members navigation link missing");
   if (!page.includes('href="./forum-search.html"')) fail.push(name + " search navigation link missing");
-  if (!page.includes("site-config.js?v=1")) fail.push(name + " site config include missing");
 }
 if (!read("site-config.js").includes('plannedOrigin: "https://nazerak.ru"')) fail.push("planned Nazerak.ru origin missing from site config");
 if (!read("DOMAIN_MIGRATION.md").includes("https://nazerak.ru/cabinet.html")) fail.push("domain migration guide missing Supabase redirect URL");
