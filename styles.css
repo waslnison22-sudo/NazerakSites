@@ -2162,3 +2162,14 @@ html.js-ready .reveal.is-visible{opacity:1;transform:none}
 /* Keep internal forum routes single-column; the two-column index is exclusive to forum.html. */
 body:not([data-forum]) .forum{display:block;width:min(calc(100% - 48px),1120px);max-width:1120px}
 @media(max-width:1000px){body:not([data-forum]) .forum{width:min(calc(100% - 36px),900px);max-width:900px}}
+
+/* v34: give the index its intended desktop canvas; internal routes keep their reading width. */
+body[data-forum] .container:has(> .forum){width:min(calc(100% - 48px),1360px)}
+body[data-forum] .forum{width:100%;max-width:none;min-width:0}
+body[data-forum] .forum-hero{grid-column:1/-1}
+body[data-forum] .forum-toolbar{grid-column:1/-1}
+body[data-forum] .forum-message{grid-column:1/-1}
+body[data-forum] .forum-boards,body[data-forum] .forum-discussions,body[data-forum] .forum-resources{min-width:0}
+@media(max-width:1000px){body[data-forum] .container:has(> .forum){width:min(calc(100% - 36px),900px)}}
+@media(max-width:700px){body[data-forum] .container:has(> .forum){width:calc(100% - 28px)}}
+@media(max-width:380px){body[data-forum] .container:has(> .forum){width:calc(100% - 24px)}}
