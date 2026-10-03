@@ -448,6 +448,28 @@ await testStaticPage({
 });
 
 await testStaticPage({
+  path: "/forum.html",
+  name: "forum narrow mobile",
+  viewport: { width: 320, height: 740 },
+  check: async (page) => {
+    if (!(await page.locator("h1").textContent()).includes("Форум")) throw new Error("narrow mobile forum heading missing");
+    const metrics = await page.evaluate(() => {
+      const menu = document.querySelector(".nav-toggle").getBoundingClientRect();
+      return {
+        searchFont: parseFloat(getComputedStyle(document.querySelector("#forum-search")).fontSize),
+        menuWidth: menu.width,
+        menuHeight: menu.height,
+        pageWidth: document.documentElement.scrollWidth,
+        viewport: innerWidth
+      };
+    });
+    if (metrics.searchFont < 16) throw new Error("narrow mobile search text may trigger browser zoom: " + JSON.stringify(metrics));
+    if (metrics.menuWidth < 44 || metrics.menuHeight < 44) throw new Error("narrow mobile menu touch target is too small: " + JSON.stringify(metrics));
+    if (metrics.pageWidth > metrics.viewport + 1) throw new Error("narrow mobile forum overflows: " + JSON.stringify(metrics));
+  }
+});
+
+await testStaticPage({
   path: "/forum-category.html?slug=pravila-i-dokumenty",
   name: "official forum category",
   viewport: { width: 1280, height: 900 },
