@@ -8,6 +8,7 @@ const requiredFiles = [
   "index.html",
   "cabinet.html",
   "styles.css",
+  "forum.css",
   "script.js",
   "auth.js",
   "auth-config.js",
@@ -51,6 +52,7 @@ const requiredFiles = [
   "supabase/migrations/20261002233000_forum_category_posting_modes.sql",
   "supabase/migrations/20261002231000_forum_locked_topic_insert_guard.sql",
   "supabase/migrations/20261002230000_forum_permission_function_hardening.sql",
+  "supabase/migrations/20261004000000_forum_runtime_integrity.sql",
   "scripts/runtime-smoke.mjs",
   "scripts/browser-smoke.mjs",
   "assets/images/README.md"
@@ -116,12 +118,12 @@ for (const [name, page] of [
   ["forum-user.html", read("forum-user.html")]
 ]) {
   const assets = ["auth-config.js?v=8", "supabase-loader.js?v=9", "auth.js?v=35", "script.js?v=17", "styles.css?v=36"];
-  if (name === "forum.html") { assets.push("forum-ui.js?v=1", "forum.js?v=4"); }
-  if (name === "forum-category.html") { assets.push("forum-ui.js?v=1", "forum-category.js?v=2"); }
-  if (name === "forum-members.html") { assets.push("forum-ui.js?v=1", "forum-members.js?v=2"); }
-  if (name === "forum-search.html") { assets.push("forum-ui.js?v=1", "forum-search.js?v=2"); }
-  if (name === "topic.html") { assets.push("forum-ui.js?v=1", "topic.js?v=3"); }
-  if (name === "forum-user.html") { assets.push("forum-ui.js?v=1", "user.js?v=2"); }
+  if (name === "forum.html") { assets.push("forum.css?v=1", "forum-ui.js?v=1", "forum.js?v=4"); }
+  if (name === "forum-category.html") { assets.push("forum.css?v=1", "forum-ui.js?v=1", "forum-category.js?v=2"); }
+  if (name === "forum-members.html") { assets.push("forum.css?v=1", "forum-ui.js?v=1", "forum-members.js?v=2"); }
+  if (name === "forum-search.html") { assets.push("forum.css?v=1", "forum-ui.js?v=1", "forum-search.js?v=2"); }
+  if (name === "topic.html") { assets.push("forum.css?v=1", "forum-ui.js?v=1", "topic.js?v=3"); }
+  if (name === "forum-user.html") { assets.push("forum.css?v=1", "forum-ui.js?v=1", "user.js?v=2"); }
   for (const asset of assets) {
     if (!page.includes(asset)) {
       fail.push(`${name} asset include missing: ${asset}`);
@@ -260,7 +262,12 @@ for (const [name, page] of forumPages) {
 }
 
 const forumSurfaceFiles = ["forum.html","forum-category.html","forum-members.html","forum-search.html","topic.html","forum-user.html"];
+
 for (const file of forumSurfaceFiles) {
+  const page = read(file);
+  if (!page.includes("forum.css?v=1")) fail.push(file + " forum stylesheet is missing");
+}
+if (css.includes("NAZERAK FORUM")) fail.push("obsolete forum cascade remains in global stylesheet");for (const file of forumSurfaceFiles) {
   const page = read(file);
   if (!page.includes("styles.css?v=36")) fail.push(file + " styles cache revision is stale");
   if (!page.includes('Content-Security-Policy')) fail.push(file + " CSP is missing");
@@ -280,10 +287,9 @@ if (!read("forum-ui.js").includes("data-forum-user")) fail.push("forum hover pro
 if (!read("user.js").includes('from("forum_author_directory")')) fail.push("forum user directory query missing");
 for (const file of ["forum.js","forum-category.js","topic.js"]) {
   const source = read(file);
-  if (source.includes("from(\"forum_authors\").upsert({id:state.user.id,display_name:userName(state.user),avatar_url:userAvatar(state.user),last_seen_at")) {
-    fail.push(file + " forum author sync writes a column without browser update privilege");
-  }
+  if (!source.includes('from("forum_authors").upsert(')) fail.push(file + " forum author sync is missing");
   if (!source.includes('updated_at:new Date().toISOString()')) fail.push(file + " forum author sync must refresh updated_at");
+  if (!source.includes('last_seen_at:new Date().toISOString()')) fail.push(file + " forum author sync must refresh last_seen_at");
 }
 if (auth.includes(".from(\"profiles\")\n      .upsert(")) fail.push("profile initialization still uses upsert");
 if (script.includes(".magnetic") || script.includes("[data-parallax]")) fail.push("unstable motion controls remain");
