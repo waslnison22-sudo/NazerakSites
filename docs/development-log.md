@@ -267,3 +267,23 @@ v35 is not considered visually finished until browser screenshots are checked at
 - 650/390/320px responsive layout and overflow.
 - Forum/category runtime rendering.
 - Existing QA/browser smoke must pass on the resulting commit before production acceptance.
+
+## 2026-10-04 — Forum incident audit and recovery
+
+### Incident
+The forum regression was traced to the commit series immediately after `a6de9d51dc74342f23a2e4ffdd88ee83996f48c4`. That series introduced a parallel `forum-styles.css` / `animations.css` styling layer and rewrote several forum scripts. The latest commit `97ccb220be2bf4bed0e47c89b72963523332a83c` also replaced the stable topic/profile/search logic with incompatible simplified code.
+
+### Confirmed failures
+- `topic.js` queried `forum_topics` for fields that belong to public forum views, so topic loading could fail at the database layer.
+- `topic.js` stopped loading/rendering `forum_posts`, so replies were lost from the topic page.
+- `user.js` switched from `joined_at` to a non-existent `created_at` field and lost the bounded request guards / stable role rendering.
+- `forum-search.js` lost URL-query initialization and submit handling and only searched titles.
+- `forum-user.html` gained inline styles that violate the site's CSP/QA contract.
+- `forum-styles.css` was loaded after `styles.css` and overrode the reference-led forum layout, creating a conflicting cascade.
+- Latest QA run `37158780904` failed before browser smoke with forum-related errors; latest production deploy for that commit was skipped.
+
+### Recovery
+Restored all forum surface HTML and the affected forum scripts to the last known good baseline `a6de9d51dc74342f23a2e4ffdd88ee83996f48c4`. Removed the conflicting `forum-styles.css` and `animations.css` files. Synchronized global stylesheet cache references to `v36` and fixed a stray closing tag in `forum.html`.
+
+### Verification
+A GitHub compare from `a6de9d51…` to the recovery head `fb9225862a4750028e29f9ec791af85a2ff88713` reports only four files changed: `index.html`, `cabinet.html`, `404.html`, and `forum.html`. The forum HTML/JS/CSS implementation is otherwise back on the prior baseline. A fresh QA run is queued for the recovery head.
