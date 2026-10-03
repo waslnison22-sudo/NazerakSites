@@ -83,6 +83,7 @@ for (const file of requiredFiles) {
 const index = read("index.html");
 const cabinet = read("cabinet.html");
 const css = read("styles.css");
+const forumCss = read("forum.css");
 const script = read("script.js");
 const auth = read("auth.js");
 const loader = read("supabase-loader.js");
