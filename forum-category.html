@@ -4,11 +4,13 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#07070a">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://unpkg.com; connect-src 'self' https://ujlbyzvdsncvqbrhasuw.supabase.co; img-src 'self' data: https://cdn.discordapp.com https://media.discordapp.net; style-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; frame-src 'none'; form-action 'self';">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://unpkg.com; connect-src 'self' https://ujlbyzvdsncvqbrhasuw.supabase.co; img-src 'self' data: https:; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://unpkg.com; font-src 'self' data:; frame-ancestors 'none'; object-src 'none'; base-uri 'self'">
   <meta name="description" content="NaZerak — раздел форума.">
   <meta name="robots" content="noindex,nofollow,noarchive">
   <link rel="icon" href="./favicon.svg?v=5" type="image/svg+xml">
   <link rel="stylesheet" href="./styles.css?v=36">
+  <link rel="stylesheet" href="./animations.css?v=2">
+  <link rel="stylesheet" href="./forum-styles.css?v=2">
   <title>NaZerak — раздел форума</title>
 </head>
 <body data-forum-category-page>
@@ -29,8 +31,8 @@
   <main class="forum-page" id="main-content" tabindex="-1">
     <div class="container forum">
       <div class="forum-breadcrumbs"><a href="./forum.html">Форум</a><span>/</span><span data-category-parent>Загрузка</span><span>/</span><strong data-category-name>Загрузка</strong></div>
-      <header class="forum-section-head">
-        <div>
+      <header class="forum-hero">
+        <div class="forum-hero__copy">
           <span class="section-kicker">FORUM / SECTION</span>
           <h1 data-category-title>Загрузка<span>.</span></h1>
           <p data-category-description>Загрузка раздела…</p>
@@ -48,15 +50,12 @@
           </div>
           <span class="forum-result-count" data-category-result-count>0 тем</span>
         </header>
-        <div class="forum-thread-table">
-          <div class="forum-thread-table__header"><span>Тема</span><span>Ответы</span><span>Последнее сообщение</span></div>
-          <div data-category-topic-list aria-live="polite"></div>
-        </div>
+        <div class="forum-topic-list" data-category-topic-list aria-live="polite"></div>
         <div class="forum-empty" data-category-empty hidden>
           <span class="forum-empty__mark" aria-hidden="true">NZ</span>
           <span class="section-kicker">NO THREADS</span>
           <h3>В этом разделе пока нет тем.</h3>
-                    <button class="button button--primary" type="button" data-category-create><span>Создать тему</span><span aria-hidden="true">+</span></button>
+          <button class="button button--primary" type="button" data-category-create><span>Создать тему</span><span aria-hidden="true">+</span></button>
         </div>
       </section>
     </div>
@@ -68,16 +67,16 @@
       <span class="section-kicker">NEW TOPIC</span>
       <h2 id="category-modal-title">Создать тему.</h2>
       <p class="forum-modal__copy">Первое сообщение станет стартовым постом темы.</p>
-      <div class="forum-form-field"><label for="category-title-input">Заголовок</label><input id="category-title-input" name="title" maxlength="120" minlength="3" required placeholder="Заголовок темы"></div>
-      <div class="forum-form-field"><label for="category-body-input">Сообщение</label><textarea id="category-body-input" name="body" maxlength="12000" rows="8" required placeholder="Текст сообщения…"></textarea><small>1–12 000 символов</small></div>
+      <div class="forum-form-field"><label for="category-title-input">Заголовок</label><input id="category-title-input" name="title" maxlength="120" minlength="3" required placeholder="Например: Вопрос о правилах"></div>
+      <div class="forum-form-field"><label for="category-body-input">Сообщение</label><textarea id="category-body-input" name="body" maxlength="12000" rows="8" required placeholder="Твоё сообщение…"></textarea><small>1–12 000 символов</small></div>
       <div class="forum-modal__footer">
         <span>Авторизация выполняется через Discord.</span>
-        <div class="forum-modal__buttons"><button class="button button--ghost" type="submit" value="cancel">Отмена</button><button class="button button--primary" type="button" data-category-submit>Опубликовать <span aria-hidden="true">→</span></button></div>
+        <div class="forum-modal__buttons"><button class="button button--ghost" type="submit" value="cancel"><span>Отмена</span><span aria-hidden="true">×</span></button><button class="button button--primary" type="button" data-category-submit><span>Опубликовать</span><span aria-hidden="true">→</span></button></div>
       </div>
     </form>
   </dialog>
 
-  <footer class="footer"><div class="container footer__inner"><div><a class="brand brand--footer" href="./"><span class="brand__mark" aria-hidden="true">NZ</span><span class="brand__name">NaZerak</span></a><p class="footer__copy">Раздел форума NaZerak.</p></div><div class="footer__right"><span>© <span id="year"></span> NaZerak</span><a href="#top">Наверх ↑</a></div></div></footer>
+  <footer class="footer"><div class="container footer__inner"><div><a class="brand brand--footer" href="./"><span class="brand__mark" aria-hidden="true">NZ</span><span class="brand__name">NaZerak</span></a><p class="footer__copy">Официальный форум NaZerak.</p><p class="footer__legal">NaZerak — независимый Minecraft-проект. Не связан с Mojang Studios или Microsoft.</p></div><div class="footer__right"><span>© <span id="year"></span> NaZerak</span><a href="#top">Наверх ↑</a></div></div></footer>
   <noscript><div class="noscript-message">Для форума требуется JavaScript.</div></noscript>
   <script src="./auth-config.js?v=8" defer></script>
   <script src="./supabase-loader.js?v=9" defer></script>

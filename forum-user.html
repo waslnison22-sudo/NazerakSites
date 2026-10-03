@@ -4,33 +4,38 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#07070a">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://unpkg.com; connect-src 'self' https://ujlbyzvdsncvqbrhasuw.supabase.co; img-src 'self' data: https://cdn.discordapp.com https://media.discordapp.net; style-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; frame-src 'none'; form-action 'self';">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://unpkg.com; connect-src 'self' https://ujlbyzvdsncvqbrhasuw.supabase.co; img-src 'self' data: https:; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://unpkg.com; font-src 'self' data:; frame-ancestors 'none'; object-src 'none'; base-uri 'self'">
   <meta name="description" content="Профиль пользователя форума NaZerak.">
   <meta name="robots" content="noindex,nofollow,noarchive">
   <link rel="icon" href="./favicon.svg?v=5" type="image/svg+xml">
   <link rel="stylesheet" href="./styles.css?v=36">
+  <link rel="stylesheet" href="./animations.css?v=2">
+  <link rel="stylesheet" href="./forum-styles.css?v=2">
   <title>NaZerak — профиль пользователя</title>
 </head>
 <body data-forum-user-page>
   <a class="skip-link" href="#main-content">К содержимому</a>
-  <header class="topbar" id="top"><div class="container topbar__inner">
-    <a class="brand" href="./" aria-label="NaZerak — на главную"><span class="brand__mark" aria-hidden="true">NZ</span><span class="brand__name">NaZerak</span></a>
-    <button class="nav-toggle" type="button" aria-controls="user-nav" aria-expanded="false" aria-label="Открыть меню"><span></span><span></span><span></span><span class="sr-only">Открыть меню</span></button>
-    <nav class="nav" id="user-nav" aria-label="Навигация форума">
+  <header class="topbar" id="top">
+    <div class="container topbar__inner">
+      <a class="brand" href="./" aria-label="NaZerak — на главную"><span class="brand__mark" aria-hidden="true">NZ</span><span class="brand__name">NaZerak</span></a>
+      <button class="nav-toggle" type="button" aria-controls="user-nav" aria-expanded="false" aria-label="Открыть меню"><span></span><span></span><span></span><span class="sr-only">Открыть меню</span></button>
+      <nav class="nav" id="user-nav" aria-label="Навигация форума">
         <a class="nav-forum is-active" href="./forum.html">Форум</a>
         <a href="./forum-members.html">Участники</a>
         <a href="./forum-search.html">Поиск</a>
         <a class="nav-account" data-auth-link href="./cabinet.html"><span class="nav-account__avatar"><img data-auth-link-avatar alt="" hidden><span data-auth-link-fallback>◉</span></span><span data-auth-link-label>Войти</span></a>
       </nav>
-  </div></header>
+    </div>
+  </header>
 
   <main class="forum-user-page" id="main-content" tabindex="-1">
     <div class="container forum-user">
-      <div class="forum-user__crumb"><a href="./forum.html">Форум</a><span>/</span><span>Профиль</span></div>
+      <div class="forum-breadcrumbs"><a href="./forum.html">Форум</a><span>/</span><a href="./forum-members.html">Участники</a><span>/</span><span>Профиль</span></div>
       <div class="auth-message" data-user-message role="status" aria-live="polite" hidden></div>
-      <section class="forum-user__hero" data-user-profile hidden>
-        <div class="forum-user__identity">
-          <div class="forum-user__avatar"><img data-user-avatar alt="" hidden><span data-user-initial>NZ</span></div>
+
+      <section class="forum-hero" data-user-profile hidden>
+        <div class="forum-user-identity">
+          <div class="forum-avatar" style="width: 88px; height: 88px; font-size: 32px;"><img data-user-avatar alt="" hidden><span data-user-initial>NZ</span></div>
           <div>
             <span class="section-kicker">FORUM PROFILE</span>
             <h1 data-user-name>Игрок NaZerak</h1>
@@ -38,25 +43,28 @@
             <p data-user-bio>Участник форума NaZerak.</p>
           </div>
         </div>
-        <div class="forum-user__meta">
+        <div class="forum-user__stats">
           <div><span>MINECRAFT</span><strong data-user-minecraft>Не указан</strong></div>
           <div><span>НА ФОРУМЕ С</span><strong data-user-joined>—</strong></div>
           <div><span>АКТИВНОСТЬ</span><strong data-user-lastseen>—</strong></div>
+          <div><span>ТЕМ</span><strong data-user-topic-count>0</strong></div>
+          <div><span>СООБЩЕНИЙ</span><strong data-user-post-count>0</strong></div>
         </div>
       </section>
 
-      <section data-user-content hidden>
-        <div class="forum-user__stats"><div><strong data-user-topic-count>0</strong><span>тем</span></div><div><strong data-user-post-count>0</strong><span>сообщений</span></div></div>
-        <div class="forum-user__topics">
-          <div class="forum-main__head"><div><span class="section-kicker">ACTIVITY</span><h2>Последние темы</h2></div></div>
-          <div data-user-topics></div>
+      <section class="forum-user-content" data-user-content hidden>
+        <div class="forum-main__head">
+          <div><span class="section-kicker">ACTIVITY</span><h2>Последние темы</h2></div>
         </div>
+        <div class="forum-topic-list" data-user-topics aria-live="polite"></div>
       </section>
-      <div class="topic-footer-links"><a href="./forum.html">← Форум</a><a href="./cabinet.html">Личный кабинет →</a></div>
+
+      <div class="topic-footer-links"><a href="./forum.html">← Форум</a><a href="./forum-members.html">Участники →</a></div>
     </div>
   </main>
 
-  <footer class="footer"><div class="container footer__inner"><div><a class="brand brand--footer" href="./"><span class="brand__mark" aria-hidden="true">NZ</span><span class="brand__name">NaZerak</span></a><p class="footer__copy">Профиль участника форума NaZerak.</p></div><div class="footer__right"><span>© <span id="year"></span> NaZerak</span><a href="#top">Наверх ↑</a></div></div></footer>
+  <footer class="footer"><div class="container footer__inner"><div><a class="brand brand--footer" href="./"><span class="brand__mark" aria-hidden="true">NZ</span><span class="brand__name">NaZerak</span></a><p class="footer__copy">Официальный форум NaZerak.</p><p class="footer__legal">NaZerak — независимый Minecraft-проект. Не связан с Mojang Studios или Microsoft.</p></div><div class="footer__right"><span>© <span id="year"></span> NaZerak</span><a href="#top">Наверх ↑</a></div></div></footer>
+
   <noscript><div class="noscript-message">Для профиля требуется включить JavaScript.</div></noscript>
   <script src="./auth-config.js?v=8" defer></script>
   <script src="./supabase-loader.js?v=9" defer></script>
