@@ -52,7 +52,7 @@ const requiredFiles = [
   "supabase/migrations/20261002233000_forum_category_posting_modes.sql",
   "supabase/migrations/20261002231000_forum_locked_topic_insert_guard.sql",
   "supabase/migrations/20261002230000_forum_permission_function_hardening.sql",
-  "supabase/migrations/20261004000000_forum_runtime_integrity.sql",
+  "supabase/migrations/20261003225344_forum_runtime_integrity_20261004.sql",
   "scripts/runtime-smoke.mjs",
   "scripts/browser-smoke.mjs",
   "assets/images/README.md"
