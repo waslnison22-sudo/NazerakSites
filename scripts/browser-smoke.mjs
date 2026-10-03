@@ -500,6 +500,29 @@ await testStaticPage({
 });
 
 await testStaticPage({
+  path: "/forum-category.html?slug=pravila-i-dokumenty",
+  name: "forum category narrow mobile",
+  viewport: { width: 320, height: 740 },
+  check: async (page) => {
+    const title = (await page.locator("[data-category-title]").textContent() || "").trim();
+    if (!title || /загрузка/i.test(title)) throw new Error("narrow mobile category did not resolve");
+    const fontSize = await page.locator("input, textarea").first().evaluate((el) => parseFloat(getComputedStyle(el).fontSize)).catch(() => 16);
+    if (fontSize < 16) throw new Error("narrow mobile category input font too small: " + fontSize);
+  }
+});
+
+await testStaticPage({
+  path: "/forum-members.html",
+  name: "forum members narrow mobile",
+  viewport: { width: 320, height: 740 },
+  check: async (page) => {
+    if (!(await page.locator("h1").textContent()).includes("Участники")) throw new Error("narrow mobile members heading missing");
+    const grid = await page.locator("[data-members-list]").evaluate((el) => getComputedStyle(el).gridTemplateColumns);
+    if (!grid) throw new Error("narrow mobile member list layout missing");
+  }
+});
+
+await testStaticPage({
   path: "/forum-members.html",
   name: "forum members",
   viewport: { width: 1280, height: 900 },
