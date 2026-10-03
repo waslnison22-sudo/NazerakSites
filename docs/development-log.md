@@ -224,3 +224,21 @@ The first QA run after the reliability pass failed in the browser smoke test at 
 - Added narrow 320px browser smoke cases for a forum category and the members directory, alongside the existing 320px forum-index and 390px mobile scenarios.
 - These checks validate resolved category/member content and rely on shared browser assertions for horizontal overflow, accessible controls, same-origin links and runtime diagnostics.
 - The v34 desktop grid assertion and added narrow-screen cases require the current QA workflow to complete before acceptance.
+
+
+## 2026-10-04 — forum block reconstruction v35
+
+The previous forum blocks were judged visually raw, so the next layer was rebuilt at component level rather than adding another generic glass overlay.
+
+### Implemented
+- Rebuilt category-page header, breadcrumbs, topic-list shell and topic rows with a calmer hierarchy and fewer nested boxes.
+- Rebuilt topic header, post layout, author column, reply composer and login state as a single coherent discussion system.
+- Desktop posts use a real forum reading structure: author rail + message body, rather than stacked card fragments.
+- Mobile posts collapse into author strip + content with full-width actions.
+- Increased mobile touch targets and removed the desktop table header on narrow screens instead of shrinking it until it becomes unusable.
+- Added 320/380/760px responsive rules for category and topic pages.
+- Added overflow-safe media/content behavior for topic posts.
+- Bumped stylesheet cache revision to v35 and aligned static QA.
+
+### Acceptance rule
+v35 is not considered visually finished until browser screenshots are checked at desktop and narrow mobile sizes. Generated scenic artwork for the hero remains a separate integration step.
