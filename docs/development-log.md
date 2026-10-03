@@ -218,3 +218,9 @@ The first QA run after the reliability pass failed in the browser smoke test at 
 - Added a browser assertion at 1440px that the index uses a two-column CSS grid and has a canvas wider than 1100px. Existing 390px and 320px mobile checks remain.
 - Updated the forum stylesheet cache reference and QA expectation to v34.
 - v33 QA and its production deployment passed. v34 is a new follow-up revision; QA and deployment are pending until their workflows complete.
+
+
+### v34 follow-up — mobile regression coverage
+- Added narrow 320px browser smoke cases for a forum category and the members directory, alongside the existing 320px forum-index and 390px mobile scenarios.
+- These checks validate resolved category/member content and rely on shared browser assertions for horizontal overflow, accessible controls, same-origin links and runtime diagnostics.
+- The v34 desktop grid assertion and added narrow-screen cases require the current QA workflow to complete before acceptance.
