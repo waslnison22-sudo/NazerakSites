@@ -12,6 +12,7 @@
   const relative=(v)=>{const d=new Date(v);if(Number.isNaN(d.getTime()))return"—";const diff=Math.max(0,Date.now()-d.getTime()),m=Math.floor(diff/60000);if(m<1)return"только что";if(m<60)return m+" мин назад";const h=Math.floor(m/60);if(h<24)return h+" ч назад";const days=Math.floor(h/24);if(days<7)return days+" дн назад";return formatDate(v);};
   const userName=(u)=>{const m=u?.user_metadata||{};return String(m.global_name||m.full_name||m.name||m.user_name||m.preferred_username||"Игрок NaZerak").trim().slice(0,64)||"Игрок NaZerak";};
   const userAvatar=(u)=>{const m=u?.user_metadata||{};const url=safeUrl(m.avatar_url||m.picture);if(!url)return null;try{const host=new URL(url).hostname.toLowerCase();return host==="cdn.discordapp.com"||host==="media.discordapp.net"?url:null;}catch{return null;}};
+  const withTimeout=(promise,ms,message)=>Promise.race([promise,new Promise((_,reject)=>window.setTimeout(()=>reject(new Error(message)),ms))]);
   const waitForClient=async()=>{for(let i=0;i<100;i+=1){if(window.NaZerakAuth?.client)return window.NaZerakAuth.client;await new Promise(r=>window.setTimeout(r,100));}return null;};
   const syncAuthor=async()=>{if(!state.client||!state.user)return;const r=await state.client.from("forum_authors").upsert({id:state.user.id,display_name:userName(state.user),avatar_url:userAvatar(state.user),last_seen_at:new Date().toISOString()},{onConflict:"id"});if(r.error)console.warn("[NaZerak Forum] author sync:",r.error.message);};
 
@@ -68,7 +69,7 @@
       state.client.from("forum_community_stats").select("member_count,online_count").maybeSingle()
     ];
     if(state.user)req.push(state.client.from("forum_my_permissions").select("can_publish_official,can_moderate_forum,can_manage_roles,can_manage_categories").maybeSingle());
-    const res=await Promise.all(req);
+    const res=await withTimeout(Promise.all(req),10000,"Загрузка форума превысила 10 секунд. Проверь соединение и попробуй обновить страницу.");
     if(res[0].error)throw new Error(res[0].error.message||"Не удалось загрузить структуру форума.");
     if(res[1].error)throw new Error(res[1].error.message||"Не удалось загрузить темы форума.");
     if(res[2].error)console.warn("[NaZerak Forum] stats:",res[2].error.message);
@@ -105,7 +106,7 @@
   const init=async()=>{
     state.client=await waitForClient();
     if(!state.client){setState("ОШИБКА ДАННЫХ","error");showMessage("Форум не смог подключиться к данным.","error");return;}
-    state.user=(await state.client.auth.getSession()).data?.session?.user||window.NaZerakAuth?.user||null;
+    try{const session=await withTimeout(state.client.auth.getSession(),8000,"");state.user=session.data?.session?.user||window.NaZerakAuth?.user||null;}catch{state.user=window.NaZerakAuth?.user||null;}
     if(state.user)await syncAuthor();
     qsa("[data-forum-create]").forEach(b=>b.addEventListener("click",openCreate));
     qs("[data-forum-submit]")?.addEventListener("click",createTopic);
