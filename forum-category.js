@@ -61,7 +61,7 @@
     if(!state.user){location.href="./cabinet.html";return;}
     const form=qs("[data-category-form]"),title=String(new FormData(form).get("title")||"").trim(),body=String(new FormData(form).get("body")||"").trim(),button=qs("[data-category-submit]");
     if(title.length<3||!body){msg("Заполни заголовок и сообщение.","error");return;}
-    button.disabled=true;await state.client.from("forum_authors").upsert({id:state.user.id,display_name:userName(state.user),avatar_url:userAvatar(state.user)||null,updated_at:new Date().toISOString()},{onConflict:"id"});
+    button.disabled=true;await state.client.from("forum_authors").upsert({id:state.user.id,display_name:userName(state.user),avatar_url:userAvatar(state.user)||null,updated_at:new Date().toISOString(),last_seen_at:new Date().toISOString()},{onConflict:"id"});
     const r=await state.client.from("forum_topics").insert({category_id:state.category.id,author_id:state.user.id,title,body}).select("id").single();
     button.disabled=false;if(r.error){msg(r.error.message,"error");return;}location.href="./topic.html?id="+encodeURIComponent(r.data.id);
   };
