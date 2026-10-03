@@ -67,3 +67,27 @@ This distinction prevents a valid code deployment from being reported as failed 
 - Check stale CSS/JS selectors and duplicate markup.
 - Verify production routes after each release.
 - Keep Supabase migration history intact unless a migration is demonstrably unused and safe to archive.
+
+
+## 2026-10-03 — forum reliability pass
+
+### Real problems found
+1. The members page treated any Supabase failure as an empty directory. A network/API/RLS failure therefore looked identical to a real zero-member state.
+2. The forum search page had the same silent-failure behavior: failed topic loading produced an empty result surface without explaining the problem.
+3. The public forum profile treated database errors as "profile not found", conflating an unavailable backend with a genuinely missing profile.
+4. Forum members/search/profile requests had no client-side timeout, so a stalled request could leave the surface waiting indefinitely.
+
+### Fixes applied
+- Added explicit error surfaces to the members and global-search pages.
+- Added 8-second request timeouts for members and search loading.
+- Added an 8-second timeout for profile and profile-topic loading.
+- Distinguished profile backend errors from a genuinely missing profile.
+- Bumped forum script cache revisions:
+  - `forum-members.js?v=2`
+  - `forum-search.js?v=2`
+  - `user.js?v=2`
+
+### Verification status
+- Changes are committed directly to `main` through the repository API.
+- The next required gate is the GitHub `NaZerak QA` run on the resulting HEAD.
+- No production success is claimed until that run and the production content check are observed.
