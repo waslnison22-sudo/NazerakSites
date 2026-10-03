@@ -287,3 +287,32 @@ Restored all forum surface HTML and the affected forum scripts to the last known
 
 ### Verification
 A GitHub compare from `a6de9d51…` to the recovery head `fb9225862a4750028e29f9ec791af85a2ff88713` reports only four files changed: `index.html`, `cabinet.html`, `404.html`, and `forum.html`. The forum HTML/JS/CSS implementation is otherwise back on the prior baseline. A fresh QA run is queued for the recovery head.
+
+
+## 2026-10-04 — forum second audit: architecture and production runtime integrity
+
+### What was wrong
+- The forum's shared stylesheet had accumulated multiple appended generations of forum selectors, causing later layers to override earlier layout decisions unpredictably.
+- Forum category rows and their CSS data contract diverged; the renderer used different class names than the table stylesheet expected.
+- A category row contained nested links, producing invalid interaction/HTML structure.
+- The frontend refreshed forum-author activity, but production column grants did not allow browser INSERT/UPDATE on the required author fields.
+- Reply activity did not update `forum_topics.last_post_at` automatically, so latest-activity ordering could become stale.
+
+### Implemented
+- Removed the forum-specific cascade from the global `styles.css` and introduced one authoritative `forum.css?v=1` shared by all forum routes.
+- Rebuilt the forum index composition around a single `.forum-index-grid`: categories as the primary area, latest discussions and community resources as the secondary column; mobile collapses to one column.
+- Corrected the forum hero to keep title/description on the left and actions directly below them on the lower-left.
+- Aligned category topic rows with one explicit markup/CSS contract and removed nested links.
+- Added browser smoke assertions for desktop composition, hero alignment, category row structure and nested-link integrity.
+- Added repo migration `20261004000000_forum_runtime_integrity.sql` and synchronized `supabase/schema.sql`.
+- Applied the runtime integrity migration directly to production project `ujlbyzvdsncvqbrhasuw`: forum-author INSERT/UPDATE grants, automatic `last_post_at` trigger, and activity backfill.
+- Restored `last_seen_at` updates in forum author synchronization.
+
+### Production verification
+- Production Supabase project is ACTIVE_HEALTHY on PostgreSQL 17.
+- Current forum content counts: 33 category nodes, 27 forums, 0 topics, 0 posts, 1 author. The zero-content state is expected because starter topics are not seeded automatically.
+- Verified the new author column grants and `forum_topic_last_post_touch` trigger exist in production.
+
+### Release state
+- Static QA and Supabase runtime smoke reached success during the current cleanup sequence; browser smoke remains the final acceptance gate for the newest head.
+- REG.RU production deploy remains gated by `DEPLOY_ENABLED`; no REG.RU deployment is claimed without a successful production deployment run.
