@@ -27,17 +27,7 @@
     qs("[data-category-title]").innerHTML=escapeHtml(state.category.name)+"<span>.</span>";
     qs("[data-category-description]").textContent=state.category.description||"";
     const canCreate = state.category.posting_mode==="open" || Boolean(state.permissions?.can_publish_official);
-    document.querySelectorAll("[data-category-create]").forEach((button)=>{button.hidden=!canCreate;});
-    const policy=qs("[data-category-policy]");
-    if(policy){
-      policy.hidden=false;
-      policy.textContent=state.category.posting_mode==="official"
-        ? "Официальный раздел · публикация доступна команде с правом publish_official."
-        : state.category.posting_mode==="restricted"
-          ? "Ограниченный раздел · публикация доступна только ответственным ролям."
-          : "Открытый раздел · темы доступны участникам форума.";
-    }
-    const count=qs("[data-category-result-count]");const n=state.topics.length;n===1?count.textContent="1 тема":n<5?count.textContent=n+" темы":count.textContent=n+" тем";
+    document.querySelectorAll("[data-category-create]").forEach((button)=>{button.hidden=!canCreate;});    const count=qs("[data-category-result-count]");const n=state.topics.length;n===1?count.textContent="1 тема":n<5?count.textContent=n+" темы":count.textContent=n+" тем";
     const root=qs("[data-category-topic-list]");const empty=qs("[data-category-empty]");
     root.innerHTML=state.topics.map(t=>{
       const avatar=safeUrl(t.author_avatar_url);const av=avatar?'<img src="'+escapeHtml(avatar)+'" alt="">':escapeHtml((t.author_name||"N").slice(0,1).toUpperCase());
