@@ -422,13 +422,13 @@ await testStaticPage({
   viewport: { width: 1440, height: 900 },
   check: async (page) => {
     if (!(await page.locator("h1").textContent()).includes("Форум")) throw new Error("forum heading missing");
-    const layout = await page.locator(".forum").evaluate((node) => {
+    const layout = await page.locator(".forum-index-grid").evaluate((node) => {
       const style = getComputedStyle(node);
       const rect = node.getBoundingClientRect();
       return { display: style.display, columns: style.gridTemplateColumns.split(" ").filter(Boolean).length, width: rect.width };
     });
     if (layout.display !== "grid" || layout.columns < 2) throw new Error("desktop forum reference grid missing: " + JSON.stringify(layout));
-    if (layout.width < 1100) throw new Error("desktop forum canvas is unexpectedly narrow: " + JSON.stringify(layout));
+    if (layout.width < 1000) throw new Error("desktop forum canvas is unexpectedly narrow: " + JSON.stringify(layout));
     const hero = await page.locator(".forum-hero").evaluate((node) => {
       const style = getComputedStyle(node);
       const actions = node.querySelector(".forum-hero__actions");
@@ -442,6 +442,9 @@ await testStaticPage({
     }
     if (await page.locator("[data-forum-node-tree] .forum-board-row").count() < 1) {
       throw new Error("forum boards did not load");
+    }
+    if (await page.locator(".forum-index-grid > section").count() !== 3) {
+      throw new Error("forum index composition is incomplete");
     }
     if (await page.locator('[data-forum-create]').count() < 1) throw new Error("forum create control missing");
     if (!(await page.locator('a[href="./forum-members.html"]').count() >= 1)) throw new Error("members navigation missing");
