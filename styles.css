@@ -2069,3 +2069,6 @@ html.js-ready .reveal.is-visible{opacity:1;transform:none}
 @media(prefers-reduced-motion:reduce){
   .forum-page *, .forum-user-page *, .topic-page *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
 }
+
+@media(max-width:760px){.nav-toggle{width:44px;height:44px;min-width:44px;min-height:44px}.nav>a{min-height:44px}}
+@media(max-width:700px){.forum-search__clear{min-width:44px;width:44px;min-height:44px}.forum-modal__buttons .button{min-height:46px}}
