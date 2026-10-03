@@ -356,7 +356,7 @@ if (!read("DOMAIN_MIGRATION.md").includes("https://nazerak.ru/cabinet.html")) fa
 const forumSurfaceFiles = ["forum.html","forum-category.html","forum-members.html","forum-search.html","topic.html","forum-user.html"];
 for (const file of forumSurfaceFiles) {
   const page = read(file);
-  if (!page.includes("styles.css?v=25")) fail.push(file + " styles cache revision is stale");
+  if (!page.includes("styles.css?v=26")) fail.push(file + " styles cache revision is stale");
   if (!page.includes("site-config.js?v=1")) fail.push(file + " site configuration include is missing");
   if (!page.includes('Content-Security-Policy')) fail.push(file + " CSP is missing");
   if (/\sstyle=/i.test(page) || page.includes("style-src-attr 'unsafe-inline'")) fail.push(file + " contains inline style/CSP allowance");
