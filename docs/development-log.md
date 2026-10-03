@@ -209,3 +209,12 @@ The first QA run after the reliability pass failed in the browser smoke test at 
 - The revision is committed to `main`, but visual acceptance is not complete.
 - The scenic hero artwork still awaits generation/integration.
 - Full QA and screenshot review are pending; no production deployment is claimed.
+
+
+## 2026-10-04 — desktop forum canvas correction v34
+
+- Follow-up audit found the shared `.container` capped the index at the global site width, so the 1360px forum canvas could not reach its intended desktop width.
+- Scoped a wider container to `body[data-forum]` only, retaining narrower reading widths on internal forum routes. Added explicit grid-column spans for the hero, search toolbar and status message.
+- Added a browser assertion at 1440px that the index uses a two-column CSS grid and has a canvas wider than 1100px. Existing 390px and 320px mobile checks remain.
+- Updated the forum stylesheet cache reference and QA expectation to v34.
+- v33 QA and its production deployment passed. v34 is a new follow-up revision; QA and deployment are pending until their workflows complete.
