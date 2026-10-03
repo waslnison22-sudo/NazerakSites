@@ -63,8 +63,8 @@
   const loadData=async()=>{
     setState("ЗАГРУЗКА","loading");
     const req=[
-      state.client.from("forum_node_directory").select("id,slug,name,description,sort_order,icon,accent_color,area_slug,posting_mode,node_type,parent_id,route_slug,parent_slug,parent_name,topic_count,post_count").order("sort_order",{ascending:true}).order("id",{ascending:true}),
-      state.client.from("forum_topic_list").select("id,slug,category_id,category_slug,category_route_slug,category_name,category_description,parent_name,author_public_id,author_name,author_avatar_url,primary_role_slug,primary_role_name,primary_role_badge,title,body,is_pinned,is_locked,is_archived,prefix,views_count,solution_state,created_at,updated_at,last_post_at,reply_count").order("is_pinned",{ascending:false}).order("last_post_at",{ascending:false}).limit(100),
+      state.client.from("forum_node_directory").select("id,slug,name,description,sort_order,icon,posting_mode,node_type,parent_id,route_slug,parent_name").order("sort_order",{ascending:true}).order("id",{ascending:true}),
+      state.client.from("forum_topic_list").select("id,category_id,category_name,parent_name,author_public_id,author_name,author_avatar_url,primary_role_slug,primary_role_badge,title,body,is_pinned,is_locked,prefix,last_post_at,reply_count").order("is_pinned",{ascending:false}).order("last_post_at",{ascending:false}).limit(100),
       state.client.from("forum_community_stats").select("member_count,online_count").maybeSingle()
     ];
     if(state.user)req.push(state.client.from("forum_my_permissions").select("can_publish_official,can_moderate_forum,can_manage_roles,can_manage_categories").maybeSingle());

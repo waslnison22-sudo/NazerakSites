@@ -13,8 +13,8 @@
     const slug=String(new URLSearchParams(location.search).get("slug")||"").toLowerCase();
     if(!slug)throw new Error("Раздел не указан.");
     const requests=[
-      state.client.from("forum_node_directory").select("id,slug,name,description,area_slug,sort_order,icon,accent_color,posting_mode,node_type,parent_id,route_slug,parent_slug,parent_name,topic_count,post_count").eq("route_slug",slug).maybeSingle(),
-      state.client.from("forum_topic_list").select("id,slug,category_id,category_name,category_route_slug,parent_name,area_slug,author_public_id,author_name,author_avatar_url,primary_role_slug,primary_role_name,primary_role_badge,title,body,is_pinned,is_locked,is_archived,prefix,created_at,last_post_at,reply_count").eq("category_route_slug",slug).order("is_pinned",{ascending:false}).order("last_post_at",{ascending:false}).limit(100)
+      state.client.from("forum_node_directory").select("id,name,description,posting_mode,parent_name").eq("route_slug",slug).maybeSingle(),
+      state.client.from("forum_topic_list").select("id,category_name,author_public_id,author_name,author_avatar_url,primary_role_slug,primary_role_name,primary_role_badge,title,body,is_pinned,is_locked,prefix,last_post_at,reply_count").eq("category_route_slug",slug).order("is_pinned",{ascending:false}).order("last_post_at",{ascending:false}).limit(100)
     ];
     if(state.user) requests.push(state.client.from("forum_my_permissions").select("can_publish_official,can_moderate_forum").maybeSingle());
     const [cat,topics,permissions]=await Promise.all(requests);
