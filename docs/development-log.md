@@ -242,3 +242,28 @@ The previous forum blocks were judged visually raw, so the next layer was rebuil
 
 ### Acceptance rule
 v35 is not considered visually finished until browser screenshots are checked at desktop and narrow mobile sizes. Generated scenic artwork for the hero remains a separate integration step.
+
+
+## 2026-10-04 — Forum visual cleanup and micro-error pass (v36)
+
+### Completed
+- Removed the visible forum readiness/status pill from the forum header. Runtime loading/error handling remains in JavaScript; the status control is now non-visual.
+- Reworked the forum hero composition: forum title and description stay anchored to the left, while the action buttons are moved directly beneath them into the lower-left area of the header.
+- Removed the empty-state copy that described the forum as ready; an empty forum now communicates the state through the heading only.
+- Removed per-category publication-access policy text from forum category pages. Permission logic remains enforced in JavaScript/Supabase and is not being weakened.
+- Removed the visual posting-mode label from forum index rows. The posting mode remains part of the data/permission flow.
+- Removed the empty-category ready-state copy.
+- Preserved mobile stacking and touch sizing.
+
+### Audit scope
+- Repository: `waslnison22-sudo/NazerakSites`
+- Branch: `main`
+- Base commit: `8e15381df442e5d7d777a396d85bcda3502cb55b`
+- Checked forum index/category markup, dynamic renderers, shared forum CSS and existing browser smoke coverage.
+- No authorization/RLS logic was changed; only explanatory UI was removed.
+
+### Release gates
+- Desktop header alignment.
+- 650/390/320px responsive layout and overflow.
+- Forum/category runtime rendering.
+- Existing QA/browser smoke must pass on the resulting commit before production acceptance.
