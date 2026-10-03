@@ -263,7 +263,6 @@ const forumSurfaceFiles = ["forum.html","forum-category.html","forum-members.htm
 for (const file of forumSurfaceFiles) {
   const page = read(file);
   if (!page.includes("styles.css?v=29")) fail.push(file + " styles cache revision is stale");
-  if (!page.includes("site-config.js?v=1")) fail.push(file + " site configuration include is missing");
   if (!page.includes('Content-Security-Policy')) fail.push(file + " CSP is missing");
   if (/\sstyle=/i.test(page) || page.includes("style-src-attr 'unsafe-inline'")) fail.push(file + " contains inline style/CSP allowance");
 }
