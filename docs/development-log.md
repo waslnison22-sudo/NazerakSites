@@ -91,3 +91,38 @@ This distinction prevents a valid code deployment from being reported as failed 
 - Changes are committed directly to `main` through the repository API.
 - The next required gate is the GitHub `NaZerak QA` run on the resulting HEAD.
 - No production success is claimed until that run and the production content check are observed.
+
+
+## 2026-10-03 — QA regression caught and corrected
+
+### Regression
+The first QA run after the reliability pass failed in the browser smoke test at the forum profile check. Root cause was introduced by the new timeout wrapper in `user.js`: the helper was referenced but had not actually been inserted because the source pattern did not match the compact current function.
+
+### Correction
+- Added the missing `withTimeout()` helper to `user.js`.
+- Re-ran the full QA pipeline.
+
+### Verified result
+- QA run `37109447974`: **success**.
+- Release checks: **success**.
+- Supabase runtime smoke: **success**.
+- Browser smoke: **success**, including:
+  - homepage desktop/mobile;
+  - forum index/mobile;
+  - official forum category;
+  - forum category;
+  - members;
+  - search;
+  - forum profile.
+
+## 2026-10-03 — production deployment after QA
+
+- Production deploy run: `37109492322`.
+- SFTP upload: **success**.
+- Obsolete public route cleanup: **success**.
+- Production content checks:
+  - `https://nazerak.ru/`: **HTTP 200 / NaZerak content confirmed**.
+  - `https://nazerak.ru/forum.html`: **HTTP 200 / NaZerak content confirmed**.
+- TLS check still reports:
+  `curl: (60) SSL certificate problem: self-signed certificate`.
+- Therefore the deployment is healthy at the content/SFTP level, but the public certificate chain is **still not trusted by the GitHub runner**. This remains an infrastructure issue to resolve in REG.RU; it is not marked fixed.
