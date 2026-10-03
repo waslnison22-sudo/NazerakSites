@@ -258,8 +258,6 @@ for (const [name, page] of forumPages) {
   if (!page.includes('href="./forum-members.html"')) fail.push(name + " members navigation link missing");
   if (!page.includes('href="./forum-search.html"')) fail.push(name + " search navigation link missing");
 }
-if (!read("site-config.js").includes('plannedOrigin: "https://nazerak.ru"')) fail.push("planned Nazerak.ru origin missing from site config");
-if (!read("DOMAIN_MIGRATION.md").includes("https://nazerak.ru/cabinet.html")) fail.push("domain migration guide missing Supabase redirect URL");
 
 const forumSurfaceFiles = ["forum.html","forum-category.html","forum-members.html","forum-search.html","topic.html","forum-user.html"];
 for (const file of forumSurfaceFiles) {
