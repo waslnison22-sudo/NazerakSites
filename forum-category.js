@@ -30,15 +30,26 @@
     document.querySelectorAll("[data-category-create]").forEach((button)=>{button.hidden=!canCreate;});    const count=qs("[data-category-result-count]");const n=state.topics.length;n===1?count.textContent="1 тема":n<5?count.textContent=n+" темы":count.textContent=n+" тем";
     const root=qs("[data-category-topic-list]");const empty=qs("[data-category-empty]");
     root.innerHTML=state.topics.map(t=>{
-      const avatar=safeUrl(t.author_avatar_url);const av=avatar?'<img src="'+escapeHtml(avatar)+'" alt="">':escapeHtml((t.author_name||"N").slice(0,1).toUpperCase());
-      const prefix=t.prefix?'<span class="forum-topic-row__prefix">'+escapeHtml(t.prefix)+'</span>':"";
-      const status=t.is_locked?'<span>ЗАКРЫТО</span>':t.is_pinned?'<span>ЗАКРЕПЛЕНО</span>':"";
+      const avatar=safeUrl(t.author_avatar_url);
+      const av=avatar?'<img src="'+escapeHtml(avatar)+'" alt="">':escapeHtml((t.author_name||"N").slice(0,1).toUpperCase());
+      const publicId=escapeHtml(t.author_public_id||"");
+      const tags='<div class="forum-thread-row__tags">'+
+        '<span>'+escapeHtml(t.category_name||"Форум")+'</span>'+
+        (t.prefix?'<span class="forum-topic-row__prefix">'+escapeHtml(t.prefix)+'</span>':"")+
+        (t.is_pinned?'<span>Закреплено</span>':"")+
+        (t.is_locked?'<span>Закрыто</span>':"")+
+      '</div>';
+      const author=publicId
+        ? '<a class="forum-user-link forum-thread-row__author" data-forum-user="'+publicId+'" href="./forum-user.html?id='+publicId+'"><span class="forum-avatar forum-avatar--small">'+av+'</span><span>'+escapeHtml(t.author_name||"Игрок NaZerak")+'</span></a>'
+        : '<span class="forum-thread-row__author"><span class="forum-avatar forum-avatar--small">'+av+'</span><span>'+escapeHtml(t.author_name||"Игрок NaZerak")+'</span></span>';
       return '<article class="forum-thread-row">'+
-        '<div class="forum-thread-row__icon">'+(t.is_pinned?"★":"›")+'</div>'+
-        '<div class="forum-thread-row__main"><a href="./topic.html?id='+encodeURIComponent(t.id)+'"><div class="forum-topic-row__tags"><span>'+escapeHtml(t.category_name)+'</span>'+prefix+status+'</div><h3>'+escapeHtml(t.title)+'</h3><p>'+escapeHtml(String(t.body||"").replace(/\s+/g," ").slice(0,150))+'</p></a>'+
-        '<a class="forum-user-link forum-role--'+escapeHtml(t.primary_role_slug||"player")+'" data-forum-user="'+escapeHtml(t.author_public_id||"")+'" href="./forum-user.html?id='+encodeURIComponent(t.author_public_id||"")+'"><span class="forum-avatar forum-avatar--small">'+av+'</span><span>'+escapeHtml(t.author_name||"Игрок NaZerak")+'</span><span class="forum-user-link__role">'+escapeHtml(t.primary_role_badge||"•")+" "+escapeHtml(t.primary_role_name||"Игрок")+'</span></a></div>'+
-        '<div class="forum-thread-row__replies"><strong>'+Number(t.reply_count||0)+'</strong><span>ответов</span></div>'+
-        '<div class="forum-thread-row__last"><time datetime="'+escapeHtml(t.last_post_at)+'">'+relative(t.last_post_at)+'</time></div>'+
+        '<div class="forum-thread-row__main"><a class="forum-thread-row__link" href="./topic.html?id='+encodeURIComponent(t.id)+'">'+
+          tags+
+          '<div class="forum-thread-row__title">'+escapeHtml(t.title)+'</div>'+
+          '<div class="forum-thread-row__meta">'+author+'<span aria-hidden="true">·</span><time datetime="'+escapeHtml(t.last_post_at||"")+'">'+relative(t.last_post_at)+'</time></div>'+
+        '</a></div>'+
+        '<div class="forum-thread-row__count"><strong>'+Number(t.reply_count||0)+'</strong><span>ответов</span></div>'+
+        '<div class="forum-thread-row__last"><strong>Последняя активность</strong><time datetime="'+escapeHtml(t.last_post_at||"")+'">'+relative(t.last_post_at)+'</time></div>'+
       '</article>';
     }).join("");
     empty.hidden=state.topics.length>0;
