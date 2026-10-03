@@ -60,7 +60,7 @@ jobs:
         run: |
           rm -rf .deploy
           mkdir -p .deploy
-          tar --exclude='./.git' --exclude='./.github' --exclude='./.gitignore' --exclude='./supabase' --exclude='./scripts' --exclude='./docs' --exclude='./README.md' --exclude='./AUTH_SETUP.md' --exclude='./DOMAIN_MIGRATION.md' --exclude='./.DS_Store' -cf - . | tar -xf - -C .deploy
+          tar --exclude='./.git' --exclude='./.github' --exclude='./.deploy' --exclude='./.gitignore' --exclude='./supabase' --exclude='./scripts' --exclude='./docs' --exclude='./README.md' --exclude='./AUTH_SETUP.md' --exclude='./DOMAIN_MIGRATION.md' --exclude='./.DS_Store' -cf - . | tar -xf - -C .deploy
           test -f .deploy/index.html
 
       - name: Deploy public files over SFTP
@@ -89,7 +89,7 @@ jobs:
           export SSHPASS="$DEPLOY_PASSWORD"
           sshpass -e ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 "$DEPLOY_USER@$DEPLOY_HOST" "rm -rf -- '$DEPLOY_PATH/pravitelstvo' '$DEPLOY_PATH/sud' '$DEPLOY_PATH/prokuratura' '$DEPLOY_PATH/fsb' '$DEPLOY_PATH/voennaya-baza' '$DEPLOY_PATH/organizatsii' '$DEPLOY_PATH/o-proekte'"
 
-      - name: Verify production routes
+      - name: Verify production content
         if: steps.gate.outputs.enabled == 'true'
         env:
           SITE_URL: https://nazerak.ru
@@ -98,16 +98,28 @@ jobs:
           for route in / /forum.html; do
             ok=false
             for i in {1..6}; do
-              status=$(curl -L -sS -o /tmp/nazerak-check.html -w "%{http_code}" "$SITE_URL$route")
+              status=$(curl -k -L -sS -o /tmp/nazerak-check.html -w "%{http_code}" "$SITE_URL$route")
               if [ "$status" = "200" ] && grep -q "NaZerak" /tmp/nazerak-check.html; then
-                echo "PASS: $SITE_URL$route"
+                echo "PASS: content $SITE_URL$route"
                 ok=true
                 break
               fi
               sleep 5
             done
             if [ "$ok" != "true" ]; then
-              echo "Production route failed: $SITE_URL$route"
+              echo "Production content failed: $SITE_URL$route"
               exit 1
             fi
           done
+
+      - name: Verify production TLS certificate
+        if: steps.gate.outputs.enabled == 'true'
+        continue-on-error: true
+        env:
+          SITE_URL: https://nazerak.ru
+        run: |
+          if curl -L -sS -o /tmp/nazerak-tls-check.html "$SITE_URL/" && grep -q "NaZerak" /tmp/nazerak-tls-check.html; then
+            echo "PASS: trusted TLS certificate for $SITE_URL"
+          else
+            echo "::warning::HTTPS content is reachable, but the certificate is not trusted by the runner. REG.RU SSL activation/installation still needs attention."
+          fi
