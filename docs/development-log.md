@@ -162,3 +162,19 @@ The first QA run after the reliability pass failed in the browser smoke test at 
 ### Verification
 - JavaScript source was re-fetched after the changes and the topic timeout wrapper was inspected for balanced Promise/timeout syntax.
 - Full GitHub QA for the final commit is required before considering these changes release-ready. Production deployment is not claimed for this hardening pass.
+
+
+## 2026-10-04 — forum reference layout and mobile resilience v32
+
+### Changes
+- Reworked the forum index composition into a desktop two-column layout: forum categories remain the primary column, with latest discussions and community resources in a supporting sidebar. The layout collapses to a single column below 1000px.
+- Kept category content as unified forum rows with separators rather than independent row cards, and reduced sidebar density to better match the approved reference.
+- Rebuilt mobile-specific sizing and wrapping rules for forum index, category, search, members, topic, profile and creation modal surfaces.
+- Increased touch targets, used 16px input text to avoid mobile browser zoom, constrained grid children to prevent overflow, allowed long names and topic content to wrap, and made the topic composer/modal fit within dynamic viewport height.
+- Added narrow-device refinements and disabled hover elevation on touch-only devices.
+- Bumped stylesheet cache revision to v32 across published HTML pages and updated static QA expectations.
+
+### Verification status
+- The stylesheet, affected page references and QA version expectation were updated in `main`.
+- Browser smoke includes a mobile horizontal-overflow assertion for forum pages; the v32 changes still require a completed GitHub QA run and visual review at narrow widths before release acceptance.
+- No production deployment is claimed.
