@@ -14,7 +14,7 @@
   const userAvatar=(u)=>{const m=u?.user_metadata||{};const url=safeUrl(m.avatar_url||m.picture);if(!url)return null;try{const host=new URL(url).hostname.toLowerCase();return host==="cdn.discordapp.com"||host==="media.discordapp.net"?url:null;}catch{return null;}};
   const withTimeout=(promise,ms,message)=>Promise.race([promise,new Promise((_,reject)=>window.setTimeout(()=>reject(new Error(message)),ms))]);
   const waitForClient=async()=>{for(let i=0;i<100;i+=1){if(window.NaZerakAuth?.client)return window.NaZerakAuth.client;await new Promise(r=>window.setTimeout(r,100));}return null;};
-  const syncAuthor=async()=>{if(!state.client||!state.user)return;const r=await state.client.from("forum_authors").upsert({id:state.user.id,display_name:userName(state.user),avatar_url:userAvatar(state.user)||null,updated_at:new Date().toISOString(),last_seen_at:new Date().toISOString()},{onConflict:"id"});if(r.error)console.warn("[NaZerak Forum] author sync:",r.error.message);};
+  const syncAuthor=async()=>{if(!state.client||!state.user)return false;const r=await state.client.from("forum_authors").upsert({id:state.user.id,display_name:userName(state.user),avatar_url:userAvatar(state.user)||null,updated_at:new Date().toISOString(),last_seen_at:new Date().toISOString()},{onConflict:"id"});if(r.error){console.warn("[NaZerak Forum] author sync:",r.error.message);return false;}return true;};
 
   const topicsFor=(id)=>state.topics.filter(t=>Number(t.category_id)===Number(id));
   const renderNodeTree=()=>{
@@ -95,7 +95,7 @@
     const node=state.nodes.find(n=>Number(n.id)===categoryId);
     if(!node||node.node_type!=="forum"){showMessage("Выбран недопустимый раздел.","error");return;}
     button.disabled=true;showMessage("");
-    await syncAuthor();
+    if(!(await syncAuthor())){showMessage("Не удалось сохранить форумный профиль. Попробуй ещё раз.","error");return;}
     const r=await state.client.from("forum_topics").insert({category_id:categoryId,author_id:state.user.id,title,body}).select("id").single();
     button.disabled=false;
     if(r.error||!r.data){showMessage(r.error?.message||"Не удалось создать тему.","error");return;}
