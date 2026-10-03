@@ -1,38 +1,13 @@
 (() => {
-  "use strict";
-  const qs=(s,r=document)=>r.querySelector(s);
-  const escapeHtml=(v)=>String(v==null?"":v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-  const formatDate=(v)=>{const d=new Date(v);if(Number.isNaN(d.getTime()))return"—";return new Intl.DateTimeFormat("ru-RU",{day:"2-digit",month:"long",year:"numeric"}).format(d)};
-  const showMessage=(m,k)=>{const n=qs("[data-user-message]");if(!n)return;n.textContent=m;n.dataset.kind=k||"error";n.hidden=!m};
-  const waitForClient=async()=>{for(let i=0;i<100;i+=1){const c=window.NaZerakAuth&&window.NaZerakAuth.client;if(c)return c;await new Promise(r=>window.setTimeout(r,100))}return null};
-  const withTimeout=async(promise,ms,message)=>{let timer;try{return await Promise.race([promise,new Promise((_,reject)=>{timer=window.setTimeout(()=>reject(new Error(message)),ms);})]);}finally{window.clearTimeout(timer);}};
-  const init=async()=>{
-    const publicId=new URLSearchParams(location.search).get("id");
-    if(!publicId){showMessage("Профиль не указан.");return;}
-    const client=await waitForClient();
-    if(!client){showMessage("Не удалось подключиться к форуму.");return;}
-    let result;try{result=await withTimeout(client.from("forum_author_directory").select("public_id,display_name,avatar_url,bio,minecraft_username,joined_at,last_seen_at,topic_count,post_count,role_slugs,primary_role_slug,primary_role_name,primary_role_badge").eq("public_id",publicId).maybeSingle(),8000,"Загрузка профиля превысила 8 секунд.");}catch(e){showMessage(e instanceof Error?e.message:"Не удалось загрузить профиль.");return;}
-    if(result.error){showMessage("Не удалось загрузить профиль. Попробуй обновить страницу.");return;}if(!result.data){showMessage("Профиль не найден.");return;}
-    const p=result.data;
-    qs("[data-user-profile]").hidden=false;
-    qs("[data-user-content]").hidden=false;
-    qs("[data-user-name]").textContent=p.display_name||"Игрок NaZerak";
-    qs("[data-user-bio]").textContent=p.bio||"Участник форума NaZerak.";
-    qs("[data-user-minecraft]").textContent=p.minecraft_username||"Не указан";
-    qs("[data-user-joined]").textContent=formatDate(p.joined_at);
-    qs("[data-user-lastseen]").textContent=p.last_seen_at?formatDate(p.last_seen_at):"—";
-    qs("[data-user-topic-count]").textContent=String(p.topic_count||0);
-    qs("[data-user-post-count]").textContent=String(p.post_count||0);
-    qs("[data-user-initial]").textContent=(p.display_name||"N").slice(0,1).toUpperCase();
-    const img=qs("[data-user-avatar]");
-    if(p.avatar_url){img.hidden=false;img.src=p.avatar_url;img.alt="";}
-    const roles=Array.isArray(p.role_slugs)?p.role_slugs:[];
-    qs("[data-user-roles]").innerHTML=roles.map(r=>window.NaZerakForumUI.roleBadge(r.slug,r.name,r.badge)).join("");
-    let topics;try{topics=await withTimeout(client.from("forum_topic_list").select("id,title,category_name,last_post_at,reply_count,is_pinned,author_public_id,primary_role_slug").eq("author_public_id",publicId).order("last_post_at",{ascending:false}).limit(10),8000,"Загрузка тем профиля превысила 8 секунд.");}catch(e){showMessage(e instanceof Error?e.message:"Не удалось загрузить темы профиля.");return;}
-    const root=qs("[data-user-topics]");
-    if(topics.error){root.innerHTML='<div class="forum-user__empty">Не удалось загрузить последние темы.</div>';return;}if(!topics.data||!topics.data.length){root.innerHTML='<div class="forum-user__empty">Пока нет опубликованных тем.</div>';return;}
-    root.innerHTML=topics.data.map(t=>'<a class="forum-user-topic" href="./topic.html?id='+encodeURIComponent(t.id)+'"><span class="forum-user-topic__category">'+escapeHtml(t.category_name)+'</span><strong>'+escapeHtml(t.title)+'</strong><span>'+Number(t.reply_count||0)+' ответов · '+formatDate(t.last_post_at)+'</span></a>').join("");
-    document.title="NaZerak — "+(p.display_name||"Профиль");
-  };
-  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",()=>void init(),{once:true});else void init();
+  'use strict';
+  const state = { client: null, profile: null };
+  const qs = (s, r = document) => r.querySelector(s);
+  const escapeHtml = (v) => String(v == null ? '' : v).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[c]));
+  const safeUrl = (v) => { try { const u = new URL(String(v || '')); return /^https?:$/.test(u.protocol) ? u.href : ''; } catch { return ''; } };
+  const msg = (m, k = 'info') => { const n = qs('[data-user-message]'); if (!n) return; n.textContent = m; n.dataset.kind = k; n.hidden = !m; };
+  const formatDate = (v) => { const d = new Date(v); if (Number.isNaN(d.getTime())) return '—'; return new Intl.DateTimeFormat('ru-RU', { day: '2-digit', month: 'short', year: 'numeric' }).format(d); };
+  const relative = (v) => { const d = new Date(v), diff = Date.now() - d.getTime(); if (Number.isNaN(d.getTime())) return '—'; const m = Math.max(0, Math.floor(diff / 60000)); if (m < 1) return 'только что'; if (m < 60) return m + 'м'; if (m < 1440) return Math.floor(m / 60) + 'ч'; return Math.floor(m / 1440) + 'д'; };
+  const load = async () => { if (!state.client) return; const id = String(new URLSearchParams(location.search).get('id') || ''); if (!id) throw new Error('Пользователь не указан'); const r = await state.client.from('forum_author_directory').select('*').eq('public_id', id).maybeSingle(); if (r.error) throw r.error; if (!r.data) throw new Error('Пользователь не найден'); state.profile = r.data; qs('[data-user-profile]').hidden = false; qs('[data-user-content]').hidden = false; qs('[data-user-name]').textContent = state.profile.display_name || 'Игрок'; qs('[data-user-bio]').textContent = state.profile.bio || 'Участник форума NaZerak'; qs('[data-user-minecraft]').textContent = state.profile.minecraft_username || 'Не указан'; qs('[data-user-joined]').textContent = formatDate(state.profile.created_at); qs('[data-user-lastseen]').textContent = relative(state.profile.last_seen_at) + ' назад'; qs('[data-user-topic-count]').textContent = Number(state.profile.topic_count || 0); qs('[data-user-post-count]').textContent = Number(state.profile.post_count || 0); const avatar = safeUrl(state.profile.avatar_url); if (avatar) { const img = qs('[data-user-avatar]'); if (img) { img.src = avatar; img.hidden = false; } } else { qs('[data-user-initial]').textContent = escapeHtml((state.profile.display_name || 'N').slice(0, 1).toUpperCase()); } const roles = state.profile.role_slugs || []; qs('[data-user-roles]').innerHTML = roles.slice(0, 3).map(r => `<span class="forum-role forum-role--${escapeHtml(r.slug || 'player')}">● ${escapeHtml(r.name || 'Игрок')}</span>`).join(''); const topics = await state.client.from('forum_topic_list').select('id,title,category_name,created_at,reply_count').eq('author_public_id', id).order('created_at', { ascending: false }).limit(10); if (!topics.error && topics.data) { qs('[data-user-topics]').innerHTML = topics.data.map(t => `<article class="forum-topic-row"><div class="forum-topic-row__mark">›</div><div class="forum-topic-row__copy"><div class="forum-topic-row__tags"><span>${escapeHtml(t.category_name)}</span></div><a href="./topic.html?id=${encodeURIComponent(t.id)}" style="color:inherit;text-decoration:none"><h3>${escapeHtml(t.title)}</h3></a><div class="forum-topic-row__author"><time datetime="${escapeHtml(t.created_at)}">${formatDate(t.created_at)}</time></div></div><div class="forum-topic-row__replies"><strong>${Number(t.reply_count || 0)}</strong><span>ответов</span></div></article>`).join(''); } document.title = 'NaZerak — ' + (state.profile.display_name || 'Пользователь'); };
+  const init = async () => { state.client = await (async () => { for (let i = 0; i < 100; i++) { if (window.NaZerakAuth?.client) return window.NaZerakAuth.client; await new Promise(r => setTimeout(r, 100)); } return null; })(); if (!state.client) { msg('Не удалось подключиться к форуму', 'error'); return; } try { await load(); } catch (e) { msg(e.message, 'error'); } };
+  if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', () => void init(), { once: true }); } else { void init(); }
 })();
