@@ -418,10 +418,17 @@ await testStaticPage({
 
 await testStaticPage({
   path: "/forum.html",
-  name: "forum index",
-  viewport: { width: 1280, height: 900 },
+  name: "forum index desktop",
+  viewport: { width: 1440, height: 900 },
   check: async (page) => {
     if (!(await page.locator("h1").textContent()).includes("Форум")) throw new Error("forum heading missing");
+    const layout = await page.locator(".forum").evaluate((node) => {
+      const style = getComputedStyle(node);
+      const rect = node.getBoundingClientRect();
+      return { display: style.display, columns: style.gridTemplateColumns.split(" ").filter(Boolean).length, width: rect.width };
+    });
+    if (layout.display !== "grid" || layout.columns < 2) throw new Error("desktop forum reference grid missing: " + JSON.stringify(layout));
+    if (layout.width < 1100) throw new Error("desktop forum canvas is unexpectedly narrow: " + JSON.stringify(layout));
     if (await page.locator("[data-forum-node-tree] .forum-node-section").count() < 1) {
       throw new Error("forum sections did not load");
     }
