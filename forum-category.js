@@ -6,6 +6,7 @@
   const safeUrl=(v)=>{try{const u=new URL(String(v||""));return /^https?:$/.test(u.protocol)?u.href:"";}catch{return"";}};
   const userName=(u)=>{const m=u?.user_metadata||{};return String(m.global_name||m.full_name||m.name||"Игрок NaZerak").trim().slice(0,64)||"Игрок NaZerak";};
   const userAvatar=(u)=>safeUrl(u?.user_metadata?.avatar_url||u?.user_metadata?.picture);
+  const withTimeout=(promise,ms,message)=>Promise.race([promise,new Promise((_,reject)=>window.setTimeout(()=>reject(new Error(message)),ms))]);
   const wait=async()=>{for(let i=0;i<100;i++){if(window.NaZerakAuth?.client)return window.NaZerakAuth.client;await new Promise(r=>setTimeout(r,100));}return null;};
   const msg=(m,k="info")=>{const n=qs("[data-category-message]");if(!n)return;n.textContent=m;n.dataset.kind=k;n.hidden=!m;};
   const relative=(v)=>{const d=new Date(v),diff=Date.now()-d.getTime();if(Number.isNaN(d.getTime()))return"—";const m=Math.max(0,Math.floor(diff/60000));if(m<1)return"только что";if(m<60)return m+" мин назад";const h=Math.floor(m/60);if(h<24)return h+" ч назад";const day=Math.floor(h/24);if(day<7)return day+" дн назад";return new Intl.DateTimeFormat("ru-RU",{day:"2-digit",month:"short",year:"numeric"}).format(d);};
@@ -17,7 +18,7 @@
       state.client.from("forum_topic_list").select("id,category_name,author_public_id,author_name,author_avatar_url,primary_role_slug,primary_role_name,primary_role_badge,title,body,is_pinned,is_locked,prefix,last_post_at,reply_count").eq("category_route_slug",slug).order("is_pinned",{ascending:false}).order("last_post_at",{ascending:false}).limit(100)
     ];
     if(state.user) requests.push(state.client.from("forum_my_permissions").select("can_publish_official,can_moderate_forum").maybeSingle());
-    const [cat,topics,permissions]=await Promise.all(requests);
+    const [cat,topics,permissions]=await withTimeout(Promise.all(requests),10000,"Загрузка раздела превысила 10 секунд. Попробуй обновить страницу.");
     if(cat.error)throw new Error(cat.error.message);if(!cat.data)throw new Error("Раздел не найден.");
     if(topics.error)throw new Error(topics.error.message); if(permissions?.error) console.warn("[NaZerak Forum] permission lookup:",permissions.error.message);
     state.category=cat.data;state.topics=topics.data||[];state.permissions=permissions?.data||null;
@@ -61,6 +62,6 @@
     const r=await state.client.from("forum_topics").insert({category_id:state.category.id,author_id:state.user.id,title,body}).select("id").single();
     button.disabled=false;if(r.error){msg(r.error.message,"error");return;}location.href="./topic.html?id="+encodeURIComponent(r.data.id);
   };
-  const init=async()=>{state.client=await wait();if(!state.client){msg("Не удалось подключиться к форуму.","error");return;}state.user=(await state.client.auth.getSession()).data?.session?.user||null;qs("[data-category-create]")?.addEventListener("click",()=>state.user?qs("[data-category-modal]")?.showModal():location.href="./cabinet.html");qs("[data-category-submit]")?.addEventListener("click",create);try{await load();}catch(e){msg(e instanceof Error?e.message:"Не удалось загрузить раздел.","error");}};
+  const init=async()=>{state.client=await wait();if(!state.client){msg("Не удалось подключиться к форуму.","error");return;}try{const session=await withTimeout(state.client.auth.getSession(),8000,"");state.user=session.data?.session?.user||null;}catch{state.user=window.NaZerakAuth?.user||null;}qs("[data-category-create]")?.addEventListener("click",()=>state.user?qs("[data-category-modal]")?.showModal():location.href="./cabinet.html");qs("[data-category-submit]")?.addEventListener("click",create);try{await load();}catch(e){msg(e instanceof Error?e.message:"Не удалось загрузить раздел.","error");}};
   if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",()=>void init(),{once:true});else void init();
 })();
