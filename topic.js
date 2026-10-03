@@ -8,15 +8,16 @@
   const userName=(u)=>{const m=u&&u.user_metadata||{};return String(m.global_name||m.full_name||m.name||m.user_name||"Игрок NaZerak").trim().slice(0,64)||"Игрок NaZerak";};
   const userAvatar=(u)=>safeUrl(u&&u.user_metadata&&(u.user_metadata.avatar_url||u.user_metadata.picture));
   const showMessage=(m,k)=>{const n=qs("[data-topic-message]");if(!n)return;n.textContent=m;n.dataset.kind=k||"info";n.hidden=!m;};
+  const withTimeout=(promise,ms,message)=>Promise.race([promise,new Promise((_,reject)=>window.setTimeout(()=>reject(new Error(message)),ms))]);
   const waitForClient=async()=>{for(let i=0;i<100;i+=1){const c=window.NaZerakAuth&&window.NaZerakAuth.client;if(c)return c;await new Promise(r=>window.setTimeout(r,100));}return null;};
   const syncAuthor=async()=>{if(!state.client||!state.user)return;await state.client.from("forum_authors").upsert({id:state.user.id,display_name:userName(state.user),avatar_url:userAvatar(state.user)||null,last_seen_at:new Date().toISOString()},{onConflict:"id"});};
   const loadTopic=async()=>{
     const id=Number(new URLSearchParams(window.location.search).get("id"));
     if(!Number.isSafeInteger(id)||id<1)throw new Error("Некорректная тема форума.");
-    const results=await Promise.all([
+    const results=await withTimeout(Promise.all([
       state.client.from("forum_topic_detail").select("id,slug,category_id,category_slug,category_route_slug,category_name,parent_name,author_public_id,author_name,author_avatar_url,primary_role_slug,primary_role_name,primary_role_badge,title,body,is_pinned,is_locked,is_archived,prefix,views_count,solution_state,created_at,updated_at,last_post_at,reply_count").eq("id",id).maybeSingle(),
       state.client.from("forum_posts").select("id,topic_id,body,created_at,updated_at,edited_at,author_public_id,author_display_name,author_avatar_url,author_role_slug,author_role_name,author_role_badge").eq("topic_id",id).order("created_at",{ascending:true})
-    ]);
+    ]),10000,"Загрузка темы превысила 10 секунд. Попробуй обновить страницу.");
     if(results[0].error)throw new Error(results[0].error.message);
     if(!results[0].data)throw new Error("Тема не найдена или была удалена.");
     if(results[1].error)throw new Error(results[1].error.message);
@@ -63,7 +64,7 @@
   const init=async()=>{
     state.client=await waitForClient();
     if(!state.client){showMessage("Форум не смог подключиться к базе данных.","error");return;}
-    const session=await state.client.auth.getSession();
+    let session=null;try{session=await withTimeout(state.client.auth.getSession(),8000,"");}catch{}
     state.user=session.data&&session.data.session&&session.data.session.user||null;
     if(state.user)await syncAuthor();
     qs("[data-topic-reply-submit]")&&qs("[data-topic-reply-submit]").addEventListener("click",reply);
