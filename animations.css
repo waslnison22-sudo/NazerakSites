@@ -1,0 +1,266 @@
+/* =========================================================
+   NAZERAK ANIMATIONS & TRANSITIONS
+   Modern, performant CSS animations with GPU acceleration
+   ========================================================= */
+
+:root {
+  --ease-out-cubic: cubic-bezier(0.215, 0.61, 0.355, 1);
+  --ease-in-out-expo: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --ease-out-back: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --anim-short: 200ms;
+  --anim-medium: 400ms;
+  --anim-long: 600ms;
+}
+
+/* Fade + Slide In - Entry animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Scale animations for cards */
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Pulse and shimmer for loading states */
+@keyframes shimmerLoad {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+@keyframes gentle-pulse {
+  0%, 100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* Hover elevation effect */
+@keyframes liftHover {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-3px);
+  }
+}
+
+/* Forum row hover glow */
+@keyframes rowGlow {
+  from {
+    background-color: transparent;
+  }
+  to {
+    background-color: rgba(255, 41, 66, 0.04);
+  }
+}
+
+/* Spinner for loading indicators */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Text highlight pulse */
+@keyframes highlightPulse {
+  0%, 100% {
+    background-color: transparent;
+  }
+  50% {
+    background-color: rgba(255, 41, 66, 0.08);
+  }
+}
+
+/* Apply animations to common elements */
+
+/* Forum topic rows - stagger effect */
+.forum-topic-row {
+  animation: fadeInUp var(--anim-medium) var(--ease-out-cubic) backwards;
+  will-change: transform, opacity;
+}
+
+.forum-topic-row:nth-child(1) { animation-delay: 0ms; }
+.forum-topic-row:nth-child(2) { animation-delay: 50ms; }
+.forum-topic-row:nth-child(3) { animation-delay: 100ms; }
+.forum-topic-row:nth-child(4) { animation-delay: 150ms; }
+.forum-topic-row:nth-child(5) { animation-delay: 200ms; }
+.forum-topic-row:nth-child(n+6) { animation-delay: 250ms; }
+
+/* Smooth hover effect */
+.forum-topic-row:hover {
+  animation: rowGlow var(--anim-short) var(--ease-out-cubic) forwards;
+}
+
+/* Feature cards entry */
+.feature-card {
+  animation: fadeInUp var(--anim-medium) var(--ease-out-cubic) backwards;
+  will-change: transform;
+}
+
+.feature-card:nth-child(1) { animation-delay: 0ms; }
+.feature-card:nth-child(2) { animation-delay: 80ms; }
+.feature-card:nth-child(3) { animation-delay: 160ms; }
+
+/* Button interactions */
+.button {
+  transition: 
+    background-color var(--anim-short) var(--ease-out-cubic),
+    border-color var(--anim-short) var(--ease-out-cubic),
+    transform var(--anim-short) var(--ease-out-cubic),
+    box-shadow var(--anim-short) var(--ease-out-cubic);
+  will-change: transform;
+}
+
+.button:active {
+  transform: scale(0.98);
+}
+
+/* Forum modal smooth entrance */
+.forum-modal {
+  animation: scaleIn var(--anim-medium) var(--ease-out-back);
+}
+
+.forum-modal::backdrop {
+  animation: fadeIn var(--anim-short) var(--ease-out-cubic);
+}
+
+/* Form fields focus state */
+.forum-form-field input,
+.forum-form-field textarea,
+.forum-form-field select {
+  transition: 
+    border-color var(--anim-short) var(--ease-out-cubic),
+    box-shadow var(--anim-short) var(--ease-out-cubic),
+    background-color var(--anim-short) var(--ease-out-cubic);
+}
+
+/* Loading skeleton pulse effect */
+.forum-loading-row span {
+  animation: shimmerLoad 1.6s linear infinite;
+  background-size: 1000px 100%;
+}
+
+/* Scroll progress bar animation */
+.scroll-progress span {
+  transition: width var(--anim-short) ease-out;
+  will-change: width;
+}
+
+/* Navigation link active state */
+.nav a {
+  transition: 
+    color var(--anim-short) var(--ease-out-cubic),
+    background-color var(--anim-short) var(--ease-out-cubic),
+    border-color var(--anim-short) var(--ease-out-cubic);
+}
+
+/* Avatar images fade in */
+.forum-avatar img,
+.account-avatar img {
+  animation: fadeIn var(--anim-medium) var(--ease-out-cubic);
+}
+
+/* Account profile card animation */
+.account-profile-card {
+  animation: fadeInUp var(--anim-medium) var(--ease-out-cubic);
+}
+
+/* Hero reveal animation */
+.hero__content {
+  animation: fadeInUp var(--anim-long) var(--ease-out-cubic);
+}
+
+.hero-visual-wrap {
+  animation: fadeInDown var(--anim-long) var(--ease-out-cubic);
+}
+
+/* Stagger animations for multiple elements */
+@for $i from 1 through 6 {
+  .reveal:nth-child(#{$i}) {
+    animation-delay: calc(#{$i} * 50ms);
+  }
+}
+
+/* Disable animations for users preferring reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  
+  .forum-topic-row { animation: none; }
+  .feature-card { animation: none; }
+  .button { transition: none; }
+  .forum-modal { animation: none; }
+  .scroll-progress span { transition: none; }
+}
+
+/* Optimizations for performance */
+.will-animate {
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Smooth scrolling for navigation */
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
