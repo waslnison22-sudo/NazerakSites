@@ -1,6 +1,6 @@
 import { chromium } from "playwright";
 
-const BASE = (process.env.NAZERAK_BASE_URL || "https://waslnison22-sudo.github.io/NazerakSites").replace(/\/$/, "");
+const BASE = (process.env.NAZERAK_BASE_URL || "http://127.0.0.1:4173").replace(/\/$/, "");
 const TIMEOUT = 20000;
 
 const attachDiagnostics = (page, name) => {

@@ -29,7 +29,7 @@ jobs:
         id: gate
         run: |
           if [ "$DEPLOY_ENABLED" != "true" ]; then
-            echo "Production deploy is disabled. Set DEPLOY_ENABLED=true when DNS, HTTPS and hosting credentials are ready."
+            echo "Production deploy is disabled. Set DEPLOY_ENABLED=true when hosting credentials are ready."
             echo "enabled=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
@@ -54,10 +54,6 @@ jobs:
           test -n "$DEPLOY_USER" || { echo "DEPLOY_USER is not configured"; exit 1; }
           test -n "$DEPLOY_PATH" || { echo "DEPLOY_PATH is not configured"; exit 1; }
           test -n "$DEPLOY_PASSWORD" || { echo "DEPLOY_PASSWORD is not configured"; exit 1; }
-
-      - name: Prepare production domain metadata
-        if: steps.gate.outputs.enabled == 'true'
-        run: node scripts/prepare-production.mjs
 
       - name: Generate public route pages
         if: steps.gate.outputs.enabled == 'true'

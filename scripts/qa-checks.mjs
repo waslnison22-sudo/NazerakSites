@@ -223,10 +223,10 @@ for (const [name, page] of [
 if (!read("404.html").includes("styles.css?v=29")) fail.push("404.html styles cache version is stale");
 const sitemap = read("sitemap.xml");
 if (sitemap.includes("cabinet.html") || sitemap.includes("forum.html")) fail.push("sitemap contains a noindex page");
-if (!sitemap.includes("https://waslnison22-sudo.github.io/NazerakSites/")) fail.push("sitemap homepage URL is missing");
+if (!sitemap.includes("https://nazerak.ru/")) fail.push("sitemap homepage URL is missing");
 const robots = read("robots.txt");
 if (!robots.includes("Disallow: /cabinet.html") || !robots.includes("Disallow: /forum.html") || !robots.includes("Disallow: /topic.html") || !robots.includes("Disallow: /forum-user.html") || !robots.includes("Disallow: /forum-category.html") || !robots.includes("Disallow: /forum-members.html") || !robots.includes("Disallow: /forum-search.html")) fail.push("robots must block all noindex account/forum routes");
-if (!robots.includes("Sitemap: https://waslnison22-sudo.github.io/NazerakSites/sitemap.xml")) fail.push("robots sitemap URL is missing");
+if (!robots.includes("Sitemap: https://nazerak.ru/sitemap.xml")) fail.push("robots sitemap URL is missing");
 
 
 if (!index.includes("script.js") || !cabinet.includes("script.js") || !read("forum.html").includes("script.js")) {
@@ -390,8 +390,8 @@ for (const token of [
   if (!schema.includes(token)) fail.push(`schema guard missing: ${token}`);
 }
 
-if (!index.includes('<link rel="canonical" href="https://waslnison22-sudo.github.io/NazerakSites/">')) fail.push("homepage canonical URL is missing");
-if (!index.includes('<meta property="og:url" content="https://waslnison22-sudo.github.io/NazerakSites/">')) fail.push("homepage og:url is missing");
+if (!index.includes('<link rel="canonical" href="https://nazerak.ru/">')) fail.push("homepage canonical URL is missing");
+if (!index.includes('<meta property="og:url" content="https://nazerak.ru/">')) fail.push("homepage og:url is missing");
 if (!index.includes('<meta name="twitter:card" content="summary">')) fail.push("homepage twitter card is missing");
 if (index.includes('class="button button--primary magnetic"') || index.includes(' class="button button--ghost magnetic"')) fail.push("dead magnetic classes remain on homepage");
 if (script.includes("isTouch")) fail.push("unused touch detection remains");
@@ -429,7 +429,3 @@ if (fail.length) {
 console.log("NaZerak QA PASSED");
 for (const item of info) console.log(" - " + item);
 
-const routesSource = read("site-routes.js");
-if (!routesSource.includes('government: "pravitelstvo"')) fail.push("government public route helper is missing");
-if (!read("scripts/generate-public-routes.mjs").includes("JSON.parse")) fail.push("public route generator manifest parser is missing");
-if (!routesSource.includes('options.absolute ?')) fail.push("absolute route helper is missing");

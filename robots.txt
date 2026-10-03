@@ -8,4 +8,4 @@ Disallow: /forum-search.html
 Disallow: /forum-members.html
 Disallow: /forum-category.html
 
-Sitemap: https://waslnison22-sudo.github.io/NazerakSites/sitemap.xml
+Sitemap: https://nazerak.ru/sitemap.xml

@@ -9,7 +9,7 @@ permissions:
   contents: read
 
 env:
-  NAZERAK_BASE_URL: http://127.0.0.1:4173/NazerakSites
+  NAZERAK_BASE_URL: http://127.0.0.1:4173
 
 concurrency:
   group: nazerak-qa-${{ github.ref }}
@@ -35,7 +35,7 @@ jobs:
         run: node scripts/runtime-smoke.mjs
       - name: Start local production server for browser smoke
         run: |
-          python3 -m http.server 4173 --directory .. > /tmp/nazerak-http.log 2>&1 &
+          python3 -m http.server 4173 --directory . > /tmp/nazerak-http.log 2>&1 &
           echo $! > /tmp/nazerak-http.pid
           for i in {1..18}; do
             if curl -fsSL "$NAZERAK_BASE_URL/index.html" | grep -q "NaZerak"; then
