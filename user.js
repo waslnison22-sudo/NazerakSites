@@ -5,6 +5,7 @@
   const formatDate=(v)=>{const d=new Date(v);if(Number.isNaN(d.getTime()))return"—";return new Intl.DateTimeFormat("ru-RU",{day:"2-digit",month:"long",year:"numeric"}).format(d)};
   const showMessage=(m,k)=>{const n=qs("[data-user-message]");if(!n)return;n.textContent=m;n.dataset.kind=k||"error";n.hidden=!m};
   const waitForClient=async()=>{for(let i=0;i<100;i+=1){const c=window.NaZerakAuth&&window.NaZerakAuth.client;if(c)return c;await new Promise(r=>window.setTimeout(r,100))}return null};
+  const withTimeout=async(promise,ms,message)=>{let timer;try{return await Promise.race([promise,new Promise((_,reject)=>{timer=window.setTimeout(()=>reject(new Error(message)),ms);})]);}finally{window.clearTimeout(timer);}};
   const init=async()=>{
     const publicId=new URLSearchParams(location.search).get("id");
     if(!publicId){showMessage("Профиль не указан.");return;}
