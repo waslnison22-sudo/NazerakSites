@@ -429,6 +429,14 @@ await testStaticPage({
     });
     if (layout.display !== "grid" || layout.columns < 2) throw new Error("desktop forum reference grid missing: " + JSON.stringify(layout));
     if (layout.width < 1100) throw new Error("desktop forum canvas is unexpectedly narrow: " + JSON.stringify(layout));
+    const hero = await page.locator(".forum-hero").evaluate((node) => {
+      const style = getComputedStyle(node);
+      const actions = node.querySelector(".forum-hero__actions");
+      return { alignItems: style.alignItems, actionAlign: actions ? getComputedStyle(actions).alignSelf : "" };
+    });
+    if (hero.alignItems !== "flex-start" || hero.actionAlign !== "flex-start") {
+      throw new Error("forum hero is not left aligned: " + JSON.stringify(hero));
+    }
     if (await page.locator("[data-forum-node-tree] .forum-node-section").count() < 1) {
       throw new Error("forum sections did not load");
     }
@@ -500,6 +508,7 @@ await testStaticPage({
       for (const selector of [".forum-thread-row__main",".forum-thread-row__title",".forum-thread-row__meta",".forum-thread-row__count",".forum-thread-row__last"]) {
         if (await row.locator(selector).count() < 1) throw new Error("category row structure missing: " + selector);
       }
+      if (await row.locator("a a").count()) throw new Error("category row contains nested links");
     }
   }
 });
