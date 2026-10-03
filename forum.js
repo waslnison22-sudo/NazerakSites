@@ -14,7 +14,7 @@
   const userAvatar=(u)=>{const m=u?.user_metadata||{};const url=safeUrl(m.avatar_url||m.picture);if(!url)return null;try{const host=new URL(url).hostname.toLowerCase();return host==="cdn.discordapp.com"||host==="media.discordapp.net"?url:null;}catch{return null;}};
   const withTimeout=(promise,ms,message)=>Promise.race([promise,new Promise((_,reject)=>window.setTimeout(()=>reject(new Error(message)),ms))]);
   const waitForClient=async()=>{for(let i=0;i<100;i+=1){if(window.NaZerakAuth?.client)return window.NaZerakAuth.client;await new Promise(r=>window.setTimeout(r,100));}return null;};
-  const syncAuthor=async()=>{if(!state.client||!state.user)return;const r=await state.client.from("forum_authors").upsert({id:state.user.id,display_name:userName(state.user),avatar_url:userAvatar(state.user),last_seen_at:new Date().toISOString()},{onConflict:"id"});if(r.error)console.warn("[NaZerak Forum] author sync:",r.error.message);};
+  const syncAuthor=async()=>{if(!state.client||!state.user)return;const r=await state.client.from("forum_authors").upsert({id:state.user.id,display_name:userName(state.user),avatar_url:userAvatar(state.user)||null,updated_at:new Date().toISOString()},{onConflict:"id"});if(r.error)console.warn("[NaZerak Forum] author sync:",r.error.message);};
 
   const topicsFor=(id)=>state.topics.filter(t=>Number(t.category_id)===Number(id));
   const renderNodeTree=()=>{
