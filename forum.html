@@ -4,14 +4,12 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#07070a">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://unpkg.com; connect-src 'self' https://ujlbyzvdsncvqbrhasuw.supabase.co; img-src 'self' data: https:; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://unpkg.com; font-src 'self' data:; frame-ancestors 'none'; object-src 'none'; base-uri 'self'">
-  <meta name="description" content="NaZerak — официальный форум проекта. Правила, государственные структуры, игровой мир, обращения и новости.">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://unpkg.com; connect-src 'self' https://ujlbyzvdsncvqbrhasuw.supabase.co; img-src 'self' data: https://cdn.discordapp.com https://media.discordapp.net; style-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; frame-src 'none'; form-action 'self';">
+  <meta name="description" content="NaZerak — официальный форум проекта. Правила, государственные структуры, игровой мир, обращения, развитие и сообщество.">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <meta name="robots" content="noindex,nofollow,noarchive">
   <link rel="icon" href="./favicon.svg?v=5" type="image/svg+xml">
   <link rel="stylesheet" href="./styles.css?v=36">
-  <link rel="stylesheet" href="./animations.css?v=2">
-  <link rel="stylesheet" href="./forum-styles.css?v=2">
   <title>NaZerak — форум</title>
 </head>
 <body data-forum>
@@ -43,9 +41,9 @@
         <div class="forum-hero__copy">
           <span class="section-kicker">NAZERAK / FORUM</span>
           <h1>Форум<span>.</span></h1>
-          <p>Единое пространство проекта: официальная информация, государственные структуры, игровой мир, обращения и новости сообщества.</p>
+          <p>Единое пространство проекта: официальная информация, государственные структуры, игровой мир, обращения, развитие и общение.</p>
         </div>
-        <div class="forum-hero__actions">
+        <div class="forum-hero__actions"> </span>
           <button class="button button--primary" type="button" data-forum-create>
             <span>Новая тема</span><span aria-hidden="true">+</span>
           </button>
@@ -86,26 +84,17 @@
           <span class="forum-empty__mark" aria-hidden="true">NZ</span>
           <span class="section-kicker">NO THREADS YET</span>
           <h3>Тем пока нет.</h3>
-        </div>
+                  </div>
       </section>
       
       <section class="forum-resources" id="forum-resources" aria-label="Ресурсы сообщества">
-        <div class="forum-resource-block">
-          <div class="forum-community-head">
-            <div><span class="section-kicker">COMMUNITY</span><h2>Сообщество</h2></div>
-            <div class="forum-community-stats">
-              <span><strong data-forum-online-count>0</strong><small>онлайн</small></span>
-              <span><strong data-forum-member-count>0</strong><small>участников</small></span>
-            </div>
-          </div>
-          <div class="forum-resource-grid">
-            <a class="forum-resource__link" href="./forum-category.html?slug=pravila-i-dokumenty"><span class="forum-resource__icon">§</span><span><strong>Законы и правила</strong><small>Официальные документы</small></span></a>
-            <a class="forum-resource__link" href="./forum-category.html?slug=zayavki"><span class="forum-resource__icon">□</span><span><strong>Заявки</strong><small>Формы и обращения</small></span></a>
-            <a class="forum-resource__link" href="https://discord.gg/2KvsYYDHN6" target="_blank" rel="noopener noreferrer"><span class="forum-resource__icon">↗</span><span><strong>Discord</strong><small>Чат сообщества</small></span></a>
-            <a class="forum-resource__link" href="./forum-members.html"><span class="forum-resource__icon">◎</span><span><strong>Участники</strong><small>Профили и роли</small></span></a>
-            <a class="forum-resource__link" href="./forum-search.html"><span class="forum-resource__icon">⌕</span><span><strong>Поиск</strong><small>Темы и документы</small></span></a>
-          </div>
-        </div>
+        <div class="forum-resource-block"><div class="forum-community-head"><div><span class="section-kicker">COMMUNITY</span><h2>Сообщество</h2></div><div class="forum-community-stats" data-forum-community-stats><span><strong data-forum-online-count>0</strong><small>онлайн</small></span><span><strong data-forum-member-count>0</strong><small>участников</small></span></div></div><div class="forum-resource-grid">
+          <a class="forum-resource__link" href="./forum-category.html?slug=pravila-i-dokumenty"><span class="forum-resource__icon">§</span><span><strong>Законы и правила</strong><small>Официальные документы</small></span></a>
+          <a class="forum-resource__link" href="./forum-category.html?slug=zayavki"><span class="forum-resource__icon">□</span><span><strong>Заявки</strong><small>Формы и обращения</small></span></a>
+          <a class="forum-resource__link" href="https://discord.gg/2KvsYYDHN6" target="_blank" rel="noopener noreferrer"><span class="forum-resource__icon">↗</span><span><strong>Discord</strong><small>Официальный сервер</small></span></a>
+          <a class="forum-resource__link" href="./forum-members.html"><span class="forum-resource__icon">◎</span><span><strong>Участники</strong><small>Профили и роли</small></span></a>
+          <a class="forum-resource__link" href="./forum-search.html"><span class="forum-resource__icon">⌕</span><span><strong>Поиск</strong><small>Темы и документы</small></span></a>
+        </div></div>
       </section>
     </div>
   </main>
