@@ -483,7 +483,7 @@ await testStaticPage({
 });
 
 await testStaticPage({
-  path: "/forum-category.html?slug=minecraft",
+  path: "/forum-category.html?slug=igrovye-voprosy",
   name: "forum category",
   viewport: { width: 1280, height: 900 },
   check: async (page) => {
