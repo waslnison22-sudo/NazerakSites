@@ -10,7 +10,7 @@
   const showMessage=(m,k)=>{const n=qs("[data-topic-message]");if(!n)return;n.textContent=m;n.dataset.kind=k||"info";n.hidden=!m;};
   const withTimeout=(promise,ms,message)=>Promise.race([promise,new Promise((_,reject)=>window.setTimeout(()=>reject(new Error(message)),ms))]);
   const waitForClient=async()=>{for(let i=0;i<100;i+=1){const c=window.NaZerakAuth&&window.NaZerakAuth.client;if(c)return c;await new Promise(r=>window.setTimeout(r,100));}return null;};
-  const syncAuthor=async()=>{if(!state.client||!state.user)return;await state.client.from("forum_authors").upsert({id:state.user.id,display_name:userName(state.user),avatar_url:userAvatar(state.user)||null,last_seen_at:new Date().toISOString()},{onConflict:"id"});};
+  const syncAuthor=async()=>{if(!state.client||!state.user)return;await state.client.from("forum_authors").upsert({id:state.user.id,display_name:userName(state.user),avatar_url:userAvatar(state.user)||null,updated_at:new Date().toISOString()},{onConflict:"id"});};
   const loadTopic=async()=>{
     const id=Number(new URLSearchParams(window.location.search).get("id"));
     if(!Number.isSafeInteger(id)||id<1)throw new Error("Некорректная тема форума.");
