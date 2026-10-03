@@ -149,3 +149,16 @@ The first QA run after the reliability pass failed in the browser smoke test at 
 ### Verification
 - Static and browser QA are pending on the resulting HEAD.
 - Screenshot-based visual acceptance has not yet been performed; do not treat this as final design approval.
+
+
+## 2026-10-04 — forum runtime hardening and interaction polish
+
+### Changes
+- Added bounded 10-second waits to the forum index, category and topic data-loading requests so stalled backend reads surface an actionable error instead of leaving the screen indefinitely loading.
+- Bounded auth-session lookup on those forum screens; if session lookup stalls, the public read-only forum remains accessible and the page falls back to the available auth state.
+- Added the conventional `/` keyboard shortcut to focus and select the forum index search field. The shortcut ignores typing controls and editable content to avoid hijacking normal text input.
+- Extended static QA guards for the keyboard shortcut and bounded forum data requests.
+
+### Verification
+- JavaScript source was re-fetched after the changes and the topic timeout wrapper was inspected for balanced Promise/timeout syntax.
+- Full GitHub QA for the final commit is required before considering these changes release-ready. Production deployment is not claimed for this hardening pass.
