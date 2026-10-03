@@ -422,11 +422,11 @@ await testStaticPage({
   viewport: { width: 1280, height: 900 },
   check: async (page) => {
     if (!(await page.locator("h1").textContent()).includes("Форум")) throw new Error("forum heading missing");
-    if (await page.locator('[data-forum-board-rows="rp"] .forum-board-row').count() < 1) {
-      throw new Error("RP forum board did not load");
+    if (await page.locator("[data-forum-node-tree] .forum-node-section").count() < 1) {
+      throw new Error("forum sections did not load");
     }
-    if (await page.locator('[data-forum-board-rows="administration"] .forum-board-row').count() < 1) {
-      throw new Error("administration forum board did not load");
+    if (await page.locator("[data-forum-node-tree] .forum-board-row").count() < 1) {
+      throw new Error("forum boards did not load");
     }
     if (await page.locator("[data-forum-state]").textContent() === "") throw new Error("forum state missing");
     if (await page.locator('[data-forum-create]').count() < 1) throw new Error("forum create control missing");
