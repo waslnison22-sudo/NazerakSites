@@ -81,14 +81,14 @@ const testSameOriginLinks = async (page, name) => {
   const routes = await page.evaluate(() =>
     [...document.querySelectorAll("a[href]")]
       .map((a) => a.href)
-      .filter((href) => href.startsWith(location.origin + "/NazerakSites") || href.startsWith(location.origin + "/NazerakSites/"))
+      .filter((href) => href.startsWith(location.origin + "/"))
       .map((href) => new URL(href))
       .map((url) => url.pathname + url.hash)
   );
 
   for (const route of [...new Set(routes)]) {
     const [pathname, hash] = route.split("#");
-    if (!["/NazerakSites/", "/NazerakSites/cabinet.html", "/NazerakSites/forum.html", "/NazerakSites/forum-category.html", "/NazerakSites/forum-members.html", "/NazerakSites/forum-search.html", "/NazerakSites/topic.html", "/NazerakSites/forum-user.html", "/NazerakSites/pravitelstvo/", "/NazerakSites/sud/", "/NazerakSites/prokuratura/", "/NazerakSites/fsb/", "/NazerakSites/voennaya-baza/", "/NazerakSites/organizatsii/", "/NazerakSites/o-proekte/", "/NazerakSites/AUTH_SETUP.md", "/NazerakSites/DOMAIN_MIGRATION.md"].includes(pathname)) {
+    if (!["/", "/cabinet.html", "/forum.html", "/forum-category.html", "/forum-members.html", "/forum-search.html", "/topic.html", "/forum-user.html"].includes(pathname)) {
       throw new Error(name + " contains an unexpected local route: " + route);
     }
     if (hash && pathname === new URL(page.url()).pathname) {
@@ -436,29 +436,6 @@ await testStaticPage({
     if (!/noindex/.test(robots || "")) throw new Error("forum robots policy missing");
   }
 });
-
-for (const route of [
-  ["/pravitelstvo/","public government route","Правительство"],
-  ["/sud/","public court route","Суд"],
-  ["/prokuratura/","public prosecutor route","Прокуратура"],
-  ["/fsb/","public security route","ФСБ"],
-  ["/voennaya-baza/","public military route","Военная база"],
-  ["/organizatsii/","public organizations route","Организации"],
-  ["/o-proekte/","public project route","О проекте"]
-]) {
-  await testStaticPage({
-    path: route[0],
-    name: route[1],
-    viewport: { width: 1280, height: 900 },
-    check: async (page) => {
-      if (!(await page.locator("h1").textContent()).includes(route[2])) throw new Error(route[1] + " heading missing");
-      const robots = await page.locator('meta[name="robots"]').getAttribute("content");
-      if (!/index/.test(robots || "")) throw new Error(route[1] + " indexing policy missing");
-      const canonical = await page.locator('link[rel="canonical"]').getAttribute("href");
-      if (!canonical || !canonical.startsWith("https://nazerak.ru/")) throw new Error(route[1] + " canonical missing");
-    }
-  });
-}
 
 await testStaticPage({
   path: "/forum.html",

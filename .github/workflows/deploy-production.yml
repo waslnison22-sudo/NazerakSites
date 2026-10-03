@@ -55,16 +55,12 @@ jobs:
           test -n "$DEPLOY_PATH" || { echo "DEPLOY_PATH is not configured"; exit 1; }
           test -n "$DEPLOY_PASSWORD" || { echo "DEPLOY_PASSWORD is not configured"; exit 1; }
 
-      - name: Generate public route pages
-        if: steps.gate.outputs.enabled == 'true'
-        run: node scripts/generate-public-routes.mjs
-
       - name: Prepare web root
         if: steps.gate.outputs.enabled == 'true'
         run: |
           rm -rf .deploy
           mkdir -p .deploy
-          tar --exclude='./.git' --exclude='./.github' --exclude='./.gitignore' --exclude='./supabase' --exclude='./scripts' --exclude='./docs' --exclude='./templates' --exclude='./public-routes.json' --exclude='./README.md' --exclude='./AUTH_SETUP.md' --exclude='./DOMAIN_MIGRATION.md' --exclude='./.DS_Store' -cf - . | tar -xf - -C .deploy
+          tar --exclude='./.git' --exclude='./.github' --exclude='./.gitignore' --exclude='./supabase' --exclude='./scripts' --exclude='./docs' --exclude='./README.md' --exclude='./AUTH_SETUP.md' --exclude='./DOMAIN_MIGRATION.md' --exclude='./.DS_Store' -cf - . | tar -xf - -C .deploy
           test -f .deploy/index.html
 
       - name: Deploy public files over SFTP
@@ -86,7 +82,7 @@ jobs:
           SITE_URL: https://nazerak.ru
         run: |
           set -e
-          for route in / /forum.html /pravitelstvo/ /sud/ /prokuratura/ /fsb/ /voennaya-baza/ /organizatsii/ /o-proekte/; do
+          for route in / /forum.html; do
             ok=false
             for i in {1..6}; do
               status=$(curl -L -sS -o /tmp/nazerak-check.html -w "%{http_code}" "$SITE_URL$route")

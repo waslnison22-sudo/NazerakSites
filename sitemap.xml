@@ -1,13 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://nazerak.ru/</loc>
-  </url>
-  <url><loc>https://nazerak.ru/pravitelstvo/</loc></url>
-  <url><loc>https://nazerak.ru/sud/</loc></url>
-  <url><loc>https://nazerak.ru/prokuratura/</loc></url>
-  <url><loc>https://nazerak.ru/fsb/</loc></url>
-  <url><loc>https://nazerak.ru/voennaya-baza/</loc></url>
-  <url><loc>https://nazerak.ru/organizatsii/</loc></url>
-  <url><loc>https://nazerak.ru/o-proekte/</loc></url>
+  <url><loc>https://nazerak.ru/</loc></url>
 </urlset>

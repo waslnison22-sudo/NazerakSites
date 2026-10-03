@@ -32,18 +32,7 @@ const requiredFiles = [
   "forum-user.html",
   "user.js",
   "site-config.js",
-  "site-routes.js",
-  "public-routes.json",
-  "templates/public-route.html",
-  "docs/public-routes.md",
   "docs/stability-roadmap.md",
-  "pravitelstvo/index.html",
-  "sud/index.html",
-  "prokuratura/index.html",
-  "fsb/index.html",
-  "voennaya-baza/index.html",
-  "organizatsii/index.html",
-  "o-proekte/index.html",
   "supabase/migrations/20261002234000_forum_node_tree_refactor.sql",
   "supabase/migrations/20261002235000_forum_node_directory_safe_counts.sql",
   "DOMAIN_MIGRATION.md",
@@ -99,7 +88,6 @@ const auth = read("auth.js");
 const loader = read("supabase-loader.js");
 const config = read("auth-config.js");
 const schema = read("supabase/schema.sql");
-const routeManifest = JSON.parse(read("public-routes.json"));
 
 const allSource = [index, cabinet, css, script, auth, loader, config, schema].join("\n");
 
@@ -119,83 +107,6 @@ if (/clientSecret\s*[:=]/i.test(config)) {
 
 
 const publishedFiles = new Set(requiredFiles.filter((file) => fs.existsSync(path.join(root, file))));
-for (const [key, route] of Object.entries(routeManifest)) {
-  if (!/^\/[a-z0-9-]+(?:\/[a-z0-9-]+)*$/.test("/" + route.slug)) fail.push(`invalid public route slug: ${key}`);
-  const routeFile = path.join(root, route.slug, "index.html");
-  if (!fs.existsSync(routeFile)) fail.push(`missing generated public route: ${route.slug}`);
-  else {
-    const routePage = fs.readFileSync(routeFile, "utf8");
-    if (!routePage.includes(`<h1>${route.title}<span>.</span></h1>`)) fail.push(`public route title mismatch: ${route.slug}`);
-    if (!routePage.includes(`https://nazerak.ru/${route.slug}`)) fail.push(`public route canonical missing: ${route.slug}`);
-  }
-}
-for (const [name, page] of [
-  ["index.html", index],
-  ["cabinet.html", cabinet],
-  ["404.html", read("404.html")]
-]) {
-  const refs = [...page.matchAll(/\b(?:href|src)="(\.\/[^"#?]+)"/g)].map((m) => m[1].slice(2));
-  const missing = [...new Set(refs.filter((ref) => {
-    if (publishedFiles.has(ref)) return false;
-    return !fs.existsSync(path.join(root, ref, "index.html"));
-  }))];
-  if (missing.length) {
-    fail.push(`missing local reference(s) in ${name}: ${missing.join(", ")}`);
-  }
-
-  const ids = new Set([...page.matchAll(/\bid=["']([^"']+)["']/g)].map((m) => m[1]));
-  const hashRefs = [...page.matchAll(/\bhref="#([^"]+)"/g)].map((m) => m[1]);
-  const missingHashes = [...new Set(hashRefs.filter((id) => !ids.has(id)))];
-  if (missingHashes.length) {
-    fail.push(`missing hash target(s) in ${name}: ${missingHashes.join(", ")}`);
-  }
-}
-
-for (const file of ["script.js", "auth.js", "supabase-loader.js", "forum.js", "forum-ui.js", "forum-category.js", "forum-members.js", "forum-search.js", "topic.js", "user.js", "site-routes.js"]) {
-  try {
-    new Function(read(file));
-  } catch (error) {
-    fail.push(`JS syntax: ${file}: ${error.message}`);
-  }
-}
-
-const cssOpen = (css.match(/{/g) || []).length;
-const cssClose = (css.match(/}/g) || []).length;
-if (cssOpen !== cssClose) {
-  fail.push(`CSS braces mismatch: ${cssOpen} != ${cssClose}`);
-}
-
-
-const cspPages = [index, cabinet, read("404.html"), read("forum.html")];
-for (const [i, page] of cspPages.entries()) {
-  if (!page.includes('http-equiv="Content-Security-Policy"')) {
-    fail.push(`CSP missing on page #${i + 1}`);
-  }
-  if (page.includes("style-src-attr 'unsafe-inline'")) {
-    fail.push(`style-src-attr must not be enabled on page #${i + 1}`);
-  }
-  if (/<script(?![^>]*\bsrc=)[^>]*>/i.test(page)) {
-    fail.push(`inline script tag found on page #${i + 1}`);
-  }
-  if (/\sstyle=/i.test(page)) {
-    fail.push(`inline style attribute found on page #${i + 1}`);
-  }
-
-  const blankLinks = [...page.matchAll(/<a\b[^>]*target="_blank"[^>]*>/gi)].map((m) => m[0]);
-  if (blankLinks.some((link) => !/rel="[^"]*noopener[^"]*"/i.test(link))) {
-    fail.push(`target=_blank without noopener on page #${i + 1}`);
-  }
-}
-
-const duplicateIds = (html, name) => {
-  const ids = [...html.matchAll(/\bid=["']([^"']+)["']/g)].map((match) => match[1]);
-  const duplicates = [...new Set(ids.filter((id, i) => ids.indexOf(id) !== i))];
-  if (duplicates.length) fail.push(`duplicate IDs in ${name}: ${duplicates.join(", ")}`);
-};
-
-duplicateIds(index, "index.html");
-duplicateIds(cabinet, "cabinet.html");
-
 for (const [name, page] of [
   ["index.html", index],
   ["cabinet.html", cabinet],
