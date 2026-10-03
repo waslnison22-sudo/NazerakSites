@@ -434,7 +434,7 @@ await testStaticPage({
       const actions = node.querySelector(".forum-hero__actions");
       return { alignItems: style.alignItems, actionAlign: actions ? getComputedStyle(actions).alignSelf : "" };
     });
-    if (hero.alignItems !== "flex-start" || hero.actionAlign !== "flex-start") {
+    if (hero.alignItems !== "flex-start" || !["auto","flex-start"].includes(hero.actionAlign)) {
       throw new Error("forum hero is not left aligned: " + JSON.stringify(hero));
     }
     if (await page.locator("[data-forum-node-tree] .forum-node-section").count() < 1) {
