@@ -278,6 +278,13 @@ if (!forumPage.includes("button--primary") || !forumPage.includes("button--ghost
 if (!read("forum-user.html").includes("data-user-profile")) fail.push("full forum profile markup missing");
 if (!read("forum-ui.js").includes("data-forum-user")) fail.push("forum hover profile interaction missing");
 if (!read("user.js").includes('from("forum_author_directory")')) fail.push("forum user directory query missing");
+for (const file of ["forum.js","forum-category.js","topic.js"]) {
+  const source = read(file);
+  if (source.includes("from(\"forum_authors\").upsert({id:state.user.id,display_name:userName(state.user),avatar_url:userAvatar(state.user),last_seen_at")) {
+    fail.push(file + " forum author sync writes a column without browser update privilege");
+  }
+  if (!source.includes('updated_at:new Date().toISOString()')) fail.push(file + " forum author sync must refresh updated_at");
+}
 if (auth.includes(".from(\"profiles\")\n      .upsert(")) fail.push("profile initialization still uses upsert");
 if (script.includes(".magnetic") || script.includes("[data-parallax]")) fail.push("unstable motion controls remain");
 
