@@ -114,6 +114,7 @@
     qs("[data-forum-search-clear]")?.addEventListener("click",()=>{state.search="";if(qs("#forum-search"))qs("#forum-search").value="";renderTopics();});
     qs("[data-forum-search-reset]")?.addEventListener("click",()=>{state.search="";if(qs("#forum-search"))qs("#forum-search").value="";renderTopics();});
     qs("[data-forum-search-form]")?.addEventListener("submit",e=>{e.preventDefault();const q=String(qs("#forum-search")?.value||"").trim();if(q)window.location.href="./forum-search.html?q="+encodeURIComponent(q);});
+    document.addEventListener("keydown",e=>{if(e.key!=="/"||e.altKey||e.ctrlKey||e.metaKey)return;const target=e.target;if(target instanceof HTMLElement&&(target.isContentEditable||/^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName)))return;const search=qs("#forum-search");if(!search)return;e.preventDefault();search.focus();search.select();});
     try{await loadData();}catch(e){setState("ОШИБКА","error");showMessage(e instanceof Error?e.message:"Не удалось загрузить форум.","error");}
   };
   if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",()=>void init(),{once:true});else void init();
