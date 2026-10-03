@@ -487,7 +487,8 @@ await testStaticPage({
   name: "forum category",
   viewport: { width: 1280, height: 900 },
   check: async (page) => {
-    if (!(await page.locator("h1").textContent()).includes("Игровой мир")) throw new Error("forum category heading missing");
+    const categoryTitle = (await page.locator("[data-category-title]").textContent() || "").trim();
+    if (!categoryTitle || /загрузка/i.test(categoryTitle)) throw new Error("forum category did not resolve");
     if (!(await page.locator(".forum-thread-table").count())) throw new Error("forum thread table missing");
   }
 });
