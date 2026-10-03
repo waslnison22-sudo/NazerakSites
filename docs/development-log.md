@@ -178,3 +178,34 @@ The first QA run after the reliability pass failed in the browser smoke test at 
 - The stylesheet, affected page references and QA version expectation were updated in `main`.
 - Browser smoke includes a mobile horizontal-overflow assertion for forum pages; the v32 changes still require a completed GitHub QA run and visual review at narrow widths before release acceptance.
 - No production deployment is claimed.
+
+
+## 2026-10-04 — reference-led forum reconstruction plan and v33
+
+### Audit findings
+- The actual forum index lacked the approved reference's rules action and used “Последние темы” rather than “Последние обсуждения”.
+- No dedicated scenic artwork exists in the forum markup yet; CSS atmosphere is only a fallback, not a substitute for generated NaZerak environment art.
+- Forum content is rendered dynamically by `forum.js`; redesign must preserve data selectors and real Supabase content.
+- Earlier visual passes accumulated appended overrides, creating a maintenance risk. Consolidation is required after visual verification.
+- Index and internal routes share the `.forum` class, so desktop grid rules must be isolated from category/search/member/profile pages.
+
+### Delivery plan
+1. Audit markup, dynamic renderers, styles and browser checks against the accepted image.
+2. Establish a coherent system for surfaces, typography, spacing, breakpoints and motion.
+3. Reconstruct the index composition: hero, search, forum groups, latest discussions and resource sidebar.
+4. Refine category rows, topic previews, counts, avatars, status labels and actions.
+5. Align category, topic, search, member and profile pages.
+6. Verify at 320, 360/390, 768 and desktop widths; remove overflow, clipping and tiny controls.
+7. Preserve and test Supabase, Discord auth, permissions, topic creation, replies, profiles and failure states.
+8. Run static/runtime/browser QA, inspect screenshots and iterate before release acceptance.
+
+### Implemented in v33
+- Adjusted the index toward the reference with a wider content area, atmospheric CSS hero fallback, legible search toolbar, unified glass forum groups, quieter monochrome icons and a calmer sidebar.
+- Isolated the desktop two-column index layout from internal forum routes.
+- Added the secondary “Правила форума” action and renamed the sidebar heading to “Последние обсуждения”.
+- Bumped stylesheet references to v33 and aligned static QA checks.
+
+### Verification / limitations
+- The revision is committed to `main`, but visual acceptance is not complete.
+- The scenic hero artwork still awaits generation/integration.
+- Full QA and screenshot review are pending; no production deployment is claimed.
