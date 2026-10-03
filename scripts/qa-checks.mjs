@@ -35,7 +35,6 @@ const requiredFiles = [
   "docs/stability-roadmap.md",
   "supabase/migrations/20261002234000_forum_node_tree_refactor.sql",
   "supabase/migrations/20261002235000_forum_node_directory_safe_counts.sql",
-  "DOMAIN_MIGRATION.md",
   "favicon.svg",
   "supabase/migrations/20260930205000_harden_frontend_column_privileges.sql",
   "supabase/migrations/20261002200000_forum_foundation.sql",

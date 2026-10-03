@@ -3,7 +3,7 @@
 ## Release gates
 
 ### Gate 1 — Foundation
-- [x] Static GitHub Pages application
+- [x] Static production application on REG.RU hosting
 - [x] Supabase browser integration with publishable key only
 - [x] Discord OAuth / PKCE
 - [x] Relative internal routes
@@ -12,7 +12,7 @@
 
 ### Gate 2 — Forum
 - [x] Forum index
-- [x] Two top-level worlds: RP and Administration
+- [x] Hierarchical forum node tree with six natural top-level sections
 - [x] Forum section page
 - [x] Topic page
 - [x] Members directory
@@ -42,23 +42,22 @@
 - [ ] Final browser-smoke pass on the latest revision
 
 ### Gate 5 — Production domain
-- [x] Planned origin stored as `https://nazerak.ru`
+- [x] Production origin is `https://nazerak.ru`
 - [x] Application routes remain relative
 - [x] Browser smoke base URL configurable
-- [x] Migration instructions documented
-- [ ] Add new Supabase Site URL and Redirect URL
-- [ ] Configure hosting and HTTPS
-- [ ] Switch DNS
-- [ ] Update canonical/OG/robots/sitemap
+- [x] Production hosting and SFTP deployment documented
+- [x] Supabase production URL documented
+- [x] Hosting and SFTP deployment configured
+- [x] Production canonical/OG/robots/sitemap normalized
 - [ ] Run full fresh-session authentication and forum smoke on `https://nazerak.ru`
 
 ## CI deployment separation
 
-Browser QA runs against a local HTTP server built from the exact checked-out commit. GitHub Pages deployment is monitored separately and does not gate application correctness.
+Browser QA runs against a local HTTP server built from the exact checked-out commit. A successful QA run triggers the production SFTP deployment.
 
 ## Design rule
 
-The forum follows the information architecture of established RP/XenForo-style forums: forum index, section lists, topics, profiles, members, search and community resources. The visual system remains NaZerak-specific.
+The forum uses a single natural hierarchy: information and rules, state and organizations, game world, support, development and community. Government structures are forum subsections, not separate homepage navigation.
 
 ## Stability rule
 

@@ -74,13 +74,7 @@ Client Secret вводится только в Supabase Dashboard.
 
 ### Site URL
 
-Пока оставить:
-
-```text
-https://waslnison22-sudo.github.io/NazerakSites/
-```
-
-После переноса на новый хостинг сменить на:
+Текущий production URL:
 
 ```text
 https://nazerak.ru/
@@ -88,20 +82,19 @@ https://nazerak.ru/
 
 ### Redirect URLs
 
-Сейчас:
-
-```text
-https://waslnison22-sudo.github.io/NazerakSites/cabinet.html
-http://localhost:8000/cabinet.html
-```
-
-Перед переключением домена добавить, не удаляя старый URL:
+Production:
 
 ```text
 https://nazerak.ru/cabinet.html
 ```
 
-После подтверждения работы нового домена старый GitHub Pages redirect можно удалить.
+Локальное тестирование:
+
+```text
+http://localhost:8000/cabinet.html
+```
+
+Старые GitHub Pages URL для production больше не используются.
 
 Production URL лучше добавлять точным совпадением.
 
@@ -122,7 +115,7 @@ Production URL лучше добавлять точным совпадением
 
 ## 7. Проверка
 
-1. Открой `https://waslnison22-sudo.github.io/NazerakSites/`.
+1. Открой `https://nazerak.ru/`.
 2. Нажми **Войти**.
 3. Разреши вход через Discord.
 4. После авторизации должен открыться `cabinet.html`.
@@ -147,7 +140,7 @@ https://ujlbyzvdsncvqbrhasuw.supabase.co/auth/v1/callback
 Проверь **Authentication → URL Configuration → Redirect URLs** и наличие:
 
 ```text
-https://waslnison22-sudo.github.io/NazerakSites/cabinet.html
+https://nazerak.ru/cabinet.html
 ```
 
 ### Профиль не сохраняется

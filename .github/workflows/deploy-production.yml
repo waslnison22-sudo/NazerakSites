@@ -76,6 +76,19 @@ jobs:
           sftp_only: true
           sftpArgs: '-o ConnectTimeout=10'
 
+      - name: Remove obsolete public route directories
+        if: steps.gate.outputs.enabled == 'true'
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+          DEPLOY_PASSWORD: ${{ secrets.DEPLOY_PASSWORD }}
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq sshpass
+          export SSHPASS="$DEPLOY_PASSWORD"
+          sshpass -e ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 "$DEPLOY_USER@$DEPLOY_HOST" "rm -rf -- '$DEPLOY_PATH/pravitelstvo' '$DEPLOY_PATH/sud' '$DEPLOY_PATH/prokuratura' '$DEPLOY_PATH/fsb' '$DEPLOY_PATH/voennaya-baza' '$DEPLOY_PATH/organizatsii' '$DEPLOY_PATH/o-proekte'"
+
       - name: Verify production routes
         if: steps.gate.outputs.enabled == 'true'
         env:
