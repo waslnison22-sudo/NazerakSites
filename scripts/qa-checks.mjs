@@ -118,10 +118,10 @@ for (const [name, page] of [
   const assets = ["auth-config.js?v=8", "supabase-loader.js?v=9", "auth.js?v=35", "script.js?v=17", "styles.css?v=29"];
   if (name === "forum.html") { assets.push("forum-ui.js?v=1", "forum.js?v=4"); }
   if (name === "forum-category.html") { assets.push("forum-ui.js?v=1", "forum-category.js?v=2"); }
-  if (name === "forum-members.html") { assets.push("forum-ui.js?v=1", "forum-members.js?v=1"); }
-  if (name === "forum-search.html") { assets.push("forum-ui.js?v=1", "forum-search.js?v=1"); }
+  if (name === "forum-members.html") { assets.push("forum-ui.js?v=1", "forum-members.js?v=2"); }
+  if (name === "forum-search.html") { assets.push("forum-ui.js?v=1", "forum-search.js?v=2"); }
   if (name === "topic.html") { assets.push("forum-ui.js?v=1", "topic.js?v=3"); }
-  if (name === "forum-user.html") { assets.push("forum-ui.js?v=1", "user.js?v=1"); }
+  if (name === "forum-user.html") { assets.push("forum-ui.js?v=1", "user.js?v=2"); }
   for (const asset of assets) {
     if (!page.includes(asset)) {
       fail.push(`${name} asset include missing: ${asset}`);
