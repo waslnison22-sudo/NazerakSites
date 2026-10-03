@@ -126,3 +126,26 @@ The first QA run after the reliability pass failed in the browser smoke test at 
 - TLS check still reports:
   `curl: (60) SSL certificate problem: self-signed certificate`.
 - Therefore the deployment is healthy at the content/SFTP level, but the public certificate chain is **still not trusted by the GitHub runner**. This remains an infrastructure issue to resolve in REG.RU; it is not marked fixed.
+
+
+## 2026-10-03 — forum visual system v30
+
+### User-reported issues addressed
+- Forum surfaces looked like rigid rectangular panels.
+- Visual hierarchy and interaction motion felt basic and abrupt.
+- Glassmorphism was missing.
+
+### Changes
+- Introduced translucent glass surfaces with blur/saturation, layered gradients, subtle inner highlights and restrained shadows.
+- Increased corner radii across forum hero, categories, lists, member cards, topic posts, reply areas, modal and profile popover.
+- Replaced abrupt hover feedback with eased transitions and gentle elevation, without hover-induced padding/layout shifts.
+- Improved focus-visible outlines and included reduced-motion handling.
+- Added mobile-specific radius and spacing adjustments.
+- Bumped shared stylesheet references and QA expectation from v29 to v30.
+
+### Design research
+- Reviewed publicly indexed Majestic and Matreshka community knowledge/forum structures. Their information architecture emphasizes clear category discovery, separated functional sections and actionable topic/application paths. The NaZerak skin remains original rather than copying their branding or proprietary UI.
+
+### Verification
+- Static and browser QA are pending on the resulting HEAD.
+- Screenshot-based visual acceptance has not yet been performed; do not treat this as final design approval.
