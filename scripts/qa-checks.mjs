@@ -115,7 +115,7 @@ for (const [name, page] of [
   ["topic.html", read("topic.html")],
   ["forum-user.html", read("forum-user.html")]
 ]) {
-  const assets = ["auth-config.js?v=8", "supabase-loader.js?v=9", "auth.js?v=35", "script.js?v=17", "styles.css?v=32"];
+  const assets = ["auth-config.js?v=8", "supabase-loader.js?v=9", "auth.js?v=35", "script.js?v=17", "styles.css?v=33"];
   if (name === "forum.html") { assets.push("forum-ui.js?v=1", "forum.js?v=4"); }
   if (name === "forum-category.html") { assets.push("forum-ui.js?v=1", "forum-category.js?v=2"); }
   if (name === "forum-members.html") { assets.push("forum-ui.js?v=1", "forum-members.js?v=2"); }
@@ -129,7 +129,7 @@ for (const [name, page] of [
   }
 }
 
-if (!read("404.html").includes("styles.css?v=32")) fail.push("404.html styles cache version is stale");
+if (!read("404.html").includes("styles.css?v=33")) fail.push("404.html styles cache version is stale");
 const sitemap = read("sitemap.xml");
 if (sitemap.includes("cabinet.html") || sitemap.includes("forum.html")) fail.push("sitemap contains a noindex page");
 if (!sitemap.includes("https://nazerak.ru/")) fail.push("sitemap homepage URL is missing");
@@ -262,7 +262,7 @@ for (const [name, page] of forumPages) {
 const forumSurfaceFiles = ["forum.html","forum-category.html","forum-members.html","forum-search.html","topic.html","forum-user.html"];
 for (const file of forumSurfaceFiles) {
   const page = read(file);
-  if (!page.includes("styles.css?v=32")) fail.push(file + " styles cache revision is stale");
+  if (!page.includes("styles.css?v=33")) fail.push(file + " styles cache revision is stale");
   if (!page.includes('Content-Security-Policy')) fail.push(file + " CSP is missing");
   if (/\sstyle=/i.test(page) || page.includes("style-src-attr 'unsafe-inline'")) fail.push(file + " contains inline style/CSP allowance");
 }
@@ -270,6 +270,8 @@ const forumPage = read("forum.html");
 if (!forumPage.includes("data-forum-node-tree")) fail.push("forum node tree markup is missing");
 if (forumPage.includes("Мир администрации</h3>") || forumPage.includes("РП-мир</h3>")) fail.push("legacy two-world forum presentation remains");
 if (!forumPage.includes("data-forum-search-form") || !forumPage.includes("data-forum-search-clear")) fail.push("forum search controls are incomplete");
+if (!forumPage.includes("Правила форума") || !forumPage.includes("Последние обсуждения")) fail.push("forum reference action is missing");
+if (!css.includes("Forum v33: reference-led art direction")) fail.push("forum reference art direction layer is missing");
 if (!read("forum.js").includes('e.key!=="/"')) fail.push("forum slash-to-search keyboard shortcut is missing");
 for (const file of ["forum.js","forum-category.js","topic.js"]) if (!read(file).includes("Загрузка") || !read(file).includes("10000")) fail.push(file + " forum data timeout guard is missing");
 if (!forumPage.includes("button--primary") || !forumPage.includes("button--ghost")) fail.push("forum must use common site button classes");
