@@ -2275,3 +2275,10 @@ body[data-forum] .forum-boards,body[data-forum] .forum-discussions,body[data-for
   .forum-hero{align-items:flex-start}
   .forum-hero__actions{align-self:stretch}
 }
+
+/* v37.2 — category tags and reset control */
+.forum-thread-row__tags{display:flex;flex-wrap:wrap;align-items:center;gap:5px;min-width:0}
+.forum-thread-row__tags span{padding:3px 6px;border:1px solid rgba(180,195,218,.09);border-radius:5px;background:rgba(255,255,255,.035);color:#7f8999;font-size:8px;line-height:1.2;white-space:nowrap}
+.forum-thread-row__tags .forum-topic-row__prefix{border-color:rgba(255,41,66,.2);background:rgba(255,41,66,.06);color:#ff9aa7}
+.forum-search__reset{min-height:40px;flex:0 0 auto}
+@media(max-width:700px){.forum-search__reset{width:100%}}
