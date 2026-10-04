@@ -438,9 +438,10 @@ await testStaticPage({
       throw new Error("forum hero is not left aligned: " + JSON.stringify(hero));
     }
     if (await page.locator("[data-forum-state]:visible").count() !== 0) throw new Error("decorative forum status should not be visible");
-    if (await page.locator('.forum-hero__bg[data-image-slot="forum-hero"]').count() !== 1) {
-      throw new Error("forum hero media slot is missing");
+    if (await page.locator(".forum-hero__bg").count() !== 1) {
+      throw new Error("forum hero artwork layer is missing");
     }
+    if (await page.locator("[data-forum-state]:visible").count() !== 0) throw new Error("obsolete forum status UI is visible");
     if (layout.width > 760) {
       const placement = await page.locator(".forum-hero").evaluate((hero) => {
         const actions = hero.querySelector(".forum-hero__actions");
