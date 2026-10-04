@@ -363,3 +363,17 @@ A GitHub compare from `a6de9d51…` to the recovery head `fb9225862a4750028e29f9
 - Exact corrected commit: 62c551d1486f2b51ae1145b94f1e8c0e974f294b.
 - QA run 37181252277 completed successfully. Static release checks, Supabase runtime smoke, and browser smoke all passed, including homepage desktop/mobile, forum index/category/member/search/profile routes, 320px narrow layouts, 404, OAuth start, and cabinet anonymous/profile-timeout cases.
 - Production deployment run 37181293844 completed successfully for that exact tested commit. This confirms the GitHub Actions SFTP workflow completed; it does not independently prove that every visitor's browser cache has refreshed.
+
+
+## 2026-10-04 — forum typography readability pass v2
+
+### Audit finding
+- The authoritative forum stylesheet contained 99 font-size declarations; 45 were between 7px and 9px. That made secondary labels, metadata, roles, tags and helper text too small for comfortable reading, especially on mobile.
+
+### Implemented
+- Raised the forum's smallest text sizes: 7–8px to 10px, 9px to 11px, 10px to 12px, 11px to 12px, 12px to 13px, and 13px to 14px. Display headings and mobile viewport-specific headline clamps were left intact.
+- Bumped the forum stylesheet cache to v2 on all six forum routes and updated the static QA contract.
+- Kept wrapping and responsive grid rules in place so longer labels can wrap rather than force horizontal overflow.
+
+### Verification status
+- This typography change requires a fresh browser QA run at desktop and narrow mobile widths before it is accepted. It is not yet declared visually final; screenshots remain a needed human visual acceptance step.
