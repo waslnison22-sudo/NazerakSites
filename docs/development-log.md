@@ -407,3 +407,18 @@ A GitHub compare from `a6de9d51…` to the recovery head `fb9225862a4750028e29f9
 - The first QA pass correctly caught that stylesheet v3 was expected in tests before all six forum route HTML files had been cache-busted. Aligned forum index, category, topic, members, search and profile pages to the same v3 stylesheet revision.
 - Removed remaining backend description output from parent section headings and removed the category selector's visible “official” access label; posting authorization logic remains unchanged.
 - Latest QA is rerunning against the corrected source head; earlier failed runs are treated as stale and not as final verification.
+
+
+## 2026-10-04 — concurrent-edit reconciliation and dead artifact cleanup
+
+### Regressions from concurrent edits
+- An additional script.js redesign-helper commit reintroduced automatic probes for artwork files that are not present in the repository. Removed the probes again from the current source and bumped script.js references to v20 across the homepage, cabinet and all forum routes; QA now expects v20.
+- The forum category description was removed from markup as requested, but forum-category.js still dereferenced the deleted element. Removed that stale DOM write and bumped forum-category.js to v3 on the category route and in QA.
+- The hero placement test relied on getComputedStyle(marginTop) equalling the literal string auto. Replaced it with rendered geometry checks for left alignment and bottom spacing, which tests the visible result rather than a browser-specific computed-value representation.
+
+### Repository cleanup
+- Removed REDESIGN_STATUS.txt because it claimed the live site still served an old build while describing an absent ZIP artifact; it was not a user-facing page or a valid release source.
+- Removed assets/ui/patterns.css after checking that no public HTML or source reference consumed its classes or stylesheet. No active page depended on it.
+
+### Verification
+- These corrections are committed, but the exact latest head must complete static QA, Supabase runtime smoke and browser smoke before it is accepted. A successful production deployment is required before describing the latest forum typography/layout as live.
