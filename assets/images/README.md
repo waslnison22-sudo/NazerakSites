@@ -1,6 +1,6 @@
 # Визуалы NaZerak
 
-Изображения подключаются автоматически, когда соответствующий файл появляется в этой папке. Без файла интерфейс остаётся на безопасной CSS-заглушке — битых изображений в UI не создаётся.
+Основные визуалы подключаются через явные ссылки из страниц и CSS. Отсутствующие опциональные изображения не должны создавать 404 в браузерной консоли.
 
 | Файл | Слот |
 |------|------|
@@ -14,11 +14,11 @@
 
 ## Важно
 
-В текущем состоянии репозитория сами бинарные изображения ещё не находятся в `assets/images/` — там только этот файл-инструкция. Поэтому код уже подготовлен под реальные визуалы, но не выдаёт 404-запросы и не показывает пустые «сломанные» картинки.
+Текущий репозиторий содержит `forum-hero.svg` — это рабочий hero-визуал форума. Дополнительные JPG/PNG/WebP-файлы из списка ниже пока не закоммичены.
 
 Ничего дополнительно менять в HTML после загрузки этих файлов не требуется.
 
 
 ### Current 2026-10-04 artwork status
 
-The Library contains two relevant NaZeRaK assets: the red city/megapolis artwork is the preferred forum hero source, and the red-black brand pack is the visual reference for supporting graphics. They are not currently committed as binary files in this GitHub directory. The loader therefore does not probe guessed filenames and produces no 404s. Add the chosen binary asset here, then reference it with `data-image-src` on the matching media slot.
+The repository currently commits the forum hero as `forum-hero.svg`. The current GitHub tree does not contain the additional binary artwork names listed below. Do not add guessed runtime probes for files that are not present; add an asset first, then wire it explicitly.
