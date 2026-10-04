@@ -849,3 +849,10 @@ The captured search screen showed a non-empty query ("na") and a result title fo
 - Static QA and Supabase runtime smoke passed in run `37217970008`; browser smoke failed only at the flawed tablet track-count assertion.
 - The parser correction, empty-activity state and v17 cache updates are committed on the reboot branch.
 - A fresh full browser QA run is now required. This v17 state is not marked accepted until that run passes and updated screenshots are reviewed.
+
+
+### Follow-up regression discovered during v17 validation
+- After correcting the CSS Grid parser, browser QA exposed a second stale expectation: the desktop smoke test required two columns unconditionally, while v17 intentionally changes the index to one full-width column when the filtered latest-activity list is empty.
+- Updated the desktop test to accept exactly one column only when the explicit `is-empty-activity` state is active; otherwise it still requires the intended two-column desktop grid. Width and display-mode checks remain in place.
+- The branch had an intermediate browser-smoke syntax error while repairing the parser; that malformed edit was corrected, and the test file was simplified to a depth-aware track counter without regex escaping.
+- Latest validation must still pass before the v17 UI is accepted. The test now reflects both supported layouts rather than weakening the layout gate.
