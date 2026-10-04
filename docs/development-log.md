@@ -422,3 +422,10 @@ A GitHub compare from `a6de9d51…` to the recovery head `fb9225862a4750028e29f9
 
 ### Verification
 - These corrections are committed, but the exact latest head must complete static QA, Supabase runtime smoke and browser smoke before it is accepted. A successful production deployment is required before describing the latest forum typography/layout as live.
+
+
+### Final release verification — 2026-10-04
+- Latest verified source head before this log-only update: c7a6adfb16cb92ad93963ba3a71fb7314da9a7ec.
+- NaZerak QA run 37182217474 completed with success, including the browser smoke suite.
+- REG.RU production deployment run 37182281410 completed with success. SFTP upload, obsolete-route cleanup, production content checks for / and /forum.html, and TLS certificate verification all succeeded.
+- The corrected script and forum stylesheet versions are included in this release. Visual sign-off remains limited to automated geometry/responsive assertions; a human screenshot review is still recommended for subjective polish.
