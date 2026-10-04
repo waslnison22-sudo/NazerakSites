@@ -665,3 +665,21 @@ body[data-forum-topic] [hidden],
 body[data-forum-members-page] [hidden],
 body[data-forum-search-page] [hidden],
 body[data-forum-user-page] [hidden]{display:none!important}
+
+
+/* v16 — prevent board metric headings from colliding at intermediate desktop widths */
+.forum-page .forum-board__columns,
+.forum-page .forum-board-row{grid-template-columns:minmax(0,1fr) 60px 94px minmax(180px,.38fr);gap:12px}
+.forum-page .forum-board__columns{align-items:center}
+.forum-page .forum-board__columns span{min-width:0;white-space:normal;line-height:1.4;overflow-wrap:normal}
+.forum-page .forum-board__columns span:nth-child(2),
+.forum-page .forum-board__columns span:nth-child(3){text-align:center}
+.forum-page .forum-board__columns span:nth-child(4){text-align:left;overflow-wrap:break-word}
+@media(max-width:1120px){
+  .forum-page .forum-board__columns,
+  .forum-page .forum-board-row{grid-template-columns:minmax(0,1fr) 60px 94px minmax(180px,.38fr)}
+}
+@media(max-width:760px){
+  .forum-page .forum-board-row{display:block}
+  .forum-page .forum-board__columns{display:none}
+}
