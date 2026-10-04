@@ -6,7 +6,6 @@
   const qsa=(s,r=document)=>Array.from(r.querySelectorAll(s));
   const escapeHtml=(v)=>String(v==null?"":v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
   const safeUrl=(v)=>{try{const u=new URL(String(v||""));return /^https?:$/.test(u.protocol)?u.href:"";}catch{return"";}};
-  const setState=(label,kind)=>{const n=qs("[data-forum-state]");if(!n)return;n.dataset.state=kind||"";const t=qs("span",n);if(t)t.textContent=label;};
   const showMessage=(message,kind="info")=>{const n=qs("[data-forum-message]");if(!n)return;n.textContent=message;n.dataset.kind=kind;n.hidden=!message;};
   const formatDate=(v)=>{const d=new Date(v);if(Number.isNaN(d.getTime()))return"—";return new Intl.DateTimeFormat("ru-RU",{day:"2-digit",month:"short",year:"numeric"}).format(d);};
   const relative=(v)=>{const d=new Date(v);if(Number.isNaN(d.getTime()))return"—";const diff=Math.max(0,Date.now()-d.getTime()),m=Math.floor(diff/60000);if(m<1)return"только что";if(m<60)return m+" мин назад";const h=Math.floor(m/60);if(h<24)return h+" ч назад";const days=Math.floor(h/24);if(days<7)return days+" дн назад";return formatDate(v);};
@@ -61,7 +60,6 @@
   };
 
   const loadData=async()=>{
-    setState("ЗАГРУЗКА","loading");
     const req=[
       state.client.from("forum_node_directory").select("id,slug,name,description,sort_order,icon,posting_mode,node_type,parent_id,route_slug,parent_name").order("sort_order",{ascending:true}).order("id",{ascending:true}),
       state.client.from("forum_topic_list").select("id,category_id,category_name,parent_name,author_public_id,author_name,author_avatar_url,primary_role_slug,primary_role_badge,title,body,is_pinned,is_locked,prefix,last_post_at,reply_count").order("is_pinned",{ascending:false}).order("last_post_at",{ascending:false}).limit(100),
@@ -76,7 +74,7 @@
     const stats=res[2].data||{member_count:0,online_count:0};
     qs("[data-forum-online-count]")?.replaceChildren(document.createTextNode(String(Number(stats.online_count||0))));
     qs("[data-forum-member-count]")?.replaceChildren(document.createTextNode(String(Number(stats.member_count||0))));
-    renderNodeTree();fillCategorySelect();renderTopics();setState("ФОРУМ ГОТОВ","ready");
+    renderNodeTree();fillCategorySelect();renderTopics();
   };
 
   const openCreate=()=>{
@@ -110,7 +108,7 @@
 
   const init=async()=>{
     state.client=await waitForClient();
-    if(!state.client){setState("ОШИБКА ДАННЫХ","error");showMessage("Форум не смог подключиться к данным.","error");return;}
+    if(!state.client){showMessage("Форум не смог подключиться к данным.","error");return;}
     try{const session=await withTimeout(state.client.auth.getSession(),8000,"");state.user=session.data?.session?.user||window.NaZerakAuth?.user||null;}catch{state.user=window.NaZerakAuth?.user||null;}
     if(state.user)await syncAuthor();
     qsa("[data-forum-create]").forEach(b=>b.addEventListener("click",openCreate));
