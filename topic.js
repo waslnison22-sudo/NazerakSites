@@ -54,12 +54,18 @@
     const input=qs("[data-topic-reply-input]"),button=qs("[data-topic-reply-submit]"),body=String(input&&input.value||"").trim();
     if(!state.user||!state.client||!state.topic||button.disabled)return;
     if(!body){showMessage("Напиши текст ответа.","error");return;}
-    button.disabled=true;button.querySelector("span").textContent="Публикуем…";showMessage("");
-    if(!(await syncAuthor())){showMessage("Не удалось сохранить форумный профиль. Попробуй ещё раз.","error");return;}
-    const r=await state.client.from("forum_posts").insert({topic_id:state.topic.id,author_id:state.user.id,body:body});
-    button.disabled=false;button.querySelector("span").textContent="Ответить";
-    if(r.error){showMessage(r.error.message||"Не удалось опубликовать ответ.","error");return;}
-    input.value="";await loadTopic();window.scrollTo({top:document.body.scrollHeight,behavior:"smooth"});
+    button.disabled=true;const buttonLabel=button.querySelector("span");if(buttonLabel)buttonLabel.textContent="Публикуем…";showMessage("");
+    try {
+      if(!(await syncAuthor())){showMessage("Не удалось сохранить форумный профиль. Проверь соединение и попробуй ещё раз.","error");return;}
+      const r=await state.client.from("forum_posts").insert({topic_id:state.topic.id,author_id:state.user.id,body:body});
+      if(r.error){showMessage("Не удалось опубликовать ответ. Проверь соединение и попробуй ещё раз.","error");return;}
+      input.value="";await loadTopic();window.scrollTo({top:document.body.scrollHeight,behavior:"smooth"});
+    } catch (error) {
+      console.error("[NaZerak Forum] reply failed:",error);
+      showMessage("Не удалось опубликовать ответ из-за ошибки соединения. Попробуй ещё раз.","error");
+    } finally {
+      button.disabled=false;if(buttonLabel)buttonLabel.textContent="Ответить";
+    }
   };
   const init=async()=>{
     state.client=await waitForClient();
