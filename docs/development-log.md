@@ -615,3 +615,48 @@ The repository documentation names forum-hero.jpg, hero-world.jpg, world-panel.j
 ### v11 QA correction
 - The first v11 browser run reached the forum page successfully but failed its new hero geometry assertion because the assertion compared the button group to the outer hero border while the design intentionally aligns buttons with the padded title/description column.
 - The implementation itself kept the requested lower-left alignment; the test was corrected to compare the action group's left edge with the hero content column and still enforce the bottom anchoring.
+
+
+## 2026-10-04 — full forum audit and v12 reconstruction
+
+### Current-state audit
+The current main branch was re-read after the latest external-assistant changes. The important finding was not a missing polish rule but a conflicting visual history: forum.css had accumulated multiple forum generations (v3–v11) inside one file. The latest rules were overriding earlier rules, while the screenshot still looked like the previous visual system.
+
+The forum content/rendering contract remains dynamic and must stay intact:
+- forum_node_directory for the section tree;
+- forum_topic_list for topic data;
+- forum_community_stats for counters;
+- forum_my_permissions for publishing permissions.
+
+No RLS/permission logic was weakened.
+
+### User-requested cleanup
+- The visible forum readiness/status pill is not part of the current forum header.
+- The category publication-policy container was still present in forum-category.html even though it was hidden. It was removed completely so the obsolete publication-access UI cannot reappear.
+- The forum hero keeps the title/description on the left and the action buttons at the lower-left.
+- The old empty-state “forum ready” copy remains removed.
+- No publication-access explanation is rendered by the current forum.js / forum-category.js row renderers.
+
+### Visual reconstruction v12
+forum.css was rewritten rather than extended. The new file is a single authoritative forum stylesheet with:
+- image-backed hero;
+- left-aligned content and lower-left actions;
+- clear primary/secondary column hierarchy;
+- flatter directory rows instead of stacked cards;
+- stronger section separators and restrained hover indicators;
+- coherent category, search, members, topic and profile surfaces;
+- full mobile restructuring rather than desktop shrinkage;
+- 16px mobile inputs and minimum touch targets;
+- overflow-safe topic content;
+- reduced-motion support.
+
+The committed forum artwork is assets/images/forum-hero.svg. The current GitHub tree contains one forum artwork asset; no additional JPG/PNG/WebP forum artwork is currently committed on main.
+
+### QA corrections
+- Forum CSS cache references were bumped to forum.css?v=12.
+- Static QA was aligned with v12.
+- Browser smoke was corrected to validate the new hero artwork layer instead of the old data-image-slot contract.
+- The smoke suite continues to enforce the absence of the visible forum status UI, correct hero geometry, desktop two-column composition, narrow mobile overflow safety and removal of obsolete publication-policy UI.
+
+### Release gate
+The current v12 changes are not considered released until the fresh NaZerak QA, Pages build and production deployment for the resulting head are observed.
