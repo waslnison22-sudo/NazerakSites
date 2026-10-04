@@ -454,3 +454,11 @@ A GitHub compare from `a6de9d51…` to the recovery head `fb9225862a4750028e29f9
 - Browser smoke already checks hero left alignment, lower-left button geometry, no visible status and loaded forum sections. The updated source must pass the full suite.
 - Live page could not be inspected through the available web page reader during this pass. Automated browser assertions are not a substitute for screenshot-based subjective review.
 - No Supabase schema, RLS policy, or posting permission logic was changed.
+
+
+### Verified release addendum — 2026-10-04
+- Exact resulting HEAD: `f98ddab186b19ab143de03acdae8536c30858e31`.
+- QA run `37182675457`: **success**. Static release checks and Supabase runtime smoke passed; browser smoke passed for homepage desktop/mobile, forum index desktop/mobile/narrow mobile, official/category/narrow category, members/narrow members, search, user profile, 404, OAuth start, and cabinet desktop/mobile/tablet plus profile-timeout isolation.
+- Production deploy run `37182735551`: **success**. SFTP upload, obsolete route cleanup, production HTTP content checks for `/` and `/forum.html`, and runner TLS verification step all completed successfully.
+- TLS verification step emitted a warning that the certificate is not trusted by the runner; the deploy workflow is configured to continue after this independent TLS check. Do not describe the public certificate chain as trusted based on this run.
+- These corrections are now included in the successfully deployed tested commit. Screenshot-based visual sign-off is still outstanding.
