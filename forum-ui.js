@@ -14,6 +14,8 @@
     "'": "&#039;"
   }[c]));
 
+  const withTimeout = async (promise, ms) => { let timer; try { return await Promise.race([promise, new Promise((_, reject) => { timer = window.setTimeout(() => reject(new Error("timeout")), ms); })]); } finally { window.clearTimeout(timer); } };
+
   const safeUrl = (value) => {
     try {
       const url = new URL(String(value || ""));
@@ -61,9 +63,11 @@
       .select("*")
       .eq("public_id", publicId)
       .maybeSingle();
+    const guarded = withTimeout(request, 5000);
 
-    cache.set(publicId, request);
-    const result = await request;
+    cache.set(publicId, guarded);
+    let result;
+    try { result = await guarded; } catch { cache.delete(publicId); return null; }
 
     if (result.error) {
       cache.delete(publicId);
