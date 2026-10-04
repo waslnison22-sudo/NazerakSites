@@ -781,3 +781,27 @@ The supplied desktop screenshot still reads as an older, compressed forum: main 
 3. Audit actual populated forum rows and topic posts with long Russian text and usernames. Add deterministic fixtures where live data is absent.
 4. Refactor duplicated v12–v16 CSS into one maintainable component stylesheet after the visual contracts are stable; do not keep stacking blind overrides.
 5. Rebuild the index and internal route composition, then repeat the full matrix before any release request.
+
+
+## 2026-10-04 — search state integrity and v16 visual regression (isolated branch)
+
+### Search defect found during screenshot review
+The captured search screen showed a non-empty query ("na") and a result title for that query, but the empty-state heading still said "Введите запрос." This made the interface contradict its own state. The clear button also did not consistently reset its own visibility and could leave the query parameter in a way that did not match the displayed state.
+
+### Correction
+- Search now distinguishes an empty query from a query with no matches.
+- Empty query: shows "Введите запрос." with a neutral instruction.
+- Non-empty query with zero matches: shows "Совпадений не найдено." and a useful next step.
+- Typing updates the local result state and clear-button visibility.
+- Submitting updates the URL query while preserving unrelated query parameters and hash.
+- Clearing empties the field, hides the clear control, removes only the `q` parameter, restores the empty-query state and returns focus to the field.
+- Bumped the search script reference to `forum-search.js?v=3` and aligned static QA.
+
+### Regression coverage
+- Browser smoke now verifies that a query reveals the clear control, that no-results copy is semantically correct when there are no matches, and that clearing restores the blank-query state and removes the URL query.
+- These checks use the real public data path; the assertion adapts if the database has matching topics.
+
+### Release status
+- Changes remain isolated on `forum-hud-reboot-prep-20261004`.
+- No merge to `main`, no REG.RU SFTP operation and no production deployment.
+- Awaiting the latest exact-head QA after the search correction.
