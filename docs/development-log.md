@@ -708,3 +708,37 @@ The next visual implementation must be built component-by-component on this bran
 - Bumped forum stylesheet references from v12 to v13 across all six forum routes and aligned static QA expectations.
 - These edits are only on the isolated reboot branch. They have not been deployed to nazerak.ru.
 - Required next check: rerun PR QA, inspect the first failing assertion if any, then extend the browser regression matrix to assert readable text and control dimensions across every forum route. Screenshot review remains mandatory before declaring visual acceptance.
+
+
+## 2026-10-04 — HUD reboot v14 readability foundation (isolated branch)
+
+### Why
+The supplied desktop screenshot still reads as an older, compressed forum: main content is too dense, topic activity becomes a weak empty rail, the hero hierarchy is disconnected from the content, and multiple secondary labels are too small to scan comfortably. This is a composition and scale problem, not only a color problem.
+
+### Changes
+- Added v14 component-level readability and spacing rules to `forum.css` on `forum-hud-reboot-prep-20261004`.
+- Raised core board, thread, member and post typography; increased row rhythm, avatar size, search-field height and form-control dimensions.
+- Kept compact 12px typography only for secondary labels and dense metadata; core reading content is targeted at 14–16px or larger.
+- Made primary buttons at least 48px high and important icon controls 44px.
+- Preserved existing HTML data hooks, routes, Supabase view names, auth and posting handlers.
+- Reworked the index breakpoint so the sidebar no longer forces cramped columns at medium widths; responsive behavior stacks primary content before auxiliary activity.
+- Kept mobile category and topic rows stacked rather than shrinking desktop table columns.
+- Bumped the six forum route stylesheet references to `forum.css?v=14`.
+- Added browser-smoke gates for visible forum control target size (44px), core text floor (14px), content staying within the viewport and document horizontal overflow.
+
+### Validation status
+- Static QA and Supabase runtime smoke passed on the preceding v13 branch commit `3f1b4c0c`.
+- v14 browser regression is running on the isolated branch; no pass is claimed until the final exact-head workflow completes.
+- The earlier v12 browser run failed because a narrow-mobile category input rendered at 12px. v13 raised form inputs to 16px; v14 retains that floor and adds broader checks.
+- No production SFTP deployment or merge to `main` was performed. The production workflow is restricted to successful QA on `main`.
+- Exact asset inventory still contains only `assets/images/forum-hero.svg` and the asset README. Additional artwork mentioned in older documentation is not present in the current Git tree, so no guessed paths were wired in.
+
+### Reference review
+- XenForo's modern-UX showcase was used as a structural reference for clear category navigation and discussion flow, not copied as a skin: https://xenforo.com/community/threads/showcase-a-more-modern-user-experience.230362/
+- WCAG 2.2 SC 2.5.8 sets a 24×24 CSS-pixel minimum target size with exceptions. NaZerak uses a more comfortable 44px project target for primary touch controls: https://www.w3.org/TR/WCAG22/#target-size-minimum
+
+### Next
+1. Confirm v14 exact-head QA, inspect failures and correct them.
+2. Add screenshot artifacts to the isolated browser workflow for visual comparison at 1440, 1280, 768, 390 and 320 CSS px.
+3. Validate the actual empty/populated and guest/authenticated states, including long Russian labels, long usernames and the composer.
+4. Rebuild page composition only after screenshot review; do not merge or deploy without a separate release decision.
