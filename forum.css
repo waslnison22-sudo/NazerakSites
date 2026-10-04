@@ -656,3 +656,12 @@ body[data-forum] .noscript-message,body[data-forum-category-page] .noscript-mess
 @media(prefers-reduced-motion:reduce){
   .forum-page *,.topic-page *,.forum-user-page *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
 }
+
+
+/* v15 — preserve native hidden semantics when component display rules are present */
+body[data-forum] [hidden],
+body[data-forum-category-page] [hidden],
+body[data-forum-topic] [hidden],
+body[data-forum-members-page] [hidden],
+body[data-forum-search-page] [hidden],
+body[data-forum-user-page] [hidden]{display:none!important}
