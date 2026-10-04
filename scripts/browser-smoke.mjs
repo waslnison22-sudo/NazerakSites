@@ -1,4 +1,5 @@
 import { chromium } from "playwright";
+import fs from "node:fs";
 
 const BASE = (process.env.NAZERAK_BASE_URL || "http://127.0.0.1:4173").replace(/\/$/, "");
 const TIMEOUT = 20000;
@@ -77,6 +78,48 @@ const assertAccessibleControls = async (page, name) => {
   }
 };
 
+const assertForumVisualBaseline = async (page, name) => {
+  const result = await page.evaluate(() => {
+    const root = document.querySelector(".forum-page, .topic-page, .forum-user-page");
+    if (!root) return null;
+    const visible = (el) => {
+      const style = getComputedStyle(el);
+      const rect = el.getBoundingClientRect();
+      return !el.hidden && style.display !== "none" && style.visibility !== "hidden" && rect.width > 0 && rect.height > 0;
+    };
+    const controls = [...document.querySelectorAll(
+      ".forum-page button, .topic-page button, .forum-user-page button, .topbar .nav-toggle, .topbar .nav > a"
+    )].filter(visible);
+    const undersized = controls.map((el) => {
+      const rect = el.getBoundingClientRect();
+      return { label: (el.getAttribute("aria-label") || el.textContent || "").trim().slice(0, 48), width: Math.round(rect.width), height: Math.round(rect.height) };
+    }).filter((item) => item.width < 44 || item.height < 44);
+    const primaryTextSelectors = [
+      "h1", "h2", "h3", ".forum-board-row__forum strong",
+      ".forum-thread-row__title", ".forum-topic-row__copy h3",
+      ".forum-member-card__body strong", ".topic-post__body",
+      ".forum-hero p", ".forum-section-head p"
+    ];
+    const tinyText = primaryTextSelectors.flatMap((selector) =>
+      [...root.querySelectorAll(selector)].filter(visible).map((el) => ({
+        selector, text: (el.textContent || "").trim().replace(/\\s+/g, " ").slice(0, 48),
+        size: parseFloat(getComputedStyle(el).fontSize)
+      }))
+    ).filter((item) => item.size < 14);
+    const outside = [...root.querySelectorAll("*")].filter(visible).map((el) => {
+      const rect = el.getBoundingClientRect();
+      return { tag: el.tagName, className: typeof el.className === "string" ? el.className : "", left: Math.round(rect.left), right: Math.round(rect.right) };
+    }).filter((item) => item.left < -1 || item.right > innerWidth + 1).slice(0, 8);
+    return { undersized, tinyText, outside, viewport: innerWidth, pageWidth: document.documentElement.scrollWidth };
+  });
+  if (!result) return;
+  if (result.undersized.length) throw new Error(name + " forum controls below 44px target: " + JSON.stringify(result.undersized));
+  if (result.tinyText.length) throw new Error(name + " primary forum text below 14px: " + JSON.stringify(result.tinyText));
+  if (result.outside.length || result.pageWidth > result.viewport + 1) {
+    throw new Error(name + " forum content extends beyond viewport: " + JSON.stringify({ outside: result.outside, pageWidth: result.pageWidth, viewport: result.viewport }));
+  }
+};
+
 const testSameOriginLinks = async (page, name) => {
   const routes = await page.evaluate(() =>
     [...document.querySelectorAll("a[href]")]
@@ -146,6 +189,12 @@ const testStaticPage = async ({ path, name, viewport, check }) => {
   try {
     await page.goto(BASE + path, { waitUntil: "networkidle", timeout: TIMEOUT });
     await check(page);
+    await assertForumVisualBaseline(page, name);
+    if (await page.locator(".forum-page, .topic-page, .forum-user-page").count()) {
+      fs.mkdirSync("artifacts/forum-hud", { recursive: true });
+      const slug = name.toLowerCase().replace(/[^a-z0-9-]+/g, "-").replace(/^-|-$/g, "");
+      await page.screenshot({ path: `artifacts/forum-hud/${slug}-${viewport.width}x${viewport.height}.png`, fullPage: false });
+    }
     await assertAccessibleControls(page, name);
     await testSameOriginLinks(page, name);
     await assertNoHorizontalOverflow(page, name);
@@ -422,12 +471,8 @@ await testStaticPage({
   viewport: { width: 1440, height: 900 },
   check: async (page) => {
     if (!(await page.locator("h1").textContent()).includes("Форум")) throw new Error("forum heading missing");
-    const layout = await page.locator(".forum-index-grid").evaluate((node) => {
-      const style = getComputedStyle(node);
-      const rect = node.getBoundingClientRect();
-      return { display: style.display, columns: style.gridTemplateColumns.split(" ").filter(Boolean).length, width: rect.width };
-    });
-    if (layout.display !== "grid" || layout.columns < 2) throw new Error("desktop forum reference grid missing: " + JSON.stringify(layout));
+    const layout = await page.locator(".forum-index-grid").evaluate((node) => { const style = getComputedStyle(node), value = style.gridTemplateColumns, rect = node.getBoundingClientRect(); let depth = 0, columns = 0, inTrack = false; for (const char of value) { if (char === "(") depth++; else if (char === ")") depth--; if (char === " " && depth === 0) { if (inTrack) columns++; inTrack = false; } else inTrack = true; } if (inTrack) columns++; return { display: style.display, columns, width: rect.width, emptyActivity: node.classList.contains("is-empty-activity") }; });
+    if (layout.display !== "grid" || (!layout.emptyActivity && layout.columns < 2) || (layout.emptyActivity && layout.columns !== 1)) throw new Error("desktop forum composition invalid: " + JSON.stringify(layout));
     if (layout.width < 1000) throw new Error("desktop forum canvas is unexpectedly narrow: " + JSON.stringify(layout));
     const hero = await page.locator(".forum-hero").evaluate((node) => {
       const style = getComputedStyle(node);
@@ -484,6 +529,17 @@ await testStaticPage({
     if (await page.locator(".forum-board__columns").count() < 1) throw new Error("forum board markup missing");
     const mobileLayout = await page.locator(".forum").evaluate((node) => ({ width: node.getBoundingClientRect().width, viewport: innerWidth }));
     if (mobileLayout.width > mobileLayout.viewport + 1) throw new Error("mobile forum canvas overflows: " + JSON.stringify(mobileLayout));
+  }
+});
+
+await testStaticPage({
+  path: "/forum.html",
+  name: "forum tablet",
+  viewport: { width: 768, height: 1024 },
+  check: async (page) => {
+    if (!(await page.locator("h1").textContent()).includes("Форум")) throw new Error("tablet forum heading missing");
+    const layout = await page.locator(".forum-index-grid").evaluate((node) => { const style = getComputedStyle(node); const value = style.gridTemplateColumns; let depth = 0, columns = 0, inTrack = false; for (const char of value) { if (char === "(") depth++; else if (char === ")") depth--; if (char === " " && depth === 0) { if (inTrack) columns++; inTrack = false; } else inTrack = true; } if (inTrack) columns++; return { display: style.display, columns }; });
+    if (layout.display === "grid" && layout.columns !== 1) throw new Error("tablet forum must use a single readable column: " + JSON.stringify(layout));
   }
 });
 
@@ -550,6 +606,19 @@ await testStaticPage({
 });
 
 await testStaticPage({
+  path: "/forum-category.html?slug=pravila-i-dokumenty",
+  name: "forum category mobile",
+  viewport: { width: 390, height: 844 },
+  check: async (page) => {
+    const title = (await page.locator("[data-category-title]").textContent() || "").trim();
+    if (!title || /загрузка/i.test(title)) throw new Error("mobile category did not resolve");
+    if (!(await page.locator(".forum-list-shell").count())) throw new Error("mobile category list shell missing");
+    const controls = await page.locator(".forum-section-head button").first().boundingBox();
+    if (!controls || controls.height < 44) throw new Error("mobile category create target is too small");
+  }
+});
+
+await testStaticPage({
   path: "/forum-members.html",
   name: "forum members narrow mobile",
   viewport: { width: 320, height: 740 },
@@ -577,9 +646,46 @@ await testStaticPage({
   check: async (page) => {
     if (!(await page.locator("h1").textContent()).includes("Поиск")) throw new Error("search heading missing");
     if (!(await page.locator("#global-forum-search").count())) throw new Error("search field missing");
-    await page.locator("#global-forum-search").fill("na");
+    const input = page.locator("#global-forum-search");
+    const clear = page.locator("[data-forum-search-clear]");
+    await input.fill("na");
     await page.locator('[data-forum-search-form]').evaluate((form) => form.requestSubmit());
-    if (!page.url().includes("/forum-search.html?q=na")) throw new Error("search did not update query URL");
+    if (!new URL(page.url()).searchParams.get("q")?.includes("na")) throw new Error("search did not update query URL");
+    if (!(await clear.isVisible())) throw new Error("search clear control did not appear for a query");
+    if (await page.locator("[data-search-empty]").isVisible()) {
+      const emptyTitle = (await page.locator("[data-search-empty] h3").textContent() || "").trim();
+      if (!/не найдено/i.test(emptyTitle)) throw new Error("search no-results state still looks like an empty query: " + emptyTitle);
+    }
+    await clear.click();
+    if ((await input.inputValue()) !== "") throw new Error("search clear did not reset the input");
+    if (await clear.isVisible()) throw new Error("search clear control stayed visible after clearing");
+    if (new URL(page.url()).searchParams.has("q")) throw new Error("search clear did not remove the query from URL");
+    if ((await page.locator("[data-search-empty] h3").textContent() || "").trim() !== "Введите запрос.") {
+      throw new Error("search clear did not restore the empty-query state");
+    }
+  }
+});
+
+await testStaticPage({
+  path: "/forum-search.html",
+  name: "forum search mobile",
+  viewport: { width: 390, height: 844 },
+  check: async (page) => {
+    if (!(await page.locator("h1").textContent()).includes("Поиск")) throw new Error("mobile search heading missing");
+    const field = page.locator("#global-forum-search");
+    const fontSize = await field.evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
+    const bounds = await field.boundingBox();
+    if (fontSize < 16 || !bounds || bounds.height < 48) throw new Error("mobile search field is too small: " + JSON.stringify({fontSize,bounds}));
+  }
+});
+
+await testStaticPage({
+  path: "/topic.html?id=invalid",
+  name: "forum topic invalid state mobile",
+  viewport: { width: 320, height: 740 },
+  check: async (page) => {
+    await page.locator("[data-topic-message]").waitFor({ state: "visible", timeout: 15000 });
+    if (await page.locator("[data-topic-head]").isVisible()) throw new Error("invalid topic should not show a loading header");
   }
 });
 

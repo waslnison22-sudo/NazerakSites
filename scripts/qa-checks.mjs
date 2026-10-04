@@ -119,12 +119,12 @@ for (const [name, page] of [
   ["forum-user.html", read("forum-user.html")]
 ]) {
   const assets = ["auth-config.js?v=8", "supabase-loader.js?v=9", "auth.js?v=35", "script.js?v=22", "styles.css?v=37"];
-  if (name === "forum.html") { assets.push("forum.css?v=12", "forum-ui.js?v=3", "forum.js?v=6"); }
-  if (name === "forum-category.html") { assets.push("forum.css?v=12", "forum-ui.js?v=3", "forum-category.js?v=5"); }
-  if (name === "forum-members.html") { assets.push("forum.css?v=12", "forum-ui.js?v=3", "forum-members.js?v=2"); }
-  if (name === "forum-search.html") { assets.push("forum.css?v=12", "forum-ui.js?v=3", "forum-search.js?v=2"); }
-  if (name === "topic.html") { assets.push("forum.css?v=12", "forum-ui.js?v=3", "topic.js?v=4"); }
-  if (name === "forum-user.html") { assets.push("forum.css?v=12", "forum-ui.js?v=3", "user.js?v=3"); }
+  if (name === "forum.html") { assets.push("forum.css?v=17", "forum-ui.js?v=3", "forum.js?v=7"); }
+  if (name === "forum-category.html") { assets.push("forum.css?v=17", "forum-ui.js?v=3", "forum-category.js?v=5"); }
+  if (name === "forum-members.html") { assets.push("forum.css?v=17", "forum-ui.js?v=3", "forum-members.js?v=2"); }
+  if (name === "forum-search.html") { assets.push("forum.css?v=17", "forum-ui.js?v=3", "forum-search.js?v=3"); }
+  if (name === "topic.html") { assets.push("forum.css?v=17", "forum-ui.js?v=3", "topic.js?v=4"); }
+  if (name === "forum-user.html") { assets.push("forum.css?v=17", "forum-ui.js?v=3", "user.js?v=3"); }
   for (const asset of assets) {
     if (!page.includes(asset)) {
       fail.push(`${name} asset include missing: ${asset}`);
@@ -266,8 +266,8 @@ const forumSurfaceFiles = ["forum.html","forum-category.html","forum-members.htm
 
 for (const file of forumSurfaceFiles) {
   const page = read(file);
-  if (file === "forum.html" && !page.includes("forum.css?v=12")) fail.push(file + " forum stylesheet is missing");
-  if (file !== "forum.html" && !page.includes("forum.css?v=12")) fail.push(file + " forum stylesheet is missing");
+  if (file === "forum.html" && !page.includes("forum.css?v=17")) fail.push(file + " forum stylesheet is missing");
+  if (file !== "forum.html" && !page.includes("forum.css?v=17")) fail.push(file + " forum stylesheet is missing");
 }
 if (css.includes("NAZERAK FORUM")) fail.push("obsolete forum cascade remains in global stylesheet");for (const file of forumSurfaceFiles) {
   const page = read(file);
@@ -293,7 +293,7 @@ if (forumPage.includes("Официальные разделы публикует
 if (forumPage.includes("Мир администрации</h3>") || forumPage.includes("РП-мир</h3>")) fail.push("legacy two-world forum presentation remains");
 if (!forumPage.includes("data-forum-search-form") || !forumPage.includes("data-forum-search-clear")) fail.push("forum search controls are incomplete");
 if (!forumPage.includes("Правила форума") || !forumPage.includes("Последние обсуждения")) fail.push("forum reference action is missing");
-if (!forumCss.includes("single authoritative forum surface")) fail.push("final forum stylesheet is missing");
+if (![".forum-hero{", ".forum-index-grid{", ".forum-board-row{", ".topic-post{"].every((selector) => forumCss.includes(selector))) fail.push("forum stylesheet component contract is incomplete");
 if (!read("forum.js").includes('e.key!=="/"')) fail.push("forum slash-to-search keyboard shortcut is missing");
 for (const file of ["forum.js","forum-category.js","topic.js"]) if (!read(file).includes("Загрузка") || !read(file).includes("10000")) fail.push(file + " forum data timeout guard is missing");
 if (!forumPage.includes("button--primary") || !forumPage.includes("button--ghost")) fail.push("forum must use common site button classes");

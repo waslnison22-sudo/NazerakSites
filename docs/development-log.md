@@ -660,3 +660,199 @@ The committed forum artwork is assets/images/forum-hero.svg. The current GitHub 
 
 ### Release gate
 The current v12 changes are not considered released until the fresh NaZerak QA, Pages build and production deployment for the resulting head are observed.
+
+## 2026-10-04 — forum HUD reboot preparation (isolated branch)
+
+### Scope and production safety
+- Created isolated preparation branch: `forum-hud-reboot-prep-20261004`, based on main commit `7367cd200ccdcd847ddfcc0c0481e5eb0180b20e`.
+- No changes were uploaded to `nazerak.ru`; no production deployment was triggered by this work.
+- Main branch remains the baseline. Design and QA preparation is isolated from the public site.
+
+### Current-state audit
+- Re-checked all six forum routes, current forum stylesheet separation, dynamic rendering scripts, workflow deployment gates, and recent v11/v12 changes.
+- The current forum system uses `forum.css?v=12` with shared global styles at `styles.css?v=37`; runtime content is rendered by page-specific scripts and shared `forum-ui.js`.
+- The stylesheet still includes small values for primary reading context (9–13px on tags, metadata, table headings, topic titles and row labels). The new design must establish a readable type scale and must not compress core text to preserve desktop columns.
+- The screenshot supplied in this conversation confirms visible imbalance: the hero text/actions do not form a strong compact composition, the forum index is too dense, and the latest-activity rail is visually weak when empty.
+- Main currently contains only `assets/images/forum-hero.svg` plus documentation in `assets/images`. Other names in the asset guide are not present in the current tree and must not be referenced until exact files are found.
+- GitHub commit metadata lists the latest v11/v12 changes under the repository owner. This does not reliably identify whether individual changes were produced by Grok, Copilot, or direct editing; review diffs and behavior rather than assuming authorship.
+- Latest inspected QA run `37194440970` failed during static QA on the obsolete string assertion `single authoritative forum surface`; subsequent Supabase and browser smoke steps were skipped.
+
+### QA correction prepared
+- Replaced the obsolete literal stylesheet-name assertion with a component contract checking the forum hero, index grid, board row and topic post selectors.
+- This QA correction is on the isolated branch and has not yet been executed in a fresh full workflow. It is not recorded as passed.
+
+### Reference review
+- Reviewed the XenForo community showcase for category context, streamlined navigation and conversational flow.
+- Reviewed the Matreshka RP forum for real-world roleplay forum grouping, status labels and latest-activity information architecture.
+- Reviewed W3C WCAG 2.2 target-size guidance; the project target for primary and mobile controls is set to 44×44 CSS px, exceeding the formal 24×24 minimum where practical.
+- Reviewed a modern forum/community template as a cross-page reference for category, thread, member, profile and compose screens. These are structural references, not designs to copy literally.
+
+### Reboot rule
+The next visual implementation must be built component-by-component on this branch, preserve all existing data hooks and permissions, and pass screenshot-based review at desktop and mobile sizes before advancing. No main merge or production deploy without explicit approval and exact-commit QA.
+
+
+### Design specification prepared
+- Added `docs/forum-hud-design-spec.md` on the isolated reboot branch.
+- Defined proposed type scale, spacing, surface treatment, content widths, target dimensions, per-route composition, responsive behavior, artwork rules and stop conditions.
+- Set project design targets of 16px body copy, 14px secondary copy, 12px only for nonessential dense metadata, and 44×44px for important interactive targets.
+- Documented the distinction between formal WCAG 2.2 target-size minimum and the more comfortable project target.
+- The spec is a preparation artifact; it is not proof that the visual implementation is complete or tested.
+- Production site remains unchanged.
+
+
+### v13 isolated readability correction
+- The draft PR browser smoke completed desktop index, forum mobile, narrow forum, official category and standard category checks, then failed at the 320px category form input: computed font size was 12px while the test expected 16px.
+- Raised the forum stylesheet's compact font-size values to a 12px floor, with core text values increased to 14–16px. This is a first readability correction, not a claim that the entire visual system is complete.
+- Set forum-scoped shared button labels to 14px and minimum height to 48px; forum navigation rows target 44px; icon clear/close controls target 44px.
+- Set composer labels to 14px, input/select/textarea text to 16px, help text to 12px and modal description to 14px.
+- Bumped forum stylesheet references from v12 to v13 across all six forum routes and aligned static QA expectations.
+- These edits are only on the isolated reboot branch. They have not been deployed to nazerak.ru.
+- Required next check: rerun PR QA, inspect the first failing assertion if any, then extend the browser regression matrix to assert readable text and control dimensions across every forum route. Screenshot review remains mandatory before declaring visual acceptance.
+
+
+## 2026-10-04 — HUD reboot v14 readability foundation (isolated branch)
+
+### Why
+The supplied desktop screenshot still reads as an older, compressed forum: main content is too dense, topic activity becomes a weak empty rail, the hero hierarchy is disconnected from the content, and multiple secondary labels are too small to scan comfortably. This is a composition and scale problem, not only a color problem.
+
+### Changes
+- Added v14 component-level readability and spacing rules to `forum.css` on `forum-hud-reboot-prep-20261004`.
+- Raised core board, thread, member and post typography; increased row rhythm, avatar size, search-field height and form-control dimensions.
+- Kept compact 12px typography only for secondary labels and dense metadata; core reading content is targeted at 14–16px or larger.
+- Made primary buttons at least 48px high and important icon controls 44px.
+- Preserved existing HTML data hooks, routes, Supabase view names, auth and posting handlers.
+- Reworked the index breakpoint so the sidebar no longer forces cramped columns at medium widths; responsive behavior stacks primary content before auxiliary activity.
+- Kept mobile category and topic rows stacked rather than shrinking desktop table columns.
+- Bumped the six forum route stylesheet references to `forum.css?v=14`.
+- Added browser-smoke gates for visible forum control target size (44px), core text floor (14px), content staying within the viewport and document horizontal overflow.
+
+### Validation status
+- Static QA and Supabase runtime smoke passed on the preceding v13 branch commit `3f1b4c0c`.
+- v14 browser regression is running on the isolated branch; no pass is claimed until the final exact-head workflow completes.
+- The earlier v12 browser run failed because a narrow-mobile category input rendered at 12px. v13 raised form inputs to 16px; v14 retains that floor and adds broader checks.
+- No production SFTP deployment or merge to `main` was performed. The production workflow is restricted to successful QA on `main`.
+- Exact asset inventory still contains only `assets/images/forum-hero.svg` and the asset README. Additional artwork mentioned in older documentation is not present in the current Git tree, so no guessed paths were wired in.
+
+### Reference review
+- XenForo's modern-UX showcase was used as a structural reference for clear category navigation and discussion flow, not copied as a skin: https://xenforo.com/community/threads/showcase-a-more-modern-user-experience.230362/
+- WCAG 2.2 SC 2.5.8 sets a 24×24 CSS-pixel minimum target size with exceptions. NaZerak uses a more comfortable 44px project target for primary touch controls: https://www.w3.org/TR/WCAG22/#target-size-minimum
+
+### Next
+1. Confirm v14 exact-head QA, inspect failures and correct them.
+2. Add screenshot artifacts to the isolated browser workflow for visual comparison at 1440, 1280, 768, 390 and 320 CSS px.
+3. Validate the actual empty/populated and guest/authenticated states, including long Russian labels, long usernames and the composer.
+4. Rebuild page composition only after screenshot review; do not merge or deploy without a separate release decision.
+
+
+## 2026-10-04 — forum HUD v15/v16 responsive QA hardening (isolated branch)
+
+### Screenshot review findings
+- The v15 browser artifact was reviewed at 1440×900 and 390×844 / 320×740.
+- Desktop board column labels still collided: the fixed statistics tracks were too narrow for Russian headings, even though document-level horizontal overflow was absent.
+- Mobile category title and empty-state content wrap without clipping at 320px, but this does not replace the remaining populated-state and real-topic checks.
+- The screenshot artifact is now produced by the QA workflow and retained for seven days, allowing visual evidence to be reviewed rather than treating passing static checks as visual sign-off.
+
+### v16 correction
+- Widened the board metric tracks and gave heading cells explicit wrapping/width behavior to prevent the “Сообщения / Последнее сообщение” labels from colliding.
+- Kept the first column flexible so long Russian forum names have available space.
+- Preserved the stacked mobile board-row composition.
+
+### Expanded browser coverage
+- Added a 768px tablet forum-index check that requires a single readable column.
+- Added a 390px category page check for a valid title, list shell and create target height.
+- Added a 390px search page check for a 16px search field and at least 48px field height.
+- Added a 320px invalid-topic state check to ensure the loading header is not left visible when the topic identifier is invalid.
+- Existing baseline checks continue to test visible control targets, core text floors, accessible labels, viewport boundaries, same-origin links, console errors and failed local requests.
+- v15 exact-head workflow passed static QA, Supabase runtime smoke, browser smoke and screenshot artifact upload. v16 is not considered passed until the latest exact-head workflow finishes.
+
+### Production safety
+- All v13–v16 visual and test changes remain on `forum-hud-reboot-prep-20261004` / draft PR #3.
+- The production deploy workflow is configured to run only for successful QA on `main`; this work has not been merged to main or deployed to `nazerak.ru`.
+- No new image path was guessed. Current repository artwork inventory remains `assets/images/forum-hero.svg` and its README.
+
+### Reference review refinement
+- Matreshka's live forum was reviewed for its practical division into information, help, applications and server/faction areas, plus the visibility of thread status and latest activity: https://forum.matrp.ru/index.php
+- The XenForo community showcase was used for ideas around nested category context and thread navigation: https://xenforo.com/community/threads/showcase-a-more-modern-user-experience.230362/
+- WCAG 2.2 target-size minimum is 24×24 CSS px with defined exceptions; NaZerak's internal target remains 44×44px for primary controls: https://www.w3.org/TR/WCAG22/#target-size-minimum
+
+### Next implementation gates
+1. Confirm the exact-head v16 QA run and inspect every failed browser assertion, if any.
+2. Review captured screenshots for all generated route/viewport pairs; add 1024px and 200% zoom checks.
+3. Audit actual populated forum rows and topic posts with long Russian text and usernames. Add deterministic fixtures where live data is absent.
+4. Refactor duplicated v12–v16 CSS into one maintainable component stylesheet after the visual contracts are stable; do not keep stacking blind overrides.
+5. Rebuild the index and internal route composition, then repeat the full matrix before any release request.
+
+
+## 2026-10-04 — search state integrity and v16 visual regression (isolated branch)
+
+### Search defect found during screenshot review
+The captured search screen showed a non-empty query ("na") and a result title for that query, but the empty-state heading still said "Введите запрос." This made the interface contradict its own state. The clear button also did not consistently reset its own visibility and could leave the query parameter in a way that did not match the displayed state.
+
+### Correction
+- Search now distinguishes an empty query from a query with no matches.
+- Empty query: shows "Введите запрос." with a neutral instruction.
+- Non-empty query with zero matches: shows "Совпадений не найдено." and a useful next step.
+- Typing updates the local result state and clear-button visibility.
+- Submitting updates the URL query while preserving unrelated query parameters and hash.
+- Clearing empties the field, hides the clear control, removes only the `q` parameter, restores the empty-query state and returns focus to the field.
+- Bumped the search script reference to `forum-search.js?v=3` and aligned static QA.
+
+### Regression coverage
+- Browser smoke now verifies that a query reveals the clear control, that no-results copy is semantically correct when there are no matches, and that clearing restores the blank-query state and removes the URL query.
+- These checks use the real public data path; the assertion adapts if the database has matching topics.
+
+### Release status
+- Changes remain isolated on `forum-hud-reboot-prep-20261004`.
+- No merge to `main`, no REG.RU SFTP operation and no production deployment.
+- Awaiting the latest exact-head QA after the search correction.
+
+
+## 2026-10-04 — isolated HUD QA failure analysis and correction
+
+### Scope and safety
+- Work continues on `forum-hud-reboot-prep-20261004`, not `main`.
+- No production SFTP deployment was started by this change.
+- Baseline branch remains `main` at `7367cd200c`; reboot branch contains the isolated HUD specification, readability work and responsive regression coverage.
+
+### Visual review
+- Retrieved the browser QA screenshot artifact from run `37217970008` and inspected the 1440×900 forum-index capture.
+- The page has a working wide hero illustration, readable large title and clear action buttons, but the right-side latest-activity rail is visually sparse when the forum has no topics. This remains an open composition issue; do not mark the index as visually accepted from this screenshot alone.
+- Inspected the current branch's tracked image tree. The only committed image-format visual is `assets/images/forum-hero.svg`; no generated JPG, PNG, WebP or AVIF artwork is currently present in this branch. Keep the current verified SVG wired, and do not reference absent artwork paths.
+- The asset README was corrected to distinguish the present SVG from proposed future assets.
+
+### QA failure observed
+- Run `37217970008` completed with failure in browser smoke; static QA and Supabase runtime smoke passed.
+- The failing case was `forum tablet` at 768×1024. CSS deliberately changes `.forum-index-grid` to `display:block` below 900px, but the test counted `grid-template-columns` tokens even when the element was no longer a grid. Browsers retain the computed grid-template-columns declaration on a non-grid element, so the test reported two columns despite the actual block layout being stacked.
+- This was a test-contract defect, not evidence of a visual two-column collision. The test now reads both `display` and the track count, and only requires one grid track when the element is actually displayed as a grid.
+- No application JavaScript, database query, authorization rule or production deployment configuration was changed to mask this test failure.
+
+### Verification status
+- The assertion correction is committed to the isolated reboot branch.
+- A new branch QA run is required to verify the correction against Chromium and all remaining route/state checks.
+- Production remains unchanged. The screenshot artifact is a baseline for further visual review, not a final approval.
+
+
+## 2026-10-04 — empty activity layout and tablet test correction (v17)
+
+### Changes
+- Corrected the tablet browser assertion to parse computed CSS Grid tracks without splitting spaces inside `minmax()`. The test now evaluates the actual display mode and parsed track count.
+- Fixed the forum index composition when the latest-activity list is empty: on wide desktop the empty activity section and community resources now flow below the full-width forum directory instead of occupying a narrow, largely vacant side rail.
+- Added an explicit `is-empty-activity` state in `forum.js`, based on the filtered topic set, so searching to zero matches uses the same balanced layout and restoring matches returns to the standard grid.
+- Bumped `forum.css` to v17 on all six forum routes and the index script to v7; aligned static QA expectations.
+- Kept the change on the isolated reboot branch. No production upload or main-branch update was made.
+
+### Rationale
+- A 768px tablet layout was already intentionally stacked by the v16 media query; the former test miscounted `minmax(0px, 1fr)` as two space-separated items.
+- An empty latest-activity rail creates a large dead zone beside a 27-forum directory. A full-width flow better reflects the actual content while preserving the normal two-column layout when activity exists.
+
+### Verification
+- Static QA and Supabase runtime smoke passed in run `37217970008`; browser smoke failed only at the flawed tablet track-count assertion.
+- The parser correction, empty-activity state and v17 cache updates are committed on the reboot branch.
+- A fresh full browser QA run is now required. This v17 state is not marked accepted until that run passes and updated screenshots are reviewed.
+
+
+### Follow-up regression discovered during v17 validation
+- After correcting the CSS Grid parser, browser QA exposed a second stale expectation: the desktop smoke test required two columns unconditionally, while v17 intentionally changes the index to one full-width column when the filtered latest-activity list is empty.
+- Updated the desktop test to accept exactly one column only when the explicit `is-empty-activity` state is active; otherwise it still requires the intended two-column desktop grid. Width and display-mode checks remain in place.
+- The branch had an intermediate browser-smoke syntax error while repairing the parser; that malformed edit was corrected, and the test file was simplified to a depth-aware track counter without regex escaping.
+- Latest validation must still pass before the v17 UI is accepted. The test now reflects both supported layouts rather than weakening the layout gate.
