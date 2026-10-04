@@ -442,3 +442,10 @@ body[data-forum-user-page] .topbar .nav>a{min-height:44px;font-size:14px}
 .forum-modal__copy{font-size:14px;line-height:1.6}
 .forum-modal__close{width:44px;height:44px}
 .forum-search__clear{width:44px;height:44px}
+
+.forum-page .section-kicker,.topic-page .section-kicker,.forum-user-page .section-kicker{font-size:12px;line-height:1.4;letter-spacing:.12em}
+.forum-page .footer__copy,.topic-page .footer__copy,.forum-user-page .footer__copy{font-size:14px;line-height:1.5}
+.forum-page .footer__legal,.topic-page .footer__legal,.forum-user-page .footer__legal{font-size:12px;line-height:1.5}
+.forum-page .footer__right,.topic-page .footer__right,.forum-user-page .footer__right{font-size:12px;line-height:1.5}
+body[data-forum] .skip-link,body[data-forum-category-page] .skip-link,body[data-forum-topic] .skip-link,body[data-forum-members-page] .skip-link,body[data-forum-search-page] .skip-link,body[data-forum-user-page] .skip-link{min-height:44px;display:flex;align-items:center;font-size:14px}
+body[data-forum] .noscript-message,body[data-forum-category-page] .noscript-message,body[data-forum-topic] .noscript-message,body[data-forum-members-page] .noscript-message,body[data-forum-search-page] .noscript-message,body[data-forum-user-page] .noscript-message{font-size:14px;line-height:1.5}
