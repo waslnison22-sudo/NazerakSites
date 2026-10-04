@@ -542,7 +542,7 @@ await testStaticPage({
   viewport: { width: 768, height: 1024 },
   check: async (page) => {
     if (!(await page.locator("h1").textContent()).includes("Форум")) throw new Error("tablet forum heading missing");
-    const layout = await page.locator(".forum-index-grid").evaluate((node) => ({ display: getComputedStyle(node).display, columns: getComputedStyle(node).gridTemplateColumns.split(" ").filter(Boolean).length }));
+    const layout = await page.locator(".forum-index-grid").evaluate((node) => { const style = getComputedStyle(node); const tracks = style.gridTemplateColumns.match(/minmax\\([^)]*\\)|\\S+/g) || []; return { display: style.display, columns: tracks.length }; });
     if (layout.display === "grid" && layout.columns !== 1) throw new Error("tablet forum must use a single readable column: " + JSON.stringify(layout));
   }
 });
