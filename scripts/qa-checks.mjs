@@ -266,7 +266,8 @@ const forumSurfaceFiles = ["forum.html","forum-category.html","forum-members.htm
 
 for (const file of forumSurfaceFiles) {
   const page = read(file);
-  if (!page.includes("forum.css?v=6")) fail.push(file + " forum stylesheet is missing");
+  if (name === "forum.html" && !page.includes("forum.css?v=7")) fail.push(file + " forum stylesheet is missing");
+  if (name !== "forum.html" && !page.includes("forum.css?v=6")) fail.push(file + " forum stylesheet is missing");
 }
 if (css.includes("NAZERAK FORUM")) fail.push("obsolete forum cascade remains in global stylesheet");for (const file of forumSurfaceFiles) {
   const page = read(file);
@@ -278,7 +279,7 @@ const forumPage = read("forum.html");
 if (!forumPage.includes("data-forum-node-tree")) fail.push("forum node tree markup is missing");
 if (!forumPage.includes('data-image-slot="forum-hero"')) fail.push("forum hero media slot is missing");
 if (!read("script.js").includes("const mediaSources")) fail.push("media slot loader is missing");
-if (!read("script.js").includes('"forum-hero": "./assets/images/forum-hero.jpg"')) fail.push("forum hero media mapping is missing");
+if (!read("script.js").includes('slot.getAttribute("data-image-src")')) fail.push("media slots must use explicit image sources");
 if (/ФОРУМ ГОТОВ|Форум готов|forum ready/i.test(forumPage) || /ФОРУМ ГОТОВ|Форум готов|forum ready/i.test(read("forum-category.html")) || /Форум готов/i.test(read("forum.js"))) fail.push("obsolete forum-ready copy remains");
 for (const file of ["forum.html","forum-category.html","topic.html"]) {
   const source = read(file);
