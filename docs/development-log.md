@@ -660,3 +660,24 @@ The committed forum artwork is assets/images/forum-hero.svg. The current GitHub 
 
 ### Release gate
 The current v12 changes are not considered released until the fresh NaZerak QA, Pages build and production deployment for the resulting head are observed.
+
+## 2026-10-04 — v13 readability and interaction hardening (staging branch)
+
+### Audit findings
+- Main branch is already on forum visual system v12; older v35 notes and CSS snapshots are stale and must not be treated as current.
+- The index hero currently has an explicit artwork layer and left-aligned copy/actions; the ready/status badge and redundant publication-access explanation are absent from the current page/renderers.
+- The current committed artwork tree contains only `assets/images/forum-hero.svg`. Other JPG/PNG/WebP names in the artwork guide are intended slots, not files currently present in main.
+- Forum UI still uses 8–11px text for important metadata and 9–10px utility labels, and some compact controls can fall below comfortable mobile target sizes.
+- A recent browser smoke run passed homepage, forum index, mobile, tablet and category checks, then failed at the category-create button height assertion. This exposed a real acceptance gap, not a reason to bypass the test.
+
+### v13 changes
+- Added a scoped readability layer to the single active `forum.css`: forum body copy, board titles, topic titles, replies, labels, metadata and resource links now have larger minimum text sizes.
+- Set forum controls to at least 44px, with primary mobile actions at 48px; category creation now has an explicit mobile target size.
+- Preserved the image-backed hero and its lower-left action arrangement, rather than rewriting working markup without evidence.
+- Kept the existing dynamic Supabase renderers and authorization model untouched.
+- Bumped `forum.css` to v13 on the six forum routes and aligned static QA cache expectations.
+
+### Staging / release gate
+- Changes are isolated on `forum-hud-v13-readability`; they are not published to the production website.
+- Verify static QA and browser smoke at 320px, 390px, tablet and desktop, inspect screenshots and address any remaining failures before considering a pull request or production release.
+- Only wire additional generated artwork after the image files actually exist in the repository and their intended slots are verified.
