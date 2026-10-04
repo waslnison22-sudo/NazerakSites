@@ -119,8 +119,8 @@ for (const [name, page] of [
   ["forum-user.html", read("forum-user.html")]
 ]) {
   const assets = ["auth-config.js?v=8", "supabase-loader.js?v=9", "auth.js?v=35", "script.js?v=20", "styles.css?v=36"];
-  if (name === "forum.html") { assets.push("forum.css?v=3", "forum-ui.js?v=1", "forum.js?v=4"); }
-  if (name === "forum-category.html") { assets.push("forum.css?v=3", "forum-ui.js?v=1", "forum-category.js?v=3"); }
+  if (name === "forum.html") { assets.push("forum.css?v=3", "forum-ui.js?v=1", "forum.js?v=5"); }
+  if (name === "forum-category.html") { assets.push("forum.css?v=3", "forum-ui.js?v=1", "forum-category.js?v=4"); }
   if (name === "forum-members.html") { assets.push("forum.css?v=3", "forum-ui.js?v=1", "forum-members.js?v=2"); }
   if (name === "forum-search.html") { assets.push("forum.css?v=3", "forum-ui.js?v=1", "forum-search.js?v=2"); }
   if (name === "topic.html") { assets.push("forum.css?v=3", "forum-ui.js?v=1", "topic.js?v=3"); }
@@ -276,8 +276,9 @@ if (css.includes("NAZERAK FORUM")) fail.push("obsolete forum cascade remains in 
 }
 const forumPage = read("forum.html");
 if (!forumPage.includes("data-forum-node-tree")) fail.push("forum node tree markup is missing");
-if (/Форум готов|data-forum-state[^>]*>[^<]*готов/i.test(forumPage)) fail.push("obsolete forum-ready status remains");
-if (read("forum-category.html").includes("data-category-description")) fail.push("category publication-policy descriptions must not be rendered");
+if (forumPage.includes("data-forum-state") || /ФОРУМ ГОТОВ/i.test(read("forum.js"))) fail.push("obsolete forum-ready status remains");
+if (read("forum-category.html").includes("data-category-description") || read("forum-category.html").includes("data-category-policy")) fail.push("category publication-policy descriptions must not be rendered");
+if (forumPage.includes("Официальные разделы публикует команда проекта")) fail.push("obsolete topic publication access copy remains");
 if (forumPage.includes("Мир администрации</h3>") || forumPage.includes("РП-мир</h3>")) fail.push("legacy two-world forum presentation remains");
 if (!forumPage.includes("data-forum-search-form") || !forumPage.includes("data-forum-search-clear")) fail.push("forum search controls are incomplete");
 if (!forumPage.includes("Правила форума") || !forumPage.includes("Последние обсуждения")) fail.push("forum reference action is missing");
