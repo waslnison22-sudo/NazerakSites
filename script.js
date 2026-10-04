@@ -155,7 +155,8 @@
       image.className = "media-slot__image";
       image.alt = slot.getAttribute("aria-label") || "";
       image.decoding = "async";
-      image.loading = "lazy";
+      image.loading = slot.getAttribute("data-image-slot") === "forum-hero" ? "eager" : "lazy";
+      if (slot.getAttribute("data-image-slot") === "forum-hero") image.fetchPriority = "high";
       image.onload = () => {
         slot.appendChild(image);
         slot.classList.add("has-image");
