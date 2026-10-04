@@ -429,3 +429,28 @@ A GitHub compare from `a6de9d51…` to the recovery head `fb9225862a4750028e29f9
 - NaZerak QA run 37182217474 completed with success, including the browser smoke suite.
 - REG.RU production deployment run 37182281410 completed with success. SFTP upload, obsolete-route cleanup, production content checks for / and /forum.html, and TLS certificate verification all succeeded.
 - The corrected script and forum stylesheet versions are included in this release. Visual sign-off remains limited to automated geometry/responsive assertions; a human screenshot review is still recommended for subjective polish.
+
+
+## 2026-10-04 — current-head audit and forum status/access-copy cleanup
+
+### Baseline reconciled
+- Audited the current default-branch HTML, dedicated forum stylesheet, index/category scripts, static QA and browser smoke checks rather than assuming the earlier v35 source was still authoritative.
+- Current architecture uses shared `styles.css?v=36` plus the forum-specific `forum.css?v=3`; the older v35 visual layer is not the current source of truth.
+- Confirmed hero alignment and lower-left action placement were already implemented in forum stylesheet v3 and have browser geometry assertions. Preserved that work rather than re-appending conflicting hero CSS.
+- Confirmed the visible forum-ready badge had already been hidden, but hidden markup and JavaScript still retained the obsolete “ФОРУМ ГОТОВ” state.
+- Confirmed category access descriptions were already removed from visible category markup and forum rows; removed the remaining unused category description field from the category lookup.
+
+### Corrections applied
+- Removed the hidden `data-forum-state` node from `forum.html`.
+- Removed the unused state mutation helper and loading/ready/error state writes from `forum.js`. User-facing connection and data failures remain surfaced through the existing accessible message region.
+- Removed modal copy describing who publishes official sections; retained concise instructions to select a section and write the first post. Authorization and database policy logic are unchanged.
+- Removed the unused `description` field from the category directory select in `forum-category.js`; category resolution and permission checks are unchanged.
+- Bumped `forum.js` to v5 and `forum-category.js` to v4 in their route HTML.
+- Updated static QA to reject any remaining forum state node / “ФОРУМ ГОТОВ” lifecycle, category policy description hooks, and obsolete publication-access copy; aligned expected script cache revisions.
+
+### Release and visual verification
+- Previous verified baseline: QA run 37182352478 succeeded and production deploy 37182394296 succeeded for the recorded release.
+- These corrections are newer than that baseline and are not considered released until QA and production deployment complete on their exact resulting HEAD.
+- Browser smoke already checks hero left alignment, lower-left button geometry, no visible status and loaded forum sections. The updated source must pass the full suite.
+- Live page could not be inspected through the available web page reader during this pass. Automated browser assertions are not a substitute for screenshot-based subjective review.
+- No Supabase schema, RLS policy, or posting permission logic was changed.
