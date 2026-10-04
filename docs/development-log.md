@@ -610,3 +610,8 @@ The current head is not considered live until exact-head QA, Pages build/deploym
 
 ### Artwork note
 The repository documentation names forum-hero.jpg, hero-world.jpg, world-panel.jpg, partnership.jpg and og-cover.png as intended visual assets. They are not currently present as binary files in the Git tree. The forum implementation therefore does not request guessed missing files and remains free of intentional 404s. The committed forum-hero.svg is used as the current safe fallback/hero artwork.
+
+
+### v11 QA correction
+- The first v11 browser run reached the forum page successfully but failed its new hero geometry assertion because the assertion compared the button group to the outer hero border while the design intentionally aligns buttons with the padded title/description column.
+- The implementation itself kept the requested lower-left alignment; the test was corrected to compare the action group's left edge with the hero content column and still enforce the bottom anchoring.
