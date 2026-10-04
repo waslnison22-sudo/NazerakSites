@@ -1,13 +1,17 @@
-# NaZerak image slots
+# Визуалы NaZerak
 
-The site is ready to use generated artwork without any HTML rewrite.
+Положи сюда файлы (JPG/WebP, ~1920px по ширине):
 
-Place the final WebP files here:
+| Файл | Куда |
+|------|------|
+| `forum-hero.jpg` | Фон hero на форуме |
+| `hero-world.jpg` | Карточка мира на главной |
+| `world-panel.jpg` | Блок «Мир» на главной |
+| `og-cover.png` | OG 1200×630 |
 
-- `hero.webp` — main hero artwork, landscape, recommended 1600×1000 or larger.
-- `world.webp` — world/map visual, recommended 1600×900 or larger.
-- `partnership.webp` — media/community visual, recommended 1200×800 or larger.
+После загрузки добавь класс `has-photo` на:
+- `.forum-hero__bg`
+- `.hero-card__frame`
+- `.world-visual`
 
-The page keeps its CSS fallback when a file is missing, so a missing asset never produces a broken-image icon. Once the file exists, the page automatically promotes it to the visual layer.
-
-Keep important text/logos inside the artwork away from the outer ~6% of the frame so it remains safe on mobile crops.
+Либо сгенерированные картинки из чата сохрани с этими именами.
