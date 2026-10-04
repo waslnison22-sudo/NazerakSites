@@ -425,3 +425,79 @@
 @media(prefers-reduced-motion:reduce){
   .forum-page *,.topic-page *,.forum-user-page *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
 }
+
+
+/* v13 — legibility and touch-target hardening across the forum */
+.forum-page,.topic-page,.forum-user-page{font-size:14px}
+.forum-page :where(button,a),.topic-page :where(button,a),.forum-user-page :where(button,a){min-height:44px}
+.forum-page .button,.topic-page .button,.forum-user-page .button{font-size:13px;letter-spacing:0}
+.forum-page .nav>a,.topic-page .nav>a,.forum-user-page .nav>a{min-height:44px;font-size:13px}
+.forum-hero p{font-size:16px;line-height:1.65}
+.forum-result-count,.forum-node-section__count{font-size:12px}
+.forum-board__columns{font-size:10px}
+.forum-board-row__forum strong{font-size:15px;line-height:1.4}
+.forum-board-row__stat{font-size:12px}
+.forum-board-row__last strong{font-size:12px}
+.forum-board-row__last span,.forum-board-row__last--empty{font-size:11px;line-height:1.45}
+.forum-main__all{min-height:44px;font-size:12px}
+.forum-topic-row__copy h3{font-size:14px;line-height:1.45}
+.forum-topic-row__copy p,.forum-user-link{font-size:12px;line-height:1.5}
+.forum-topic-row__activity{font-size:11px;white-space:normal}
+.forum-topic-row__tags span,.forum-user-link__role{font-size:10px}
+.forum-community-stats span,.forum-community-stats small{font-size:11px}
+.forum-resource__link{min-height:58px}
+.forum-resource__link strong{font-size:13px}
+.forum-resource__link small{font-size:11px;line-height:1.45}
+.forum-empty h3{font-size:19px}
+.forum-empty p{font-size:13px;line-height:1.6}
+.forum-breadcrumbs,.topic-breadcrumbs,.forum-user__crumb{font-size:12px}
+.forum-section-head p{font-size:15px;line-height:1.65}
+.forum-thread-table__header{font-size:10px}
+.forum-thread-row__title{font-size:15px;line-height:1.45}
+.forum-thread-row__meta,.forum-thread-row__count,.forum-thread-row__last{font-size:12px;line-height:1.5}
+.forum-thread-row__tags span{font-size:10px}
+.forum-thread-row__count strong{font-size:15px}
+.forum-thread-row__last strong{font-size:12px}
+.forum-member-card__body strong{font-size:14px}
+.forum-member-card__body small{font-size:12px}
+.forum-member-card__body>span{font-size:11px;line-height:1.45}
+.topic-head__meta{font-size:12px}
+.forum-topic-badge{font-size:11px}
+.topic-author-label{font-size:10px}
+.topic-head__author strong{font-size:14px}
+.topic-post__body{font-size:15px;line-height:1.75}
+.topic-reply h2,.topic-login h2{font-size:20px}
+.topic-reply textarea{font-size:15px;line-height:1.65}
+.topic-reply__footer span,.topic-login p{font-size:12px;line-height:1.55}
+.topic-footer-links{font-size:13px}
+.forum-user__identity p{font-size:13px;line-height:1.6}
+.forum-user__meta span{font-size:10px}
+.forum-user__meta strong{font-size:12px}
+.forum-user__stats span{font-size:11px}
+.forum-user-topic__category{font-size:12px}
+.forum-user-topic strong{font-size:14px}
+.forum-user-topic>span:last-child{font-size:11px}
+.forum-modal__close{width:44px;height:44px}
+.forum-modal__copy{font-size:13px;line-height:1.6}
+.forum-form-field label{font-size:12px}
+.forum-form-field input,.forum-form-field select,.forum-form-field textarea{font-size:15px}
+.forum-form-field small{font-size:11px}
+@media(max-width:760px){
+  .forum-hero p{font-size:15px}
+  .forum-hero__actions{align-items:stretch}
+  .forum-hero__actions .button{min-height:48px;font-size:14px}
+  .forum-section-head p{font-size:14px}
+  .forum-section-head [data-category-create]{min-height:48px;width:100%;justify-content:center;font-size:14px}
+  .forum-main__all{min-height:44px}
+  .forum-thread-row__title{font-size:14px}
+  .topic-post__body{font-size:15px}
+  .topic-reply__footer .button,.topic-login .button,.forum-modal__buttons .button{min-height:48px;font-size:14px}
+  .forum-form-field input,.forum-form-field select,.forum-form-field textarea{font-size:16px}
+}
+@media(max-width:380px){
+  .forum-hero p{font-size:14px}
+  .forum-section-head h1{font-size:34px}
+  .forum-list-head h2,.forum-main__head h2{font-size:19px}
+  .forum-thread-row__title,.forum-topic-row__copy h3{font-size:14px}
+  .forum-hero__actions .button{min-height:48px}
+}
