@@ -56,7 +56,7 @@
   const fillCategorySelect=()=>{
     const select=qs("#forum-category");if(!select)return;
     const allowed=state.nodes.filter(n=>n.node_type==="forum"&&(n.posting_mode==="open"||Boolean(state.permissions?.can_publish_official))).sort((a,b)=>String(a.parent_name||"").localeCompare(String(b.parent_name||""))||Number(a.sort_order)-Number(b.sort_order));
-    select.innerHTML=allowed.map(n=>'<option value="'+escapeHtml(n.id)+'">'+escapeHtml(n.parent_name?n.parent_name+" — ":"")+escapeHtml(n.name)+(n.posting_mode==="official"?" · официальное":"")+'</option>').join("");
+    select.innerHTML=allowed.map(n=>'<option value="'+escapeHtml(n.id)+'">'+escapeHtml(n.parent_name?n.parent_name+" — ":"")+escapeHtml(n.name)+'</option>').join("");
     qs("[data-forum-submit]")?.toggleAttribute("disabled",allowed.length===0);
   };
 
