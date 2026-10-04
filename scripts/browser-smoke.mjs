@@ -472,7 +472,6 @@ await testStaticPage({
   check: async (page) => {
     if (!(await page.locator("h1").textContent()).includes("Форум")) throw new Error("forum heading missing");
     const layout = await page.locator(".forum-index-grid").evaluate((node) => { const style = getComputedStyle(node); const rect = node.getBoundingClientRect(); return { display: style.display, columns: style.gridTemplateColumns.split(" ").filter(Boolean).length, width: rect.width }; });
-    });
     if (layout.display !== "grid" || layout.columns < 2) throw new Error("desktop forum reference grid missing: " + JSON.stringify(layout));
     if (layout.width < 1000) throw new Error("desktop forum canvas is unexpectedly narrow: " + JSON.stringify(layout));
     const hero = await page.locator(".forum-hero").evaluate((node) => {
