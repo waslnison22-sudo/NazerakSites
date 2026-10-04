@@ -316,3 +316,25 @@ A GitHub compare from `a6de9d51…` to the recovery head `fb9225862a4750028e29f9
 ### Release state
 - Static QA and Supabase runtime smoke reached success during the current cleanup sequence; browser smoke remains the final acceptance gate for the newest head.
 - REG.RU production deploy remains gated by `DEPLOY_ENABLED`; no REG.RU deployment is claimed without a successful production deployment run.
+
+
+## 2026-10-04 — regression audit after external model edits
+
+### Repository state reviewed
+- Re-read the current repository tree and recent commits after additional changes from other coding assistants.
+- Confirmed the image directory contains only its README; no forum-hero.jpg, hero-world.jpg, or world-panel.jpg assets are committed.
+- Reviewed the shared runtime script, forum rendering modules, browser smoke diagnostics, static QA and the latest GitHub Actions result.
+
+### Regression found
+- The newest script.js change attempted to probe optional artwork by constructing new Image() and requesting three not-yet-committed JPG files.
+- The browser smoke test treats unexpected console 404s as failures. As a result, static QA and Supabase runtime smoke passed, but homepage browser smoke failed on a local missing-file 404. Pages build succeeded, while production deploy was skipped by the QA gate.
+- This was an actual regression introduced by the optional-artwork probe, not evidence of a Supabase or JavaScript syntax failure.
+
+### Correction
+- Removed speculative image requests from the shared script. Optional art remains a documented asset slot and should only be activated after the actual files are added and verified.
+- Bumped the shared script.js cache revision from v17 to v18 on the main site, cabinet and forum routes so clients do not retain the old script.
+- Kept the stricter browser diagnostic in place; do not weaken the test to ignore missing local resources.
+
+### Verification status
+- Static QA and runtime smoke were green on the failing commit; browser smoke exposed the missing-asset regression.
+- A fresh QA and deployment run is required for the corrective commit chain. Do not mark production updated until the current QA and production deploy runs are confirmed successful.
