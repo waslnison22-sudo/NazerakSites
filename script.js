@@ -144,7 +144,7 @@
     document.querySelectorAll("[data-image-slot]").forEach((slot) => {
       if (!(slot instanceof HTMLElement) || !slot.classList.contains("media-slot")) return;
       if (slot.querySelector(".media-slot__image")) return;
-      const source = mediaSources[slot.getAttribute("data-image-slot")];
+      const source = slot.getAttribute("data-image-src") || mediaSources[slot.getAttribute("data-image-slot")];
       if (!source) return;
 
       const image = new Image();
