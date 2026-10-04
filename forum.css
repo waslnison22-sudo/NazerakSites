@@ -526,3 +526,11 @@
  .forum-resource__link,.forum-resource__link:nth-child(n){border-right:0;border-bottom:1px solid var(--forum-line-soft)}
  .forum-resource__link:last-child{border-bottom:0}
 }
+
+/* v13.2 — stack category heading and create action on narrow viewports */
+@media(max-width:760px){
+ .forum-section-head{align-items:stretch;flex-direction:column;gap:14px}
+ .forum-section-head>div{width:100%;max-width:none}
+ .forum-section-head h1{max-width:100%;overflow-wrap:normal;word-break:normal;hyphens:manual}
+ .forum-section-head [data-category-create]{width:100%;min-height:48px;justify-content:center}
+}
