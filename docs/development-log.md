@@ -698,3 +698,13 @@ The next visual implementation must be built component-by-component on this bran
 - Documented the distinction between formal WCAG 2.2 target-size minimum and the more comfortable project target.
 - The spec is a preparation artifact; it is not proof that the visual implementation is complete or tested.
 - Production site remains unchanged.
+
+
+### v13 isolated readability correction
+- The draft PR browser smoke completed desktop index, forum mobile, narrow forum, official category and standard category checks, then failed at the 320px category form input: computed font size was 12px while the test expected 16px.
+- Raised the forum stylesheet's compact font-size values to a 12px floor, with core text values increased to 14–16px. This is a first readability correction, not a claim that the entire visual system is complete.
+- Set forum-scoped shared button labels to 14px and minimum height to 48px; forum navigation rows target 44px; icon clear/close controls target 44px.
+- Set composer labels to 14px, input/select/textarea text to 16px, help text to 12px and modal description to 14px.
+- Bumped forum stylesheet references from v12 to v13 across all six forum routes and aligned static QA expectations.
+- These edits are only on the isolated reboot branch. They have not been deployed to nazerak.ru.
+- Required next check: rerun PR QA, inspect the first failing assertion if any, then extend the browser regression matrix to assert readable text and control dimensions across every forum route. Screenshot review remains mandatory before declaring visual acceptance.
