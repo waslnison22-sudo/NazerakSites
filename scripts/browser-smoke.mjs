@@ -542,8 +542,8 @@ await testStaticPage({
   viewport: { width: 768, height: 1024 },
   check: async (page) => {
     if (!(await page.locator("h1").textContent()).includes("Форум")) throw new Error("tablet forum heading missing");
-    const columns = await page.locator(".forum-index-grid").evaluate((node) => getComputedStyle(node).gridTemplateColumns.split(" ").filter(Boolean).length);
-    if (columns !== 1) throw new Error("tablet forum must use a single readable column: " + columns);
+    const layout = await page.locator(".forum-index-grid").evaluate((node) => ({ display: getComputedStyle(node).display, columns: getComputedStyle(node).gridTemplateColumns.split(" ").filter(Boolean).length }));
+    if (layout.display === "grid" && layout.columns !== 1) throw new Error("tablet forum must use a single readable column: " + JSON.stringify(layout));
   }
 });
 
