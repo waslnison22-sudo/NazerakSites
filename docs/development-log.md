@@ -689,3 +689,12 @@ The current v12 changes are not considered released until the fresh NaZerak QA, 
 
 ### Reboot rule
 The next visual implementation must be built component-by-component on this branch, preserve all existing data hooks and permissions, and pass screenshot-based review at desktop and mobile sizes before advancing. No main merge or production deploy without explicit approval and exact-commit QA.
+
+
+### Design specification prepared
+- Added `docs/forum-hud-design-spec.md` on the isolated reboot branch.
+- Defined proposed type scale, spacing, surface treatment, content widths, target dimensions, per-route composition, responsive behavior, artwork rules and stop conditions.
+- Set project design targets of 16px body copy, 14px secondary copy, 12px only for nonessential dense metadata, and 44×44px for important interactive targets.
+- Documented the distinction between formal WCAG 2.2 target-size minimum and the more comfortable project target.
+- The spec is a preparation artifact; it is not proof that the visual implementation is complete or tested.
+- Production site remains unchanged.
