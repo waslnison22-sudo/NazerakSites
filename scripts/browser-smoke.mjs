@@ -151,7 +151,7 @@ const testStaticPage = async ({ path, name, viewport, check }) => {
     await testSameOriginLinks(page, name);
     await assertNoHorizontalOverflow(page, name);
     finishDiagnostics();
-    if (/^\\/(forum|forum-category|forum-members|forum-search|topic|forum-user)\\.html/.test(path)) {
+    if (/^\/(forum|forum-category|forum-members|forum-search|topic|forum-user)\.html/.test(path)) {
       await mkdir("artifacts/forum-hud", { recursive: true });
       const file = name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
       await page.screenshot({ path: "artifacts/forum-hud/" + file + ".png", fullPage: true, animations: "disabled" });
