@@ -471,7 +471,7 @@ await testStaticPage({
   viewport: { width: 1440, height: 900 },
   check: async (page) => {
     if (!(await page.locator("h1").textContent()).includes("Форум")) throw new Error("forum heading missing");
-    const layout = await page.locator(".forum-index-grid").evaluate((node) => {
+    const layout = await page.locator(".forum-index-grid").evaluate((node) => { const style = getComputedStyle(node); const tracks = style.gridTemplateColumns.match(/minmax\([^)]*\)|\S+/g) || []; return { display: style.display, columns: tracks.length }; });
       const style = getComputedStyle(node);
       const rect = node.getBoundingClientRect();
       return { display: style.display, columns: style.gridTemplateColumns.split(" ").filter(Boolean).length, width: rect.width };
