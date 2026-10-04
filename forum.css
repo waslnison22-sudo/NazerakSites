@@ -501,3 +501,28 @@
   .forum-thread-row__title,.forum-topic-row__copy h3{font-size:14px}
   .forum-hero__actions .button{min-height:48px}
 }
+
+/* v13.1 — prevent the sidebar's second grid row from inheriting directory height */
+.forum-index-grid{grid-template-rows:auto;grid-auto-flow:row}
+.forum-resources{width:100%;margin-top:30px;grid-column:auto;grid-row:auto}
+.forum-resource-grid{grid-template-columns:repeat(5,minmax(0,1fr));gap:0}
+.forum-resource__link{min-width:0;padding:10px 14px;border-right:1px solid var(--forum-line-soft);border-bottom:0}
+.forum-resource__link:last-child{border-right:0}
+.forum-resource__link>span:last-child{min-width:0}
+@media(max-width:1080px){
+ .forum-resource-grid{grid-template-columns:repeat(3,minmax(0,1fr));row-gap:8px}
+ .forum-resource__link:nth-child(3){border-right:0}
+ .forum-resource__link:nth-child(4){border-right:1px solid var(--forum-line-soft)}
+}
+@media(max-width:760px){
+ .forum-resource-grid{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:0}
+ .forum-resource__link{padding:10px 8px;border-bottom:1px solid var(--forum-line-soft)}
+ .forum-resource__link:nth-child(3){border-right:1px solid var(--forum-line-soft)}
+ .forum-resource__link:nth-child(2n){border-right:0}
+ .forum-resource__link:last-child{border-bottom:0}
+}
+@media(max-width:380px){
+ .forum-resource-grid{grid-template-columns:1fr}
+ .forum-resource__link,.forum-resource__link:nth-child(n){border-right:0;border-bottom:1px solid var(--forum-line-soft)}
+ .forum-resource__link:last-child{border-bottom:0}
+}
