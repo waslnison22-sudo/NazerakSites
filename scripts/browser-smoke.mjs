@@ -538,6 +538,17 @@ await testStaticPage({
 
 await testStaticPage({
   path: "/forum.html",
+  name: "forum tablet",
+  viewport: { width: 768, height: 1024 },
+  check: async (page) => {
+    if (!(await page.locator("h1").textContent()).includes("Форум")) throw new Error("tablet forum heading missing");
+    const columns = await page.locator(".forum-index-grid").evaluate((node) => getComputedStyle(node).gridTemplateColumns.split(" ").filter(Boolean).length);
+    if (columns !== 1) throw new Error("tablet forum must use a single readable column: " + columns);
+  }
+});
+
+await testStaticPage({
+  path: "/forum.html",
   name: "forum narrow mobile",
   viewport: { width: 320, height: 740 },
   check: async (page) => {
@@ -599,6 +610,19 @@ await testStaticPage({
 });
 
 await testStaticPage({
+  path: "/forum-category.html?slug=pravila-i-dokumenty",
+  name: "forum category mobile",
+  viewport: { width: 390, height: 844 },
+  check: async (page) => {
+    const title = (await page.locator("[data-category-title]").textContent() || "").trim();
+    if (!title || /загрузка/i.test(title)) throw new Error("mobile category did not resolve");
+    if (!(await page.locator(".forum-list-shell").count())) throw new Error("mobile category list shell missing");
+    const controls = await page.locator(".forum-section-head button").first().boundingBox();
+    if (!controls || controls.height < 44) throw new Error("mobile category create target is too small");
+  }
+});
+
+await testStaticPage({
   path: "/forum-members.html",
   name: "forum members narrow mobile",
   viewport: { width: 320, height: 740 },
@@ -629,6 +653,29 @@ await testStaticPage({
     await page.locator("#global-forum-search").fill("na");
     await page.locator('[data-forum-search-form]').evaluate((form) => form.requestSubmit());
     if (!page.url().includes("/forum-search.html?q=na")) throw new Error("search did not update query URL");
+  }
+});
+
+await testStaticPage({
+  path: "/forum-search.html",
+  name: "forum search mobile",
+  viewport: { width: 390, height: 844 },
+  check: async (page) => {
+    if (!(await page.locator("h1").textContent()).includes("Поиск")) throw new Error("mobile search heading missing");
+    const field = page.locator("#global-forum-search");
+    const fontSize = await field.evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
+    const bounds = await field.boundingBox();
+    if (fontSize < 16 || !bounds || bounds.height < 48) throw new Error("mobile search field is too small: " + JSON.stringify({fontSize,bounds}));
+  }
+});
+
+await testStaticPage({
+  path: "/topic.html?id=invalid",
+  name: "forum topic invalid state mobile",
+  viewport: { width: 320, height: 740 },
+  check: async (page) => {
+    await page.locator("[data-topic-message]").waitFor({ state: "visible", timeout: 15000 });
+    if (await page.locator("[data-topic-head]").isVisible()) throw new Error("invalid topic should not show a loading header");
   }
 });
 
