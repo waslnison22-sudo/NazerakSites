@@ -2030,3 +2030,15 @@
   position:relative;
   z-index:1;
 }
+
+
+/* v5 — give the forum index the desktop canvas it was designed for */
+.forum-page .forum{
+  width:min(calc(100% - 48px),1360px);
+}
+@media(max-width:760px){
+  .forum-page .forum{width:min(calc(100% - 28px),1360px)}
+}
+@media(max-width:380px){
+  .forum-page .forum{width:calc(100% - 24px)}
+}
