@@ -577,3 +577,36 @@ The project Library contains the supplied NaZerak megapolis artwork and a red-bl
 
 ### Release gate
 The current head is not considered live until exact-head QA, Pages build/deployment and REG.RU production deployment complete successfully.
+
+
+## 2026-10-04 — full forum audit / v11 visual reconstruction
+
+### Current-state audit after external edits
+- Re-read the current main tree and the latest forum commit sequence instead of relying on the earlier v35 snapshot.
+- Confirmed the repository is now using one authoritative forum.css, but its cache versions were inconsistent: index used v10 while internal forum routes still used v6. This could leave different pages on different visual generations in real browsers.
+- Confirmed the previous publication-access helper text and forum-ready status are no longer present in the current forum markup/renderers.
+- Confirmed the forum hero has an explicit artwork slot. The only image currently committed in assets/images is forum-hero.svg; the larger binary visuals documented in assets/images/README.md are not committed to the Git tree at this time.
+- Confirmed latest QA/deploy head before this pass was 4276118c1451: QA passed and the REG.RU production deploy completed successfully.
+
+### v11 implementation
+- Reconstructed the forum index composition again at the surface level rather than adding another generic card treatment.
+- Made the hero a large image-aware composition with the title/description anchored left and actions fixed to the lower-left on desktop.
+- Reduced the card-stack appearance of forum directory groups: rows are now separator-driven surfaces with a restrained red hover rail.
+- Gave the forum directory more horizontal space on desktop and a clearer primary/sidebar proportion.
+- Simplified the search area so it reads as a tool row instead of another large panel.
+- Simplified latest discussions and community resources into lighter directory lists.
+- Kept narrow mobile layouts as stacked, full-width controls rather than compressed desktop columns.
+- Bumped all forum route forum.css references to v11.
+
+### Functional micro-fix
+- Fixed forum profile hover-card positioning. The previous JavaScript positionCard() function was intentionally empty while the card used fixed top-right placement, so the profile preview did not follow the hovered author. The card now clamps to the viewport and prefers to open below the trigger, falling above when necessary.
+- Bumped forum-ui.js to v3 on all forum routes.
+
+### QA hardening
+- Static QA now checks that the obsolete forum-ready status does not return.
+- Static QA checks the category page for reintroduced publication-access helper text.
+- Static QA checks that the forum hero artwork slot remains wired.
+- Static QA expectation now matches forum.css v11 and forum-ui v3.
+
+### Artwork note
+The repository documentation names forum-hero.jpg, hero-world.jpg, world-panel.jpg, partnership.jpg and og-cover.png as intended visual assets. They are not currently present as binary files in the Git tree. The forum implementation therefore does not request guessed missing files and remains free of intentional 404s. The committed forum-hero.svg is used as the current safe fallback/hero artwork.
