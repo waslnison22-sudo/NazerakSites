@@ -377,3 +377,27 @@ A GitHub compare from `a6de9d51…` to the recovery head `fb9225862a4750028e29f9
 
 ### Verification status
 - This typography change requires a fresh browser QA run at desktop and narrow mobile widths before it is accepted. It is not yet declared visually final; screenshots remain a needed human visual acceptance step.
+
+
+## 2026-10-04 — full forum audit and targeted cleanup
+
+### Current repository audit
+- Reviewed the current HEAD and latest changes from external coding assistants instead of assuming the previous v35 snapshot was still authoritative.
+- Confirmed the current forum already uses a dedicated `forum.css`; older global forum overrides should not be reintroduced.
+- Found forum index markup with malformed section/container closing order around the resources block. This could cause browser DOM repair and inconsistent grid placement.
+- Found that category descriptions were still rendered from backend metadata and subforum rows exposed their descriptive text. These are unnecessary in the publishing flow and risk repeating publication-access explanations.
+- Confirmed posting restrictions are enforced in frontend selection/visibility logic and remain intact; presentation cleanup does not grant new permissions.
+- Confirmed the old “Форум готов” text/status is absent from visible hero markup in the current HTML; retained only an assistive status node, hidden from visual display.
+
+### Changes in this pass
+- Corrected the forum index section nesting so the three grid sections close in the proper order.
+- Simplified the empty-topic markup and removed the obsolete blank/misaligned closure.
+- Removed category description output from the category header and removed descriptions from each subforum row and parent group heading; the structure stays scannable without permission-policy paragraphs.
+- Kept `posting_mode`, permission lookup and publish authorization checks unchanged.
+- Anchored forum hero actions to the lower-left beneath the title/description on desktop; made action wrapping intentional on narrow mobile screens.
+- Added static QA assertions for hidden status and removed category policy copy.
+- Added browser smoke coverage for hero action placement and no visible status badge.
+- Updated forum stylesheet references to v3 and documented the audit.
+
+### Verification discipline
+- This commit is not treated as released until the exact-head QA browser suite and the REG.RU production deploy workflow report success.
