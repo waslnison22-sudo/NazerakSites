@@ -688,3 +688,11 @@ The current v12 changes are not considered released until the fresh NaZerak QA, 
 - Static release checks and the full browser smoke suite passed on the PR merge commit.
 - The browser suite did not preserve screenshot artifacts in this workflow revision. Added explicit forum-page screenshots and an always-run artifact upload step so visual review is possible before merge.
 - Screenshot review is still a release gate; passing interaction/overflow tests alone does not prove the visual design is polished.
+
+
+### v13.1 visual screenshot review
+- Reviewed the CI screenshot set at 1440px desktop and 320px mobile.
+- The hero art is wired correctly and the left/lower-left alignment is present. The 320px layout does not horizontally overflow, but some secondary metadata remains visually too small relative to the user’s readability target.
+- Found a real composition flaw on desktop: the community resources occupied the second row of a shared CSS grid, so that row started only after the tall forum directory ended. This left an oversized empty sidebar column and pushed community links far down the page.
+- Moved community resources out of the two-column index grid, retained the latest-discussions sidebar, and made resources a distinct full-width section with responsive columns.
+- Updated browser smoke to require exactly two index-grid sections plus one resources section. This prevents the whitespace regression from returning.
