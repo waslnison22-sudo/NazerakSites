@@ -555,10 +555,14 @@ await testStaticPage({
     const create = page.locator(".forum-section-head [data-category-create]");
     const createMetrics = await create.evaluate((el) => ({
       height: el.getBoundingClientRect().height,
-      fontSize: parseFloat(getComputedStyle(el).fontSize)
+      width: el.getBoundingClientRect().width,
+      fontSize: parseFloat(getComputedStyle(el).fontSize),
+      headerDirection: getComputedStyle(el.closest(".forum-section-head")).flexDirection,
+      headerWidth: el.closest(".forum-section-head").getBoundingClientRect().width
     }));
-    if (createMetrics.height < 44 || createMetrics.fontSize < 14) {
-      throw new Error("narrow mobile category create control is too small: " + JSON.stringify(createMetrics));
+    if (createMetrics.height < 44 || createMetrics.fontSize < 14 ||
+        createMetrics.headerDirection !== "column" || createMetrics.width < createMetrics.headerWidth - 2) {
+      throw new Error("narrow mobile category heading/action layout is invalid: " + JSON.stringify(createMetrics));
     }
   }
 });
