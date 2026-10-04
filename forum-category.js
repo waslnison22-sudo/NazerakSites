@@ -62,9 +62,18 @@
     if(!state.user){location.href="./cabinet.html";return;}
     const form=qs("[data-category-form]"),title=String(new FormData(form).get("title")||"").trim(),body=String(new FormData(form).get("body")||"").trim(),button=qs("[data-category-submit]");
     if(title.length<3||!body){msg("Заполни заголовок и сообщение.","error");return;}
-    button.disabled=true;if(!(await syncAuthor())){button.disabled=false;msg("Не удалось сохранить форумный профиль. Попробуй ещё раз.","error");return;}
-    const r=await state.client.from("forum_topics").insert({category_id:state.category.id,author_id:state.user.id,title,body}).select("id").single();
-    button.disabled=false;if(r.error){msg(r.error.message,"error");return;}location.href="./topic.html?id="+encodeURIComponent(r.data.id);
+    button.disabled=true;
+    try {
+      if(!(await syncAuthor())){msg("Не удалось сохранить форумный профиль. Проверь соединение и попробуй ещё раз.","error");return;}
+      const r=await state.client.from("forum_topics").insert({category_id:state.category.id,author_id:state.user.id,title,body}).select("id").single();
+      if(r.error||!r.data?.id){msg("Не удалось создать тему. Проверь соединение и попробуй ещё раз.","error");return;}
+      location.href="./topic.html?id="+encodeURIComponent(r.data.id);
+    } catch (error) {
+      console.error("[NaZerak Forum] category topic creation failed:",error);
+      msg("Не удалось создать тему из-за ошибки соединения. Попробуй ещё раз.","error");
+    } finally {
+      button.disabled=false;
+    }
   };
   const init=async()=>{state.client=await wait();if(!state.client){msg("Не удалось подключиться к форуму.","error");return;}try{const session=await withTimeout(state.client.auth.getSession(),8000,"");state.user=session.data?.session?.user||null;}catch{state.user=window.NaZerakAuth?.user||null;}qs("[data-category-create]")?.addEventListener("click",()=>state.user?qs("[data-category-modal]")?.showModal():location.href="./cabinet.html");qs("[data-category-submit]")?.addEventListener("click",create);try{await load();}catch(e){msg(e instanceof Error?e.message:"Не удалось загрузить раздел.","error");}};
   if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",()=>void init(),{once:true});else void init();
