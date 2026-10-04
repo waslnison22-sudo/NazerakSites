@@ -144,16 +144,5 @@
     });
   });
 
-  const photoTargets = [
-    { sel: "[data-forum-hero-bg], .forum-hero__bg", url: "./assets/images/forum-hero.jpg" },
-    { sel: ".hero-card__frame", url: "./assets/images/hero-world.jpg" },
-    { sel: ".world-visual, .world-panel__visual", url: "./assets/images/world-panel.svg" },
-  ];
-  photoTargets.forEach(({ sel, url }) => {
-    const el = document.querySelector(sel);
-    if (!el) return;
-    const img = new Image();
-    img.onload = () => el.classList.add("has-photo");
-    img.src = url;
-  });
+
 })();
