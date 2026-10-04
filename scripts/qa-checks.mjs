@@ -276,6 +276,12 @@ if (css.includes("NAZERAK FORUM")) fail.push("obsolete forum cascade remains in 
 }
 const forumPage = read("forum.html");
 if (!forumPage.includes("data-forum-node-tree")) fail.push("forum node tree markup is missing");
+if (/ФОРУМ ГОТОВ|Форум готов|forum ready/i.test(forumPage) || /ФОРУМ ГОТОВ|Форум готов|forum ready/i.test(read("forum-category.html")) || /Форум готов/i.test(read("forum.js"))) fail.push("obsolete forum-ready copy remains");
+for (const file of ["forum.html","forum-category.html","topic.html"]) {
+  const source = read(file);
+  if (/Доступен для публикации|доступна публикация|публикаци[яи].*(участник|авториз|команд)|Ответы доступны авторизованным/i.test(source)) fail.push(file + " contains redundant publication-access explanation");
+}
+if (/setState\(/.test(read("forum.js")) && !/const setState|function setState/.test(read("forum.js"))) fail.push("forum.js references an undefined setState helper");
 if (forumPage.includes("data-forum-state") || /ФОРУМ ГОТОВ/i.test(read("forum.js"))) fail.push("obsolete forum-ready status remains");
 if (read("forum-category.html").includes("data-category-description") || read("forum-category.html").includes("data-category-policy")) fail.push("category publication-policy descriptions must not be rendered");
 if (forumPage.includes("Официальные разделы публикует команда проекта")) fail.push("obsolete topic publication access copy remains");
