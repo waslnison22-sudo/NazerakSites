@@ -338,3 +338,20 @@ A GitHub compare from `a6de9d51…` to the recovery head `fb9225862a4750028e29f9
 ### Verification status
 - Static QA and runtime smoke were green on the failing commit; browser smoke exposed the missing-asset regression.
 - A fresh QA and deployment run is required for the corrective commit chain. Do not mark production updated until the current QA and production deploy runs are confirmed successful.
+
+
+## 2026-10-04 — forum publishing failure recovery
+
+### Defects found
+- Forum index topic creation could leave the publish button permanently disabled when author synchronization failed or the insert request threw.
+- Category topic creation had the same failure path; it also assumed a successful insert always returned a topic ID.
+- Topic replies could leave the reply button disabled when author synchronization failed, and an exception during insert or refresh could bypass restoration of the button label/state.
+
+### Corrections
+- Wrapped topic creation and reply submission in try/catch/finally so submit controls are restored on every return/error path.
+- Replaced direct backend error text in these submit paths with user-readable retry guidance; technical errors remain in console diagnostics.
+- Validate that a topic insert returns a usable ID before navigating to the topic.
+- Extended static QA to guard that all three forum submit flows restore their button state in finally.
+
+### Verification
+- Static and browser QA are running against the corrective commit chain. Production status remains unconfirmed until the matching QA and deploy result is successful.
