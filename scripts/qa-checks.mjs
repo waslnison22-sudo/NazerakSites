@@ -122,7 +122,7 @@ for (const [name, page] of [
   if (name === "forum.html") { assets.push("forum.css?v=16", "forum-ui.js?v=3", "forum.js?v=6"); }
   if (name === "forum-category.html") { assets.push("forum.css?v=16", "forum-ui.js?v=3", "forum-category.js?v=5"); }
   if (name === "forum-members.html") { assets.push("forum.css?v=16", "forum-ui.js?v=3", "forum-members.js?v=2"); }
-  if (name === "forum-search.html") { assets.push("forum.css?v=16", "forum-ui.js?v=3", "forum-search.js?v=2"); }
+  if (name === "forum-search.html") { assets.push("forum.css?v=16", "forum-ui.js?v=3", "forum-search.js?v=3"); }
   if (name === "topic.html") { assets.push("forum.css?v=16", "forum-ui.js?v=3", "topic.js?v=4"); }
   if (name === "forum-user.html") { assets.push("forum.css?v=16", "forum-ui.js?v=3", "user.js?v=3"); }
   for (const asset of assets) {
