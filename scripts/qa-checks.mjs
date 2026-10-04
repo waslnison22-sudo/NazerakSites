@@ -120,7 +120,7 @@ for (const [name, page] of [
 ]) {
   const assets = ["auth-config.js?v=8", "supabase-loader.js?v=9", "auth.js?v=35", "script.js?v=19", "styles.css?v=36"];
   if (name === "forum.html") { assets.push("forum.css?v=3", "forum-ui.js?v=1", "forum.js?v=4"); }
-  if (name === "forum-category.html") { assets.push("forum.css?v=3", "forum-ui.js?v=1", "forum-category.js?v=2"); }
+  if (name === "forum-category.html") { assets.push("forum.css?v=3", "forum-ui.js?v=1", "forum-category.js?v=3"); }
   if (name === "forum-members.html") { assets.push("forum.css?v=3", "forum-ui.js?v=1", "forum-members.js?v=2"); }
   if (name === "forum-search.html") { assets.push("forum.css?v=3", "forum-ui.js?v=1", "forum-search.js?v=2"); }
   if (name === "topic.html") { assets.push("forum.css?v=3", "forum-ui.js?v=1", "topic.js?v=3"); }
