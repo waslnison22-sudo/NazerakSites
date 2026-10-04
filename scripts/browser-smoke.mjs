@@ -1,4 +1,5 @@
 import { chromium } from "playwright";
+import { mkdir } from "node:fs/promises";
 
 const BASE = (process.env.NAZERAK_BASE_URL || "http://127.0.0.1:4173").replace(/\/$/, "");
 const TIMEOUT = 20000;
@@ -150,6 +151,11 @@ const testStaticPage = async ({ path, name, viewport, check }) => {
     await testSameOriginLinks(page, name);
     await assertNoHorizontalOverflow(page, name);
     finishDiagnostics();
+    if (/^\\/(forum|forum-category|forum-members|forum-search|topic|forum-user)\\.html/.test(path)) {
+      await mkdir("artifacts/forum-hud", { recursive: true });
+      const file = name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+      await page.screenshot({ path: "artifacts/forum-hud/" + file + ".png", fullPage: true, animations: "disabled" });
+    }
     console.log("PASS:", name);
   } finally {
     await browser.close();
