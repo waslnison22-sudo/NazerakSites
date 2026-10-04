@@ -355,3 +355,11 @@ A GitHub compare from `a6de9d51…` to the recovery head `fb9225862a4750028e29f9
 
 ### Verification
 - Static and browser QA are running against the corrective commit chain. Production status remains unconfirmed until the matching QA and deploy result is successful.
+
+
+## 2026-10-04 — verified recovery release
+
+- The first retry-control QA assertion exposed a stale static expectation: QA still required script.js?v=17 after page references had moved to v18. The test failed before runtime/browser checks; the assertion was corrected to v18.
+- Exact corrected commit: 62c551d1486f2b51ae1145b94f1e8c0e974f294b.
+- QA run 37181252277 completed successfully. Static release checks, Supabase runtime smoke, and browser smoke all passed, including homepage desktop/mobile, forum index/category/member/search/profile routes, 320px narrow layouts, 404, OAuth start, and cabinet anonymous/profile-timeout cases.
+- Production deployment run 37181293844 completed successfully for that exact tested commit. This confirms the GitHub Actions SFTP workflow completed; it does not independently prove that every visitor's browser cache has refreshed.
