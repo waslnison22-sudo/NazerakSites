@@ -85,7 +85,7 @@ const assertForumVisualBaseline = async (page, name) => {
     const visible = (el) => {
       const style = getComputedStyle(el);
       const rect = el.getBoundingClientRect();
-      return style.display !== "none" && style.visibility !== "hidden" && rect.width > 0 && rect.height > 0;
+      return !el.hidden && style.display !== "none" && style.visibility !== "hidden" && rect.width > 0 && rect.height > 0;
     };
     const controls = [...document.querySelectorAll(
       ".forum-page button, .topic-page button, .forum-user-page button, .topbar .nav-toggle, .topbar .nav > a"
