@@ -555,3 +555,25 @@ A new exact-head QA run must pass static QA, Supabase runtime smoke and browser 
 ## 2026-10-04 — browser-smoke geometry correction
 
 The first explicit lower-left hero anchor passed the left-edge requirement but rendered with a 101px bottom gap in browser smoke. The cause was the absolute-positioning variant interacting with the existing forum surface sizing rules. It was replaced with a box-sized flex layout that reserves the bottom padding and uses `margin-top:auto` for deterministic lower-left placement. The browser assertion remains unchanged so the visual contract is tested rather than weakened.
+
+## 2026-10-04 — forum reference correction / current-head pass
+
+### Visual issue confirmed
+A supplied browser screenshot showed the public GitHub Pages forum still displaying the older composition: excessive top whitespace, no artwork in the hero, weak section hierarchy, and the hero controls not visually matching the intended layout. The repository was therefore treated as the source of truth, but the failed exact-head QA explains why the screenshot can still represent the previously deployed build.
+
+### Current changes
+- Connected the forum hero media slot to a real repository-local SVG artwork asset so the hero no longer depends on a missing raster file.
+- Reduced the forum index excessive top padding beneath the fixed navigation.
+- Tightened hero height, typography, search spacing and desktop two-column proportions toward the supplied reference.
+- Kept the title and description left aligned and the two hero actions in the lower-left action row.
+- Added a dark red city atmosphere as a lightweight local SVG asset; it is self-hosted and requires no external CDN.
+- Preserved dynamic Supabase forum data, topic creation, permissions and profile links.
+
+### QA finding
+The exact prior head 9201bb2 had static QA and Supabase smoke passing but browser smoke failing because the lower-left hero geometry still had a 45px bottom gap. The new v9 hero layout is intended to resolve that exact regression without weakening the browser assertion.
+
+### Asset audit
+The project Library contains the supplied NaZerak megapolis artwork and a red-black brand pack. The megapolis image is retained as the preferred visual reference; the committed hero uses a lightweight SVG so production does not depend on a Library-only binary that is not present in GitHub.
+
+### Release gate
+The current head is not considered live until exact-head QA, Pages build/deployment and REG.RU production deployment complete successfully.
