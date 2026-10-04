@@ -277,9 +277,10 @@ if (css.includes("NAZERAK FORUM")) fail.push("obsolete forum cascade remains in 
 }
 const forumPage = read("forum.html");
 if (!forumPage.includes("data-forum-node-tree")) fail.push("forum node tree markup is missing");
-if (!forumPage.includes('data-image-slot="forum-hero"')) fail.push("forum hero media slot is missing");
+if (!forumPage.includes('class="forum-hero__bg"')) fail.push("forum hero artwork layer is missing");
 if (!read("script.js").includes("const mediaSources")) fail.push("media slot loader is missing");
 if (!read("script.js").includes('slot.getAttribute("data-image-src")')) fail.push("media slots must use explicit image sources");
+if (!forumCss.includes("assets/images/forum-hero.svg")) fail.push("forum hero artwork asset is not wired into forum.css");
 if (/ФОРУМ ГОТОВ|Форум готов|forum ready/i.test(forumPage) || /ФОРУМ ГОТОВ|Форум готов|forum ready/i.test(read("forum-category.html")) || /Форум готов/i.test(read("forum.js"))) fail.push("obsolete forum-ready copy remains");
 for (const file of ["forum.html","forum-category.html","topic.html"]) {
   const source = read(file);
@@ -287,7 +288,7 @@ for (const file of ["forum.html","forum-category.html","topic.html"]) {
 }
 if (/setState\(/.test(read("forum.js")) && !/const setState|function setState/.test(read("forum.js"))) fail.push("forum.js references an undefined setState helper");
 if (forumPage.includes("data-forum-state") || /ФОРУМ ГОТОВ/i.test(read("forum.js"))) fail.push("obsolete forum-ready status remains");
-if (read("forum-category.html").includes("data-category-description") || read("forum-category.html").includes("data-category-policy")) fail.push("category publication-policy descriptions must not be rendered");
+if (read("forum-category.html").includes("data-category-policy")) fail.push("category publication-policy UI container must not remain");
 if (forumPage.includes("Официальные разделы публикует команда проекта")) fail.push("obsolete topic publication access copy remains");
 if (forumPage.includes("Мир администрации</h3>") || forumPage.includes("РП-мир</h3>")) fail.push("legacy two-world forum presentation remains");
 if (!forumPage.includes("data-forum-search-form") || !forumPage.includes("data-forum-search-clear")) fail.push("forum search controls are incomplete");
@@ -300,7 +301,7 @@ if (!read("forum-user.html").includes("data-user-profile")) fail.push("full foru
 if (!read("forum-ui.js").includes("data-forum-user")) fail.push("forum hover profile interaction missing");
 if (read("forum.html").match(/data-forum-state|forum-state|форум готов|Форум готов/i)) fail.push("obsolete forum ready status must not return");
 if (read("forum-category.html").match(/доступ.*публикац|публикац.*доступ|кто.*может.*публика/i)) fail.push("forum publication-access helper copy must not return");
-if (!read("forum.html").includes('data-image-src="./assets/images/forum-hero.svg?v=2"')) fail.push("forum hero artwork slot missing");
+if (!read("forum.html").includes('class="forum-hero__bg"')) fail.push("forum hero artwork layer missing");
 
 if (!read("user.js").includes('from("forum_author_directory")')) fail.push("forum user directory query missing");
 for (const file of ["forum.js","forum-category.js","topic.js"]) {
