@@ -1,4 +1,5 @@
 import { chromium } from "playwright";
+import fs from "node:fs";
 
 const BASE = (process.env.NAZERAK_BASE_URL || "http://127.0.0.1:4173").replace(/\/$/, "");
 const TIMEOUT = 20000;
@@ -189,6 +190,11 @@ const testStaticPage = async ({ path, name, viewport, check }) => {
     await page.goto(BASE + path, { waitUntil: "networkidle", timeout: TIMEOUT });
     await check(page);
     await assertForumVisualBaseline(page, name);
+    if (await page.locator(".forum-page, .topic-page, .forum-user-page").count()) {
+      fs.mkdirSync("artifacts/forum-hud", { recursive: true });
+      const slug = name.toLowerCase().replace(/[^a-z0-9-]+/g, "-").replace(/^-|-$/g, "");
+      await page.screenshot({ path: `artifacts/forum-hud/${slug}-${viewport.width}x${viewport.height}.png`, fullPage: false });
+    }
     await assertAccessibleControls(page, name);
     await testSameOriginLinks(page, name);
     await assertNoHorizontalOverflow(page, name);
