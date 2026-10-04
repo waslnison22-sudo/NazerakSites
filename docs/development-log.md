@@ -742,3 +742,42 @@ The supplied desktop screenshot still reads as an older, compressed forum: main 
 2. Add screenshot artifacts to the isolated browser workflow for visual comparison at 1440, 1280, 768, 390 and 320 CSS px.
 3. Validate the actual empty/populated and guest/authenticated states, including long Russian labels, long usernames and the composer.
 4. Rebuild page composition only after screenshot review; do not merge or deploy without a separate release decision.
+
+
+## 2026-10-04 — forum HUD v15/v16 responsive QA hardening (isolated branch)
+
+### Screenshot review findings
+- The v15 browser artifact was reviewed at 1440×900 and 390×844 / 320×740.
+- Desktop board column labels still collided: the fixed statistics tracks were too narrow for Russian headings, even though document-level horizontal overflow was absent.
+- Mobile category title and empty-state content wrap without clipping at 320px, but this does not replace the remaining populated-state and real-topic checks.
+- The screenshot artifact is now produced by the QA workflow and retained for seven days, allowing visual evidence to be reviewed rather than treating passing static checks as visual sign-off.
+
+### v16 correction
+- Widened the board metric tracks and gave heading cells explicit wrapping/width behavior to prevent the “Сообщения / Последнее сообщение” labels from colliding.
+- Kept the first column flexible so long Russian forum names have available space.
+- Preserved the stacked mobile board-row composition.
+
+### Expanded browser coverage
+- Added a 768px tablet forum-index check that requires a single readable column.
+- Added a 390px category page check for a valid title, list shell and create target height.
+- Added a 390px search page check for a 16px search field and at least 48px field height.
+- Added a 320px invalid-topic state check to ensure the loading header is not left visible when the topic identifier is invalid.
+- Existing baseline checks continue to test visible control targets, core text floors, accessible labels, viewport boundaries, same-origin links, console errors and failed local requests.
+- v15 exact-head workflow passed static QA, Supabase runtime smoke, browser smoke and screenshot artifact upload. v16 is not considered passed until the latest exact-head workflow finishes.
+
+### Production safety
+- All v13–v16 visual and test changes remain on `forum-hud-reboot-prep-20261004` / draft PR #3.
+- The production deploy workflow is configured to run only for successful QA on `main`; this work has not been merged to main or deployed to `nazerak.ru`.
+- No new image path was guessed. Current repository artwork inventory remains `assets/images/forum-hero.svg` and its README.
+
+### Reference review refinement
+- Matreshka's live forum was reviewed for its practical division into information, help, applications and server/faction areas, plus the visibility of thread status and latest activity: https://forum.matrp.ru/index.php
+- The XenForo community showcase was used for ideas around nested category context and thread navigation: https://xenforo.com/community/threads/showcase-a-more-modern-user-experience.230362/
+- WCAG 2.2 target-size minimum is 24×24 CSS px with defined exceptions; NaZerak's internal target remains 44×44px for primary controls: https://www.w3.org/TR/WCAG22/#target-size-minimum
+
+### Next implementation gates
+1. Confirm the exact-head v16 QA run and inspect every failed browser assertion, if any.
+2. Review captured screenshots for all generated route/viewport pairs; add 1024px and 200% zoom checks.
+3. Audit actual populated forum rows and topic posts with long Russian text and usernames. Add deterministic fixtures where live data is absent.
+4. Refactor duplicated v12–v16 CSS into one maintainable component stylesheet after the visual contracts are stable; do not keep stacking blind overrides.
+5. Rebuild the index and internal route composition, then repeat the full matrix before any release request.
