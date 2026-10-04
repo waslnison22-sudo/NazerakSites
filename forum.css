@@ -2088,3 +2088,43 @@
 @media(max-width:380px){
   .forum-hero__actions{grid-template-columns:1fr}
 }
+
+
+/* v8 — stable lower-left hero layout without absolute-position drift */
+.forum-hero{
+  box-sizing:border-box;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  min-height:238px;
+  padding:28px 0 22px;
+}
+.forum-hero__copy{
+  flex:0 0 auto;
+  margin-left:0;
+  width:min(100%,760px);
+  text-align:left;
+}
+.forum-hero__actions{
+  position:static;
+  align-self:flex-start;
+  margin-top:auto;
+  padding:0;
+  width:auto;
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  gap:8px;
+}
+@media(max-width:760px){
+  .forum-hero{min-height:0;padding:18px 0 17px}
+  .forum-hero__actions{
+    width:100%;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    margin-top:16px;
+  }
+}
+@media(max-width:380px){
+  .forum-hero__actions{grid-template-columns:1fr}
+}
