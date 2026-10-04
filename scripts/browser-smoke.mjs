@@ -546,6 +546,14 @@ await testStaticPage({
     if (!title || /загрузка/i.test(title)) throw new Error("narrow mobile category did not resolve");
     const fontSize = await page.locator("input, textarea").first().evaluate((el) => parseFloat(getComputedStyle(el).fontSize)).catch(() => 16);
     if (fontSize < 16) throw new Error("narrow mobile category input font too small: " + fontSize);
+    const create = page.locator(".forum-section-head [data-category-create]");
+    const createMetrics = await create.evaluate((el) => ({
+      height: el.getBoundingClientRect().height,
+      fontSize: parseFloat(getComputedStyle(el).fontSize)
+    }));
+    if (createMetrics.height < 44 || createMetrics.fontSize < 14) {
+      throw new Error("narrow mobile category create control is too small: " + JSON.stringify(createMetrics));
+    }
   }
 });
 
