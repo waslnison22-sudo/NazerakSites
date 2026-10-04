@@ -119,12 +119,12 @@ for (const [name, page] of [
   ["forum-user.html", read("forum-user.html")]
 ]) {
   const assets = ["auth-config.js?v=8", "supabase-loader.js?v=9", "auth.js?v=35", "script.js?v=22", "styles.css?v=37"];
-  if (name === "forum.html") { assets.push("forum.css?v=11", "forum-ui.js?v=2", "forum.js?v=6"); }
-  if (name === "forum-category.html") { assets.push("forum.css?v=11", "forum-ui.js?v=2", "forum-category.js?v=5"); }
-  if (name === "forum-members.html") { assets.push("forum.css?v=11", "forum-ui.js?v=2", "forum-members.js?v=2"); }
-  if (name === "forum-search.html") { assets.push("forum.css?v=11", "forum-ui.js?v=2", "forum-search.js?v=2"); }
-  if (name === "topic.html") { assets.push("forum.css?v=11", "forum-ui.js?v=2", "topic.js?v=4"); }
-  if (name === "forum-user.html") { assets.push("forum.css?v=11", "forum-ui.js?v=2", "user.js?v=3"); }
+  if (name === "forum.html") { assets.push("forum.css?v=11", "forum-ui.js?v=3", "forum.js?v=6"); }
+  if (name === "forum-category.html") { assets.push("forum.css?v=11", "forum-ui.js?v=3", "forum-category.js?v=5"); }
+  if (name === "forum-members.html") { assets.push("forum.css?v=11", "forum-ui.js?v=3", "forum-members.js?v=2"); }
+  if (name === "forum-search.html") { assets.push("forum.css?v=11", "forum-ui.js?v=3", "forum-search.js?v=2"); }
+  if (name === "topic.html") { assets.push("forum.css?v=11", "forum-ui.js?v=3", "topic.js?v=4"); }
+  if (name === "forum-user.html") { assets.push("forum.css?v=11", "forum-ui.js?v=3", "user.js?v=3"); }
   for (const asset of assets) {
     if (!page.includes(asset)) {
       fail.push(`${name} asset include missing: ${asset}`);
@@ -298,6 +298,10 @@ for (const file of ["forum.js","forum-category.js","topic.js"]) if (!read(file).
 if (!forumPage.includes("button--primary") || !forumPage.includes("button--ghost")) fail.push("forum must use common site button classes");
 if (!read("forum-user.html").includes("data-user-profile")) fail.push("full forum profile markup missing");
 if (!read("forum-ui.js").includes("data-forum-user")) fail.push("forum hover profile interaction missing");
+if (read("forum.html").match(/data-forum-state|forum-state|форум готов|Форум готов/i)) fail.push("obsolete forum ready status must not return");
+if (read("forum-category.html").match(/доступ.*публикац|публикац.*доступ|кто.*может.*публика/i)) fail.push("forum publication-access helper copy must not return");
+if (!read("forum.html").includes('data-image-src="./assets/images/forum-hero.svg"')) fail.push("forum hero artwork slot missing");
+
 if (!read("user.js").includes('from("forum_author_directory")')) fail.push("forum user directory query missing");
 for (const file of ["forum.js","forum-category.js","topic.js"]) {
   const source = read(file);
