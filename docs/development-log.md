@@ -681,3 +681,10 @@ The current v12 changes are not considered released until the fresh NaZerak QA, 
 - Changes are isolated on `forum-hud-v13-readability`; they are not published to the production website.
 - Verify static QA and browser smoke at 320px, 390px, tablet and desktop, inspect screenshots and address any remaining failures before considering a pull request or production release.
 - Only wire additional generated artwork after the image files actually exist in the repository and their intended slots are verified.
+
+
+### v13 browser QA evidence
+- The v13 PR run `37219930577` completed successfully after the stylesheet QA marker was corrected.
+- Static release checks and the full browser smoke suite passed on the PR merge commit.
+- The browser suite did not preserve screenshot artifacts in this workflow revision. Added explicit forum-page screenshots and an always-run artifact upload step so visual review is possible before merge.
+- Screenshot review is still a release gate; passing interaction/overflow tests alone does not prove the visual design is polished.
