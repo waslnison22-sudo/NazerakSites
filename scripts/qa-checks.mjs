@@ -276,6 +276,9 @@ if (css.includes("NAZERAK FORUM")) fail.push("obsolete forum cascade remains in 
 }
 const forumPage = read("forum.html");
 if (!forumPage.includes("data-forum-node-tree")) fail.push("forum node tree markup is missing");
+if (!forumPage.includes('data-image-slot="forum-hero"')) fail.push("forum hero media slot is missing");
+if (!read("script.js").includes("const mediaSources")) fail.push("media slot loader is missing");
+if (!read("script.js").includes('"forum-hero": "./assets/images/forum-hero.jpg"')) fail.push("forum hero media mapping is missing");
 if (/ФОРУМ ГОТОВ|Форум готов|forum ready/i.test(forumPage) || /ФОРУМ ГОТОВ|Форум готов|forum ready/i.test(read("forum-category.html")) || /Форум готов/i.test(read("forum.js"))) fail.push("obsolete forum-ready copy remains");
 for (const file of ["forum.html","forum-category.html","topic.html"]) {
   const source = read(file);
