@@ -438,7 +438,20 @@ await testStaticPage({
       throw new Error("forum hero is not left aligned: " + JSON.stringify(hero));
     }
     if (await page.locator("[data-forum-state]:visible").count() !== 0) throw new Error("decorative forum status should not be visible");
-    if (layout.width > 760 && await page.locator(".forum-hero__actions").evaluate((node) => getComputedStyle(node).marginTop !== "auto")) throw new Error("forum hero actions are not anchored to the lower-left");
+    if (layout.width > 760) {
+      const placement = await page.locator(".forum-hero").evaluate((hero) => {
+        const actions = hero.querySelector(".forum-hero__actions");
+        const heroRect = hero.getBoundingClientRect();
+        const actionsRect = actions.getBoundingClientRect();
+        return {
+          leftDelta: Math.abs(actionsRect.left - heroRect.left),
+          bottomGap: heroRect.bottom - actionsRect.bottom
+        };
+      });
+      if (placement.leftDelta > 3 || placement.bottomGap < 8 || placement.bottomGap > 38) {
+        throw new Error("forum hero actions are not visually anchored to the lower-left: " + JSON.stringify(placement));
+      }
+    }
     if (await page.locator("[data-forum-node-tree] .forum-node-section").count() < 1) {
       throw new Error("forum sections did not load");
     }
