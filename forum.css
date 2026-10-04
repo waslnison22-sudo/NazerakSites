@@ -1977,6 +1977,11 @@
 }
 
 
+.forum-modal__footer>span:empty,
+.topic-reply__footer>span:empty{display:none}
+.forum-modal__footer:has(.forum-modal__buttons:only-child){justify-content:flex-start}
+.topic-reply__footer:has(>span:empty){justify-content:flex-end}
+
 /* v3 — hero alignment and content-first category headers */
 .forum-hero{align-items:flex-start;justify-content:flex-start;min-height:218px;padding:28px 0 22px}
 .forum-hero__copy{width:min(100%,760px);margin-left:0;text-align:left}
