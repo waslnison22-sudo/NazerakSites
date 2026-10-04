@@ -660,3 +660,32 @@ The committed forum artwork is assets/images/forum-hero.svg. The current GitHub 
 
 ### Release gate
 The current v12 changes are not considered released until the fresh NaZerak QA, Pages build and production deployment for the resulting head are observed.
+
+## 2026-10-04 — forum HUD reboot preparation (isolated branch)
+
+### Scope and production safety
+- Created isolated preparation branch: `forum-hud-reboot-prep-20261004`, based on main commit `7367cd200ccdcd847ddfcc0c0481e5eb0180b20e`.
+- No changes were uploaded to `nazerak.ru`; no production deployment was triggered by this work.
+- Main branch remains the baseline. Design and QA preparation is isolated from the public site.
+
+### Current-state audit
+- Re-checked all six forum routes, current forum stylesheet separation, dynamic rendering scripts, workflow deployment gates, and recent v11/v12 changes.
+- The current forum system uses `forum.css?v=12` with shared global styles at `styles.css?v=37`; runtime content is rendered by page-specific scripts and shared `forum-ui.js`.
+- The stylesheet still includes small values for primary reading context (9–13px on tags, metadata, table headings, topic titles and row labels). The new design must establish a readable type scale and must not compress core text to preserve desktop columns.
+- The screenshot supplied in this conversation confirms visible imbalance: the hero text/actions do not form a strong compact composition, the forum index is too dense, and the latest-activity rail is visually weak when empty.
+- Main currently contains only `assets/images/forum-hero.svg` plus documentation in `assets/images`. Other names in the asset guide are not present in the current tree and must not be referenced until exact files are found.
+- GitHub commit metadata lists the latest v11/v12 changes under the repository owner. This does not reliably identify whether individual changes were produced by Grok, Copilot, or direct editing; review diffs and behavior rather than assuming authorship.
+- Latest inspected QA run `37194440970` failed during static QA on the obsolete string assertion `single authoritative forum surface`; subsequent Supabase and browser smoke steps were skipped.
+
+### QA correction prepared
+- Replaced the obsolete literal stylesheet-name assertion with a component contract checking the forum hero, index grid, board row and topic post selectors.
+- This QA correction is on the isolated branch and has not yet been executed in a fresh full workflow. It is not recorded as passed.
+
+### Reference review
+- Reviewed the XenForo community showcase for category context, streamlined navigation and conversational flow.
+- Reviewed the Matreshka RP forum for real-world roleplay forum grouping, status labels and latest-activity information architecture.
+- Reviewed W3C WCAG 2.2 target-size guidance; the project target for primary and mobile controls is set to 44×44 CSS px, exceeding the formal 24×24 minimum where practical.
+- Reviewed a modern forum/community template as a cross-page reference for category, thread, member, profile and compose screens. These are structural references, not designs to copy literally.
+
+### Reboot rule
+The next visual implementation must be built component-by-component on this branch, preserve all existing data hooks and permissions, and pass screenshot-based review at desktop and mobile sizes before advancing. No main merge or production deploy without explicit approval and exact-commit QA.
