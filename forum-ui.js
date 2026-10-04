@@ -78,8 +78,24 @@
     return result.data;
   };
 
-  const positionCard = () => {
-    // The card is intentionally positioned by CSS and stays away from inline style injection.
+  const positionCard = (trigger) => {
+    if (!hoverCard || hoverCard.hidden || !trigger?.getBoundingClientRect) return;
+    const rect = trigger.getBoundingClientRect();
+    const margin = 12;
+    const gap = 10;
+    const width = Math.min(350, window.innerWidth - margin * 2);
+    hoverCard.style.width = width + "px";
+    const cardHeight = Math.min(hoverCard.scrollHeight || 260, window.innerHeight - margin * 2);
+    const preferredLeft = rect.right - width;
+    const left = Math.max(margin, Math.min(preferredLeft, window.innerWidth - width - margin));
+    const below = rect.bottom + gap;
+    const above = rect.top - cardHeight - gap;
+    const top = below + cardHeight <= window.innerHeight - margin
+      ? below
+      : Math.max(margin, above);
+    hoverCard.style.left = Math.round(left) + "px";
+    hoverCard.style.top = Math.round(top) + "px";
+    hoverCard.style.right = "auto";
   };
 
   const renderCard = (profile, trigger) => {
