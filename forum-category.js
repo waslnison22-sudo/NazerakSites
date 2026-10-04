@@ -6,7 +6,7 @@
   const safeUrl=(v)=>{try{const u=new URL(String(v||""));return /^https?:$/.test(u.protocol)?u.href:"";}catch{return"";}};
   const userName=(u)=>{const m=u?.user_metadata||{};return String(m.global_name||m.full_name||m.name||"Игрок NaZerak").trim().slice(0,64)||"Игрок NaZerak";};
   const userAvatar=(u)=>safeUrl(u?.user_metadata?.avatar_url||u?.user_metadata?.picture);
-  const withTimeout=(promise,ms,message)=>Promise.race([promise,new Promise((_,reject)=>window.setTimeout(()=>reject(new Error(message)),ms))]);
+  const withTimeout=async(promise,ms,message)=>{let timer;try{return await Promise.race([promise,new Promise((_,reject)=>{timer=window.setTimeout(()=>reject(new Error(message)),ms);})]);}finally{window.clearTimeout(timer);}};
   const wait=async()=>{for(let i=0;i<100;i++){if(window.NaZerakAuth?.client)return window.NaZerakAuth.client;await new Promise(r=>setTimeout(r,100));}return null;};
   const msg=(m,k="info")=>{const n=qs("[data-category-message]");if(!n)return;n.textContent=m;n.dataset.kind=k;n.hidden=!m;};
   const relative=(v)=>{const d=new Date(v),diff=Date.now()-d.getTime();if(Number.isNaN(d.getTime()))return"—";const m=Math.max(0,Math.floor(diff/60000));if(m<1)return"только что";if(m<60)return m+" мин назад";const h=Math.floor(m/60);if(h<24)return h+" ч назад";const day=Math.floor(h/24);if(day<7)return day+" дн назад";return new Intl.DateTimeFormat("ru-RU",{day:"2-digit",month:"short",year:"numeric"}).format(d);};
@@ -27,7 +27,7 @@
     qs("[data-category-title]").innerHTML=escapeHtml(state.category.name)+"<span>.</span>";
     const canCreate = state.category.posting_mode==="open" || Boolean(state.permissions?.can_publish_official);
     document.querySelectorAll("[data-category-create]").forEach((button)=>{button.hidden=!canCreate;});    const count=qs("[data-category-result-count]");const n=state.topics.length;n===1?count.textContent="1 тема":n<5?count.textContent=n+" темы":count.textContent=n+" тем";
-    const root=qs("[data-category-topic-list]");const empty=qs("[data-category-empty]");
+    const root=qs("[data-category-topic-list]");const table=qs(".forum-thread-table");const empty=qs("[data-category-empty]");
     root.innerHTML=state.topics.map(t=>{
       const avatar=safeUrl(t.author_avatar_url);
       const av=avatar?'<img src="'+escapeHtml(avatar)+'" alt="">':escapeHtml((t.author_name||"N").slice(0,1).toUpperCase());
@@ -53,7 +53,7 @@
         '<div class="forum-thread-row__last"><strong>Последняя активность</strong><time datetime="'+escapeHtml(t.last_post_at||"")+'">'+relative(t.last_post_at)+'</time></div>'+
       '</article>';
     }).join("");
-    empty.hidden=state.topics.length>0;
+    if(table)table.hidden=state.topics.length===0;empty.hidden=state.topics.length>0;
     document.title="NaZerak — "+state.category.name;
   };
   const syncAuthor=async()=>{const r=await state.client.from("forum_authors").upsert({id:state.user.id,display_name:userName(state.user),avatar_url:userAvatar(state.user)||null,updated_at:new Date().toISOString(),last_seen_at:new Date().toISOString()},{onConflict:"id"});return !r.error;};
@@ -74,6 +74,6 @@
       button.disabled=false;
     }
   };
-  const init=async()=>{state.client=await wait();if(!state.client){msg("Не удалось подключиться к форуму.","error");return;}try{const session=await withTimeout(state.client.auth.getSession(),8000,"");state.user=session.data?.session?.user||null;}catch{state.user=window.NaZerakAuth?.user||null;}qs("[data-category-create]")?.addEventListener("click",()=>state.user?qs("[data-category-modal]")?.showModal():location.href="./cabinet.html");qs("[data-category-submit]")?.addEventListener("click",create);try{await load();}catch(e){msg(e instanceof Error?e.message:"Не удалось загрузить раздел.","error");}};
+  const init=async()=>{state.client=await wait();if(!state.client){msg("Не удалось подключиться к форуму.","error");return;}try{const session=await withTimeout(state.client.auth.getSession(),8000,"");state.user=session.data?.session?.user||null;}catch{state.user=window.NaZerakAuth?.user||null;}document.querySelectorAll("[data-category-create]").forEach((button)=>button.addEventListener("click",()=>state.user?qs("[data-category-modal]")?.showModal():location.href="./cabinet.html"));qs("[data-category-submit]")?.addEventListener("click",create);try{await load();}catch(e){msg(e instanceof Error?e.message:"Не удалось загрузить раздел.","error");}};
   if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",()=>void init(),{once:true});else void init();
 })();
