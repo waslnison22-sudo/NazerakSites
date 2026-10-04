@@ -77,6 +77,48 @@ const assertAccessibleControls = async (page, name) => {
   }
 };
 
+const assertForumVisualBaseline = async (page, name) => {
+  const result = await page.evaluate(() => {
+    const root = document.querySelector(".forum-page, .topic-page, .forum-user-page");
+    if (!root) return null;
+    const visible = (el) => {
+      const style = getComputedStyle(el);
+      const rect = el.getBoundingClientRect();
+      return style.display !== "none" && style.visibility !== "hidden" && rect.width > 0 && rect.height > 0;
+    };
+    const controls = [...document.querySelectorAll(
+      ".forum-page button, .topic-page button, .forum-user-page button, .topbar .nav-toggle, .topbar .nav > a"
+    )].filter(visible);
+    const undersized = controls.map((el) => {
+      const rect = el.getBoundingClientRect();
+      return { label: (el.getAttribute("aria-label") || el.textContent || "").trim().slice(0, 48), width: Math.round(rect.width), height: Math.round(rect.height) };
+    }).filter((item) => item.width < 44 || item.height < 44);
+    const primaryTextSelectors = [
+      "h1", "h2", "h3", ".forum-board-row__forum strong",
+      ".forum-thread-row__title", ".forum-topic-row__copy h3",
+      ".forum-member-card__body strong", ".topic-post__body",
+      ".forum-hero p", ".forum-section-head p"
+    ];
+    const tinyText = primaryTextSelectors.flatMap((selector) =>
+      [...root.querySelectorAll(selector)].filter(visible).map((el) => ({
+        selector, text: (el.textContent || "").trim().replace(/\\s+/g, " ").slice(0, 48),
+        size: parseFloat(getComputedStyle(el).fontSize)
+      }))
+    ).filter((item) => item.size < 14);
+    const outside = [...root.querySelectorAll("*")].filter(visible).map((el) => {
+      const rect = el.getBoundingClientRect();
+      return { tag: el.tagName, className: typeof el.className === "string" ? el.className : "", left: Math.round(rect.left), right: Math.round(rect.right) };
+    }).filter((item) => item.left < -1 || item.right > innerWidth + 1).slice(0, 8);
+    return { undersized, tinyText, outside, viewport: innerWidth, pageWidth: document.documentElement.scrollWidth };
+  });
+  if (!result) return;
+  if (result.undersized.length) throw new Error(name + " forum controls below 44px target: " + JSON.stringify(result.undersized));
+  if (result.tinyText.length) throw new Error(name + " primary forum text below 14px: " + JSON.stringify(result.tinyText));
+  if (result.outside.length || result.pageWidth > result.viewport + 1) {
+    throw new Error(name + " forum content extends beyond viewport: " + JSON.stringify({ outside: result.outside, pageWidth: result.pageWidth, viewport: result.viewport }));
+  }
+};
+
 const testSameOriginLinks = async (page, name) => {
   const routes = await page.evaluate(() =>
     [...document.querySelectorAll("a[href]")]
@@ -146,6 +188,7 @@ const testStaticPage = async ({ path, name, viewport, check }) => {
   try {
     await page.goto(BASE + path, { waitUntil: "networkidle", timeout: TIMEOUT });
     await check(page);
+    await assertForumVisualBaseline(page, name);
     await assertAccessibleControls(page, name);
     await testSameOriginLinks(page, name);
     await assertNoHorizontalOverflow(page, name);
