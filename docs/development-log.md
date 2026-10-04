@@ -401,3 +401,9 @@ A GitHub compare from `a6de9d51…` to the recovery head `fb9225862a4750028e29f9
 
 ### Verification discipline
 - This commit is not treated as released until the exact-head QA browser suite and the REG.RU production deploy workflow report success.
+
+
+### Follow-up regression correction
+- The first QA pass correctly caught that stylesheet v3 was expected in tests before all six forum route HTML files had been cache-busted. Aligned forum index, category, topic, members, search and profile pages to the same v3 stylesheet revision.
+- Removed remaining backend description output from parent section headings and removed the category selector's visible “official” access label; posting authorization logic remains unchanged.
+- Latest QA is rerunning against the corrected source head; earlier failed runs are treated as stale and not as final verification.
