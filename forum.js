@@ -95,11 +95,17 @@
     const node=state.nodes.find(n=>Number(n.id)===categoryId);
     if(!node||node.node_type!=="forum"){showMessage("Выбран недопустимый раздел.","error");return;}
     button.disabled=true;showMessage("");
-    if(!(await syncAuthor())){showMessage("Не удалось сохранить форумный профиль. Попробуй ещё раз.","error");return;}
-    const r=await state.client.from("forum_topics").insert({category_id:categoryId,author_id:state.user.id,title,body}).select("id").single();
-    button.disabled=false;
-    if(r.error||!r.data){showMessage(r.error?.message||"Не удалось создать тему.","error");return;}
-    qs("[data-forum-modal]")?.close();form.reset();window.location.href="./topic.html?id="+encodeURIComponent(r.data.id);
+    try {
+      if(!(await syncAuthor())){showMessage("Не удалось сохранить форумный профиль. Проверь соединение и попробуй ещё раз.","error");return;}
+      const r=await state.client.from("forum_topics").insert({category_id:categoryId,author_id:state.user.id,title,body}).select("id").single();
+      if(r.error||!r.data?.id){showMessage("Не удалось создать тему. Проверь соединение и попробуй ещё раз.","error");return;}
+      qs("[data-forum-modal]")?.close();form.reset();window.location.href="./topic.html?id="+encodeURIComponent(r.data.id);
+    } catch (error) {
+      console.error("[NaZerak Forum] topic creation failed:",error);
+      showMessage("Не удалось создать тему из-за ошибки соединения. Попробуй ещё раз.","error");
+    } finally {
+      button.disabled=false;
+    }
   };
 
   const init=async()=>{
