@@ -118,13 +118,13 @@ for (const [name, page] of [
   ["topic.html", read("topic.html")],
   ["forum-user.html", read("forum-user.html")]
 ]) {
-  const assets = ["auth-config.js?v=8", "supabase-loader.js?v=9", "auth.js?v=35", "script.js?v=20", "styles.css?v=37"];
-  if (name === "forum.html") { assets.push("forum.css?v=4", "forum-ui.js?v=2", "forum.js?v=6"); }
-  if (name === "forum-category.html") { assets.push("forum.css?v=4", "forum-ui.js?v=2", "forum-category.js?v=5"); }
-  if (name === "forum-members.html") { assets.push("forum.css?v=4", "forum-ui.js?v=2", "forum-members.js?v=2"); }
-  if (name === "forum-search.html") { assets.push("forum.css?v=4", "forum-ui.js?v=2", "forum-search.js?v=2"); }
-  if (name === "topic.html") { assets.push("forum.css?v=4", "forum-ui.js?v=2", "topic.js?v=4"); }
-  if (name === "forum-user.html") { assets.push("forum.css?v=4", "forum-ui.js?v=2", "user.js?v=3"); }
+  const assets = ["auth-config.js?v=8", "supabase-loader.js?v=9", "auth.js?v=35", "script.js?v=21", "styles.css?v=37"];
+  if (name === "forum.html") { assets.push("forum.css?v=5", "forum-ui.js?v=2", "forum.js?v=6"); }
+  if (name === "forum-category.html") { assets.push("forum.css?v=5", "forum-ui.js?v=2", "forum-category.js?v=5"); }
+  if (name === "forum-members.html") { assets.push("forum.css?v=5", "forum-ui.js?v=2", "forum-members.js?v=2"); }
+  if (name === "forum-search.html") { assets.push("forum.css?v=5", "forum-ui.js?v=2", "forum-search.js?v=2"); }
+  if (name === "topic.html") { assets.push("forum.css?v=5", "forum-ui.js?v=2", "topic.js?v=4"); }
+  if (name === "forum-user.html") { assets.push("forum.css?v=5", "forum-ui.js?v=2", "user.js?v=3"); }
   for (const asset of assets) {
     if (!page.includes(asset)) {
       fail.push(`${name} asset include missing: ${asset}`);
