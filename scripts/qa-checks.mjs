@@ -266,7 +266,7 @@ const forumSurfaceFiles = ["forum.html","forum-category.html","forum-members.htm
 
 for (const file of forumSurfaceFiles) {
   const page = read(file);
-  if (!page.includes("forum.css?v=4")) fail.push(file + " forum stylesheet is missing");
+  if (!page.includes("forum.css?v=6")) fail.push(file + " forum stylesheet is missing");
 }
 if (css.includes("NAZERAK FORUM")) fail.push("obsolete forum cascade remains in global stylesheet");for (const file of forumSurfaceFiles) {
   const page = read(file);
