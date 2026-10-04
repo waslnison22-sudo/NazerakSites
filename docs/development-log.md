@@ -550,3 +550,8 @@ Browser smoke run `37185499919` had already passed static QA and Supabase runtim
 
 ### Release gate
 A new exact-head QA run must pass static QA, Supabase runtime smoke and browser smoke before production deployment is accepted.
+
+
+## 2026-10-04 — browser-smoke geometry correction
+
+The first explicit lower-left hero anchor passed the left-edge requirement but rendered with a 101px bottom gap in browser smoke. The cause was the absolute-positioning variant interacting with the existing forum surface sizing rules. It was replaced with a box-sized flex layout that reserves the bottom padding and uses `margin-top:auto` for deterministic lower-left placement. The browser assertion remains unchanged so the visual contract is tested rather than weakened.
