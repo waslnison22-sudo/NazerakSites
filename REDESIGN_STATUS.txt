@@ -1,3 +1,0 @@
-NaZerak redesign is ready in artifacts.
-Live site still serves OLD index until index.html/styles.css/forum.* are pushed to main.
-Package: nazerak-redesign-full.zip
