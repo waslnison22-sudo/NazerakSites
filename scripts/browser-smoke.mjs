@@ -444,15 +444,17 @@ await testStaticPage({
     if (layout.width > 760) {
       const placement = await page.locator(".forum-hero").evaluate((hero) => {
         const actions = hero.querySelector(".forum-hero__actions");
+        const copy = hero.querySelector(".forum-hero__copy");
         const heroRect = hero.getBoundingClientRect();
         const actionsRect = actions.getBoundingClientRect();
+        const copyRect = copy.getBoundingClientRect();
         return {
-          leftDelta: Math.abs(actionsRect.left - heroRect.left),
+          leftDelta: Math.abs(actionsRect.left - copyRect.left),
           bottomGap: heroRect.bottom - actionsRect.bottom
         };
       });
       if (placement.leftDelta > 3 || placement.bottomGap < 8 || placement.bottomGap > 38) {
-        throw new Error("forum hero actions are not visually anchored to the lower-left: " + JSON.stringify(placement));
+        throw new Error("forum hero actions are not aligned with the left content edge / lower edge: " + JSON.stringify(placement));
       }
     }
     if (await page.locator("[data-forum-node-tree] .forum-node-section").count() < 1) {
