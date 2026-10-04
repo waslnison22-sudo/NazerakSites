@@ -11,7 +11,7 @@
   const relative=(v)=>{const d=new Date(v);if(Number.isNaN(d.getTime()))return"—";const diff=Math.max(0,Date.now()-d.getTime()),m=Math.floor(diff/60000);if(m<1)return"только что";if(m<60)return m+" мин назад";const h=Math.floor(m/60);if(h<24)return h+" ч назад";const days=Math.floor(h/24);if(days<7)return days+" дн назад";return formatDate(v);};
   const userName=(u)=>{const m=u?.user_metadata||{};return String(m.global_name||m.full_name||m.name||m.user_name||m.preferred_username||"Игрок NaZerak").trim().slice(0,64)||"Игрок NaZerak";};
   const userAvatar=(u)=>{const m=u?.user_metadata||{};const url=safeUrl(m.avatar_url||m.picture);if(!url)return null;try{const host=new URL(url).hostname.toLowerCase();return host==="cdn.discordapp.com"||host==="media.discordapp.net"?url:null;}catch{return null;}};
-  const withTimeout=(promise,ms,message)=>Promise.race([promise,new Promise((_,reject)=>window.setTimeout(()=>reject(new Error(message)),ms))]);
+  const withTimeout=async(promise,ms,message)=>{let timer;try{return await Promise.race([promise,new Promise((_,reject)=>{timer=window.setTimeout(()=>reject(new Error(message)),ms);})]);}finally{window.clearTimeout(timer);}};
   const waitForClient=async()=>{for(let i=0;i<100;i+=1){if(window.NaZerakAuth?.client)return window.NaZerakAuth.client;await new Promise(r=>window.setTimeout(r,100));}return null;};
   const syncAuthor=async()=>{if(!state.client||!state.user)return false;const r=await state.client.from("forum_authors").upsert({id:state.user.id,display_name:userName(state.user),avatar_url:userAvatar(state.user)||null,updated_at:new Date().toISOString(),last_seen_at:new Date().toISOString()},{onConflict:"id"});if(r.error){console.warn("[NaZerak Forum] author sync:",r.error.message);return false;}return true;};
 
@@ -118,7 +118,7 @@
     qs("[data-forum-search-reset]")?.addEventListener("click",()=>{state.search="";if(qs("#forum-search"))qs("#forum-search").value="";renderTopics();});
     qs("[data-forum-search-form]")?.addEventListener("submit",e=>{e.preventDefault();const q=String(qs("#forum-search")?.value||"").trim();if(q)window.location.href="./forum-search.html?q="+encodeURIComponent(q);});
     document.addEventListener("keydown",e=>{if(e.key!=="/"||e.altKey||e.ctrlKey||e.metaKey)return;const target=e.target;if(target instanceof HTMLElement&&(target.isContentEditable||/^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName)))return;const search=qs("#forum-search");if(!search)return;e.preventDefault();search.focus();search.select();});
-    try{await loadData();}catch(e){setState("ОШИБКА","error");showMessage(e instanceof Error?e.message:"Не удалось загрузить форум.","error");}
+    try{await loadData();}catch(e){showMessage(e instanceof Error?e.message:"Не удалось загрузить форум.","error");}
   };
   if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",()=>void init(),{once:true});else void init();
 })();
