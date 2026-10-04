@@ -27,7 +27,7 @@
     const img=qs("[data-user-avatar]");
     if(p.avatar_url){img.hidden=false;img.src=p.avatar_url;img.alt="";}
     const roles=Array.isArray(p.role_slugs)?p.role_slugs:[];
-    qs("[data-user-roles]").innerHTML=roles.map(r=>window.NaZerakForumUI.roleBadge(r.slug,r.name,r.badge)).join("");
+    qs("[data-user-roles]").innerHTML=roles.map(r=>typeof r==="string"?window.NaZerakForumUI.roleBadge(r,"Игрок","•"):window.NaZerakForumUI.roleBadge(r.slug||r.role_slug||"player",r.name||"Игрок",r.badge||"•")).join("");
     let topics;try{topics=await withTimeout(client.from("forum_topic_list").select("id,title,category_name,last_post_at,reply_count,is_pinned,author_public_id,primary_role_slug").eq("author_public_id",publicId).order("last_post_at",{ascending:false}).limit(10),8000,"Загрузка тем профиля превысила 8 секунд.");}catch(e){showMessage(e instanceof Error?e.message:"Не удалось загрузить темы профиля.");return;}
     const root=qs("[data-user-topics]");
     if(topics.error){root.innerHTML='<div class="forum-user__empty">Не удалось загрузить последние темы.</div>';return;}if(!topics.data||!topics.data.length){root.innerHTML='<div class="forum-user__empty">Пока нет опубликованных тем.</div>';return;}
