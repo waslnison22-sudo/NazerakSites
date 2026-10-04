@@ -805,3 +805,28 @@ The captured search screen showed a non-empty query ("na") and a result title fo
 - Changes remain isolated on `forum-hud-reboot-prep-20261004`.
 - No merge to `main`, no REG.RU SFTP operation and no production deployment.
 - Awaiting the latest exact-head QA after the search correction.
+
+
+## 2026-10-04 — isolated HUD QA failure analysis and correction
+
+### Scope and safety
+- Work continues on `forum-hud-reboot-prep-20261004`, not `main`.
+- No production SFTP deployment was started by this change.
+- Baseline branch remains `main` at `7367cd200c`; reboot branch contains the isolated HUD specification, readability work and responsive regression coverage.
+
+### Visual review
+- Retrieved the browser QA screenshot artifact from run `37217970008` and inspected the 1440×900 forum-index capture.
+- The page has a working wide hero illustration, readable large title and clear action buttons, but the right-side latest-activity rail is visually sparse when the forum has no topics. This remains an open composition issue; do not mark the index as visually accepted from this screenshot alone.
+- Inspected the current branch's tracked image tree. The only committed image-format visual is `assets/images/forum-hero.svg`; no generated JPG, PNG, WebP or AVIF artwork is currently present in this branch. Keep the current verified SVG wired, and do not reference absent artwork paths.
+- The asset README was corrected to distinguish the present SVG from proposed future assets.
+
+### QA failure observed
+- Run `37217970008` completed with failure in browser smoke; static QA and Supabase runtime smoke passed.
+- The failing case was `forum tablet` at 768×1024. CSS deliberately changes `.forum-index-grid` to `display:block` below 900px, but the test counted `grid-template-columns` tokens even when the element was no longer a grid. Browsers retain the computed grid-template-columns declaration on a non-grid element, so the test reported two columns despite the actual block layout being stacked.
+- This was a test-contract defect, not evidence of a visual two-column collision. The test now reads both `display` and the track count, and only requires one grid track when the element is actually displayed as a grid.
+- No application JavaScript, database query, authorization rule or production deployment configuration was changed to mask this test failure.
+
+### Verification status
+- The assertion correction is committed to the isolated reboot branch.
+- A new branch QA run is required to verify the correction against Chromium and all remaining route/state checks.
+- Production remains unchanged. The screenshot artifact is a baseline for further visual review, not a final approval.
