@@ -2232,3 +2232,20 @@ body[data-forum] .forum-resource-block{
   }
   body[data-forum] .forum-index-grid{margin-top:18px}
 }
+
+
+/* v10 — deterministic desktop hero action baseline */
+@media(min-width:761px){
+  body[data-forum] .forum-hero{
+    position:relative;
+    min-height:224px;
+    padding-bottom:0;
+  }
+  body[data-forum] .forum-hero__actions{
+    position:absolute;
+    left:0;
+    bottom:18px;
+    margin:0;
+    align-self:auto;
+  }
+}
