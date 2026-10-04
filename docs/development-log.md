@@ -500,3 +500,36 @@ The separate conversation/library image collection contains NaZerak visual mater
 
 ### Release gate
 v37 requires a fresh QA + Pages + REG.RU production deploy cycle. Production is not considered updated merely because the repository commit exists.
+
+
+## 2026-10-04 — full current-head reconciliation after concurrent edits
+
+### What changed in the repository since the previous audit
+The default branch received a dense sequence of forum fixes from the parallel editing pass. I treated the current `main` tree as authoritative and re-read the affected HTML/CSS/JS plus the QA/browser contracts before changing anything. The recent series included forum runtime hardening, removal of obsolete publication/status copy, hover-profile safety work, mobile navigation sizing, forum hero placement, and repeated cache refreshes.
+
+### User-requested forum corrections verified
+- The visible «Форум готов» status/pill is gone from the current forum markup.
+- The obsolete forum status lifecycle is rejected by static QA.
+- Category publication-policy text/hooks are gone from category markup and renderer logic.
+- Topic reply no longer carries the «Ответы доступны авторизованным…» explanatory copy; access is still enforced by authentication and database policy.
+- Forum hero title/description are left-aligned.
+- Hero actions are anchored to the lower-left of the hero on desktop; browser smoke checks the rendered geometry instead of relying on CSS implementation details.
+- The mobile hero keeps usable touch targets and switches to a full-width action layout at narrow widths.
+
+### Additional issues found during this pass
+1. Static QA expected an older `forum-ui.js?v=1` cache on three routes while those routes had already moved to v2. This caused the current QA run to fail before runtime/browser checks.
+2. `styles.css` had continued to receive real changes after the previous cache revision. All HTML routes were aligned to v37.
+3. The global `script.js` also changed after its v20 cache. Routes were aligned to v22.
+4. Forum-specific CSS had changed after v4, so all forum routes were aligned to the new v6 cache.
+5. The documented image-slot system and the actual repository were inconsistent: the homepage already exposed media slots, while `assets/images/` contained only the README and no binary art. The README was corrected so it describes the actual behavior instead of implying files are already present.
+6. The media slots had no automatic activation path. A safe loader was added: it silently tests the known local artwork names and inserts an image only after a successful load. Missing artwork therefore leaves the existing CSS composition intact without producing broken-image UI.
+7. The forum hero now has its own optional artwork slot. When `assets/images/forum-hero.jpg` is later committed, it will appear automatically and the text remains readable through the dedicated dark overlay.
+8. The forum index was still constrained by the child `.forum` width even after the outer canvas was widened. The forum index/category canvas was expanded to 1360px on desktop while preserving narrow mobile gutters.
+
+### Image inventory result
+Current GitHub `main` contains `assets/images/README.md` but no committed JPG/JPEG/PNG/WebP files. I therefore did not fake an image integration or claim that the new artwork is live. The code is prepared for the documented files, and the homepage/forum will use them automatically once they exist in the repository.
+
+### Verification state
+- The previous stale QA failure caused by cache expectations was corrected; a fresh release run is required for the resulting head.
+- Pages and production deployment are intentionally not treated as successful until the exact resulting head passes QA and the production gate.
+- No Supabase schema/RLS/posting-permission logic was changed in this pass.
