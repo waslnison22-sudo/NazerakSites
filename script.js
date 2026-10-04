@@ -137,12 +137,8 @@
     });
   });
 
-  const mediaSources = Object.freeze({
-    hero: "./assets/images/hero-world.jpg",
-    world: "./assets/images/world-panel.jpg",
-    partnership: "./assets/images/partnership.jpg",
-    "forum-hero": "./assets/images/forum-hero.jpg"
-  });
+  // Artwork is opt-in: only an explicitly supplied data-image-src may load.
+  const mediaSources = Object.freeze({});
 
   const hydrateMediaSlots = () => {
     document.querySelectorAll("[data-image-slot]").forEach((slot) => {

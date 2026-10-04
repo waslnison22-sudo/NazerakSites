@@ -533,3 +533,20 @@ Current GitHub `main` contains `assets/images/README.md` but no committed JPG/JP
 - The previous stale QA failure caused by cache expectations was corrected; a fresh release run is required for the resulting head.
 - Pages and production deployment are intentionally not treated as successful until the exact resulting head passes QA and the production gate.
 - No Supabase schema/RLS/posting-permission logic was changed in this pass.
+
+
+## 2026-10-04 — forum micro-error pass / QA regression
+
+### Corrected
+- Removed the remaining Discord access-explanation sentence from the topic login surface. Authentication/permission enforcement remains functional; only redundant explanatory UI was removed.
+- Made the forum hero actions an explicit desktop lower-left anchor instead of relying on flex auto-margin.
+- Kept title and description left-aligned with reserved bottom space so the controls cannot overlap the copy.
+- The media loader no longer probes guessed raster filenames that are absent from the repository. It accepts only explicit `data-image-src` values, eliminating the forum 404 detected by browser smoke.
+- Bumped only the forum index stylesheet reference to v7 because the new hero-placement rule is consumed by that page; other forum pages continue using the stable v6 stylesheet.
+- The image library was re-checked. The selected red NaZeRaK megapolis art is available in the project Library, while the GitHub repository still contains no binary raster assets in `assets/images/`. No nonexistent production image was claimed as deployed.
+
+### QA finding and resolution
+Browser smoke run `37185499919` had already passed static QA and Supabase runtime smoke but failed on one forum resource 404. The current change removes that request at the source rather than weakening the browser test.
+
+### Release gate
+A new exact-head QA run must pass static QA, Supabase runtime smoke and browser smoke before production deployment is accepted.

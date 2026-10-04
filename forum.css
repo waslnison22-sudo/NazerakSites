@@ -2042,3 +2042,49 @@
 @media(max-width:380px){
   .forum-page .forum{width:calc(100% - 24px)}
 }
+
+
+/* v7 — exact hero placement requested by the current forum layout */
+.forum-hero{
+  min-height:238px;
+  padding:28px 0 78px;
+}
+.forum-hero__copy{
+  margin-left:0;
+  width:min(100%,760px);
+  text-align:left;
+}
+.forum-hero__actions{
+  position:absolute;
+  left:0;
+  bottom:22px;
+  z-index:2;
+  width:auto;
+  margin:0;
+  padding:0;
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  gap:8px;
+}
+@media(max-width:760px){
+  .forum-hero{
+    min-height:0;
+    padding:18px 0 17px;
+  }
+  .forum-hero__actions{
+    position:static;
+    width:100%;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    margin-top:16px;
+    gap:8px;
+  }
+  .forum-hero__actions .button{
+    width:100%;
+    min-height:46px;
+  }
+}
+@media(max-width:380px){
+  .forum-hero__actions{grid-template-columns:1fr}
+}
