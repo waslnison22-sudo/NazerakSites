@@ -830,3 +830,22 @@ The captured search screen showed a non-empty query ("na") and a result title fo
 - The assertion correction is committed to the isolated reboot branch.
 - A new branch QA run is required to verify the correction against Chromium and all remaining route/state checks.
 - Production remains unchanged. The screenshot artifact is a baseline for further visual review, not a final approval.
+
+
+## 2026-10-04 — empty activity layout and tablet test correction (v17)
+
+### Changes
+- Corrected the tablet browser assertion to parse computed CSS Grid tracks without splitting spaces inside `minmax()`. The test now evaluates the actual display mode and parsed track count.
+- Fixed the forum index composition when the latest-activity list is empty: on wide desktop the empty activity section and community resources now flow below the full-width forum directory instead of occupying a narrow, largely vacant side rail.
+- Added an explicit `is-empty-activity` state in `forum.js`, based on the filtered topic set, so searching to zero matches uses the same balanced layout and restoring matches returns to the standard grid.
+- Bumped `forum.css` to v17 on all six forum routes and the index script to v7; aligned static QA expectations.
+- Kept the change on the isolated reboot branch. No production upload or main-branch update was made.
+
+### Rationale
+- A 768px tablet layout was already intentionally stacked by the v16 media query; the former test miscounted `minmax(0px, 1fr)` as two space-separated items.
+- An empty latest-activity rail creates a large dead zone beside a 27-forum directory. A full-width flow better reflects the actual content while preserving the normal two-column layout when activity exists.
+
+### Verification
+- Static QA and Supabase runtime smoke passed in run `37217970008`; browser smoke failed only at the flawed tablet track-count assertion.
+- The parser correction, empty-activity state and v17 cache updates are committed on the reboot branch.
+- A fresh full browser QA run is now required. This v17 state is not marked accepted until that run passes and updated screenshots are reviewed.
