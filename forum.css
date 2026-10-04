@@ -683,3 +683,12 @@ body[data-forum-user-page] [hidden]{display:none!important}
   .forum-page .forum-board-row{display:block}
   .forum-page .forum-board__columns{display:none}
 }
+
+
+/* v17 — empty activity should not leave a narrow, visually vacant desktop rail */
+@media(min-width:1121px){
+  .forum-page .forum-index-grid.is-empty-activity{grid-template-columns:minmax(0,1fr);gap:26px}
+  .forum-page .forum-index-grid.is-empty-activity .forum-discussions,
+  .forum-page .forum-index-grid.is-empty-activity .forum-resources{grid-column:1;grid-row:auto;margin-top:0}
+  .forum-page .forum-index-grid.is-empty-activity .forum-discussions{margin-top:4px}
+}
