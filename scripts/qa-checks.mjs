@@ -291,6 +291,7 @@ for (const file of ["forum.js","forum-category.js","topic.js"]) {
   if (!source.includes('from("forum_authors").upsert(')) fail.push(file + " forum author sync is missing");
   if (!source.includes('updated_at:new Date().toISOString()')) fail.push(file + " forum author sync must refresh updated_at");
   if (!source.includes('last_seen_at:new Date().toISOString()')) fail.push(file + " forum author sync must refresh last_seen_at");
+  if (!/finally\s*\{[\s\S]{0,180}button\.disabled=false/.test(source)) fail.push(file + " submit control must be restored after request failures");
 }
 if (auth.includes(".from(\"profiles\")\n      .upsert(")) fail.push("profile initialization still uses upsert");
 if (script.includes(".magnetic") || script.includes("[data-parallax]")) fail.push("unstable motion controls remain");
