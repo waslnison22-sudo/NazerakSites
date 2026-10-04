@@ -650,9 +650,23 @@ await testStaticPage({
   check: async (page) => {
     if (!(await page.locator("h1").textContent()).includes("Поиск")) throw new Error("search heading missing");
     if (!(await page.locator("#global-forum-search").count())) throw new Error("search field missing");
-    await page.locator("#global-forum-search").fill("na");
+    const input = page.locator("#global-forum-search");
+    const clear = page.locator("[data-forum-search-clear]");
+    await input.fill("na");
     await page.locator('[data-forum-search-form]').evaluate((form) => form.requestSubmit());
-    if (!page.url().includes("/forum-search.html?q=na")) throw new Error("search did not update query URL");
+    if (!new URL(page.url()).searchParams.get("q")?.includes("na")) throw new Error("search did not update query URL");
+    if (!(await clear.isVisible())) throw new Error("search clear control did not appear for a query");
+    if (await page.locator("[data-search-empty]").isVisible()) {
+      const emptyTitle = (await page.locator("[data-search-empty] h3").textContent() || "").trim();
+      if (!/не найдено/i.test(emptyTitle)) throw new Error("search no-results state still looks like an empty query: " + emptyTitle);
+    }
+    await clear.click();
+    if ((await input.inputValue()) !== "") throw new Error("search clear did not reset the input");
+    if (await clear.isVisible()) throw new Error("search clear control stayed visible after clearing");
+    if (new URL(page.url()).searchParams.has("q")) throw new Error("search clear did not remove the query from URL");
+    if ((await page.locator("[data-search-empty] h3").textContent() || "").trim() !== "Введите запрос.") {
+      throw new Error("search clear did not restore the empty-query state");
+    }
   }
 });
 
