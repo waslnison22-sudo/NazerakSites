@@ -462,3 +462,41 @@ A GitHub compare from `a6de9d51…` to the recovery head `fb9225862a4750028e29f9
 - Production deploy run `37182735551`: **success**. SFTP upload, obsolete route cleanup, production HTTP content checks for `/` and `/forum.html`, and runner TLS verification step all completed successfully.
 - TLS verification step emitted a warning that the certificate is not trusted by the runner; the deploy workflow is configured to continue after this independent TLS check. Do not describe the public certificate chain as trusted based on this run.
 - These corrections are now included in the successfully deployed tested commit. Screenshot-based visual sign-off is still outstanding.
+
+
+## 2026-10-04 — NaZerak full frontend micro-error audit / v37
+
+### Scope
+Audited the current main branch after the large external-assistant edit series, including:
+- all published HTML routes;
+- shared styles.css and authoritative forum.css;
+- forum index/category/topic/members/search/profile renderers;
+- global navigation/auth loading;
+- browser smoke and static QA contracts;
+- repository asset tree and the separate project image library.
+
+### Confirmed current architecture
+- Forum styling is isolated in forum.css; the obsolete parallel forum-styles.css / animations.css layers are absent from main.
+- Production deploy and QA for the previous verified cleanup release completed successfully on commit 72d5de6c7f.
+- Current forum database snapshot remains intentionally empty of starter topics/posts; forum structure is present and permission logic is retained.
+
+### Bugs found and fixed
+1. forum.js error handling still called an undefined setState() helper when forum loading failed. This could mask the original backend error with a ReferenceError. Replaced the broken call with the existing visible error surface.
+2. Forum/category/topic timeout wrappers did not clear their timeout handles after successful completion. Added cleanup to prevent stale timers.
+3. Category pages with multiple "Создать тему" controls only bound the first control. All category create controls are now bound.
+4. An empty category still kept the empty thread-table shell visible behind the empty state. The table now hides when there are no topics.
+5. Removed redundant publication-access copy from the forum index modal, category modal and topic reply area. Authorization/permission enforcement is unchanged.
+6. Profile role rendering now tolerates both structured role objects and string role slugs instead of silently degrading string roles to the default player role.
+7. Empty action-footer spans no longer reserve visual space after the explanatory copy was removed.
+
+### Regression guards strengthened
+Static QA now rejects:
+- reintroduction of the "Форум готов" status/copy;
+- redundant publication-access explanations on forum surfaces;
+- an undefined setState() reference in forum.js.
+
+### Visual/asset audit
+The separate conversation/library image collection contains NaZerak visual material, including a red city/megapolis hero and a red-black brand pack. The current Git repository, however, contains no committed raster artwork in assets/images/; only the asset README is present. Therefore no image is falsely reported as deployed. The forum remains ready for binary asset integration once the selected artwork is actually placed in the repository.
+
+### Release gate
+v37 requires a fresh QA + Pages + REG.RU production deploy cycle. Production is not considered updated merely because the repository commit exists.
