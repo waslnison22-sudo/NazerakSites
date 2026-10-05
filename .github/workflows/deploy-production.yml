@@ -108,7 +108,7 @@ jobs:
           SITE_URL: https://nazerak.ru
         run: |
           set -e
-          for route in / /forum; do
+          for route in / /forum /members /search /cabinet; do
             ok=false
             for i in {1..6}; do
               status=$(curl -k -L -sS -o /tmp/nazerak-check.html -w "%{http_code}" "$SITE_URL$route")
@@ -123,6 +123,26 @@ jobs:
               echo "Production content failed: $SITE_URL$route"
               exit 1
             fi
+          done
+
+          # Production must not advertise the retired GitHub Pages host.
+          if curl -k -L -sS "$SITE_URL/" | grep -Eqi 'waslnison22-sudo\.github\.io|github\.io/NazerakSites'; then
+            echo "Production HTML still contains a retired GitHub Pages URL"
+            exit 1
+          fi
+
+          # Legacy static URLs should canonicalize to clean public routes.
+          for pair in "/index.html /" "/forum.html /forum" "/forum-members.html /members" "/forum-search.html /search" "/cabinet.html /cabinet" "/forum-category.html?slug=government /forum/government" "/topic.html?id=1 /forum/topic/1" "/forum-user.html?id=1 /user/1"; do
+            set -- $pair
+            legacy="$1"
+            clean="$2"
+            status=$(curl -k -sS -o /dev/null -w "%{http_code}" -I "$SITE_URL$legacy")
+            location=$(curl -k -sS -D - -o /dev/null "$SITE_URL$legacy" | awk 'BEGIN{IGNORECASE=1} /^Location:/{print $2}' | tr -d '\r')
+            if [ "$status" != "301" ] || [ "$location" != "$SITE_URL$clean" ]; then
+              echo "Legacy route did not canonicalize: $SITE_URL$legacy -> $location (HTTP $status)"
+              exit 1
+            fi
+            echo "PASS: legacy $legacy -> $clean"
           done
 
       - name: Verify production TLS certificate

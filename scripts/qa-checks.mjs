@@ -372,6 +372,12 @@ info.push(`Checked ${requiredFiles.length} required files.`);
 info.push(`Checked ${bannedTokens.length} banned/secret tokens.`);
 info.push(`Checked HTML IDs, JavaScript syntax, CSS braces, auth guards, navigation and security headers and RLS guards.`);
 
+if (!auth.includes("const publicSiteOrigin")) fail.push("production OAuth origin guard is missing");
+if (!auth.includes('hostname === "localhost"')) fail.push("local OAuth development exception is missing");
+if (!auth.includes('hostname === "127.0.0.1"')) fail.push("loopback OAuth development exception is missing");
+if (!auth.includes('return "https://nazerak.ru";')) fail.push("production OAuth origin must fall back to nazerak.ru");
+if (!auth.includes('new URL("/cabinet", publicSiteOrigin())')) fail.push("account URL must use canonical public origin");
+
 if (fail.length) {
   console.error("NaZerak QA FAILED");
   for (const item of fail) console.error(" - " + item);
@@ -380,4 +386,3 @@ if (fail.length) {
 
 console.log("NaZerak QA PASSED");
 for (const item of info) console.log(" - " + item);
-

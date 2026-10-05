@@ -19,7 +19,20 @@
 
   const qs = (selector, root = document) => root.querySelector(selector);
   const qsa = (selector, root = document) => [...root.querySelectorAll(selector)];
-  const accountUrl = () => new URL("/cabinet", window.location.origin).href;
+  const publicSiteOrigin = () => {
+    const hostname = window.location.hostname.toLowerCase();
+    // OAuth must always return to the canonical NaZerak origin. Only local
+    // development hosts are allowed to keep their own origin.
+    if (
+      hostname === "localhost" ||
+      hostname === "127.0.0.1" ||
+      hostname === "::1"
+    ) {
+      return window.location.origin;
+    }
+    return "https://nazerak.ru";
+  };
+  const accountUrl = () => new URL("/cabinet", publicSiteOrigin()).href;
   const escapeText = (value) => String(value ?? "").trim();
 
   const safeHttpUrl = (value) => {

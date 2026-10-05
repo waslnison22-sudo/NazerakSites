@@ -2,8 +2,9 @@ name: NaZerak QA
 
 on:
   push:
-    branches: ["main"]
+    branches: ["main", "hotfix/**"]
   pull_request:
+  workflow_dispatch:
 
 permissions:
   contents: read
