@@ -19,7 +19,7 @@
 
   const qs = (selector, root = document) => root.querySelector(selector);
   const qsa = (selector, root = document) => [...root.querySelectorAll(selector)];
-  const accountUrl = () => new URL("./cabinet.html", window.location.href).href;
+  const accountUrl = () => new URL("/cabinet", window.location.origin).href;
   const escapeText = (value) => String(value ?? "").trim();
 
   const safeHttpUrl = (value) => {
