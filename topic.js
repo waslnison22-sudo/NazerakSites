@@ -15,8 +15,8 @@
     const id=Number(new URLSearchParams(window.location.search).get("id"));
     if(!Number.isSafeInteger(id)||id<1)throw new Error("Некорректная тема форума.");
     const results=await withTimeout(Promise.all([
-      state.client.from("forum_topic_detail").select("id,slug,category_id,category_slug,category_route_slug,category_name,parent_name,author_public_id,author_name,author_avatar_url,primary_role_slug,primary_role_name,primary_role_badge,title,body,is_pinned,is_locked,is_archived,prefix,views_count,solution_state,created_at,updated_at,last_post_at,reply_count").eq("id",id).maybeSingle(),
-      state.client.from("forum_posts").select("id,topic_id,body,created_at,updated_at,edited_at,author_public_id,author_display_name,author_avatar_url,author_role_slug,author_role_name,author_role_badge").eq("topic_id",id).order("created_at",{ascending:true})
+      state.client.from("forum_topic_detail").select("id,slug,category_id,category_slug,category_route_slug,category_name,parent_name,author_public_id,author_name,author_avatar_url,primary_role_slug,primary_role_name,title,body,is_pinned,is_locked,is_archived,prefix,views_count,solution_state,created_at,updated_at,last_post_at,reply_count").eq("id",id).maybeSingle(),
+      state.client.from("forum_posts").select("id,topic_id,body,created_at,updated_at,edited_at,author_public_id,author_display_name,author_avatar_url,author_role_slug,author_role_name").eq("topic_id",id).order("created_at",{ascending:true})
     ]),10000,"Загрузка темы превысила 10 секунд. Попробуй обновить страницу.");
     if(results[0].error)throw new Error(results[0].error.message);
     if(!results[0].data)throw new Error("Тема не найдена или была удалена.");
@@ -38,7 +38,7 @@
     const img=qs("[data-topic-author-avatar]");img.hidden=!avatar;if(avatar){img.src=avatar;img.alt="";}
     qs("[data-topic-author-initial]").textContent=(topic.author_name||"N").slice(0,1).toUpperCase();
     const root=qs("[data-topic-posts]");
-    const opener={body:topic.body,created_at:topic.created_at,author_public_id:topic.author_public_id,author_display_name:topic.author_name,author_avatar_url:topic.author_avatar_url,author_role_slug:topic.primary_role_slug,author_role_name:topic.primary_role_name,author_role_badge:topic.primary_role_badge};
+    const opener={body:topic.body,created_at:topic.created_at,author_public_id:topic.author_public_id,author_display_name:topic.author_name,author_avatar_url:topic.author_avatar_url,author_role_slug:topic.primary_role_slug,author_role_name:topic.primary_role_name};
     const items=[opener].concat(posts||[]);
     root.innerHTML=items.map((item,index)=>{
       const av=safeUrl(item.author_avatar_url),initial=escapeHtml((item.author_display_name||"N").slice(0,1).toUpperCase());

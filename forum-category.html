@@ -9,7 +9,7 @@
   <meta name="robots" content="noindex,nofollow,noarchive">
   <link rel="icon" href="./favicon.svg?v=5" type="image/svg+xml">
   <link rel="stylesheet" href="./styles.css?v=42">
-  <link rel="stylesheet" href="./forum.css?v=13">
+  <link rel="stylesheet" href="./forum.css?v=15">
   <title>NaZerak — раздел форума</title>
 </head>
 <body data-forum-category-page>
@@ -35,7 +35,7 @@
           <span class="section-kicker">FORUM / SECTION</span>
           <h1 data-category-title>Загрузка<span>.</span></h1>
         </div>
-        <button class="button button--primary" type="button" data-category-create><span>Новая тема</span><span aria-hidden="true">+</span></button>
+        <button class="button button--primary" type="button" data-category-create><span>Новая тема</span><span aria-hidden="true"><svg class='forum-icon' viewBox='0 0 24 24' width='16' height='16' fill='none' stroke='currentColor' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><path d='M12 5.4v13.2M5.4 12h13.2'/></svg></span></button>
       </header>
 
       <div class="forum-message auth-message" data-category-message role="status" aria-live="polite" hidden></div>
@@ -56,7 +56,7 @@
           <span class="forum-empty__mark" aria-hidden="true">NZ</span>
           <span class="section-kicker">NO THREADS</span>
           <h3>В этом разделе пока нет тем.</h3>
-                    <button class="button button--primary" type="button" data-category-create><span>Создать тему</span><span aria-hidden="true">+</span></button>
+                    <button class="button button--primary" type="button" data-category-create><span>Создать тему</span><span aria-hidden="true"><svg class='forum-icon' viewBox='0 0 24 24' width='16' height='16' fill='none' stroke='currentColor' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><path d='M12 5.4v13.2M5.4 12h13.2'/></svg></span></button>
         </div>
       </section>
     </div>
@@ -70,7 +70,7 @@
       <p class="forum-modal__copy">Первое сообщение станет стартовым постом темы.</p>
       <div class="forum-form-field"><label for="category-title-input">Заголовок</label><input id="category-title-input" name="title" maxlength="120" minlength="3" required placeholder="Заголовок темы"></div>
       <div class="forum-form-field"><label for="category-body-input">Сообщение</label><textarea id="category-body-input" name="body" maxlength="12000" rows="8" required placeholder="Текст сообщения…"></textarea><small>1–12 000 символов</small></div>
-      <div class="forum-modal__footer"><div class="forum-modal__buttons"><button class="button button--ghost" type="submit" value="cancel">Отмена</button><button class="button button--primary" type="button" data-category-submit>Опубликовать <span aria-hidden="true">→</span></button></div>
+      <div class="forum-modal__footer"><div class="forum-modal__buttons"><button class="button button--ghost" type="submit" value="cancel">Отмена</button><button class="button button--primary" type="button" data-category-submit>Опубликовать <span aria-hidden="true"><svg class='forum-icon' viewBox='0 0 24 24' width='16' height='16' fill='none' stroke='currentColor' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><path d='M4.8 12h14.4'/><path d='m13.8 6.6 5.4 5.4-5.4 5.4'/></svg></span></button></div>
       </div>
     </form>
   </dialog>
@@ -80,8 +80,8 @@
   <script src="./auth-config.js?v=8" defer></script>
   <script src="./supabase-loader.js?v=9" defer></script>
   <script src="./auth.js?v=35" defer></script>
-  <script src="./forum-ui.js?v=3" defer></script>
-  <script src="./forum-category.js?v=5" defer></script>
+  <script src="./forum-ui.js?v=5" defer></script>
+  <script src="./forum-category.js?v=7" defer></script>
   <script src="./script.js?v=22" defer></script>
 </body>
 </html>

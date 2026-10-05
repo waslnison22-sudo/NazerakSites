@@ -15,7 +15,7 @@
     if(!slug)throw new Error("Раздел не указан.");
     const requests=[
       state.client.from("forum_node_directory").select("id,name,posting_mode,parent_name").eq("route_slug",slug).maybeSingle(),
-      state.client.from("forum_topic_list").select("id,category_name,author_public_id,author_name,author_avatar_url,primary_role_slug,primary_role_name,primary_role_badge,title,body,is_pinned,is_locked,prefix,last_post_at,reply_count").eq("category_route_slug",slug).order("is_pinned",{ascending:false}).order("last_post_at",{ascending:false}).limit(100)
+      state.client.from("forum_topic_list").select("id,category_name,author_public_id,author_name,author_avatar_url,primary_role_slug,primary_role_name,title,body,is_pinned,is_locked,prefix,last_post_at,reply_count").eq("category_route_slug",slug).order("is_pinned",{ascending:false}).order("last_post_at",{ascending:false}).limit(100)
     ];
     if(state.user) requests.push(state.client.from("forum_my_permissions").select("can_publish_official,can_moderate_forum").maybeSingle());
     const [cat,topics,permissions]=await withTimeout(Promise.all(requests),10000,"Загрузка раздела превысила 10 секунд. Попробуй обновить страницу.");
@@ -35,8 +35,8 @@
       const tags='<div class="forum-thread-row__tags">'+
         '<span>'+escapeHtml(t.category_name||"Форум")+'</span>'+
         (t.prefix?'<span class="forum-topic-row__prefix">'+escapeHtml(t.prefix)+'</span>':"")+
-        (t.is_pinned?'<span>Закреплено</span>':"")+
-        (t.is_locked?'<span>Закрыто</span>':"")+
+        (t.is_pinned?window.NaZerakForumUI.chip("pin","Закреплено"):"")+
+        (t.is_locked?window.NaZerakForumUI.chip("lock","Закрыто"):"")+
       '</div>';
       const author=publicId
         ? '<a class="forum-user-link forum-thread-row__author" data-forum-user="'+publicId+'" href="./forum-user.html?id='+publicId+'"><span class="forum-avatar forum-avatar--small">'+av+'</span><span>'+escapeHtml(t.author_name||"Игрок NaZerak")+'</span></a>'
