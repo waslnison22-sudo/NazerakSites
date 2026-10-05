@@ -3,7 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#07070a">
+    <base href="/">
+<meta name="theme-color" content="#07070a">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://unpkg.com; connect-src 'self' https://ujlbyzvdsncvqbrhasuw.supabase.co; img-src 'self' data: https://cdn.discordapp.com https://media.discordapp.net; style-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; frame-src 'none'; form-action 'self';">
   <meta name="description" content="NaZerak — обсуждение на форуме.">
   <meta name="referrer" content="strict-origin-when-cross-origin">
@@ -20,17 +21,17 @@
       <a class="brand" href="./" aria-label="NaZerak — на главную"><span class="brand__mark" aria-hidden="true">NZ</span><span class="brand__name">NaZerak</span></a>
       <button class="nav-toggle" type="button" aria-controls="topic-nav" aria-expanded="false" aria-label="Открыть меню"><span></span><span></span><span></span><span class="sr-only">Открыть меню</span></button>
       <nav class="nav" id="topic-nav" aria-label="Навигация форума">
-        <a class="nav-forum is-active" href="./forum.html">Форум</a>
-        <a href="./forum-members.html">Участники</a>
-        <a href="./forum-search.html">Поиск</a>
-        <a class="nav-account" data-auth-link href="./cabinet.html"><span class="nav-account__avatar"><img data-auth-link-avatar alt="" hidden><span data-auth-link-fallback>◉</span></span><span data-auth-link-label>Войти</span></a>
+        <a class="nav-forum is-active" href="/forum">Форум</a>
+        <a href="/members">Участники</a>
+        <a href="/search">Поиск</a>
+        <a class="nav-account" data-auth-link href="/cabinet"><span class="nav-account__avatar"><img data-auth-link-avatar alt="" hidden><span data-auth-link-fallback>◉</span></span><span data-auth-link-label>Войти</span></a>
       </nav>
     </div>
   </header>
 
   <main class="topic-page" id="main-content" tabindex="-1">
     <div class="container topic">
-      <div class="topic-breadcrumbs"><a href="./forum.html">Форум</a><span>/</span><a data-topic-category-link href="./forum.html">Загрузка</a></div>
+      <div class="topic-breadcrumbs"><a href="/forum">Форум</a><span>/</span><a data-topic-category-link href="/forum">Загрузка</a></div>
       <div class="topic-message auth-message" data-topic-message role="status" aria-live="polite" hidden></div>
 
       <article class="topic-head" data-topic-head>
@@ -61,10 +62,10 @@
 
       <section class="topic-login" data-topic-login hidden>
         <div><span class="section-kicker">DISCORD</span><h2>Хочешь ответить?</h2></div>
-        <a class="button button--primary" href="./cabinet.html"><span>Войти в кабинет</span><span aria-hidden="true">↗</span></a>
+        <a class="button button--primary" href="/cabinet"><span>Войти в кабинет</span><span aria-hidden="true">↗</span></a>
       </section>
 
-      <div class="topic-footer-links"><a href="./forum.html">← Все темы</a><a href="./cabinet.html">Личный кабинет →</a></div>
+      <div class="topic-footer-links"><a href="/forum">← Все темы</a><a href="/cabinet">Личный кабинет →</a></div>
     </div>
   </main>
 
