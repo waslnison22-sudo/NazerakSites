@@ -361,6 +361,8 @@
   .forum-resources{margin-top:28px}
   .forum-member-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
+body[data-forum-category-page] .forum-section-head > .button{min-height:48px;height:48px;box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center}
+
 @media(max-width:760px){
   .forum-page,.topic-page,.forum-user-page{padding:76px 0 48px}
   .forum,.topic,.forum-user{width:calc(100% - 28px)}
