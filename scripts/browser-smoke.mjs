@@ -131,7 +131,9 @@ const testSameOriginLinks = async (page, name) => {
 
   for (const route of [...new Set(routes)]) {
     const [pathname, hash] = route.split("#");
-    if (!["/", "/cabinet.html", "/forum.html", "/forum-category.html", "/forum-members.html", "/forum-search.html", "/topic.html", "/forum-user.html"].includes(pathname)) {
+    const allowed = pathname === "/" || pathname === "/cabinet" || pathname === "/forum" || pathname === "/members" || pathname === "/search" ||
+      /^\/forum\/[^/]+$/.test(pathname) || /^\/forum\/topic\/[^/]+$/.test(pathname) || /^\/user\/[^/]+$/.test(pathname);
+    if (!allowed) {
       throw new Error(name + " contains an unexpected local route: " + route);
     }
     if (hash && pathname === new URL(page.url()).pathname) {
@@ -153,7 +155,7 @@ const testOAuthStart = async () => {
   });
 
   try {
-    await page.goto(BASE + "/cabinet.html", { waitUntil: "networkidle", timeout: TIMEOUT });
+    await page.goto(BASE + "/cabinet", { waitUntil: "networkidle", timeout: TIMEOUT });
     await page.waitForFunction(() => {
       const guest = document.querySelector('[data-account-view="guest"]');
       const loading = document.querySelector('[data-account-view="loading"]');
@@ -171,7 +173,7 @@ const testOAuthStart = async () => {
     if (parsed.searchParams.get("provider") !== "discord" && !parsed.pathname.endsWith("/authorize")) {
       throw new Error("OAuth authorize request does not look like a Discord authorization request: " + authorizeRequest);
     }
-    if (parsed.searchParams.get("redirect_to") !== BASE + "/cabinet.html") {
+    if (parsed.searchParams.get("redirect_to") !== BASE + "/cabinet") {
       throw new Error("OAuth redirect_to is not cabinet.html: " + (parsed.searchParams.get("redirect_to") || ""));
     }
 
@@ -212,7 +214,7 @@ const testCabinetAnonymous = async (viewport, name) => {
   const finishDiagnostics = attachDiagnostics(page, name);
 
   try {
-    await page.goto(BASE + "/cabinet.html", { waitUntil: "networkidle", timeout: TIMEOUT });
+    await page.goto(BASE + "/cabinet", { waitUntil: "networkidle", timeout: TIMEOUT });
     await page.waitForSelector("[data-account-view]", { state: "attached", timeout: TIMEOUT });
     await page.waitForFunction(() => {
       const loading = document.querySelector('[data-account-view="loading"]');
@@ -333,7 +335,7 @@ const testCabinetProfileTimeout = async () => {
     const page = await context.newPage();
     const finishDiagnostics = attachDiagnostics(page, "cabinet profile timeout");
 
-    await page.goto(BASE + "/cabinet.html?smoke=profile-timeout", { waitUntil: "networkidle", timeout: TIMEOUT });
+    await page.goto(BASE + "/cabinet?smoke=profile-timeout", { waitUntil: "networkidle", timeout: TIMEOUT });
     await page.waitForSelector('[data-account-view="user"]:not([hidden])', { timeout: 5000 });
     await page.waitForFunction(() =>
       (document.querySelector("[data-auth-message]")?.textContent || "").includes("Игровой профиль пока не удалось загрузить")
@@ -375,7 +377,7 @@ const testCabinetSignedIn = async () => {
   const finishDiagnostics = attachDiagnostics(page, "cabinet signed-in");
 
   try {
-    await page.goto(BASE + "/cabinet.html", { waitUntil: "networkidle", timeout: TIMEOUT });
+    await page.goto(BASE + "/cabinet", { waitUntil: "networkidle", timeout: TIMEOUT });
     await page.waitForSelector('[data-account-view="user"]:not([hidden])', { timeout: 10000 });
 
     const state = await page.evaluate(() => ({
@@ -466,7 +468,7 @@ await testStaticPage({
 });
 
 await testStaticPage({
-  path: "/forum.html",
+  path: "/forum",
   name: "forum index desktop",
   viewport: { width: 1440, height: 900 },
   check: async (page) => {
@@ -513,15 +515,15 @@ await testStaticPage({
       throw new Error("forum index composition is incomplete");
     }
     if (await page.locator('[data-forum-create]').count() < 1) throw new Error("forum create control missing");
-    if (!(await page.locator('a[href="./forum-members.html"]').count() >= 1)) throw new Error("members navigation missing");
-    if (!(await page.locator('a[href="./forum-search.html"]').count() >= 1)) throw new Error("search navigation missing");
+    if (!(await page.locator('a[href="/members"]').count() >= 1)) throw new Error("members navigation missing");
+    if (!(await page.locator('a[href="/search"]').count() >= 1)) throw new Error("search navigation missing");
     const robots = await page.locator('meta[name="robots"]').getAttribute("content");
     if (!/noindex/.test(robots || "")) throw new Error("forum robots policy missing");
   }
 });
 
 await testStaticPage({
-  path: "/forum.html",
+  path: "/forum",
   name: "forum mobile",
   viewport: { width: 390, height: 844 },
   check: async (page) => {
@@ -533,7 +535,7 @@ await testStaticPage({
 });
 
 await testStaticPage({
-  path: "/forum.html",
+  path: "/forum",
   name: "forum tablet",
   viewport: { width: 768, height: 1024 },
   check: async (page) => {
@@ -544,7 +546,7 @@ await testStaticPage({
 });
 
 await testStaticPage({
-  path: "/forum.html",
+  path: "/forum",
   name: "forum narrow mobile",
   viewport: { width: 320, height: 740 },
   check: async (page) => {
@@ -619,7 +621,7 @@ await testStaticPage({
 });
 
 await testStaticPage({
-  path: "/forum-members.html",
+  path: "/members",
   name: "forum members narrow mobile",
   viewport: { width: 320, height: 740 },
   check: async (page) => {
@@ -630,7 +632,7 @@ await testStaticPage({
 });
 
 await testStaticPage({
-  path: "/forum-members.html",
+  path: "/members",
   name: "forum members",
   viewport: { width: 1280, height: 900 },
   check: async (page) => {
@@ -640,7 +642,7 @@ await testStaticPage({
 });
 
 await testStaticPage({
-  path: "/forum-search.html",
+  path: "/search",
   name: "forum search",
   viewport: { width: 1280, height: 900 },
   check: async (page) => {
@@ -667,7 +669,7 @@ await testStaticPage({
 });
 
 await testStaticPage({
-  path: "/forum-search.html",
+  path: "/search",
   name: "forum search mobile",
   viewport: { width: 390, height: 844 },
   check: async (page) => {
@@ -690,7 +692,7 @@ await testStaticPage({
 });
 
 await testStaticPage({
-  path: "/forum-members.html",
+  path: "/members",
   name: "forum user profile",
   viewport: { width: 1280, height: 900 },
   check: async (page) => {
@@ -698,7 +700,7 @@ await testStaticPage({
     await firstMember.waitFor({ state: "visible", timeout: 10000 });
     const publicId = await firstMember.getAttribute("data-forum-user");
     if (!publicId) throw new Error("member public id missing");
-    await page.goto(BASE + "/forum-user.html?id=" + encodeURIComponent(publicId), { waitUntil: "networkidle", timeout: TIMEOUT });
+    await page.goto(BASE + "/user/" + encodeURIComponent(publicId), { waitUntil: "networkidle", timeout: TIMEOUT });
     if (!(await page.locator("[data-user-profile]").isVisible())) throw new Error("forum profile did not load");
     if (!(await page.locator("[data-user-name]").textContent()).trim()) throw new Error("forum profile name missing");
     if (await page.locator("[data-user-roles] .forum-role").count() < 1) throw new Error("forum profile role missing");
