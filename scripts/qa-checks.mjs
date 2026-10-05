@@ -381,3 +381,7 @@ if (fail.length) {
 console.log("NaZerak QA PASSED");
 for (const item of info) console.log(" - " + item);
 
+
+if (!auth.includes("const publicSiteOrigin")) fail.push("production OAuth origin guard is missing");
+if (!auth.includes('hostname.endsWith(".github.io")')) fail.push("GitHub Pages OAuth origin guard is missing");
+if (!auth.includes('return "https://nazerak.ru";')) fail.push("production OAuth origin must fall back to nazerak.ru");
