@@ -184,7 +184,7 @@
       if (trigger.tagName !== "A") {
         event.preventDefault();
         const publicId = trigger.getAttribute("data-forum-user");
-        if (publicId) window.location.href = "/user/ + encodeURIComponent(publicId);
+        if (publicId) window.location.href = "/user/" + encodeURIComponent(publicId);
       }
     });
   };
