@@ -3,7 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#07070a">
+    <base href="/">
+<meta name="theme-color" content="#07070a">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://unpkg.com; connect-src 'self' https://ujlbyzvdsncvqbrhasuw.supabase.co; img-src 'self' data: https://cdn.discordapp.com https://media.discordapp.net; style-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; frame-src 'none'; form-action 'self';">
   <meta name="description" content="NaZerak — официальный форум проекта. Правила, государственные структуры, игровой мир, обращения, развитие и сообщество.">
   <meta name="referrer" content="strict-origin-when-cross-origin">
@@ -25,10 +26,10 @@
         <span></span><span></span><span></span><span class="sr-only">Открыть меню</span>
       </button>
       <nav class="nav" id="forum-nav" aria-label="Навигация форума">
-        <a class="nav-forum is-active" href="./forum.html" aria-current="page">Форум</a>
-        <a href="./forum-members.html">Участники</a>
-        <a href="./forum-search.html">Поиск</a>
-        <a class="nav-account" data-auth-link href="./cabinet.html">
+        <a class="nav-forum is-active" href="/forum" aria-current="page">Форум</a>
+        <a href="/members">Участники</a>
+        <a href="/search">Поиск</a>
+        <a class="nav-account" data-auth-link href="/cabinet">
           <span class="nav-account__avatar"><img data-auth-link-avatar alt="" hidden><span data-auth-link-fallback>◉</span></span>
           <span data-auth-link-label>Войти</span>
         </a>
@@ -49,7 +50,7 @@
           <button class="button button--primary" type="button" data-forum-create>
             <span>Новая тема</span><span aria-hidden="true">+</span>
           </button>
-          <a class="button button--ghost" href="./forum-category.html?slug=pravila-i-dokumenty">Правила форума</a>
+          <a class="button button--ghost" href="/forum/pravila-i-dokumenty">Правила форума</a>
         </div>
       </header>
 
@@ -80,7 +81,7 @@
         <section class="forum-discussions" aria-labelledby="forum-topics-title">
         <div class="forum-main__head">
           <div><span class="section-kicker">LATEST ACTIVITY</span><h2 id="forum-topics-title">Последние обсуждения</h2></div>
-          <a class="button button--ghost forum-main__all" href="./forum-search.html">Открыть поиск</a>
+          <a class="button button--ghost forum-main__all" href="/search">Открыть поиск</a>
         </div>
         <div class="forum-topic-list" data-forum-topic-list aria-live="polite"></div>
         <div class="forum-empty" data-forum-empty hidden>
@@ -92,11 +93,11 @@
       
         <section class="forum-resources" id="forum-resources" aria-label="Ресурсы сообщества">
         <div class="forum-resource-block"><div class="forum-community-head"><div><span class="section-kicker">COMMUNITY</span><h2>Сообщество</h2></div><div class="forum-community-stats" data-forum-community-stats><span><strong data-forum-online-count>0</strong><small>онлайн</small></span><span><strong data-forum-member-count>0</strong><small>участников</small></span></div></div><div class="forum-resource-grid">
-          <a class="forum-resource__link" href="./forum-category.html?slug=pravila-i-dokumenty"><span class="forum-resource__icon">§</span><span><strong>Законы и правила</strong><small>Официальные документы</small></span></a>
-          <a class="forum-resource__link" href="./forum-category.html?slug=zayavki"><span class="forum-resource__icon">□</span><span><strong>Заявки</strong><small>Формы и обращения</small></span></a>
+          <a class="forum-resource__link" href="/forum/pravila-i-dokumenty"><span class="forum-resource__icon">§</span><span><strong>Законы и правила</strong><small>Официальные документы</small></span></a>
+          <a class="forum-resource__link" href="/forum/zayavki"><span class="forum-resource__icon">□</span><span><strong>Заявки</strong><small>Формы и обращения</small></span></a>
           <a class="forum-resource__link" href="https://discord.gg/2KvsYYDHN6" target="_blank" rel="noopener noreferrer"><span class="forum-resource__icon">↗</span><span><strong>Discord</strong><small>Официальный сервер</small></span></a>
-          <a class="forum-resource__link" href="./forum-members.html"><span class="forum-resource__icon">◎</span><span><strong>Участники</strong><small>Профили и роли</small></span></a>
-          <a class="forum-resource__link" href="./forum-search.html"><span class="forum-resource__icon">⌕</span><span><strong>Поиск</strong><small>Темы и документы</small></span></a>
+          <a class="forum-resource__link" href="/members"><span class="forum-resource__icon">◎</span><span><strong>Участники</strong><small>Профили и роли</small></span></a>
+          <a class="forum-resource__link" href="/search"><span class="forum-resource__icon">⌕</span><span><strong>Поиск</strong><small>Темы и документы</small></span></a>
         </div></div>
         </section>
       </div>
