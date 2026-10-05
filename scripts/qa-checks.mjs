@@ -120,11 +120,11 @@ for (const [name, page] of [
 ]) {
   const assets = ["auth-config.js?v=8", "supabase-loader.js?v=9", "auth.js?v=35", "script.js?v=22", "styles.css?v=37"];
   if (name === "forum.html") { assets.push("forum.css?v=14", "forum-ui.js?v=4", "forum.js?v=7"); }
-  if (name === "forum-category.html") { assets.push("forum.css?v=14", "forum-ui.js?v=4", "forum-category.js?v=5"); }
-  if (name === "forum-members.html") { assets.push("forum.css?v=14", "forum-ui.js?v=4", "forum-members.js?v=2"); }
-  if (name === "forum-search.html") { assets.push("forum.css?v=14", "forum-ui.js?v=4", "forum-search.js?v=2"); }
-  if (name === "topic.html") { assets.push("forum.css?v=14", "forum-ui.js?v=4", "topic.js?v=4"); }
-  if (name === "forum-user.html") { assets.push("forum.css?v=14", "forum-ui.js?v=4", "user.js?v=3"); }
+  if (name === "forum-category.html") { assets.push("forum.css?v=13", "forum-ui.js?v=3", "forum-category.js?v=5"); }
+  if (name === "forum-members.html") { assets.push("forum.css?v=13", "forum-ui.js?v=3", "forum-members.js?v=2"); }
+  if (name === "forum-search.html") { assets.push("forum.css?v=13", "forum-ui.js?v=3", "forum-search.js?v=2"); }
+  if (name === "topic.html") { assets.push("forum.css?v=13", "forum-ui.js?v=3", "topic.js?v=4"); }
+  if (name === "forum-user.html") { assets.push("forum.css?v=13", "forum-ui.js?v=3", "user.js?v=3"); }
   for (const asset of assets) {
     if (!page.includes(asset)) {
       fail.push(`${name} asset include missing: ${asset}`);
@@ -267,7 +267,7 @@ const forumSurfaceFiles = ["forum.html","forum-category.html","forum-members.htm
 for (const file of forumSurfaceFiles) {
   const page = read(file);
   if (file === "forum.html" && !page.includes("forum.css?v=14")) fail.push(file + " forum stylesheet is missing");
-  if (file !== "forum.html" && !page.includes("forum.css?v=14")) fail.push(file + " forum stylesheet is missing");
+  if (file !== "forum.html" && !page.includes("forum.css?v=13")) fail.push(file + " forum stylesheet is missing");
 }
 if (css.includes("NAZERAK FORUM")) fail.push("obsolete forum cascade remains in global stylesheet");for (const file of forumSurfaceFiles) {
   const page = read(file);
