@@ -1,0 +1,28 @@
+Options -MultiViews
+RewriteEngine On
+
+# Canonical clean URLs for NaZerak.
+# Legacy .html addresses stay valid and redirect to the clean route.
+
+RewriteCond %{QUERY_STRING} ^(?:.*&)?slug=([^&]+)(?:&.*)?$ [NC]
+RewriteRule ^forum-category\.html$ /forum/%1? [R=301,L,NE]
+
+RewriteCond %{QUERY_STRING} ^(?:.*&)?id=([^&]+)(?:&.*)?$ [NC]
+RewriteRule ^topic\.html$ /forum/topic/%1? [R=301,L,NE]
+
+RewriteCond %{QUERY_STRING} ^(?:.*&)?id=([^&]+)(?:&.*)?$ [NC]
+RewriteRule ^forum-user\.html$ /user/%1? [R=301,L,NE]
+
+RewriteRule ^forum\.html$ /forum [R=301,L]
+RewriteRule ^forum-members\.html$ /members [R=301,L]
+RewriteRule ^forum-search\.html$ /search [R=301,L]
+RewriteRule ^cabinet\.html$ /cabinet [R=301,L]
+
+# Clean routes -> existing static HTML files.
+RewriteRule ^forum/?$ forum.html [L]
+RewriteRule ^forum/topic/([^/]+)/?$ topic.html?id=$1 [L,QSA]
+RewriteRule ^forum/([^/]+)/?$ forum-category.html?slug=$1 [L,QSA]
+RewriteRule ^members/?$ forum-members.html [L]
+RewriteRule ^search/?$ forum-search.html [L,QSA]
+RewriteRule ^user/([^/]+)/?$ forum-user.html?id=$1 [L,QSA]
+RewriteRule ^cabinet/?$ cabinet.html [L]
