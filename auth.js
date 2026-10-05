@@ -19,7 +19,16 @@
 
   const qs = (selector, root = document) => root.querySelector(selector);
   const qsa = (selector, root = document) => [...root.querySelectorAll(selector)];
-  const accountUrl = () => new URL("/cabinet", window.location.origin).href;
+  const publicSiteOrigin = () => {
+    const hostname = window.location.hostname.toLowerCase();
+    // GitHub Pages is no longer a production surface. If an old Pages copy is
+    // opened, never let it become the OAuth return target.
+    if (hostname.endsWith(".github.io") || hostname === "github.io") {
+      return "https://nazerak.ru";
+    }
+    return window.location.origin;
+  };
+  const accountUrl = () => new URL("/cabinet", publicSiteOrigin()).href;
   const escapeText = (value) => String(value ?? "").trim();
 
   const safeHttpUrl = (value) => {
