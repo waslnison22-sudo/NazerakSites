@@ -54,3 +54,12 @@ jobs:
 
       - name: Run production browser smoke test
         run: node scripts/browser-smoke.mjs
+
+      - name: Upload forum visual QA screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: forum-hud-visual-qa
+          path: artifacts/forum-hud/*.png
+          if-no-files-found: warn
+          retention-days: 7

@@ -1,4 +1,5 @@
 import { chromium } from "playwright";
+import { mkdir } from "node:fs/promises";
 
 const BASE = (process.env.NAZERAK_BASE_URL || "http://127.0.0.1:4173").replace(/\/$/, "");
 const TIMEOUT = 20000;
@@ -150,6 +151,11 @@ const testStaticPage = async ({ path, name, viewport, check }) => {
     await testSameOriginLinks(page, name);
     await assertNoHorizontalOverflow(page, name);
     finishDiagnostics();
+    if (/^\/(forum|forum-category|forum-members|forum-search|topic|forum-user)\.html/.test(path)) {
+      await mkdir("artifacts/forum-hud", { recursive: true });
+      const file = name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+      await page.screenshot({ path: "artifacts/forum-hud/" + file + ".png", fullPage: true, animations: "disabled" });
+    }
     console.log("PASS:", name);
   } finally {
     await browser.close();
@@ -464,7 +470,7 @@ await testStaticPage({
     if (await page.locator("[data-forum-node-tree] .forum-board-row").count() < 1) {
       throw new Error("forum boards did not load");
     }
-    if (await page.locator(".forum-index-grid > section").count() !== 3) {
+    if (await page.locator(".forum-index-grid > section").count() !== 2 || await page.locator(".forum-resources").count() !== 1) {
       throw new Error("forum index composition is incomplete");
     }
     if (await page.locator('[data-forum-create]').count() < 1) throw new Error("forum create control missing");
@@ -546,6 +552,18 @@ await testStaticPage({
     if (!title || /загрузка/i.test(title)) throw new Error("narrow mobile category did not resolve");
     const fontSize = await page.locator("input, textarea").first().evaluate((el) => parseFloat(getComputedStyle(el).fontSize)).catch(() => 16);
     if (fontSize < 16) throw new Error("narrow mobile category input font too small: " + fontSize);
+    const create = page.locator(".forum-section-head [data-category-create]");
+    const createMetrics = await create.evaluate((el) => ({
+      height: el.getBoundingClientRect().height,
+      width: el.getBoundingClientRect().width,
+      fontSize: parseFloat(getComputedStyle(el).fontSize),
+      headerDirection: getComputedStyle(el.closest(".forum-section-head")).flexDirection,
+      headerWidth: el.closest(".forum-section-head").getBoundingClientRect().width
+    }));
+    if (createMetrics.height < 44 || createMetrics.fontSize < 14 ||
+        createMetrics.headerDirection !== "column" || createMetrics.width < createMetrics.headerWidth - 2) {
+      throw new Error("narrow mobile category heading/action layout is invalid: " + JSON.stringify(createMetrics));
+    }
   }
 });
 

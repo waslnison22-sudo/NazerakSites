@@ -660,3 +660,39 @@ The committed forum artwork is assets/images/forum-hero.svg. The current GitHub 
 
 ### Release gate
 The current v12 changes are not considered released until the fresh NaZerak QA, Pages build and production deployment for the resulting head are observed.
+
+## 2026-10-04 — v13 readability and interaction hardening (staging branch)
+
+### Audit findings
+- Main branch is already on forum visual system v12; older v35 notes and CSS snapshots are stale and must not be treated as current.
+- The index hero currently has an explicit artwork layer and left-aligned copy/actions; the ready/status badge and redundant publication-access explanation are absent from the current page/renderers.
+- The current committed artwork tree contains only `assets/images/forum-hero.svg`. Other JPG/PNG/WebP names in the artwork guide are intended slots, not files currently present in main.
+- Forum UI still uses 8–11px text for important metadata and 9–10px utility labels, and some compact controls can fall below comfortable mobile target sizes.
+- A recent browser smoke run passed homepage, forum index, mobile, tablet and category checks, then failed at the category-create button height assertion. This exposed a real acceptance gap, not a reason to bypass the test.
+
+### v13 changes
+- Added a scoped readability layer to the single active `forum.css`: forum body copy, board titles, topic titles, replies, labels, metadata and resource links now have larger minimum text sizes.
+- Set forum controls to at least 44px, with primary mobile actions at 48px; category creation now has an explicit mobile target size.
+- Preserved the image-backed hero and its lower-left action arrangement, rather than rewriting working markup without evidence.
+- Kept the existing dynamic Supabase renderers and authorization model untouched.
+- Bumped `forum.css` to v13 on the six forum routes and aligned static QA cache expectations.
+
+### Staging / release gate
+- Changes are isolated on `forum-hud-v13-readability`; they are not published to the production website.
+- Verify static QA and browser smoke at 320px, 390px, tablet and desktop, inspect screenshots and address any remaining failures before considering a pull request or production release.
+- Only wire additional generated artwork after the image files actually exist in the repository and their intended slots are verified.
+
+
+### v13 browser QA evidence
+- The v13 PR run `37219930577` completed successfully after the stylesheet QA marker was corrected.
+- Static release checks and the full browser smoke suite passed on the PR merge commit.
+- The browser suite did not preserve screenshot artifacts in this workflow revision. Added explicit forum-page screenshots and an always-run artifact upload step so visual review is possible before merge.
+- Screenshot review is still a release gate; passing interaction/overflow tests alone does not prove the visual design is polished.
+
+
+### v13.1 visual screenshot review
+- Reviewed the CI screenshot set at 1440px desktop and 320px mobile.
+- The hero art is wired correctly and the left/lower-left alignment is present. The 320px layout does not horizontally overflow, but some secondary metadata remains visually too small relative to the user’s readability target.
+- Found a real composition flaw on desktop: the community resources occupied the second row of a shared CSS grid, so that row started only after the tall forum directory ended. This left an oversized empty sidebar column and pushed community links far down the page.
+- Moved community resources out of the two-column index grid, retained the latest-discussions sidebar, and made resources a distinct full-width section with responsive columns.
+- Updated browser smoke to require exactly two index-grid sections plus one resources section. This prevents the whitespace regression from returning.
