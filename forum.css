@@ -694,3 +694,24 @@ body[data-forum-user-page] [hidden]{display:none!important}
   .forum-page .forum-index-grid.is-empty-activity .forum-resources{grid-column:1;grid-row:auto;margin-top:0}
   .forum-page .forum-index-grid.is-empty-activity .forum-discussions{margin-top:4px}
 }
+
+
+/* Final mobile category action target hardening */
+body[data-forum-category-page] .forum-section-head [data-category-create]{
+  min-height:48px !important;
+  height:48px !important;
+  max-height:48px !important;
+  box-sizing:border-box !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  width:auto;
+}
+@media(max-width:760px){
+  body[data-forum-category-page] .forum-section-head [data-category-create]{
+    width:100% !important;
+    min-height:48px !important;
+    height:48px !important;
+    max-height:48px !important;
+  }
+}
