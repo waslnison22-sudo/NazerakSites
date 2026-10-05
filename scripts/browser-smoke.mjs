@@ -174,7 +174,7 @@ const testOAuthStart = async () => {
       throw new Error("OAuth authorize request does not look like a Discord authorization request: " + authorizeRequest);
     }
     if (parsed.searchParams.get("redirect_to") !== BASE + "/cabinet") {
-      throw new Error("OAuth redirect_to is not cabinet.html: " + (parsed.searchParams.get("redirect_to") || ""));
+      throw new Error("OAuth redirect_to is not /cabinet: " + (parsed.searchParams.get("redirect_to") || ""));
     }
 
     console.log("PASS: OAuth start");
@@ -682,7 +682,7 @@ await testStaticPage({
 });
 
 await testStaticPage({
-  path: "/topic.html?id=invalid",
+  path: "/forum/topic/invalid",
   name: "forum topic invalid state mobile",
   viewport: { width: 320, height: 740 },
   check: async (page) => {
