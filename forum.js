@@ -39,12 +39,13 @@
 
   const renderTopics=()=>{
     const root=qs("[data-forum-topic-list]"),empty=qs("[data-forum-empty]");if(!root||!empty)return;
+    const indexGrid=qs(".forum-index-grid");
     const q=state.search.trim().toLowerCase();
     const topics=q?state.topics.filter(t=>[t.title,t.body,t.category_name,t.author_name,t.parent_name].join(" ").toLowerCase().includes(q)):state.topics;
     const noun=topics.length===1?"тема":topics.length<5?"темы":"тем";
     qs("[data-forum-result-count]")?.replaceChildren(document.createTextNode(topics.length+" "+noun));
-    if(!topics.length){root.hidden=true;empty.hidden=false;return;}
-    root.hidden=false;empty.hidden=true;
+    if(!topics.length){root.hidden=true;empty.hidden=false;indexGrid?.classList.add("is-empty-activity");return;}
+    root.hidden=false;empty.hidden=true;indexGrid?.classList.remove("is-empty-activity");
     root.innerHTML=topics.map(t=>{
       const avatar=safeUrl(t.author_avatar_url),av=avatar?'<img src="'+escapeHtml(avatar)+'" alt="">':escapeHtml((t.author_name||"N").slice(0,1).toUpperCase());
       const publicId=escapeHtml(t.author_public_id||"");
