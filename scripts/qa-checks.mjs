@@ -247,7 +247,7 @@ for (const [name, page] of [["index.html", index], ["cabinet.html", cabinet], ["
     fail.push(`unexpected auth link label in ${name}: ${labels.join(", ")}`);
   }
 }
-if (!index.includes('href="./forum.html"') || !cabinet.includes('href="./forum.html"') || !read("topic.html").includes('href="./forum.html"') || !read("forum-user.html").includes('href="./forum.html"')) fail.push("forum navigation link missing");
+if (!index.includes('href="/forum"') || !cabinet.includes('href="/forum"') || !read("topic.html").includes('href="/forum"') || !read("forum-user.html").includes('href="/forum"')) fail.push("forum navigation link missing");
 const forumPages = [
   ["forum.html", read("forum.html")],
   ["forum-category.html", read("forum-category.html")],
@@ -257,9 +257,9 @@ const forumPages = [
   ["forum-user.html", read("forum-user.html")]
 ];
 for (const [name, page] of forumPages) {
-  if (!page.includes('href="./forum.html"')) fail.push(name + " forum navigation link missing");
-  if (!page.includes('href="./forum-members.html"')) fail.push(name + " members navigation link missing");
-  if (!page.includes('href="./forum-search.html"')) fail.push(name + " search navigation link missing");
+  if (!page.includes('href="/forum"')) fail.push(name + " forum navigation link missing");
+  if (!page.includes('href="/members"')) fail.push(name + " members navigation link missing");
+  if (!page.includes('href="/search"')) fail.push(name + " search navigation link missing");
 }
 
 const forumSurfaceFiles = ["forum.html","forum-category.html","forum-members.html","forum-search.html","topic.html","forum-user.html"];
@@ -277,6 +277,11 @@ if (css.includes("NAZERAK FORUM")) fail.push("obsolete forum cascade remains in 
 }
 const forumPage = read("forum.html");
 if (!forumPage.includes("data-forum-node-tree")) fail.push("forum node tree markup is missing");
+if (!/href="\/forum"(?![a-z])/i.test(forumPage)) fail.push("forum clean route is missing");
+for (const file of forumSurfaceFiles) {
+  const page = read(file);
+  if (/href="\.\/[^"]+\.html(?:[?#"])/i.test(page)) fail.push(file + " contains a legacy .html route link");
+}
 if (!forumPage.includes('class="forum-hero__bg"')) fail.push("forum hero artwork layer is missing");
 if (!read("script.js").includes("const mediaSources")) fail.push("media slot loader is missing");
 if (!read("script.js").includes('slot.getAttribute("data-image-src")')) fail.push("media slots must use explicit image sources");
