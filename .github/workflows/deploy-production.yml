@@ -132,7 +132,7 @@ jobs:
           fi
 
           # Legacy static URLs should canonicalize to clean public routes.
-          for pair in "/forum.html /forum" "/forum-members.html /members" "/forum-search.html /search" "/cabinet.html /cabinet"; do
+          for pair in "/index.html /" "/forum.html /forum" "/forum-members.html /members" "/forum-search.html /search" "/cabinet.html /cabinet" "/forum-category.html?slug=government /forum/government" "/topic.html?id=1 /forum/topic/1" "/forum-user.html?id=1 /user/1"; do
             set -- $pair
             legacy="$1"
             clean="$2"
