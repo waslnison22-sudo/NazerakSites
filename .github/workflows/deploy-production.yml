@@ -71,7 +71,20 @@ jobs:
           server: ${{ secrets.DEPLOY_HOST }}
           port: ${{ secrets.DEPLOY_PORT || '22' }}
           password: ${{ secrets.DEPLOY_PASSWORD }}
-          local_path: './.deploy/'
+          local_path: './.deploy/*'
+          remote_path: ${{ secrets.DEPLOY_PATH }}
+          sftp_only: true
+          sftpArgs: '-o ConnectTimeout=10'
+
+      - name: Deploy Apache routing file
+        if: steps.gate.outputs.enabled == 'true'
+        uses: wlixcc/SFTP-Deploy-Action@v1.2.6
+        with:
+          username: ${{ secrets.DEPLOY_USER }}
+          server: ${{ secrets.DEPLOY_HOST }}
+          port: ${{ secrets.DEPLOY_PORT || '22' }}
+          password: ${{ secrets.DEPLOY_PASSWORD }}
+          local_path: './.deploy/.htaccess'
           remote_path: ${{ secrets.DEPLOY_PATH }}
           sftp_only: true
           sftpArgs: '-o ConnectTimeout=10'
