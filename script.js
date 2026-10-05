@@ -91,49 +91,54 @@
   }
 
   document.querySelectorAll("[data-copy]").forEach((button) => {
+    const label = button.querySelector("span:not([aria-hidden])") || button.querySelector("span");
+    const originalLabel = label ? label.textContent : "Копировать";
+    let resetTimer = 0;
+
+    const flashCopied = () => {
+      button.classList.add("is-copied");
+      if (label) label.textContent = "Скопировано";
+      window.clearTimeout(resetTimer);
+      resetTimer = window.setTimeout(() => {
+        button.classList.remove("is-copied");
+        if (label) label.textContent = originalLabel;
+      }, 1800);
+    };
+
+    const legacyCopy = () => {
+      const fallback = document.createElement("textarea");
+      fallback.className = "clipboard-fallback";
+      fallback.value = button.getAttribute("data-copy") || "";
+      fallback.setAttribute("readonly", "");
+      document.body.appendChild(fallback);
+      fallback.select();
+
+      let copied = false;
+      try {
+        copied = document.execCommand("copy");
+      } catch {
+        copied = false;
+      }
+
+      fallback.remove();
+      return copied;
+    };
+
     button.addEventListener("click", async () => {
       const value = button.getAttribute("data-copy");
       if (!value || button.disabled) return;
 
-      const label = button.querySelector("span:not([aria-hidden])") || button.querySelector("span");
-      const originalLabel = label?.textContent || "Копировать";
-
-      const showCopied = () => {
-        button.classList.add("is-copied");
-        if (label) label.textContent = "Скопировано";
-        window.setTimeout(() => {
-          button.classList.remove("is-copied");
-          if (label) label.textContent = originalLabel;
-        }, 1800);
-      };
-
-      try {
-        if (!navigator.clipboard?.writeText) {
-          throw new Error("Clipboard API unavailable");
-        }
-        await navigator.clipboard.writeText(value);
-        showCopied();
-      } catch {
-        const fallback = document.createElement("textarea");
-        fallback.className = "clipboard-fallback";
-        fallback.value = value;
-        fallback.setAttribute("readonly", "");
-        document.body.appendChild(fallback);
-        fallback.select();
-
-        let copied = false;
+      if (navigator.clipboard?.writeText && window.isSecureContext) {
         try {
-          copied = document.execCommand("copy");
+          await navigator.clipboard.writeText(value);
+          flashCopied();
+          return;
         } catch {
-          copied = false;
-        }
-
-        fallback.remove();
-
-        if (copied) {
-          showCopied();
+          // fall through to the legacy path below
         }
       }
+
+      if (legacyCopy()) flashCopied();
     });
   });
 
