@@ -122,13 +122,13 @@
       '<div class="forum-user-card__top">' +
         '<div class="forum-user-card__avatar">' + (avatar || initial) + '</div>' +
         '<div class="forum-user-card__identity">' +
-          '<a href="./forum-user.html?id=' + encodeURIComponent(profile.public_id) + '" class="forum-user-card__name forum-role--' + escapeHtml(profile.primary_role_slug || "player") + '">' + username + '</a>' +
+          '<a href="/user/' + encodeURIComponent(profile.public_id) + '" class="forum-user-card__name forum-role--' + escapeHtml(profile.primary_role_slug || "player") + '">' + username + '</a>' +
           '<div class="forum-user-card__roles">' + roleHtml + '</div>' +
         '</div>' +
       '</div>' +
       '<p class="forum-user-card__bio">' + bio + '</p>' +
       '<div class="forum-user-card__stats"><span><strong>' + Number(profile.topic_count || 0) + '</strong> тем</span><span><strong>' + Number(profile.post_count || 0) + '</strong> сообщений</span>' + minecraft + '</div>' +
-      '<a class="forum-user-card__open" href="./forum-user.html?id=' + encodeURIComponent(profile.public_id) + '">Открыть профиль <span aria-hidden="true">→</span></a>';
+      '<a class="forum-user-card__open" href="/user/' + encodeURIComponent(profile.public_id) + '">Открыть профиль <span aria-hidden="true">→</span></a>';
 
     card.hidden = false;
     positionCard(trigger);
@@ -184,7 +184,7 @@
       if (trigger.tagName !== "A") {
         event.preventDefault();
         const publicId = trigger.getAttribute("data-forum-user");
-        if (publicId) window.location.href = "./forum-user.html?id=" + encodeURIComponent(publicId);
+        if (publicId) window.location.href = "/user/ + encodeURIComponent(publicId);
       }
     });
   };
