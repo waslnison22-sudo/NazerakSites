@@ -55,7 +55,10 @@ const requiredFiles = [
   "supabase/migrations/20261003225344_forum_runtime_integrity_20261004.sql",
   "scripts/runtime-smoke.mjs",
   "scripts/browser-smoke.mjs",
-  "assets/images/README.md"
+  "assets/images/README.md",
+  ".htaccess",
+  "scripts/qa-server.mjs",
+  "supabase/migrations/20261005130500_forum_public_members_directory.sql"
 ];
 
 const bannedTokens = [
@@ -278,6 +281,9 @@ if (css.includes("NAZERAK FORUM")) fail.push("obsolete forum cascade remains in 
 const forumPage = read("forum.html");
 if (!forumPage.includes("data-forum-node-tree")) fail.push("forum node tree markup is missing");
 if (!/href="\/forum"(?![a-z])/i.test(forumPage)) fail.push("forum clean route is missing");
+if (!read(".htaccess").includes("RewriteRule ^forum/?$ forum.html [L]")) fail.push("clean /forum rewrite is missing");
+if (!read(".htaccess").includes("RewriteRule ^members/?$ forum-members.html [L]")) fail.push("clean /members rewrite is missing");
+if (!read(".htaccess").includes("RewriteRule ^search/?$ forum-search.html [L,QSA]")) fail.push("clean /search rewrite is missing");
 for (const file of forumSurfaceFiles) {
   const page = read(file);
   if (/href="\.\/[^"]+\.html(?:[?#"])/i.test(page)) fail.push(file + " contains a legacy .html route link");
