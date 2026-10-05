@@ -21,12 +21,16 @@
   const qsa = (selector, root = document) => [...root.querySelectorAll(selector)];
   const publicSiteOrigin = () => {
     const hostname = window.location.hostname.toLowerCase();
-    // GitHub Pages is no longer a production surface. If an old Pages copy is
-    // opened, never let it become the OAuth return target.
-    if (hostname.endsWith(".github.io") || hostname === "github.io") {
-      return "https://nazerak.ru";
+    // OAuth must always return to the canonical NaZerak origin. Only local
+    // development hosts are allowed to keep their own origin.
+    if (
+      hostname === "localhost" ||
+      hostname === "127.0.0.1" ||
+      hostname === "::1"
+    ) {
+      return window.location.origin;
     }
-    return window.location.origin;
+    return "https://nazerak.ru";
   };
   const accountUrl = () => new URL("/cabinet", publicSiteOrigin()).href;
   const escapeText = (value) => String(value ?? "").trim();
