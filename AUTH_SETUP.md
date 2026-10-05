@@ -85,16 +85,16 @@ https://nazerak.ru/
 Production:
 
 ```text
-https://nazerak.ru/cabinet.html
+https://nazerak.ru/cabinet
 ```
 
 Локальное тестирование:
 
 ```text
-http://localhost:8000/cabinet.html
+http://localhost:8000/cabinet
 ```
 
-Старые GitHub Pages URL для production больше не используются.
+Старые GitHub Pages URL для production больше не используются. Если пользователь случайно открыл старую копию на `*.github.io`, код авторизации принудительно возвращает OAuth в `https://nazerak.ru/cabinet`.
 
 Production URL лучше добавлять точным совпадением.
 
@@ -118,7 +118,7 @@ Production URL лучше добавлять точным совпадением
 1. Открой `https://nazerak.ru/`.
 2. Нажми **Войти**.
 3. Разреши вход через Discord.
-4. После авторизации должен открыться `cabinet.html`.
+4. После авторизации должен открыться `https://nazerak.ru/cabinet`.
 5. В кабинете должны появиться Discord имя и аватар.
 6. Введи Minecraft ник и нажми **Сохранить**.
 7. Проверь, что раздел медиа-партнёрства закрыт по умолчанию и честно сообщает о временно отключённом приёме заявок.
