@@ -53,7 +53,7 @@
           <span class="section-kicker">REPLY</span>
           <h2>Ответить в теме.</h2>
         </div>
-        <textarea data-topic-reply-input maxlength="12000" rows="7" placeholder="Напиши ответ…"></textarea>
+        <label class="sr-only" for="topic-reply-input">Текст ответа</label><textarea id="topic-reply-input" data-topic-reply-input maxlength="12000" rows="7" placeholder="Напиши ответ…" aria-label="Текст ответа"></textarea>
         <div class="topic-reply__footer">
           <span data-topic-lock-note aria-live="polite"></span>
           <button class="button button--primary" type="button" data-topic-reply-submit><span>Ответить</span><span aria-hidden="true">→</span></button>
