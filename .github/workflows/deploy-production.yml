@@ -71,7 +71,7 @@ jobs:
           server: ${{ secrets.DEPLOY_HOST }}
           port: ${{ secrets.DEPLOY_PORT || '22' }}
           password: ${{ secrets.DEPLOY_PASSWORD }}
-          local_path: './.deploy/*'
+          local_path: './.deploy/'
           remote_path: ${{ secrets.DEPLOY_PATH }}
           sftp_only: true
           sftpArgs: '-o ConnectTimeout=10'
@@ -95,7 +95,7 @@ jobs:
           SITE_URL: https://nazerak.ru
         run: |
           set -e
-          for route in / /forum.html; do
+          for route in / /forum; do
             ok=false
             for i in {1..6}; do
               status=$(curl -k -L -sS -o /tmp/nazerak-check.html -w "%{http_code}" "$SITE_URL$route")
