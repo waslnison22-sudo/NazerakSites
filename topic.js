@@ -12,7 +12,7 @@
   const waitForClient=async()=>{for(let i=0;i<100;i+=1){const c=window.NaZerakAuth&&window.NaZerakAuth.client;if(c)return c;await new Promise(r=>window.setTimeout(r,100));}return null;};
   const syncAuthor=async()=>{if(!state.client||!state.user)return false;const r=await state.client.from("forum_authors").upsert({id:state.user.id,display_name:userName(state.user),avatar_url:userAvatar(state.user)||null,updated_at:new Date().toISOString(),last_seen_at:new Date().toISOString()},{onConflict:"id"});return !r.error;};
   const loadTopic=async()=>{
-    const id=Number(new URLSearchParams(window.location.search).get("id"));
+    const pathMatch=window.location.pathname.match(/^\/forum\/topic\/([^/]+)\/?$/i); const id=Number(decodeURIComponent(pathMatch?.[1]||new URLSearchParams(window.location.search).get("id")||""));
     if(!Number.isSafeInteger(id)||id<1)throw new Error("Некорректная тема форума.");
     const results=await withTimeout(Promise.all([
       state.client.from("forum_topic_detail").select("id,slug,category_id,category_slug,category_route_slug,category_name,parent_name,author_public_id,author_name,author_avatar_url,primary_role_slug,primary_role_name,primary_role_badge,title,body,is_pinned,is_locked,is_archived,prefix,views_count,solution_state,created_at,updated_at,last_post_at,reply_count").eq("id",id).maybeSingle(),
@@ -25,12 +25,12 @@
     renderTopic(results[0].data,results[1].data||[]);
   };
   const authorMarkup=(publicId,name,roleSlug)=>publicId
-    ? '<a class="topic-post__author-link forum-role--'+escapeHtml(roleSlug||"player")+'" data-forum-user="'+escapeHtml(publicId)+'" href="./forum-user.html?id='+encodeURIComponent(publicId)+'">'+escapeHtml(name||"Игрок NaZerak")+'</a>'
+    ? '<a class="topic-post__author-link forum-role--'+escapeHtml(roleSlug||"player")+'" data-forum-user="'+escapeHtml(publicId)+'" href="/user/'+encodeURIComponent(publicId)+'">'+escapeHtml(name||"Игрок NaZerak")+'</a>'
     : escapeHtml(name||"Игрок NaZerak");
   const renderTopic=(topic,posts)=>{
     const avatar=safeUrl(topic.author_avatar_url);
     const categoryLink=qs("[data-topic-category-link]");
-    if(categoryLink){categoryLink.textContent=topic.parent_name ? topic.parent_name+" / "+(topic.category_name||"Форум") : (topic.category_name||"Форум");categoryLink.href="./forum-category.html?slug="+encodeURIComponent(topic.category_route_slug||topic.category_slug||"");}
+    if(categoryLink){categoryLink.textContent=topic.parent_name ? topic.parent_name+" / "+(topic.category_name||"Форум") : (topic.category_name||"Форум");categoryLink.href="/forum/"+encodeURIComponent(topic.category_route_slug||topic.category_slug||"");}
     qs("[data-topic-category-badge]").textContent=topic.category_name||"Форум";
     qs("[data-topic-title]").textContent=topic.title;
     qs("[data-topic-date]").textContent=formatDateTime(topic.created_at);

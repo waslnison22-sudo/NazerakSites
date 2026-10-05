@@ -11,7 +11,7 @@
   const msg=(m,k="info")=>{const n=qs("[data-category-message]");if(!n)return;n.textContent=m;n.dataset.kind=k;n.hidden=!m;};
   const relative=(v)=>{const d=new Date(v),diff=Date.now()-d.getTime();if(Number.isNaN(d.getTime()))return"—";const m=Math.max(0,Math.floor(diff/60000));if(m<1)return"только что";if(m<60)return m+" мин назад";const h=Math.floor(m/60);if(h<24)return h+" ч назад";const day=Math.floor(h/24);if(day<7)return day+" дн назад";return new Intl.DateTimeFormat("ru-RU",{day:"2-digit",month:"short",year:"numeric"}).format(d);};
   const load=async()=>{
-    const slug=String(new URLSearchParams(location.search).get("slug")||"").toLowerCase();
+    const pathMatch=location.pathname.match(/^\/forum\/([^/]+)\/?$/i); const slug=decodeURIComponent(pathMatch?.[1]||new URLSearchParams(location.search).get("slug")||"").toLowerCase();
     if(!slug)throw new Error("Раздел не указан.");
     const requests=[
       state.client.from("forum_node_directory").select("id,name,posting_mode,parent_name").eq("route_slug",slug).maybeSingle(),
@@ -39,11 +39,11 @@
         (t.is_locked?'<span>Закрыто</span>':"")+
       '</div>';
       const author=publicId
-        ? '<a class="forum-user-link forum-thread-row__author" data-forum-user="'+publicId+'" href="./forum-user.html?id='+publicId+'"><span class="forum-avatar forum-avatar--small">'+av+'</span><span>'+escapeHtml(t.author_name||"Игрок NaZerak")+'</span></a>'
+        ? '<a class="forum-user-link forum-thread-row__author" data-forum-user="'+publicId+'" href="/user/'+publicId+'"><span class="forum-avatar forum-avatar--small">'+av+'</span><span>'+escapeHtml(t.author_name||"Игрок NaZerak")+'</span></a>'
         : '<span class="forum-thread-row__author"><span class="forum-avatar forum-avatar--small">'+av+'</span><span>'+escapeHtml(t.author_name||"Игрок NaZerak")+'</span></span>';
       return '<article class="forum-thread-row">'+
         '<div class="forum-thread-row__main">'+
-          '<a class="forum-thread-row__link" href="./topic.html?id='+encodeURIComponent(t.id)+'">'+
+          '<a class="forum-thread-row__link" href="/forum/topic/'+encodeURIComponent(t.id)+'">'+
             tags+
             '<div class="forum-thread-row__title">'+escapeHtml(t.title)+'</div>'+
           '</a>'+
@@ -58,7 +58,7 @@
   };
   const syncAuthor=async()=>{const r=await state.client.from("forum_authors").upsert({id:state.user.id,display_name:userName(state.user),avatar_url:userAvatar(state.user)||null,updated_at:new Date().toISOString(),last_seen_at:new Date().toISOString()},{onConflict:"id"});return !r.error;};
   const create=async()=>{
-    if(!state.user){location.href="./cabinet.html";return;}
+    if(!state.user){location.href="/cabinet";return;}
     const form=qs("[data-category-form]"),title=String(new FormData(form).get("title")||"").trim(),body=String(new FormData(form).get("body")||"").trim(),button=qs("[data-category-submit]");
     if(title.length<3||!body){msg("Заполни заголовок и сообщение.","error");return;}
     button.disabled=true;
@@ -66,7 +66,7 @@
       if(!(await syncAuthor())){msg("Не удалось сохранить форумный профиль. Проверь соединение и попробуй ещё раз.","error");return;}
       const r=await state.client.from("forum_topics").insert({category_id:state.category.id,author_id:state.user.id,title,body}).select("id").single();
       if(r.error||!r.data?.id){msg("Не удалось создать тему. Проверь соединение и попробуй ещё раз.","error");return;}
-      location.href="./topic.html?id="+encodeURIComponent(r.data.id);
+      location.href="/forum/topic/"+encodeURIComponent(r.data.id);
     } catch (error) {
       console.error("[NaZerak Forum] category topic creation failed:",error);
       msg("Не удалось создать тему из-за ошибки соединения. Попробуй ещё раз.","error");
@@ -74,6 +74,6 @@
       button.disabled=false;
     }
   };
-  const init=async()=>{state.client=await wait();if(!state.client){msg("Не удалось подключиться к форуму.","error");return;}try{const session=await withTimeout(state.client.auth.getSession(),8000,"");state.user=session.data?.session?.user||null;}catch{state.user=window.NaZerakAuth?.user||null;}document.querySelectorAll("[data-category-create]").forEach((button)=>button.addEventListener("click",()=>state.user?qs("[data-category-modal]")?.showModal():location.href="./cabinet.html"));qs("[data-category-submit]")?.addEventListener("click",create);try{await load();}catch(e){msg(e instanceof Error?e.message:"Не удалось загрузить раздел.","error");}};
+  const init=async()=>{state.client=await wait();if(!state.client){msg("Не удалось подключиться к форуму.","error");return;}try{const session=await withTimeout(state.client.auth.getSession(),8000,"");state.user=session.data?.session?.user||null;}catch{state.user=window.NaZerakAuth?.user||null;}document.querySelectorAll("[data-category-create]").forEach((button)=>button.addEventListener("click",()=>state.user?qs("[data-category-modal]")?.showModal():location.href="/cabinet"));qs("[data-category-submit]")?.addEventListener("click",create);try{await load();}catch(e){msg(e instanceof Error?e.message:"Не удалось загрузить раздел.","error");}};
   if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",()=>void init(),{once:true});else void init();
 })();

@@ -3,7 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#07070a">
+    <base href="/">
+<meta name="theme-color" content="#07070a">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://unpkg.com; connect-src 'self' https://ujlbyzvdsncvqbrhasuw.supabase.co; img-src 'self' data: https://cdn.discordapp.com https://media.discordapp.net; style-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; frame-src 'none'; form-action 'self';">
   <meta name="description" content="NaZerak — личный кабинет игрока.">
   <meta name="referrer" content="strict-origin-when-cross-origin">
@@ -30,8 +31,8 @@
         <a href="./#about">Проект</a>
         <a href="./#world">Мир</a>
         <a href="./#start">Старт</a>
-        <a href="./forum.html">Форум</a>
-        <a class="nav-account is-active" data-auth-link href="./cabinet.html" aria-current="page">
+        <a href="/forum">Форум</a>
+        <a class="nav-account is-active" data-auth-link href="/cabinet" aria-current="page">
           <span class="nav-account__avatar">
             <img data-auth-link-avatar alt="" hidden>
             <span data-auth-link-fallback>◉</span>
@@ -247,7 +248,7 @@
 
         <div class="account-bottom-links">
           <a href="./"><span aria-hidden="true">←</span> На главную</a>
-          <a href="./forum.html" >Форум <span aria-hidden="true">→</span></a>
+          <a href="/forum" >Форум <span aria-hidden="true">→</span></a>
         </div>
       </section>
 

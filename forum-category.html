@@ -3,13 +3,14 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#07070a">
+    <base href="/">
+<meta name="theme-color" content="#07070a">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://unpkg.com; connect-src 'self' https://ujlbyzvdsncvqbrhasuw.supabase.co; img-src 'self' data: https://cdn.discordapp.com https://media.discordapp.net; style-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; frame-src 'none'; form-action 'self';">
   <meta name="description" content="NaZerak — раздел форума.">
   <meta name="robots" content="noindex,nofollow,noarchive">
   <link rel="icon" href="./favicon.svg?v=5" type="image/svg+xml">
   <link rel="stylesheet" href="./styles.css?v=37">
-  <link rel="stylesheet" href="./forum.css?v=13">
+  <link rel="stylesheet" href="./forum.css?v=17">
   <title>NaZerak — раздел форума</title>
 </head>
 <body data-forum-category-page>
@@ -19,17 +20,17 @@
       <a class="brand" href="./" aria-label="NaZerak — на главную"><span class="brand__mark" aria-hidden="true">NZ</span><span class="brand__name">NaZerak</span></a>
       <button class="nav-toggle" type="button" aria-controls="forum-nav" aria-expanded="false" aria-label="Открыть меню"><span></span><span></span><span></span><span class="sr-only">Открыть меню</span></button>
       <nav class="nav" id="forum-nav" aria-label="Основная навигация">
-        <a class="nav-forum is-active" href="./forum.html" aria-current="page">Форум</a>
-        <a href="./forum-members.html">Участники</a>
-        <a href="./forum-search.html">Поиск</a>
-        <a class="nav-account" data-auth-link href="./cabinet.html"><span class="nav-account__avatar"><img data-auth-link-avatar alt="" hidden><span data-auth-link-fallback>◉</span></span><span data-auth-link-label>Войти</span></a>
+        <a class="nav-forum is-active" href="/forum" aria-current="page">Форум</a>
+        <a href="/members">Участники</a>
+        <a href="/search">Поиск</a>
+        <a class="nav-account" data-auth-link href="/cabinet"><span class="nav-account__avatar"><img data-auth-link-avatar alt="" hidden><span data-auth-link-fallback>◉</span></span><span data-auth-link-label>Войти</span></a>
       </nav>
     </div>
   </header>
 
   <main class="forum-page" id="main-content" tabindex="-1">
     <div class="container forum">
-      <div class="forum-breadcrumbs"><a href="./forum.html">Форум</a><span>/</span><span data-category-parent>Загрузка</span><span>/</span><strong data-category-name>Загрузка</strong></div>
+      <div class="forum-breadcrumbs"><a href="/forum">Форум</a><span>/</span><span data-category-parent>Загрузка</span><span>/</span><strong data-category-name>Загрузка</strong></div>
       <header class="forum-section-head">
         <div>
           <span class="section-kicker">FORUM / SECTION</span>

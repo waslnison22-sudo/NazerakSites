@@ -27,9 +27,9 @@
         const posts=topics.reduce((sum,t)=>sum+1+Number(t.reply_count||0),0);
         const latest=[...topics].sort((a,b)=>new Date(b.last_post_at).getTime()-new Date(a.last_post_at).getTime())[0];
         const latestHtml=latest
-          ? '<a class="forum-board-row__last" href="./topic.html?id='+encodeURIComponent(latest.id)+'"><strong>'+escapeHtml(latest.title)+'</strong><span>'+escapeHtml(latest.author_name||"Игрок NaZerak")+' · '+relative(latest.last_post_at)+'</span></a>'
+          ? '<a class="forum-board-row__last" href="/forum/topic/'+encodeURIComponent(latest.id)+'"><strong>'+escapeHtml(latest.title)+'</strong><span>'+escapeHtml(latest.author_name||"Игрок NaZerak")+' · '+relative(latest.last_post_at)+'</span></a>'
           : '<span class="forum-board-row__last forum-board-row__last--empty">Пока нет тем</span>';
-        return '<article class="forum-board-row"><a class="forum-board-row__forum" href="./forum-category.html?slug='+encodeURIComponent(node.route_slug||node.slug)+'"><span class="forum-category-card__icon">'+escapeHtml(node.icon||"•")+'</span><span><strong>'+escapeHtml(node.name)+'</strong></span></a><span class="forum-board-row__stat">'+topics.length+'</span><span class="forum-board-row__stat">'+posts+'</span>'+latestHtml+'</article>';
+        return '<article class="forum-board-row"><a class="forum-board-row__forum" href="/forum/'+encodeURIComponent(node.route_slug||node.slug)+'"><span class="forum-category-card__icon">'+escapeHtml(node.icon||"•")+'</span><span><strong>'+escapeHtml(node.name)+'</strong></span></a><span class="forum-board-row__stat">'+topics.length+'</span><span class="forum-board-row__stat">'+posts+'</span>'+latestHtml+'</article>';
       }).join("");
       return '<section class="forum-node-section"><header class="forum-node-section__head"><div><span class="section-kicker">SECTION</span><h3>'+escapeHtml(parent.name)+'<span>.</span></h3></div><span class="forum-node-section__count">'+children.length+' '+(children.length===1?"форум":children.length<5?"форума":"форумов")+'</span></header><div class="forum-board__columns"><span>Форум</span><span>Темы</span><span>Сообщения</span><span>Последнее сообщение</span></div><div class="forum-node-section__rows">'+rows+'</div></section>';
     }).join("");
@@ -39,16 +39,17 @@
 
   const renderTopics=()=>{
     const root=qs("[data-forum-topic-list]"),empty=qs("[data-forum-empty]");if(!root||!empty)return;
+    const indexGrid=qs(".forum-index-grid");
     const q=state.search.trim().toLowerCase();
     const topics=q?state.topics.filter(t=>[t.title,t.body,t.category_name,t.author_name,t.parent_name].join(" ").toLowerCase().includes(q)):state.topics;
     const noun=topics.length===1?"тема":topics.length<5?"темы":"тем";
     qs("[data-forum-result-count]")?.replaceChildren(document.createTextNode(topics.length+" "+noun));
-    if(!topics.length){root.hidden=true;empty.hidden=false;return;}
-    root.hidden=false;empty.hidden=true;
+    if(!topics.length){root.hidden=true;empty.hidden=false;indexGrid?.classList.add("is-empty-activity");return;}
+    root.hidden=false;empty.hidden=true;indexGrid?.classList.remove("is-empty-activity");
     root.innerHTML=topics.map(t=>{
       const avatar=safeUrl(t.author_avatar_url),av=avatar?'<img src="'+escapeHtml(avatar)+'" alt="">':escapeHtml((t.author_name||"N").slice(0,1).toUpperCase());
       const publicId=escapeHtml(t.author_public_id||"");
-      return '<article class="forum-topic-row'+(t.is_pinned?" is-pinned":"")+'"><a class="forum-topic-row__open" href="./topic.html?id='+encodeURIComponent(t.id)+'"><div class="forum-topic-row__mark" aria-hidden="true">'+(t.is_pinned?"★":"›")+'</div><div class="forum-topic-row__copy"><div class="forum-topic-row__tags"><span>'+escapeHtml(t.category_name||"Форум")+'</span>'+(t.prefix?'<span class="forum-topic-row__prefix">'+escapeHtml(t.prefix)+'</span>':"")+(t.is_locked?"<span>ЗАКРЫТО</span>":"")+'</div><h3>'+escapeHtml(t.title)+'</h3><p>'+escapeHtml(String(t.body||"").replace(/\s+/g," ").slice(0,160))+'</p></div></a><div class="forum-topic-row__footer"><a class="forum-user-link forum-role--'+escapeHtml(t.primary_role_slug||"player")+'" data-forum-user="'+publicId+'" href="./forum-user.html?id='+publicId+'"><span class="forum-avatar forum-avatar--small">'+av+'</span><span>'+escapeHtml(t.author_name||"Игрок NaZerak")+'</span><span class="forum-user-link__role">'+escapeHtml(t.primary_role_badge||"•")+" "+escapeHtml(t.primary_role_name||"Игрок")+'</span></a><div class="forum-topic-row__activity"><strong>'+Number(t.reply_count||0)+'</strong><span>ответов</span><time datetime="'+escapeHtml(t.last_post_at)+'">'+relative(t.last_post_at)+'</time></div></div></article>';
+      return '<article class="forum-topic-row'+(t.is_pinned?" is-pinned":"")+'"><a class="forum-topic-row__open" href="/forum/topic/'+encodeURIComponent(t.id)+'"><div class="forum-topic-row__mark" aria-hidden="true">'+(t.is_pinned?"★":"›")+'</div><div class="forum-topic-row__copy"><div class="forum-topic-row__tags"><span>'+escapeHtml(t.category_name||"Форум")+'</span>'+(t.prefix?'<span class="forum-topic-row__prefix">'+escapeHtml(t.prefix)+'</span>':"")+(t.is_locked?"<span>ЗАКРЫТО</span>":"")+'</div><h3>'+escapeHtml(t.title)+'</h3><p>'+escapeHtml(String(t.body||"").replace(/\s+/g," ").slice(0,160))+'</p></div></a><div class="forum-topic-row__footer"><a class="forum-user-link forum-role--'+escapeHtml(t.primary_role_slug||"player")+'" data-forum-user="'+publicId+'" href="/user/'+publicId+'"><span class="forum-avatar forum-avatar--small">'+av+'</span><span>'+escapeHtml(t.author_name||"Игрок NaZerak")+'</span><span class="forum-user-link__role">'+escapeHtml(t.primary_role_badge||"•")+" "+escapeHtml(t.primary_role_name||"Игрок")+'</span></a><div class="forum-topic-row__activity"><strong>'+Number(t.reply_count||0)+'</strong><span>ответов</span><time datetime="'+escapeHtml(t.last_post_at)+'">'+relative(t.last_post_at)+'</time></div></div></article>';
     }).join("");
   };
 
@@ -78,7 +79,7 @@
   };
 
   const openCreate=()=>{
-    if(!state.user){window.location.href="./cabinet.html";return;}
+    if(!state.user){window.location.href="/cabinet";return;}
     fillCategorySelect();
     const select=qs("#forum-category");
     if(!select?.options.length){showMessage("Нет доступного раздела для публикации.","error");return;}
@@ -97,7 +98,7 @@
       if(!(await syncAuthor())){showMessage("Не удалось сохранить форумный профиль. Проверь соединение и попробуй ещё раз.","error");return;}
       const r=await state.client.from("forum_topics").insert({category_id:categoryId,author_id:state.user.id,title,body}).select("id").single();
       if(r.error||!r.data?.id){showMessage("Не удалось создать тему. Проверь соединение и попробуй ещё раз.","error");return;}
-      qs("[data-forum-modal]")?.close();form.reset();window.location.href="./topic.html?id="+encodeURIComponent(r.data.id);
+      qs("[data-forum-modal]")?.close();form.reset();window.location.href="/forum/topic/"+encodeURIComponent(r.data.id);
     } catch (error) {
       console.error("[NaZerak Forum] topic creation failed:",error);
       showMessage("Не удалось создать тему из-за ошибки соединения. Попробуй ещё раз.","error");
@@ -116,7 +117,7 @@
     qs("#forum-search")?.addEventListener("input",e=>{state.search=String(e.target.value||"");qsa("[data-forum-search-clear],[data-forum-search-reset]").forEach(n=>n.hidden=!state.search.trim());renderTopics();});
     qs("[data-forum-search-clear]")?.addEventListener("click",()=>{state.search="";if(qs("#forum-search"))qs("#forum-search").value="";renderTopics();});
     qs("[data-forum-search-reset]")?.addEventListener("click",()=>{state.search="";if(qs("#forum-search"))qs("#forum-search").value="";renderTopics();});
-    qs("[data-forum-search-form]")?.addEventListener("submit",e=>{e.preventDefault();const q=String(qs("#forum-search")?.value||"").trim();if(q)window.location.href="./forum-search.html?q="+encodeURIComponent(q);});
+    qs("[data-forum-search-form]")?.addEventListener("submit",e=>{e.preventDefault();const q=String(qs("#forum-search")?.value||"").trim();if(q)window.location.href="/search?q="+encodeURIComponent(q);});
     document.addEventListener("keydown",e=>{if(e.key!=="/"||e.altKey||e.ctrlKey||e.metaKey)return;const target=e.target;if(target instanceof HTMLElement&&(target.isContentEditable||/^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName)))return;const search=qs("#forum-search");if(!search)return;e.preventDefault();search.focus();search.select();});
     try{await loadData();}catch(e){showMessage(e instanceof Error?e.message:"Не удалось загрузить форум.","error");}
   };

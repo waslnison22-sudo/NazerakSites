@@ -1,0 +1,41 @@
+Options -MultiViews
+RewriteEngine On
+
+# Canonical clean URLs. Redirect only real browser requests so internal
+# rewrites to the legacy static files do not loop.
+
+RewriteCond %{THE_REQUEST} \s/+index\.html(?:[?\s]) [NC]
+RewriteRule ^index\.html$ / [R=301,L]
+
+RewriteCond %{THE_REQUEST} \s/+forum-category\.html(?:[?\s]) [NC]
+RewriteCond %{QUERY_STRING} ^(?:.*&)?slug=([^&]+)(?:&.*)?$ [NC]
+RewriteRule ^forum-category\.html$ /forum/%1? [R=301,L,NE]
+
+RewriteCond %{THE_REQUEST} \s/+topic\.html(?:[?\s]) [NC]
+RewriteCond %{QUERY_STRING} ^(?:.*&)?id=([^&]+)(?:&.*)?$ [NC]
+RewriteRule ^topic\.html$ /forum/topic/%1? [R=301,L,NE]
+
+RewriteCond %{THE_REQUEST} \s/+forum-user\.html(?:[?\s]) [NC]
+RewriteCond %{QUERY_STRING} ^(?:.*&)?id=([^&]+)(?:&.*)?$ [NC]
+RewriteRule ^forum-user\.html$ /user/%1? [R=301,L,NE]
+
+RewriteCond %{THE_REQUEST} \s/+forum\.html(?:[?\s]) [NC]
+RewriteRule ^forum\.html$ /forum [R=301,L]
+
+RewriteCond %{THE_REQUEST} \s/+forum-members\.html(?:[?\s]) [NC]
+RewriteRule ^forum-members\.html$ /members [R=301,L]
+
+RewriteCond %{THE_REQUEST} \s/+forum-search\.html(?:[?\s]) [NC]
+RewriteRule ^forum-search\.html$ /search [R=301,L]
+
+RewriteCond %{THE_REQUEST} \s/+cabinet\.html(?:[?\s]) [NC]
+RewriteRule ^cabinet\.html$ /cabinet [R=301,L]
+
+# Clean routes -> existing static HTML files.
+RewriteRule ^forum/?$ forum.html [L]
+RewriteRule ^forum/topic/([^/]+)/?$ topic.html?id=$1 [L,QSA]
+RewriteRule ^forum/([^/]+)/?$ forum-category.html?slug=$1 [L,QSA]
+RewriteRule ^members/?$ forum-members.html [L]
+RewriteRule ^search/?$ forum-search.html [L,QSA]
+RewriteRule ^user/([^/]+)/?$ forum-user.html?id=$1 [L,QSA]
+RewriteRule ^cabinet/?$ cabinet.html [L]
