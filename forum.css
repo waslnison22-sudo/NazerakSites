@@ -63,6 +63,7 @@ body[data-forum] [hidden],body[data-forum-category-page] [hidden],body[data-foru
 
 /* Forum index */
 .forum-index-grid{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:34px;align-items:start;margin-top:30px}
+.forum-index-grid.is-empty-activity{grid-template-columns:minmax(0,1fr);}
 .forum-boards,.forum-discussions,.forum-resources{min-width:0}
 .forum-discussions{grid-column:2;grid-row:1}
 .forum-resources{grid-column:2;grid-row:2;margin-top:24px}
