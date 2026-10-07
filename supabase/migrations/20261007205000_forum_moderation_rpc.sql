@@ -10,10 +10,10 @@ create or replace function public.forum_moderate_topic(
 returns boolean
 language plpgsql
 security definer
-set search_path = pg_catalog, public, auth
+set search_path = ''
 as $$
 begin
-  if auth.uid() is null then
+  if (select auth.uid()) is null then
     raise exception 'not_authenticated';
   end if;
 
