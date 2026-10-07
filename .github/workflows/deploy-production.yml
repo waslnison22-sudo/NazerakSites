@@ -23,13 +23,14 @@ jobs:
     environment: production
     env:
       DEPLOY_ENABLED: ${{ secrets.DEPLOY_ENABLED }}
+      DEPLOY_PATH: /www/nazerak.ru
 
     steps:
       - name: Check production deployment gate
         id: gate
         run: |
           if [ "$DEPLOY_ENABLED" != "true" ]; then
-            echo "Production deploy is disabled. Set DEPLOY_ENABLED=true when hosting credentials are ready."
+            echo "Production deploy is disabled. Set DEPLOY_ENABLED=true."
             echo "enabled=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
@@ -42,18 +43,17 @@ jobs:
           ref: ${{ github.event.workflow_run.head_sha }}
           fetch-depth: 1
 
-      - name: Verify deploy target
+      - name: Verify deployment credentials
         if: steps.gate.outputs.enabled == 'true'
         env:
           DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
           DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
-          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
           DEPLOY_PASSWORD: ${{ secrets.DEPLOY_PASSWORD }}
         run: |
           test -n "$DEPLOY_HOST" || { echo "DEPLOY_HOST is not configured"; exit 1; }
           test -n "$DEPLOY_USER" || { echo "DEPLOY_USER is not configured"; exit 1; }
-          test -n "$DEPLOY_PATH" || { echo "DEPLOY_PATH is not configured"; exit 1; }
           test -n "$DEPLOY_PASSWORD" || { echo "DEPLOY_PASSWORD is not configured"; exit 1; }
+          echo "Deploy target: $DEPLOY_PATH"
 
       - name: Prepare web root
         if: steps.gate.outputs.enabled == 'true'
@@ -62,6 +62,8 @@ jobs:
           mkdir -p .deploy
           tar --exclude='./.git' --exclude='./.github' --exclude='./.deploy' --exclude='./.gitignore' --exclude='./supabase' --exclude='./scripts' --exclude='./docs' --exclude='./README.md' --exclude='./AUTH_SETUP.md' --exclude='./DOMAIN_MIGRATION.md' --exclude='./.DS_Store' -cf - . | tar -xf - -C .deploy
           test -f .deploy/index.html
+          test -f .deploy/forum.html
+          grep -q 'forum.css?v=18' .deploy/forum.html
 
       - name: Deploy public files over SFTP
         if: steps.gate.outputs.enabled == 'true'
@@ -72,20 +74,7 @@ jobs:
           port: ${{ secrets.DEPLOY_PORT || '22' }}
           password: ${{ secrets.DEPLOY_PASSWORD }}
           local_path: './.deploy/*'
-          remote_path: ${{ secrets.DEPLOY_PATH }}
-          sftp_only: true
-          sftpArgs: '-o ConnectTimeout=10'
-
-      - name: Deploy Apache routing file
-        if: steps.gate.outputs.enabled == 'true'
-        uses: wlixcc/SFTP-Deploy-Action@v1.2.6
-        with:
-          username: ${{ secrets.DEPLOY_USER }}
-          server: ${{ secrets.DEPLOY_HOST }}
-          port: ${{ secrets.DEPLOY_PORT || '22' }}
-          password: ${{ secrets.DEPLOY_PASSWORD }}
-          local_path: './.deploy/.htaccess'
-          remote_path: ${{ secrets.DEPLOY_PATH }}
+          remote_path: /www/nazerak.ru
           sftp_only: true
           sftpArgs: '-o ConnectTimeout=10'
 
@@ -94,13 +83,29 @@ jobs:
         env:
           DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
           DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
-          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
           DEPLOY_PASSWORD: ${{ secrets.DEPLOY_PASSWORD }}
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y -qq sshpass
           export SSHPASS="$DEPLOY_PASSWORD"
-          sshpass -e ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 "$DEPLOY_USER@$DEPLOY_HOST" "rm -rf -- '$DEPLOY_PATH/pravitelstvo' '$DEPLOY_PATH/sud' '$DEPLOY_PATH/prokuratura' '$DEPLOY_PATH/fsb' '$DEPLOY_PATH/voennaya-baza' '$DEPLOY_PATH/organizatsii' '$DEPLOY_PATH/o-proekte'"
+          sshpass -e ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 "$DEPLOY_USER@$DEPLOY_HOST" "rm -rf -- /www/nazerak.ru/pravitelstvo /www/nazerak.ru/sud /www/nazerak.ru/prokuratura /www/nazerak.ru/fsb /www/nazerak.ru/voennaya-baza /www/nazerak.ru/organizatsii /www/nazerak.ru/o-proekte"
+
+      - name: Verify remote web root
+        if: steps.gate.outputs.enabled == 'true'
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+          DEPLOY_PASSWORD: ${{ secrets.DEPLOY_PASSWORD }}
+        run: |
+          sudo apt-get install -y -qq sshpass
+          export SSHPASS="$DEPLOY_PASSWORD"
+          sshpass -e ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 "$DEPLOY_USER@$DEPLOY_HOST" '
+            test -f /www/nazerak.ru/forum.html &&
+            grep -q "forum.css?v=18" /www/nazerak.ru/forum.html &&
+            test -f /www/nazerak.ru/forum.css &&
+            grep -q "NaZerak Forum v18" /www/nazerak.ru/forum.css
+          '
+          echo "PASS: REG.RU web root contains the rebuilt forum."
 
       - name: Verify production content
         if: steps.gate.outputs.enabled == 'true'
@@ -110,7 +115,7 @@ jobs:
           set -e
           for route in / /forum; do
             ok=false
-            for i in {1..6}; do
+            for i in {1..12}; do
               status=$(curl -k -L -sS -o /tmp/nazerak-check.html -w "%{http_code}" "$SITE_URL$route")
               if [ "$status" = "200" ] && grep -q "NaZerak" /tmp/nazerak-check.html; then
                 echo "PASS: content $SITE_URL$route"
@@ -125,6 +130,10 @@ jobs:
             fi
           done
 
+          curl -k -L -sS "$SITE_URL/forum?deploy-check=1" -o /tmp/nazerak-forum.html
+          grep -q 'forum.css?v=18' /tmp/nazerak-forum.html
+          echo "PASS: production /forum serves the rebuilt forum HTML."
+
       - name: Verify production TLS certificate
         if: steps.gate.outputs.enabled == 'true'
         continue-on-error: true
@@ -134,5 +143,5 @@ jobs:
           if curl -L -sS -o /tmp/nazerak-tls-check.html "$SITE_URL/" && grep -q "NaZerak" /tmp/nazerak-tls-check.html; then
             echo "PASS: trusted TLS certificate for $SITE_URL"
           else
-            echo "::warning::HTTPS content is reachable, but the certificate is not trusted by the runner. REG.RU SSL activation/installation still needs attention."
+            echo "::warning::HTTPS content is reachable, but the certificate is not trusted by the runner."
           fi
