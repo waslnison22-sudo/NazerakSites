@@ -281,10 +281,10 @@ if (css.includes("NAZERAK FORUM")) fail.push("obsolete forum cascade remains in 
 const forumPage = read("forum.html");
 if (!forumPage.includes("data-forum-node-tree")) fail.push("forum node tree markup is missing");
 if (!read("topic.html").includes("data-topic-edit-modal") || !read("topic.html").includes("data-post-edit-modal")) fail.push("topic editing UI is incomplete");
-if (!read("topic.js").includes("forum_topics").includes("update")) fail.push("topic update flow is missing");
-if (!read("topic.js").includes("forum_posts").includes("update")) fail.push("post update flow is missing");
-if (!read("topic.js").includes("forum_topics").includes("delete")) fail.push("topic delete flow is missing");
-if (!read("topic.js").includes("forum_posts").includes("delete")) fail.push("post delete flow is missing");
+if (!read("topic.js").includes("forum_topics") || !read("topic.js").includes(".update(")) fail.push("topic update flow is missing");
+if (!read("topic.js").includes("forum_posts") || !read("topic.js").includes(".update(")) fail.push("post update flow is missing");
+if (!read("topic.js").includes("forum_topics") || !read("topic.js").includes(".delete(")) fail.push("topic delete flow is missing");
+if (!read("topic.js").includes("forum_posts") || !read("topic.js").includes(".delete(")) fail.push("post delete flow is missing");
 if (!read("forum-category.html").includes("data-category-search-form") || !read("forum-category.html").includes("data-category-pagination")) fail.push("category search/pagination controls are missing");
 if (!/href="\/forum"(?![a-z])/i.test(forumPage)) fail.push("forum clean route is missing");
 if (!read(".htaccess").includes("RewriteRule ^forum/?$ forum.html [L]")) fail.push("clean /forum rewrite is missing");
