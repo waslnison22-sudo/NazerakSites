@@ -17,7 +17,7 @@
     if(pages<=1){nav.hidden=true;nav.innerHTML="";return}
     nav.hidden=false;
     let html='<button type="button" data-page="'+(state.page-1)+'" '+(state.page===1?"disabled":"")+'>←</button>';
-    for(let i=1;i<=pages;i++){if(pages>7&&i>2&&i<pages-1&&Math.abs(i-state.page)>1){if(i===3||i===pages-2)html+='<span style="color:#646c78;padding:0 4px">…</span>';continue}html+='<button type="button" data-page="'+i+'" aria-current="'+(i===state.page?'true':'false')+'">'+i+'</button>'}
+    for(let i=1;i<=pages;i++){if(pages>7&&i>2&&i<pages-1&&Math.abs(i-state.page)>1){if(i===3||i===pages-2)html+='<span class="forum-pagination__ellipsis" aria-hidden="true">…</span>';continue}html+='<button type="button" data-page="'+i+'" aria-current="'+(i===state.page?'true':'false')+'">'+i+'</button>'}
     html+='<button type="button" data-page="'+(state.page+1)+'" '+(state.page===pages?"disabled":"")+'>→</button>';
     nav.innerHTML=html;
   };
