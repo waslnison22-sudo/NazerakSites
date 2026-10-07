@@ -11,7 +11,7 @@
   <meta name="robots" content="noindex,nofollow,noarchive">
   <link rel="icon" href="./favicon.svg?v=5" type="image/svg+xml">
   <link rel="stylesheet" href="./styles.css?v=37">
-  <link rel="stylesheet" href="./forum.css?v=17">
+  <link rel="stylesheet" href="./forum.css?v=18">
   <title>NaZerak — тема форума</title>
 </head>
 <body data-forum-topic>
@@ -44,6 +44,13 @@
           <div class="forum-avatar"><img data-topic-author-avatar alt="" hidden><span data-topic-author-initial>NZ</span></div>
           <div><span class="topic-author-label">АВТОР</span><strong data-topic-author>Игрок NaZerak</strong></div>
         </div>
+        <div class="topic-head__actions" data-topic-actions hidden>
+          <button type="button" data-topic-edit>Изменить</button>
+          <button type="button" data-topic-pin>Закрепить</button>
+          <button type="button" data-topic-lock>Закрыть</button>
+          <button type="button" data-topic-archive>Архивировать</button>
+          <button type="button" class="danger" data-topic-delete>Удалить</button>
+        </div>
       </article>
 
       <section class="topic-posts" data-topic-posts aria-live="polite"></section>
@@ -69,6 +76,29 @@
     </div>
   </main>
 
+
+  <dialog class="forum-modal" data-topic-edit-modal aria-labelledby="topic-edit-title">
+    <form class="forum-modal__dialog" method="dialog" data-topic-edit-form>
+      <button class="forum-modal__close" type="submit" value="cancel" aria-label="Закрыть">×</button>
+      <span class="section-kicker">EDIT TOPIC</span>
+      <h2 id="topic-edit-title">Изменить тему.</h2>
+      <p class="forum-modal__copy">Изменения доступны автору темы и модераторам форума.</p>
+      <div class="forum-form-field"><label for="topic-edit-title-input">Заголовок</label><input id="topic-edit-title-input" name="title" maxlength="120" minlength="3" required></div>
+      <div class="forum-form-field"><label for="topic-edit-body-input">Первое сообщение</label><textarea id="topic-edit-body-input" name="body" maxlength="12000" rows="9" required></textarea></div>
+      <div class="forum-modal__footer"><div class="forum-modal__buttons"><button class="button button--ghost" type="submit" value="cancel">Отмена</button><button class="button button--primary" type="button" data-topic-edit-submit>Сохранить</button></div></div>
+    </form>
+  </dialog>
+
+  <dialog class="forum-modal" data-post-edit-modal aria-labelledby="post-edit-title">
+    <form class="forum-modal__dialog" method="dialog" data-post-edit-form>
+      <button class="forum-modal__close" type="submit" value="cancel" aria-label="Закрыть">×</button>
+      <span class="section-kicker">EDIT POST</span>
+      <h2 id="post-edit-title">Изменить сообщение.</h2>
+      <div class="forum-form-field"><label for="post-edit-body-input">Сообщение</label><textarea id="post-edit-body-input" name="body" maxlength="12000" rows="9" required></textarea></div>
+      <div class="forum-modal__footer"><div class="forum-modal__buttons"><button class="button button--ghost" type="submit" value="cancel">Отмена</button><button class="button button--primary" type="button" data-post-edit-submit>Сохранить</button></div></div>
+    </form>
+  </dialog>
+
   <footer class="footer"><div class="container footer__inner"><div><a class="brand brand--footer" href="./"><span class="brand__mark" aria-hidden="true">NZ</span><span class="brand__name">NaZerak</span></a><p class="footer__copy">Тема форума NaZerak.</p></div><div class="footer__right"><span>© <span id="year"></span> NaZerak</span><a href="#top">Наверх ↑</a></div></div></footer>
 
   <noscript><div class="noscript-message">Для темы форума требуется включить JavaScript.</div></noscript>
@@ -76,7 +106,7 @@
   <script src="./supabase-loader.js?v=9" defer></script>
   <script src="./auth.js?v=35" defer></script>
   <script src="./forum-ui.js?v=3" defer></script>
-  <script src="./topic.js?v=4" defer></script>
+  <script src="./topic.js?v=5" defer></script>
   <script src="./script.js?v=22" defer></script>
 </body>
 </html>

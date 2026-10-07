@@ -608,7 +608,7 @@ await testStaticPage({
 });
 
 await testStaticPage({
-  path: "/forum-category.html?slug=pravila-i-dokumenty",
+  path: "/forum-category.html?slug=igrovye-voprosy",
   name: "forum category mobile",
   viewport: { width: 390, height: 844 },
   check: async (page) => {

@@ -10,7 +10,7 @@
   <meta name="robots" content="noindex,nofollow,noarchive">
   <link rel="icon" href="./favicon.svg?v=5" type="image/svg+xml">
   <link rel="stylesheet" href="./styles.css?v=37">
-  <link rel="stylesheet" href="./forum.css?v=17">
+  <link rel="stylesheet" href="./forum.css?v=18">
   <title>NaZerak — раздел форума</title>
 </head>
 <body data-forum-category-page>
@@ -49,10 +49,17 @@
           </div>
           <span class="forum-result-count" data-category-result-count>0 тем</span>
         </header>
+        <div class="forum-category-toolbar">
+          <form class="forum-search" data-category-search-form role="search">
+            <label class="sr-only" for="category-search">Поиск по разделу</label>
+            <div class="forum-search__field"><span class="forum-search__icon" aria-hidden="true">⌕</span><input id="category-search" type="search" placeholder="Найти тему в разделе…" autocomplete="off"><button class="forum-search__clear" data-category-search-clear type="button" aria-label="Очистить" hidden>×</button></div>
+          </form>
+        </div>
         <div class="forum-thread-table">
           <div class="forum-thread-table__header"><span>Тема</span><span>Ответы</span><span>Последнее сообщение</span></div>
           <div data-category-topic-list aria-live="polite"></div>
         </div>
+        <nav class="forum-pagination" data-category-pagination aria-label="Страницы тем" hidden></nav>
         <div class="forum-empty" data-category-empty hidden>
           <span class="forum-empty__mark" aria-hidden="true">NZ</span>
           <span class="section-kicker">NO THREADS</span>
@@ -82,7 +89,7 @@
   <script src="./supabase-loader.js?v=9" defer></script>
   <script src="./auth.js?v=35" defer></script>
   <script src="./forum-ui.js?v=3" defer></script>
-  <script src="./forum-category.js?v=5" defer></script>
+  <script src="./forum-category.js?v=6" defer></script>
   <script src="./script.js?v=22" defer></script>
 </body>
 </html>
