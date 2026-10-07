@@ -58,7 +58,8 @@ const requiredFiles = [
   "assets/images/README.md",
   ".htaccess",
   "scripts/qa-server.mjs",
-  "supabase/migrations/20261005130500_forum_public_members_directory.sql"
+  "supabase/migrations/20261005130500_forum_public_members_directory.sql",
+  "supabase/migrations/20261007205000_forum_moderation_rpc.sql"
 ];
 
 const bannedTokens = [
@@ -286,6 +287,7 @@ if (!read("topic.js").includes("forum_posts") || !read("topic.js").includes(".up
 if (!read("topic.js").includes("forum_topics") || !read("topic.js").includes(".delete(")) fail.push("topic delete flow is missing");
 if (!read("topic.js").includes("forum_posts") || !read("topic.js").includes(".delete(")) fail.push("post delete flow is missing");
 if (!read("forum-category.html").includes("data-category-search-form") || !read("forum-category.html").includes("data-category-pagination")) fail.push("category search/pagination controls are missing");
+if (!read("topic.js").includes('rpc("forum_moderate_topic"')) fail.push("secure topic moderation RPC is not wired");
 if (!/href="\/forum"(?![a-z])/i.test(forumPage)) fail.push("forum clean route is missing");
 if (!read(".htaccess").includes("RewriteRule ^forum/?$ forum.html [L]")) fail.push("clean /forum rewrite is missing");
 if (!read(".htaccess").includes("RewriteRule ^members/?$ forum-members.html [L]")) fail.push("clean /members rewrite is missing");
