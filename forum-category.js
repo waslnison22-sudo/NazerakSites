@@ -39,12 +39,14 @@
     if(!slug)throw new Error("Раздел не указан.");
     const req=[
       state.client.from("forum_node_directory").select("id,name,posting_mode,parent_name").eq("route_slug",slug).maybeSingle(),
+      state.client.from("forum_categories").select("id,name,posting_mode,node_type,parent_id,route_slug").eq("route_slug",slug).maybeSingle(),
       state.client.from("forum_topic_list").select("id,category_name,author_public_id,author_name,author_avatar_url,primary_role_slug,primary_role_name,primary_role_badge,title,body,is_pinned,is_locked,prefix,last_post_at,reply_count").eq("category_route_slug",slug).order("is_pinned",{ascending:false}).order("last_post_at",{ascending:false}).limit(500)
     ];
     if(state.user)req.push(state.client.from("forum_my_permissions").select("can_publish_official,can_moderate_forum").maybeSingle());
-    const [cat,topics,permissions]=await timeout(Promise.all(req),10000,"Загрузка раздела превысила 10 секунд. Попробуй обновить страницу.");
-    if(cat.error)throw new Error(cat.error.message);if(!cat.data)throw new Error("Раздел не найден.");if(topics.error)throw new Error(topics.error.message);
-    state.category=cat.data;state.topics=topics.data||[];state.permissions=permissions?.data||null;
+    const [cat,nodeMeta,topics,permissions]=await timeout(Promise.all(req),10000,"Загрузка раздела превысила 10 секунд. Попробуй обновить страницу.");
+    if(cat.error)throw new Error(cat.error.message);if(!cat.data)throw new Error("Раздел не найден.");if(nodeMeta.error)throw new Error(nodeMeta.error.message);if(!nodeMeta.data)throw new Error("Метаданные раздела не найдены.");if(topics.error)throw new Error(topics.error.message);
+    state.category={...cat.data,posting_mode:nodeMeta.data.posting_mode||cat.data.posting_mode,parent_id:nodeMeta.data.parent_id||cat.data.parent_id,node_type:nodeMeta.data.node_type||cat.data.node_type,route_slug:nodeMeta.data.route_slug||cat.data.route_slug};
+    state.topics=topics.data||[];state.permissions=permissions?.data||null;
     qs("[data-category-parent]").textContent=state.category.parent_name||"Форумы";qs("[data-category-name]").textContent=state.category.name;qs("[data-category-title]").innerHTML=esc(state.category.name)+"<span>.</span>";
     const canCreate=state.category.posting_mode==="open"||Boolean(state.permissions?.can_publish_official);document.querySelectorAll("[data-category-create]").forEach(b=>b.hidden=!canCreate);
     document.title="NaZerak — "+state.category.name;render();
