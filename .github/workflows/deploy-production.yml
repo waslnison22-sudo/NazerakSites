@@ -53,6 +53,10 @@ jobs:
           test -n "$DEPLOY_HOST" || { echo "DEPLOY_HOST is not configured"; exit 1; }
           test -n "$DEPLOY_USER" || { echo "DEPLOY_USER is not configured"; exit 1; }
           test -n "$DEPLOY_PASSWORD" || { echo "DEPLOY_PASSWORD is not configured"; exit 1; }
+          case "$DEPLOY_PATH" in
+            /www/nazerak.ru|/www/nazerak.ru/) ;;
+            *) echo "DEPLOY_PATH must point to /www/nazerak.ru"; exit 1 ;;
+          esac
           echo "Deploy target: $DEPLOY_PATH"
 
       - name: Prepare web root
@@ -62,6 +66,7 @@ jobs:
           mkdir -p .deploy
           tar --exclude='./.git' --exclude='./.github' --exclude='./.deploy' --exclude='./.gitignore' --exclude='./supabase' --exclude='./scripts' --exclude='./docs' --exclude='./README.md' --exclude='./AUTH_SETUP.md' --exclude='./DOMAIN_MIGRATION.md' --exclude='./.DS_Store' -cf - . | tar -xf - -C .deploy
           test -f .deploy/index.html
+          printf "%s\n" "${{ github.event.workflow_run.head_sha }}" > .deploy/__nazerak_deploy_sha.txt
           test -f .deploy/forum.html
           grep -q 'forum.css?v=18' .deploy/forum.html
 
