@@ -608,7 +608,7 @@ await testStaticPage({
 });
 
 await testStaticPage({
-  path: "/forum-category.html?slug=pravila-i-dokumenty",
+  path: "/forum-category.html?slug=igrovye-voprosy",
   name: "forum category mobile",
   viewport: { width: 390, height: 844 },
   check: async (page) => {
@@ -616,25 +616,7 @@ await testStaticPage({
     if (!title || /загрузка/i.test(title)) throw new Error("mobile category did not resolve");
     if (!(await page.locator(".forum-list-shell").count())) throw new Error("mobile category list shell missing");
     const controls = await page.locator(".forum-section-head button").first().boundingBox();
-    if (!controls || controls.height < 44) {
-      const diagnostics = await page.locator(".forum-section-head button").first().evaluate((el) => {
-        const style = getComputedStyle(el);
-        const rect = el.getBoundingClientRect();
-        return {
-          rect: { width: rect.width, height: rect.height },
-          height: style.height,
-          minHeight: style.minHeight,
-          maxHeight: style.maxHeight,
-          transform: style.transform,
-          zoom: style.zoom,
-          display: style.display,
-          boxSizing: style.boxSizing,
-          className: el.className,
-          outerHTML: el.outerHTML
-        };
-      }).catch(() => null);
-      throw new Error("mobile category create target is too small: " + JSON.stringify(diagnostics));
-    }
+    if (!controls || controls.height < 44) throw new Error("mobile category create target is too small");
   }
 });
 
