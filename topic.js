@@ -117,10 +117,11 @@
   };
 
   const toggleTopic=async(field,label)=>{
-    const next=!Boolean(state.topic[field]);
-    const patch={[field]:next,updated_at:new Date().toISOString()};
-    const r=await state.client.from("forum_topics").update(patch).eq("id",state.topic.id);
-    if(r.error){message("Не удалось изменить состояние темы. Проверь права.","error");return}
+    const actionMap={is_pinned:["pin","unpin"],is_locked:["lock","unlock"],is_archived:["archive","unarchive"]};
+    const pair=actionMap[field];if(!pair)return;
+    const action=state.topic[field]?pair[1]:pair[0];
+    const r=await state.client.rpc("forum_moderate_topic",{p_topic_id:state.topic.id,p_action:action});
+    if(r.error){message("Не удалось изменить состояние темы. Проверь права модератора и подключение.","error");return}
     message(label+" обновлено.","success");await loadTopic();
   };
 
