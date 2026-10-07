@@ -59,7 +59,7 @@ const requiredFiles = [
   ".htaccess",
   "scripts/qa-server.mjs",
   "supabase/migrations/20261005130500_forum_public_members_directory.sql",
-  "supabase/migrations/20261007205000_forum_moderation_rpc.sql"
+  "supabase/migrations/20261007205516_forum_moderation_rpc.sql"
 ];
 
 const bannedTokens = [
@@ -124,7 +124,7 @@ for (const [name, page] of [
 ]) {
   const assets = ["auth-config.js?v=8", "supabase-loader.js?v=9", "auth.js?v=35", "script.js?v=22", "styles.css?v=37"];
   if (name === "forum.html") { assets.push("forum.css?v=18", "forum-ui.js?v=3", "forum.js?v=7"); }
-  if (name === "forum-category.html") { assets.push("forum.css?v=18", "forum-ui.js?v=3", "forum-category.js?v=5"); }
+  if (name === "forum-category.html") { assets.push("forum.css?v=18", "forum-ui.js?v=3", "forum-category.js?v=6"); }
   if (name === "forum-members.html") { assets.push("forum.css?v=18", "forum-ui.js?v=3", "forum-members.js?v=2"); }
   if (name === "forum-search.html") { assets.push("forum.css?v=18", "forum-ui.js?v=3", "forum-search.js?v=3"); }
   if (name === "topic.html") { assets.push("forum.css?v=18", "forum-ui.js?v=3", "topic.js?v=5"); }
