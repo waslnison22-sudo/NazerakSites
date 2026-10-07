@@ -364,3 +364,6 @@ body[data-forum] [hidden],body[data-forum-category-page] [hidden],body[data-foru
 }
 
 .forum-category-toolbar{padding:12px 0 4px}.forum-category-toolbar .forum-search{max-width:560px}.forum-pagination{display:flex;align-items:center;justify-content:center;gap:6px;padding:18px 0}.forum-pagination button{min-width:40px;height:40px;padding:0 10px;border:1px solid var(--forum-line);border-radius:9px;background:rgba(255,255,255,.025);color:#9da4af;font:inherit;font-size:12px}.forum-pagination button:hover{background:rgba(255,255,255,.06);color:#fff}.forum-pagination button[aria-current=true]{background:var(--forum-red);border-color:var(--forum-red);color:#fff}.forum-pagination button:disabled{opacity:.35;cursor:not-allowed}@media(max-width:760px){.forum-category-toolbar .forum-search{max-width:none}.forum-category-toolbar{padding-top:8px}.forum-pagination{overflow:auto;justify-content:flex-start;padding-inline:2px}.forum-pagination button{flex:0 0 40px}}
+
+
+.forum-pagination__ellipsis{display:inline-flex;align-items:center;justify-content:center;min-width:28px;padding:0 4px;color:#646c78;}
