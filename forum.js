@@ -108,7 +108,8 @@
   };
 
   const init=async()=>{
-    state.client=await waitForClient();
+    if(window.NaZerakAuth?.ready)await window.NaZerakAuth.ready;
+    state.client=window.NaZerakAuth?.client||await waitForClient();
     if(!state.client){showMessage("Форум не смог подключиться к данным.","error");return;}
     state.user=window.NaZerakAuth?.user||null;
     if(state.user)await syncAuthor();
