@@ -317,7 +317,7 @@ if (read("forum-category.html").includes("data-category-policy")) fail.push("cat
 if (forumPage.includes("Официальные разделы публикует команда проекта")) fail.push("obsolete topic publication access copy remains");
 if (forumPage.includes("Мир администрации</h3>") || forumPage.includes("РП-мир</h3>")) fail.push("legacy two-world forum presentation remains");
 if (!forumPage.includes("data-forum-search-form") || !forumPage.includes("data-forum-search-clear")) fail.push("forum search controls are incomplete");
-if (!forumPage.includes("Правила форума") || !forumPage.includes("Последние обсуждения")) fail.push("forum reference action is missing");
+if (!forumPage.includes("Разделы") || !forumPage.includes("Последние темы")) fail.push("forum reference action is missing");
 if (![".forum-hero{", ".forum-index-grid{", ".forum-board-row{", ".topic-post{"].every((selector) => forumCss.includes(selector))) fail.push("forum stylesheet component contract is incomplete");
 if (!read("forum.js").includes('e.key!=="/"')) fail.push("forum slash-to-search keyboard shortcut is missing");
 for (const file of ["forum.js","forum-category.js","topic.js"]) if (!read(file).includes("Загрузка") || !read(file).includes("10000")) fail.push(file + " forum data timeout guard is missing");
