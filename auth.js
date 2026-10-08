@@ -677,6 +677,13 @@
       return;
     }
 
+    // A background storage read can briefly return null during refresh/navigation.
+    // Never downgrade a confirmed session here; SIGNED_OUT is the only explicit logout path.
+    if (!session && state.user) {
+      state.loading = false;
+      renderAuthLinks();
+      return;
+    }
     state.user = session?.user || null;
     state.loading = false;
     renderAuthLinks();
