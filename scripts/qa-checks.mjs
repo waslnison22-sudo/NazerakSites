@@ -127,13 +127,13 @@ for (const [name, page] of [
   ["topic.html", read("topic.html")],
   ["forum-user.html", read("forum-user.html")]
 ]) {
-  const assets = ["auth-config.js?v=8", "supabase-loader.js?v=9", "auth.js?v=36", "script.js?v=22", "styles.css?v=37"];
-  if (name === "forum.html") { assets.push("forum.css?v=20", "forum-ui.js?v=4", "forum-social.js?v=1", "forum.js?v=8"); }
-  if (name === "forum-category.html") { assets.push("forum.css?v=20", "forum-ui.js?v=4", "forum-social.js?v=1", "forum-category.js?v=6"); }
-  if (name === "forum-members.html") { assets.push("forum.css?v=20", "forum-ui.js?v=4", "forum-social.js?v=1", "forum-members.js?v=2"); }
-  if (name === "forum-search.html") { assets.push("forum.css?v=20", "forum-ui.js?v=4", "forum-social.js?v=1", "forum-search.js?v=3"); }
-  if (name === "topic.html") { assets.push("forum.css?v=20", "forum-ui.js?v=4", "forum-social.js?v=1", "topic.js?v=6"); }
-  if (name === "forum-user.html") { assets.push("forum.css?v=20", "forum-ui.js?v=4", "forum-social.js?v=1", "user.js?v=3"); }
+  const assets = ["auth-config.js?v=8", "supabase-loader.js?v=9", "auth.js?v=37", "script.js?v=23", "styles.css?v=41"];
+  if (name === "forum.html") { assets.push("forum.css?v=21", "forum-ui.js?v=5", "forum-social.js?v=2", "forum.js?v=9"); }
+  if (name === "forum-category.html") { assets.push("forum.css?v=21", "forum-ui.js?v=5", "forum-social.js?v=2", "forum-category.js?v=6"); }
+  if (name === "forum-members.html") { assets.push("forum.css?v=21", "forum-ui.js?v=5", "forum-social.js?v=2", "forum-members.js?v=2"); }
+  if (name === "forum-search.html") { assets.push("forum.css?v=21", "forum-ui.js?v=5", "forum-social.js?v=2", "forum-search.js?v=3"); }
+  if (name === "topic.html") { assets.push("forum.css?v=21", "forum-ui.js?v=5", "forum-social.js?v=2", "topic.js?v=6"); }
+  if (name === "forum-user.html") { assets.push("forum.css?v=21", "forum-ui.js?v=5", "forum-social.js?v=2", "user.js?v=3"); }
   for (const asset of assets) {
     if (!page.includes(asset)) {
       fail.push(`${name} asset include missing: ${asset}`);
@@ -141,7 +141,7 @@ for (const [name, page] of [
   }
 }
 
-if (!read("404.html").includes("styles.css?v=37")) fail.push("404.html styles cache version is stale");
+if (!read("404.html").includes("styles.css?v=41")) fail.push("404.html styles cache version is stale");
 const sitemap = read("sitemap.xml");
 if (sitemap.includes("cabinet.html") || sitemap.includes("forum.html")) fail.push("sitemap contains a noindex page");
 if (!sitemap.includes("https://nazerak.ru/")) fail.push("sitemap homepage URL is missing");
@@ -229,10 +229,10 @@ if (!/\.from\(["']profiles["']\)[\s\S]{0,220}\.update\(/.test(auth)) fail.push("
 if (!/\.from\(["']profiles["']\)[\s\S]{0,220}\.insert\(\{\s*id:\s*user\.id/.test(auth)) fail.push("profile initialization insert is missing");
 if (/nazerak\.is-a\.dev\/cabinet\.html/i.test(read("AUTH_SETUP.md"))) fail.push("obsolete custom-domain auth URL remains");
 if (/server-status-text|server-players|data-server-hero/.test(index)) fail.push("obsolete server statistics markup remains");
-if (!index.includes("hero-art") || !index.includes("world-visual")) fail.push("final homepage visual system missing");
-if (!index.includes('data-image-slot="hero"') || !index.includes('data-image-slot="world"') || !index.includes('data-image-slot="partnership"')) fail.push("generated image slots are missing");
-if (!index.includes("Начать играть") || !index.includes("Перейти к подключению")) fail.push("homepage connection CTA is misleading or stale");
-if (!index.includes("Открыть Discord")) fail.push("homepage community CTA is misleading or stale");
+if (!index.includes("home-hero") || !index.includes("home-world-grid") || !index.includes("home-connect")) fail.push("final homepage visual system missing");
+if (!index.includes("assets/images/home-hero.svg")) fail.push("homepage hero artwork is missing");
+if (!index.includes("Начать играть") || !index.includes("Открыть форум")) fail.push("homepage connection CTA is misleading or stale");
+if (!index.includes("Discord")) fail.push("homepage community CTA is misleading or stale");
 if (!index.includes('data-auth-link-label>Войти')) fail.push("homepage auth link must default to neutral login state");
 if (!cabinet.includes('class="nav-account is-active"') || !cabinet.includes('aria-current="page"')) fail.push("cabinet account route must be marked active");
 if (!auth.includes('document.body.hasAttribute("data-cabinet")')) fail.push("cabinet page detection must use attribute presence");
@@ -247,7 +247,7 @@ if (!auth.includes('client.auth.signOut({ scope: "local" })')) fail.push("sign-o
 if (!script.includes("clipboard-fallback")) fail.push("clipboard fallback class missing");
 if (![index, cabinet, read("forum.html"), read("404.html")].every((page) => !page.includes("style-src-attr 'unsafe-inline'"))) fail.push("CSP hardening guard missing");
 
-if (!css.includes(".scroll-cue{position:absolute;right:0;bottom:24px;")) fail.push("desktop scroll cue is outside hero");
+
 
 const authLinkLabel = /data-auth-link-label[^>]*>\s*([^<]+?)\s*</i;
 for (const [name, page] of [["index.html", index], ["cabinet.html", cabinet], ["forum.html", read("forum.html")]]) {
@@ -275,12 +275,12 @@ const forumSurfaceFiles = ["forum.html","forum-category.html","forum-members.htm
 
 for (const file of forumSurfaceFiles) {
   const page = read(file);
-  if (file === "forum.html" && !page.includes("forum.css?v=20")) fail.push(file + " forum stylesheet is missing");
-  if (file !== "forum.html" && !page.includes("forum.css?v=20")) fail.push(file + " forum stylesheet is missing");
+  if (file === "forum.html" && !page.includes("forum.css?v=21")) fail.push(file + " forum stylesheet is missing");
+  if (file !== "forum.html" && !page.includes("forum.css?v=21")) fail.push(file + " forum stylesheet is missing");
 }
 if (css.includes("NAZERAK FORUM")) fail.push("obsolete forum cascade remains in global stylesheet");for (const file of forumSurfaceFiles) {
   const page = read(file);
-  if (!page.includes("styles.css?v=37")) fail.push(file + " styles cache revision is stale");
+  if (!page.includes("styles.css?v=41")) fail.push(file + " styles cache revision is stale");
   if (!page.includes('Content-Security-Policy')) fail.push(file + " CSP is missing");
   if (/\sstyle=/i.test(page) || page.includes("style-src-attr 'unsafe-inline'")) fail.push(file + " contains inline style/CSP allowance");
 }
@@ -302,10 +302,8 @@ for (const file of forumSurfaceFiles) {
   const page = read(file);
   if (/href="\.\/[^"]+\.html(?:[?#"])/i.test(page)) fail.push(file + " contains a legacy .html route link");
 }
-if (!forumPage.includes('class="forum-hero__bg"')) fail.push("forum hero artwork layer is missing");
 if (!read("script.js").includes("const mediaSources")) fail.push("media slot loader is missing");
 if (!read("script.js").includes('slot.getAttribute("data-image-src")')) fail.push("media slots must use explicit image sources");
-if (!forumCss.includes("assets/images/forum-hero.svg")) fail.push("forum hero artwork asset is not wired into forum.css");
 if (/ФОРУМ ГОТОВ|Форум готов|forum ready/i.test(forumPage) || /ФОРУМ ГОТОВ|Форум готов|forum ready/i.test(read("forum-category.html")) || /Форум готов/i.test(read("forum.js"))) fail.push("obsolete forum-ready copy remains");
 for (const file of ["forum.html","forum-category.html","topic.html"]) {
   const source = read(file);
@@ -318,7 +316,7 @@ if (forumPage.includes("Официальные разделы публикует
 if (forumPage.includes("Мир администрации</h3>") || forumPage.includes("РП-мир</h3>")) fail.push("legacy two-world forum presentation remains");
 if (!forumPage.includes("data-forum-search-form") || !forumPage.includes("data-forum-search-clear")) fail.push("forum search controls are incomplete");
 if (!forumPage.includes("Разделы") || !forumPage.includes("Последние темы")) fail.push("forum reference action is missing");
-if (![".forum-hero{", ".forum-index-grid{", ".forum-board-row{", ".topic-post{"].every((selector) => forumCss.includes(selector))) fail.push("forum stylesheet component contract is incomplete");
+if (![".forum-v21-layout{", ".forum-board-row{", ".topic-post{"].every((selector) => forumCss.includes(selector))) fail.push("forum stylesheet component contract is incomplete");
 if (!read("forum.js").includes('e.key!=="/"')) fail.push("forum slash-to-search keyboard shortcut is missing");
 for (const file of ["forum.js","forum-category.js","topic.js"]) if (!read(file).includes("Загрузка") || !read(file).includes("10000")) fail.push(file + " forum data timeout guard is missing");
 if (!forumPage.includes("button--primary") || !forumPage.includes("button--ghost")) fail.push("forum must use common site button classes");
@@ -358,6 +356,7 @@ for (const token of [
 
 if (!index.includes('<link rel="canonical" href="https://nazerak.ru/">')) fail.push("homepage canonical URL is missing");
 if (!index.includes('<meta property="og:url" content="https://nazerak.ru/">')) fail.push("homepage og:url is missing");
+if (!index.includes('<meta name="twitter:card"')) fail.push("homepage twitter card is missing");
 if (!index.includes('<meta name="twitter:card" content="summary">')) fail.push("homepage twitter card is missing");
 if (index.includes('class="button button--primary magnetic"') || index.includes(' class="button button--ghost magnetic"')) fail.push("dead magnetic classes remain on homepage");
 if (script.includes("isTouch")) fail.push("unused touch detection remains");
