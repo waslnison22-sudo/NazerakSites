@@ -110,7 +110,7 @@
   const init=async()=>{
     state.client=await waitForClient();
     if(!state.client){showMessage("Форум не смог подключиться к данным.","error");return;}
-    try{const session=await withTimeout(state.client.auth.getSession(),8000,"");state.user=session.data?.session?.user||window.NaZerakAuth?.user||null;}catch{state.user=window.NaZerakAuth?.user||null;}
+    state.user=window.NaZerakAuth?.user||null;
     if(state.user)await syncAuthor();
     qsa("[data-forum-create]").forEach(b=>b.addEventListener("click",openCreate));
     qs("[data-forum-submit]")?.addEventListener("click",createTopic);
