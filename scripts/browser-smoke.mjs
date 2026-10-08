@@ -511,7 +511,7 @@ await testStaticPage({
     if (await page.locator("[data-forum-node-tree] .forum-board-row").count() < 1) {
       throw new Error("forum boards did not load");
     }
-    if (await page.locator(".forum-index-grid > section").count() !== 3) {
+    if (await page.locator(".forum-index-grid > section, .forum-index-grid > aside").count() !== 3) {
       throw new Error("forum index composition is incomplete");
     }
     if (await page.locator('[data-forum-create]').count() < 1) throw new Error("forum create control missing");
