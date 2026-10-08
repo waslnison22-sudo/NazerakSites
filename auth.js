@@ -862,7 +862,9 @@
           flowType: "pkce",
           persistSession: true,
           autoRefreshToken: true,
-          detectSessionInUrl: true
+          detectSessionInUrl: true,
+          storageKey: "nazerak-auth",
+          debug: false
         }
       });
     } catch (error) {
@@ -876,6 +878,8 @@
   };
 
   let initialized = false;
+  let readyResolve = null;
+  const ready = new Promise((resolve) => { readyResolve = resolve; });
 
   const init = async () => {
     if (initialized) return;
@@ -1005,13 +1009,16 @@
       }
     }
     if (!document.body.hasAttribute("data-cabinet")) {
+      // A transient storage miss must not clear a session already confirmed by an auth event.
       state.user = initialResult.session?.user || state.user || null;
       state.loading = false;
       renderAuthLinks();
     }
+    readyResolve?.();
   };
 
   window.NaZerakAuth = Object.freeze({
+    ready,
     get client() { return client; },
     get user() { return state.user; },
     get configured() { return configured && !!client; },
