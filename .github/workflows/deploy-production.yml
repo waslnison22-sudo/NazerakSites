@@ -68,33 +68,22 @@ jobs:
           test -f .deploy/index.html
           printf "%s\n" "${{ github.event.workflow_run.head_sha }}" > .deploy/__nazerak_deploy_sha.txt
           test -f .deploy/forum.html
-          grep -q 'forum.css?v=18' .deploy/forum.html
+          grep -q 'forum.css?v=20' .deploy/forum.html
 
-      - name: Deploy public files over SFTP
+      - name: Deploy public files atomically over SSH
         if: steps.gate.outputs.enabled == 'true'
-        uses: wlixcc/SFTP-Deploy-Action@v1.2.6
-        with:
-          username: ${{ secrets.DEPLOY_USER }}
-          server: ${{ secrets.DEPLOY_HOST }}
-          port: ${{ secrets.DEPLOY_PORT || '22' }}
-          password: ${{ secrets.DEPLOY_PASSWORD }}
-          local_path: './.deploy/*'
-          remote_path: /www/nazerak.ru
-          sftp_only: true
-          sftpArgs: '-o ConnectTimeout=10'
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+          DEPLOY_PASSWORD: ${{ secrets.DEPLOY_PASSWORD }}
+          DEPLOY_PORT: ${{ secrets.DEPLOY_PORT || '22' }}
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq sshpass
+          export SSHPASS="$DEPLOY_PASSWORD"
+          tar -C .deploy -czf - . | sshpass -e ssh -p "$DEPLOY_PORT" -o StrictHostKeyChecking=no -o ConnectTimeout=15 "$DEPLOY_USER@$DEPLOY_HOST" "tar -xzf - -C '$DEPLOY_PATH'"
+          echo "PASS: atomic web-root upload completed."
 
-      - name: Deploy Apache routing file
-        if: steps.gate.outputs.enabled == 'true'
-        uses: wlixcc/SFTP-Deploy-Action@v1.2.6
-        with:
-          username: ${{ secrets.DEPLOY_USER }}
-          server: ${{ secrets.DEPLOY_HOST }}
-          port: ${{ secrets.DEPLOY_PORT || '22' }}
-          password: ${{ secrets.DEPLOY_PASSWORD }}
-          local_path: './.deploy/.htaccess'
-          remote_path: /www/nazerak.ru/.htaccess
-          sftp_only: true
-          sftpArgs: '-o ConnectTimeout=10'
       - name: Remove obsolete public route directories
         if: steps.gate.outputs.enabled == 'true'
         env:
@@ -118,9 +107,9 @@ jobs:
           export SSHPASS="$DEPLOY_PASSWORD"
           sshpass -e ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 "$DEPLOY_USER@$DEPLOY_HOST" '
             test -f /www/nazerak.ru/forum.html &&
-            grep -q "forum.css?v=18" /www/nazerak.ru/forum.html &&
+            grep -q "forum.css?v=20" /www/nazerak.ru/forum.html &&
             test -f /www/nazerak.ru/forum.css &&
-            grep -q "NaZerak Forum v18" /www/nazerak.ru/forum.css &&
+            grep -q "NaZerak Forum v20" /www/nazerak.ru/forum.css &&
             test -f /www/nazerak.ru/.htaccess &&
             grep -q "RewriteRule ^forum/?$ forum.html" /www/nazerak.ru/.htaccess &&
             grep -q "RewriteRule ^forum/topic/([^/]+)/?$ topic.html?id=\\$1" /www/nazerak.ru/.htaccess
@@ -151,7 +140,7 @@ jobs:
           done
 
           curl -k -L -sS "$SITE_URL/forum?deploy-check=1" -o /tmp/nazerak-forum.html
-          grep -q 'forum.css?v=18' /tmp/nazerak-forum.html
+          grep -q 'forum.css?v=20' /tmp/nazerak-forum.html
           echo "PASS: production /forum serves the rebuilt forum HTML."
 
       - name: Verify production TLS certificate
