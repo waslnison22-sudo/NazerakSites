@@ -68,6 +68,7 @@ jobs:
           test -f .deploy/index.html
           printf "%s\n" "${{ github.event.workflow_run.head_sha }}" > .deploy/__nazerak_deploy_sha.txt
           test -f .deploy/forum.html
+          test -f .deploy/assets/images/home-hero.svg
           grep -q 'forum.css?v=21' .deploy/forum.html
 
       - name: Deploy public files atomically over SSH
@@ -142,6 +143,11 @@ jobs:
           curl -k -L -sS "$SITE_URL/forum?deploy-check=1" -o /tmp/nazerak-forum.html
           grep -q 'forum.css?v=21' /tmp/nazerak-forum.html
           echo "PASS: production /forum serves the rebuilt forum HTML."
+
+          curl -k -L -sS "$SITE_URL/" -o /tmp/nazerak-home.html
+          grep -q "Свой мир." /tmp/nazerak-home.html
+          grep -q "assets/images/home-hero.svg" /tmp/nazerak-home.html
+          echo "PASS: production homepage serves the rebuilt home v2."
 
       - name: Verify production TLS certificate
         if: steps.gate.outputs.enabled == 'true'
