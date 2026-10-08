@@ -68,7 +68,7 @@ jobs:
           test -f .deploy/index.html
           printf "%s\n" "${{ github.event.workflow_run.head_sha }}" > .deploy/__nazerak_deploy_sha.txt
           test -f .deploy/forum.html
-          grep -q 'forum.css?v=20' .deploy/forum.html
+          grep -q 'forum.css?v=21' .deploy/forum.html
 
       - name: Deploy public files atomically over SSH
         if: steps.gate.outputs.enabled == 'true'
@@ -107,9 +107,9 @@ jobs:
           export SSHPASS="$DEPLOY_PASSWORD"
           sshpass -e ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 "$DEPLOY_USER@$DEPLOY_HOST" '
             test -f "$HOME/www/nazerak.ru/forum.html" &&
-            grep -q "forum.css?v=20" "$HOME/www/nazerak.ru/forum.html" &&
+            grep -q "forum.css?v=21" "$HOME/www/nazerak.ru/forum.html" &&
             test -f "$HOME/www/nazerak.ru/forum.css" &&
-            grep -q "NaZerak Forum v20" "$HOME/www/nazerak.ru/forum.css" &&
+            grep -q "NaZerak Forum v21" "$HOME/www/nazerak.ru/forum.css" &&
             test -f "$HOME/www/nazerak.ru/.htaccess" &&
             grep -q "RewriteRule ^forum/?$ forum.html" "$HOME/www/nazerak.ru/.htaccess" &&
             grep -Fq "RewriteRule ^forum/topic/([^/]+)/?$ topic.html?id=\$1" "$HOME/www/nazerak.ru/.htaccess"
@@ -140,7 +140,7 @@ jobs:
           done
 
           curl -k -L -sS "$SITE_URL/forum?deploy-check=1" -o /tmp/nazerak-forum.html
-          grep -q 'forum.css?v=20' /tmp/nazerak-forum.html
+          grep -q 'forum.css?v=21' /tmp/nazerak-forum.html
           echo "PASS: production /forum serves the rebuilt forum HTML."
 
       - name: Verify production TLS certificate
