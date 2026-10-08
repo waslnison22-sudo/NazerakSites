@@ -863,7 +863,6 @@
           persistSession: true,
           autoRefreshToken: true,
           detectSessionInUrl: true,
-          storageKey: "nazerak-auth",
           debug: false
         }
       });
