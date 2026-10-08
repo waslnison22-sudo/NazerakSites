@@ -474,7 +474,7 @@ await testStaticPage({
   check: async (page) => {
     if (!(await page.locator("h1").textContent()).includes("Форум")) throw new Error("forum heading missing");
     const layout = await page.locator(".forum-index-grid").evaluate((node) => { const style = getComputedStyle(node), value = style.gridTemplateColumns, rect = node.getBoundingClientRect(); let depth = 0, columns = 0, inTrack = false; for (const char of value) { if (char === "(") depth++; else if (char === ")") depth--; if (char === " " && depth === 0) { if (inTrack) columns++; inTrack = false; } else inTrack = true; } if (inTrack) columns++; return { display: style.display, columns, width: rect.width, emptyActivity: node.classList.contains("is-empty-activity") }; });
-    if (layout.display !== "grid" || (!layout.emptyActivity && layout.columns < 2) || (layout.emptyActivity && layout.columns !== 1)) throw new Error("desktop forum composition invalid: " + JSON.stringify(layout));
+    if (layout.display !== "grid" || layout.columns < 2) throw new Error("desktop forum composition invalid: " + JSON.stringify(layout));
     if (layout.width < 1000) throw new Error("desktop forum canvas is unexpectedly narrow: " + JSON.stringify(layout));
     const hero = await page.locator(".forum-hero").evaluate((node) => {
       const style = getComputedStyle(node);
@@ -511,7 +511,7 @@ await testStaticPage({
     if (await page.locator("[data-forum-node-tree] .forum-board-row").count() < 1) {
       throw new Error("forum boards did not load");
     }
-    if (await page.locator(".forum-index-grid > section").count() !== 3) {
+    if (await page.locator(".forum-index-grid > section, .forum-index-grid > aside").count() !== 3) {
       throw new Error("forum index composition is incomplete");
     }
     if (await page.locator('[data-forum-create]').count() < 1) throw new Error("forum create control missing");

@@ -89,14 +89,14 @@
   const createTopic=async()=>{
     const form=qs("[data-forum-form]"),button=qs("[data-forum-submit]");
     if(!state.user||!state.client||!form||!button||button.disabled)return;
-    const data=new FormData(form),categoryId=Number(data.get("category_id")||0),title=String(data.get("title")||"").trim(),body=String(data.get("body")||"").trim();
+    const data=new FormData(form),categoryId=Number(data.get("category_id")||0),prefix=String(data.get("prefix")||"").trim(),title=String(data.get("title")||"").trim(),body=String(data.get("body")||"").trim();
     if(!categoryId||title.length<3||!body){showMessage("Заполни раздел, заголовок и сообщение.","error");return;}
     const node=state.nodes.find(n=>Number(n.id)===categoryId);
     if(!node||node.node_type!=="forum"){showMessage("Выбран недопустимый раздел.","error");return;}
     button.disabled=true;showMessage("");
     try {
       if(!(await syncAuthor())){showMessage("Не удалось сохранить форумный профиль. Проверь соединение и попробуй ещё раз.","error");return;}
-      const r=await state.client.from("forum_topics").insert({category_id:categoryId,author_id:state.user.id,title,body}).select("id").single();
+      const r=await state.client.from("forum_topics").insert({category_id:categoryId,author_id:state.user.id,title,body,prefix}).select("id").single();
       if(r.error||!r.data?.id){showMessage("Не удалось создать тему. Проверь соединение и попробуй ещё раз.","error");return;}
       qs("[data-forum-modal]")?.close();form.reset();window.location.href="/forum/topic/"+encodeURIComponent(r.data.id);
     } catch (error) {
@@ -108,9 +108,10 @@
   };
 
   const init=async()=>{
-    state.client=await waitForClient();
+    if(window.NaZerakAuth?.ready)await window.NaZerakAuth.ready;
+    state.client=window.NaZerakAuth?.client||await waitForClient();
     if(!state.client){showMessage("Форум не смог подключиться к данным.","error");return;}
-    try{const session=await withTimeout(state.client.auth.getSession(),8000,"");state.user=session.data?.session?.user||window.NaZerakAuth?.user||null;}catch{state.user=window.NaZerakAuth?.user||null;}
+    state.user=window.NaZerakAuth?.user||null;
     if(state.user)await syncAuthor();
     qsa("[data-forum-create]").forEach(b=>b.addEventListener("click",openCreate));
     qs("[data-forum-submit]")?.addEventListener("click",createTopic);

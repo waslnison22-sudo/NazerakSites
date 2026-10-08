@@ -10,7 +10,7 @@
   <meta name="robots" content="noindex,nofollow,noarchive">
   <link rel="icon" href="./favicon.svg?v=5" type="image/svg+xml">
   <link rel="stylesheet" href="./styles.css?v=37">
-  <link rel="stylesheet" href="./forum.css?v=18">
+  <link rel="stylesheet" href="./forum.css?v=20">
   <title>NaZerak — профиль пользователя</title>
 </head>
 <body data-forum-user-page>
@@ -21,7 +21,7 @@
     <nav class="nav" id="user-nav" aria-label="Навигация форума">
         <a class="nav-forum is-active" href="/forum">Форум</a>
         <a href="/members">Участники</a>
-        <a href="/search">Поиск</a>
+        <a href="/search">Поиск</a><span class="forum-nav-notifications" data-forum-notifications hidden></span>
         <a class="nav-account" data-auth-link href="/cabinet"><span class="nav-account__avatar"><img data-auth-link-avatar alt="" hidden><span data-auth-link-fallback>◉</span></span><span data-auth-link-label>Войти</span></a>
       </nav>
   </div></header>
@@ -62,8 +62,8 @@
   <noscript><div class="noscript-message">Для профиля требуется включить JavaScript.</div></noscript>
   <script src="./auth-config.js?v=8" defer></script>
   <script src="./supabase-loader.js?v=9" defer></script>
-  <script src="./auth.js?v=35" defer></script>
-  <script src="./forum-ui.js?v=3" defer></script>
+  <script src="./auth.js?v=36" defer></script>
+  <script src="./forum-ui.js?v=4" defer></script><script src="./forum-social.js?v=1" defer></script>
   <script src="./user.js?v=3" defer></script>
   <script src="./script.js?v=22" defer></script>
 </body>

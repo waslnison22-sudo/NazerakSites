@@ -10,7 +10,7 @@
   <meta name="robots" content="noindex,nofollow,noarchive">
   <link rel="icon" href="./favicon.svg?v=5" type="image/svg+xml">
   <link rel="stylesheet" href="./styles.css?v=37">
-  <link rel="stylesheet" href="./forum.css?v=18">
+  <link rel="stylesheet" href="./forum.css?v=20">
   <title>NaZerak — раздел форума</title>
 </head>
 <body data-forum-category-page>
@@ -22,7 +22,7 @@
       <nav class="nav" id="forum-nav" aria-label="Основная навигация">
         <a class="nav-forum is-active" href="/forum" aria-current="page">Форум</a>
         <a href="/members">Участники</a>
-        <a href="/search">Поиск</a>
+        <a href="/search">Поиск</a><span class="forum-nav-notifications" data-forum-notifications hidden></span>
         <a class="nav-account" data-auth-link href="/cabinet"><span class="nav-account__avatar"><img data-auth-link-avatar alt="" hidden><span data-auth-link-fallback>◉</span></span><span data-auth-link-label>Войти</span></a>
       </nav>
     </div>
@@ -76,7 +76,7 @@
       <span class="section-kicker">NEW TOPIC</span>
       <h2 id="category-modal-title">Создать тему.</h2>
       <p class="forum-modal__copy">Первое сообщение станет стартовым постом темы.</p>
-      <div class="forum-form-field"><label for="category-title-input">Заголовок</label><input id="category-title-input" name="title" maxlength="120" minlength="3" required placeholder="Заголовок темы"></div>
+      <div class="forum-form-field"><label for="category-prefix">Тип темы</label><select id="category-prefix" name="prefix"><option value="">Обсуждение</option><option value="Вопрос">Вопрос</option><option value="Предложение">Предложение</option><option value="Помощь">Помощь</option><option value="Важно">Важно</option></select></div><div class="forum-form-field"><label for="category-title-input">Заголовок</label><input id="category-title-input" name="title" maxlength="120" minlength="3" required placeholder="Заголовок темы"></div>
       <div class="forum-form-field"><label for="category-body-input">Сообщение</label><textarea id="category-body-input" name="body" maxlength="12000" rows="8" required placeholder="Текст сообщения…"></textarea><small>1–12 000 символов</small></div>
       <div class="forum-modal__footer"><div class="forum-modal__buttons"><button class="button button--ghost" type="submit" value="cancel">Отмена</button><button class="button button--primary" type="button" data-category-submit>Опубликовать <span aria-hidden="true">→</span></button></div>
       </div>
@@ -87,8 +87,8 @@
   <noscript><div class="noscript-message">Для форума требуется JavaScript.</div></noscript>
   <script src="./auth-config.js?v=8" defer></script>
   <script src="./supabase-loader.js?v=9" defer></script>
-  <script src="./auth.js?v=35" defer></script>
-  <script src="./forum-ui.js?v=3" defer></script>
+  <script src="./auth.js?v=36" defer></script>
+  <script src="./forum-ui.js?v=4" defer></script><script src="./forum-social.js?v=1" defer></script>
   <script src="./forum-category.js?v=6" defer></script>
   <script src="./script.js?v=22" defer></script>
 </body>

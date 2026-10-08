@@ -32,6 +32,7 @@ RewriteCond %{THE_REQUEST} \s/+cabinet\.html(?:[?\s]) [NC]
 RewriteRule ^cabinet\.html$ /cabinet [R=301,L]
 
 # Clean routes -> existing static HTML files.
+RewriteRule ^forum/reports/?$ forum-reports.html [L]
 RewriteRule ^forum/?$ forum.html [L]
 RewriteRule ^forum/topic/([^/]+)/?$ topic.html?id=$1 [L,QSA]
 RewriteRule ^forum/([^/]+)/?$ forum-category.html?slug=$1 [L,QSA]

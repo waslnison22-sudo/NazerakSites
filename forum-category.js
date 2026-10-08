@@ -54,14 +54,14 @@
   const syncAuthor=async()=>{const r=await state.client.from("forum_authors").upsert({id:state.user.id,display_name:userName(state.user),avatar_url:userAvatar(state.user)||null,updated_at:new Date().toISOString(),last_seen_at:new Date().toISOString()},{onConflict:"id"});return !r.error};
   const create=async()=>{
     if(!state.user){location.href="/cabinet";return}
-    const form=qs("[data-category-form]"),button=qs("[data-category-submit]"),data=new FormData(form),title=String(data.get("title")||"").trim(),body=String(data.get("body")||"").trim();
+    const form=qs("[data-category-form]"),button=qs("[data-category-submit]"),data=new FormData(form),prefix=String(data.get("prefix")||"").trim(),title=String(data.get("title")||"").trim(),body=String(data.get("body")||"").trim();
     if(title.length<3||!body){msg("Заполни заголовок и сообщение.","error");return}
     button.disabled=true;
-    try{if(!(await syncAuthor())){msg("Не удалось сохранить форумный профиль.","error");return}const r=await state.client.from("forum_topics").insert({category_id:state.category.id,author_id:state.user.id,title,body}).select("id").single();if(r.error||!r.data?.id){msg("Не удалось создать тему. Проверь права и соединение.","error");return}location.href="/forum/topic/"+encodeURIComponent(r.data.id)}catch(e){msg("Не удалось создать тему из-за ошибки соединения.","error")}finally{button.disabled=false}
+    try{if(!(await syncAuthor())){msg("Не удалось сохранить форумный профиль.","error");return}const r=await state.client.from("forum_topics").insert({category_id:state.category.id,author_id:state.user.id,title,body,prefix}).select("id").single();if(r.error||!r.data?.id){msg("Не удалось создать тему. Проверь права и соединение.","error");return}location.href="/forum/topic/"+encodeURIComponent(r.data.id)}catch(e){msg("Не удалось создать тему из-за ошибки соединения.","error")}finally{button.disabled=false}
   };
   const init=async()=>{
-    state.client=await wait();if(!state.client){msg("Не удалось подключиться к форуму.","error");return}
-    try{const s=await timeout(state.client.auth.getSession(),8000,"");state.user=s.data?.session?.user||null}catch{state.user=window.NaZerakAuth?.user||null}
+    if(window.NaZerakAuth?.ready)await window.NaZerakAuth.ready;state.client=window.NaZerakAuth?.client||await wait();if(!state.client){msg("Не удалось подключиться к форуму.","error");return}
+    state.user=window.NaZerakAuth?.user||null;
     document.querySelectorAll("[data-category-create]").forEach(b=>b.addEventListener("click",()=>state.user?qs("[data-category-modal]")?.showModal():location.href="/cabinet"));
     qs("[data-category-submit]")?.addEventListener("click",create);
     qs("[data-category-search-form]")?.addEventListener("submit",e=>{e.preventDefault();state.page=1;state.q=String(qs("#category-search")?.value||"");render()});

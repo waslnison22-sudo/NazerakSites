@@ -677,6 +677,13 @@
       return;
     }
 
+    // A background storage read can briefly return null during refresh/navigation.
+    // Never downgrade a confirmed session here; SIGNED_OUT is the only explicit logout path.
+    if (!session && state.user) {
+      state.loading = false;
+      renderAuthLinks();
+      return;
+    }
     state.user = session?.user || null;
     state.loading = false;
     renderAuthLinks();
@@ -862,7 +869,8 @@
           flowType: "pkce",
           persistSession: true,
           autoRefreshToken: true,
-          detectSessionInUrl: true
+          detectSessionInUrl: true,
+          debug: false
         }
       });
     } catch (error) {
@@ -876,6 +884,8 @@
   };
 
   let initialized = false;
+  let readyResolve = null;
+  const ready = new Promise((resolve) => { readyResolve = resolve; });
 
   const init = async () => {
     if (initialized) return;
@@ -931,6 +941,7 @@
           "Проверь соединение и нажми «Повторить вход через Discord»."
         );
       }
+      readyResolve?.();
       return;
     }
 
@@ -1005,13 +1016,16 @@
       }
     }
     if (!document.body.hasAttribute("data-cabinet")) {
+      // A transient storage miss must not clear a session already confirmed by an auth event.
       state.user = initialResult.session?.user || state.user || null;
       state.loading = false;
       renderAuthLinks();
     }
+    readyResolve?.();
   };
 
   window.NaZerakAuth = Object.freeze({
+    ready,
     get client() { return client; },
     get user() { return state.user; },
     get configured() { return configured && !!client; },
