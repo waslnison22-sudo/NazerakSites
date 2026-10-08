@@ -60,7 +60,7 @@
     try{if(!(await syncAuthor())){msg("Не удалось сохранить форумный профиль.","error");return}const r=await state.client.from("forum_topics").insert({category_id:state.category.id,author_id:state.user.id,title,body}).select("id").single();if(r.error||!r.data?.id){msg("Не удалось создать тему. Проверь права и соединение.","error");return}location.href="/forum/topic/"+encodeURIComponent(r.data.id)}catch(e){msg("Не удалось создать тему из-за ошибки соединения.","error")}finally{button.disabled=false}
   };
   const init=async()=>{
-    state.client=await wait();if(!state.client){msg("Не удалось подключиться к форуму.","error");return}
+    if(window.NaZerakAuth?.ready)await window.NaZerakAuth.ready;state.client=window.NaZerakAuth?.client||await wait();if(!state.client){msg("Не удалось подключиться к форуму.","error");return}
     state.user=window.NaZerakAuth?.user||null;
     document.querySelectorAll("[data-category-create]").forEach(b=>b.addEventListener("click",()=>state.user?qs("[data-category-modal]")?.showModal():location.href="/cabinet"));
     qs("[data-category-submit]")?.addEventListener("click",create);
