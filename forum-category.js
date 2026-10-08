@@ -61,7 +61,7 @@
   };
   const init=async()=>{
     state.client=await wait();if(!state.client){msg("Не удалось подключиться к форуму.","error");return}
-    try{const s=await timeout(state.client.auth.getSession(),8000,"");state.user=s.data?.session?.user||null}catch{state.user=window.NaZerakAuth?.user||null}
+    state.user=window.NaZerakAuth?.user||null;
     document.querySelectorAll("[data-category-create]").forEach(b=>b.addEventListener("click",()=>state.user?qs("[data-category-modal]")?.showModal():location.href="/cabinet"));
     qs("[data-category-submit]")?.addEventListener("click",create);
     qs("[data-category-search-form]")?.addEventListener("submit",e=>{e.preventDefault();state.page=1;state.q=String(qs("#category-search")?.value||"");render()});
