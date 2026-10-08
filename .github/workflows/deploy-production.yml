@@ -112,7 +112,7 @@ jobs:
             grep -q "NaZerak Forum v20" "$HOME/www/nazerak.ru/forum.css" &&
             test -f "$HOME/www/nazerak.ru/.htaccess" &&
             grep -q "RewriteRule ^forum/?$ forum.html" "$HOME/www/nazerak.ru/.htaccess" &&
-            grep -q "RewriteRule ^forum/topic/([^/]+)/?$ topic.html?id=\\$1" "$HOME/www/nazerak.ru/.htaccess"
+            grep -Fq "RewriteRule ^forum/topic/([^/]+)/?$ topic.html?id=\$1" "$HOME/www/nazerak.ru/.htaccess"
           '
           echo "PASS: REG.RU web root contains the rebuilt forum."
 
