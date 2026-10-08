@@ -81,7 +81,7 @@ jobs:
           sudo apt-get update -qq
           sudo apt-get install -y -qq sshpass
           export SSHPASS="$DEPLOY_PASSWORD"
-          tar -C .deploy -czf - . | sshpass -e ssh -p "$DEPLOY_PORT" -o StrictHostKeyChecking=no -o ConnectTimeout=15 "$DEPLOY_USER@$DEPLOY_HOST" "tar -xzf - -C '$DEPLOY_PATH'"
+          tar -C .deploy -czf - . | sshpass -e ssh -p "$DEPLOY_PORT" -o StrictHostKeyChecking=no -o ConnectTimeout=15 "$DEPLOY_USER@$DEPLOY_HOST" "tar -xzf - -C \"\$HOME/www/nazerak.ru\""
           echo "PASS: atomic web-root upload completed."
 
       - name: Remove obsolete public route directories
@@ -94,7 +94,7 @@ jobs:
           sudo apt-get update -qq
           sudo apt-get install -y -qq sshpass
           export SSHPASS="$DEPLOY_PASSWORD"
-          sshpass -e ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 "$DEPLOY_USER@$DEPLOY_HOST" "rm -rf -- /www/nazerak.ru/pravitelstvo /www/nazerak.ru/sud /www/nazerak.ru/prokuratura /www/nazerak.ru/fsb /www/nazerak.ru/voennaya-baza /www/nazerak.ru/organizatsii /www/nazerak.ru/o-proekte"
+          sshpass -e ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 "$DEPLOY_USER@$DEPLOY_HOST" "rm -rf -- \"$HOME/www/nazerak.ru/pravitelstvo\" \"$HOME/www/nazerak.ru/sud\" \"$HOME/www/nazerak.ru/prokuratura\" \"$HOME/www/nazerak.ru/fsb\" \"$HOME/www/nazerak.ru/voennaya-baza\" \"$HOME/www/nazerak.ru/organizatsii\" \"$HOME/www/nazerak.ru/o-proekte\""
 
       - name: Verify remote web root
         if: steps.gate.outputs.enabled == 'true'
@@ -106,13 +106,13 @@ jobs:
           sudo apt-get install -y -qq sshpass
           export SSHPASS="$DEPLOY_PASSWORD"
           sshpass -e ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 "$DEPLOY_USER@$DEPLOY_HOST" '
-            test -f /www/nazerak.ru/forum.html &&
-            grep -q "forum.css?v=20" /www/nazerak.ru/forum.html &&
-            test -f /www/nazerak.ru/forum.css &&
-            grep -q "NaZerak Forum v20" /www/nazerak.ru/forum.css &&
-            test -f /www/nazerak.ru/.htaccess &&
-            grep -q "RewriteRule ^forum/?$ forum.html" /www/nazerak.ru/.htaccess &&
-            grep -q "RewriteRule ^forum/topic/([^/]+)/?$ topic.html?id=\\$1" /www/nazerak.ru/.htaccess
+            test -f "$HOME/www/nazerak.ru/forum.html" &&
+            grep -q "forum.css?v=20" "$HOME/www/nazerak.ru/forum.html" &&
+            test -f "$HOME/www/nazerak.ru/forum.css" &&
+            grep -q "NaZerak Forum v20" "$HOME/www/nazerak.ru/forum.css" &&
+            test -f "$HOME/www/nazerak.ru/.htaccess" &&
+            grep -q "RewriteRule ^forum/?$ forum.html" "$HOME/www/nazerak.ru/.htaccess" &&
+            grep -q "RewriteRule ^forum/topic/([^/]+)/?$ topic.html?id=\\$1" "$HOME/www/nazerak.ru/.htaccess"
           '
           echo "PASS: REG.RU web root contains the rebuilt forum."
 
