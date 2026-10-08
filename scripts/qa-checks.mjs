@@ -56,6 +56,7 @@ const requiredFiles = [
   "scripts/runtime-smoke.mjs",
   "scripts/browser-smoke.mjs",
   "assets/images/README.md",
+  "assets/images/home-hero.svg",
   ".htaccess",
   "scripts/qa-server.mjs",
   "supabase/migrations/20261005130500_forum_public_members_directory.sql",
