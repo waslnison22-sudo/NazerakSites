@@ -30,9 +30,8 @@ jobs:
         id: gate
         run: |
           if [ "$DEPLOY_ENABLED" != "true" ]; then
-            echo "Production deploy is disabled. Set DEPLOY_ENABLED=true."
-            echo "enabled=false" >> "$GITHUB_OUTPUT"
-            exit 0
+            echo "::error::Production deploy is disabled or DEPLOY_ENABLED is not set to true. Refusing to report a skipped deployment as a successful release."
+            exit 1
           fi
           echo "enabled=true" >> "$GITHUB_OUTPUT"
 
