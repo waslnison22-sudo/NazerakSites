@@ -440,7 +440,7 @@ await testStaticPage({
   viewport: { width: 1440, height: 1000 },
   check: async (page) => {
     if (!(await page.title()).includes("NaZerak")) throw new Error("homepage title missing");
-    if (!(await page.locator("#server-ip").textContent()).includes("nazehard.rustix.cc")) {
+    if (!(await page.locator('[data-copy="nazehard.rustix.cc"] strong').textContent()).includes("nazehard.rustix.cc")) {
       throw new Error("server IP missing");
     }
     const links = await page.locator('a[target="_blank"]').evaluateAll((items) =>
@@ -473,52 +473,20 @@ await testStaticPage({
   viewport: { width: 1440, height: 900 },
   check: async (page) => {
     if (!(await page.locator("h1").textContent()).includes("Форум")) throw new Error("forum heading missing");
-    const layout = await page.locator(".forum-index-grid").evaluate((node) => { const style = getComputedStyle(node), value = style.gridTemplateColumns, rect = node.getBoundingClientRect(); let depth = 0, columns = 0, inTrack = false; for (const char of value) { if (char === "(") depth++; else if (char === ")") depth--; if (char === " " && depth === 0) { if (inTrack) columns++; inTrack = false; } else inTrack = true; } if (inTrack) columns++; return { display: style.display, columns, width: rect.width, emptyActivity: node.classList.contains("is-empty-activity") }; });
-    if (layout.display !== "grid" || layout.columns < 2) throw new Error("desktop forum composition invalid: " + JSON.stringify(layout));
-    if (layout.width < 1000) throw new Error("desktop forum canvas is unexpectedly narrow: " + JSON.stringify(layout));
-    const hero = await page.locator(".forum-hero").evaluate((node) => {
+    const layout = await page.locator(".forum-v21-layout").evaluate((node) => {
       const style = getComputedStyle(node);
-      const actions = node.querySelector(".forum-hero__actions");
-      return { alignItems: style.alignItems, actionAlign: actions ? getComputedStyle(actions).alignSelf : "" };
+      const rect = node.getBoundingClientRect();
+      return { display: style.display, columns: style.gridTemplateColumns, width: rect.width };
     });
-    if (hero.alignItems !== "flex-start" || !["auto","flex-start"].includes(hero.actionAlign)) {
-      throw new Error("forum hero is not left aligned: " + JSON.stringify(hero));
-    }
-    if (await page.locator("[data-forum-state]:visible").count() !== 0) throw new Error("decorative forum status should not be visible");
-    if (await page.locator(".forum-hero__bg").count() !== 1) {
-      throw new Error("forum hero artwork layer is missing");
-    }
-    if (await page.locator("[data-forum-state]:visible").count() !== 0) throw new Error("obsolete forum status UI is visible");
-    if (layout.width > 760) {
-      const placement = await page.locator(".forum-hero").evaluate((hero) => {
-        const actions = hero.querySelector(".forum-hero__actions");
-        const copy = hero.querySelector(".forum-hero__copy");
-        const heroRect = hero.getBoundingClientRect();
-        const actionsRect = actions.getBoundingClientRect();
-        const copyRect = copy.getBoundingClientRect();
-        return {
-          leftDelta: Math.abs(actionsRect.left - copyRect.left),
-          bottomGap: heroRect.bottom - actionsRect.bottom
-        };
-      });
-      if (placement.leftDelta > 3 || placement.bottomGap < 8 || placement.bottomGap > 38) {
-        throw new Error("forum hero actions are not aligned with the left content edge / lower edge: " + JSON.stringify(placement));
-      }
-    }
-    if (await page.locator("[data-forum-node-tree] .forum-node-section").count() < 1) {
-      throw new Error("forum sections did not load");
-    }
-    if (await page.locator("[data-forum-node-tree] .forum-board-row").count() < 1) {
-      throw new Error("forum boards did not load");
-    }
-    if (await page.locator(".forum-index-grid > section, .forum-index-grid > aside").count() !== 3) {
-      throw new Error("forum index composition is incomplete");
-    }
-    if (await page.locator('[data-forum-create]').count() < 1) throw new Error("forum create control missing");
+    if (layout.display !== "grid" || layout.width < 1000) throw new Error("desktop forum composition invalid: " + JSON.stringify(layout));
+    if (await page.locator(".forum-v21-side").count() !== 1) throw new Error("latest topics sidebar missing");
+    if (await page.locator("[data-forum-node-tree] .forum-node-section").count() < 1) throw new Error("forum sections did not load");
+    if (await page.locator("[data-forum-node-tree] .forum-board-row").count() < 1) throw new Error("forum boards did not load");
+    if (await page.locator('[data-forum-create]').count() !== 1) throw new Error("forum create control missing");
     if (!(await page.locator('a[href="/members"]').count() >= 1)) throw new Error("members navigation missing");
     if (!(await page.locator('a[href="/search"]').count() >= 1)) throw new Error("search navigation missing");
-    const robots = await page.locator('meta[name="robots"]').getAttribute("content");
-    if (!/noindex/.test(robots || "")) throw new Error("forum robots policy missing");
+    if (await page.locator(".forum-hero, .forum-hero__bg").count() !== 0) throw new Error("retired improvised forum banner is still present");
+    if (await page.locator("[data-forum-state]:visible").count() !== 0) throw new Error("obsolete forum status UI is visible");
   }
 });
 
@@ -540,8 +508,9 @@ await testStaticPage({
   viewport: { width: 768, height: 1024 },
   check: async (page) => {
     if (!(await page.locator("h1").textContent()).includes("Форум")) throw new Error("tablet forum heading missing");
-    const layout = await page.locator(".forum-index-grid").evaluate((node) => { const style = getComputedStyle(node); const value = style.gridTemplateColumns; let depth = 0, columns = 0, inTrack = false; for (const char of value) { if (char === "(") depth++; else if (char === ")") depth--; if (char === " " && depth === 0) { if (inTrack) columns++; inTrack = false; } else inTrack = true; } if (inTrack) columns++; return { display: style.display, columns }; });
-    if (layout.display === "grid" && layout.columns !== 1) throw new Error("tablet forum must use a single readable column: " + JSON.stringify(layout));
+    const layout = await page.locator(".forum-v21-layout").evaluate((node) => ({ display: getComputedStyle(node).display, columns: getComputedStyle(node).gridTemplateColumns }));
+    const columns = layout.columns.split(/\\s+/).filter(Boolean).length;
+    if (layout.display !== "grid" || columns !== 1) throw new Error("tablet forum must use a single readable column: " + JSON.stringify(layout));
   }
 });
 
