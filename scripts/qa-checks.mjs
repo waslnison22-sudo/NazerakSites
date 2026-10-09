@@ -327,7 +327,7 @@ if (!read("forum-user.html").includes("data-user-profile")) fail.push("full foru
 if (!read("forum-ui.js").includes("data-forum-user")) fail.push("forum hover profile interaction missing");
 if (read("forum.html").match(/data-forum-state|forum-state|форум готов|Форум готов/i)) fail.push("obsolete forum ready status must not return");
 if (read("forum-category.html").match(/доступ.*публикац|публикац.*доступ|кто.*может.*публика/i)) fail.push("forum publication-access helper copy must not return");
-if (!read("forum.html").includes('class="forum-hero__bg"')) fail.push("forum hero artwork layer missing");
+if (!read("forum.html").includes('class="forum-page forum-v21"') || !read("forum.html").includes('class="forum-v21-layout"')) fail.push("forum v21 layout markup is missing");
 
 if (!read("user.js").includes('from("forum_author_directory")')) fail.push("forum user directory query missing");
 for (const file of ["forum.js","forum-category.js","topic.js"]) {
