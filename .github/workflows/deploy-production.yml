@@ -109,7 +109,9 @@ jobs:
             test -f "$HOME/www/nazerak.ru/forum.html" &&
             grep -q "forum.css?v=21" "$HOME/www/nazerak.ru/forum.html" &&
             test -f "$HOME/www/nazerak.ru/forum.css" &&
-            grep -q "NaZerak Forum v21" "$HOME/www/nazerak.ru/forum.css" &&
+            grep -Fq ".forum-v21-layout{" "$HOME/www/nazerak.ru/forum.css" &&
+            grep -q "styles.css?v=42" "$HOME/www/nazerak.ru/index.html" &&
+            grep -q "styles.css?v=42" "$HOME/www/nazerak.ru/forum.html" &&
             test -f "$HOME/www/nazerak.ru/.htaccess" &&
             grep -q "RewriteRule ^forum/?$ forum.html" "$HOME/www/nazerak.ru/.htaccess" &&
             grep -Fq "RewriteRule ^forum/topic/([^/]+)/?$ topic.html?id=\$1" "$HOME/www/nazerak.ru/.htaccess"
