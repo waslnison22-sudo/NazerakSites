@@ -126,15 +126,17 @@ for (const [name, page] of [
   ["forum-members.html", read("forum-members.html")],
   ["forum-search.html", read("forum-search.html")],
   ["topic.html", read("topic.html")],
-  ["forum-user.html", read("forum-user.html")]
+  ["forum-user.html", read("forum-user.html")],
+  ["forum-reports.html", read("forum-reports.html")]
 ]) {
-  const assets = ["auth-config.js?v=8", "supabase-loader.js?v=9", "auth.js?v=37", "script.js?v=23", "styles.css?v=41"];
+  const assets = ["auth-config.js?v=8", "supabase-loader.js?v=9", "auth.js?v=37", "script.js?v=23", "styles.css?v=42"];
   if (name === "forum.html") { assets.push("forum.css?v=21", "forum-ui.js?v=5", "forum-social.js?v=2", "forum.js?v=9"); }
   if (name === "forum-category.html") { assets.push("forum.css?v=21", "forum-ui.js?v=5", "forum-social.js?v=2", "forum-category.js?v=6"); }
   if (name === "forum-members.html") { assets.push("forum.css?v=21", "forum-ui.js?v=5", "forum-social.js?v=2", "forum-members.js?v=2"); }
   if (name === "forum-search.html") { assets.push("forum.css?v=21", "forum-ui.js?v=5", "forum-social.js?v=2", "forum-search.js?v=3"); }
   if (name === "topic.html") { assets.push("forum.css?v=21", "forum-ui.js?v=5", "forum-social.js?v=2", "topic.js?v=6"); }
   if (name === "forum-user.html") { assets.push("forum.css?v=21", "forum-ui.js?v=5", "forum-social.js?v=2", "user.js?v=3"); }
+  if (name === "forum-reports.html") { assets.push("forum.css?v=21", "forum-ui.js?v=5", "forum-social.js?v=2", "forum-reports.js?v=1"); }
   for (const asset of assets) {
     if (!page.includes(asset)) {
       fail.push(`${name} asset include missing: ${asset}`);
@@ -142,7 +144,7 @@ for (const [name, page] of [
   }
 }
 
-if (!read("404.html").includes("styles.css?v=41")) fail.push("404.html styles cache version is stale");
+if (!read("404.html").includes("styles.css?v=42")) fail.push("404.html styles cache version is stale");
 const sitemap = read("sitemap.xml");
 if (sitemap.includes("cabinet.html") || sitemap.includes("forum.html")) fail.push("sitemap contains a noindex page");
 if (!sitemap.includes("https://nazerak.ru/")) fail.push("sitemap homepage URL is missing");
@@ -281,7 +283,7 @@ for (const file of forumSurfaceFiles) {
 }
 if (css.includes("NAZERAK FORUM")) fail.push("obsolete forum cascade remains in global stylesheet");for (const file of forumSurfaceFiles) {
   const page = read(file);
-  if (!page.includes("styles.css?v=41")) fail.push(file + " styles cache revision is stale");
+  if (!page.includes("styles.css?v=42")) fail.push(file + " styles cache revision is stale");
   if (!page.includes('Content-Security-Policy')) fail.push(file + " CSP is missing");
   if (/\sstyle=/i.test(page) || page.includes("style-src-attr 'unsafe-inline'")) fail.push(file + " contains inline style/CSP allowance");
 }
