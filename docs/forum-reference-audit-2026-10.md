@@ -333,6 +333,9 @@ Reject a release if any screenshot shows:
 - XenForo forum/thread types: https://docs.xenforo.com/manual/forums/forum-thread-types
 - XenForo permissions manual: https://docs.xenforo.com/manual/access-privileges/permissions
 - XenForo users manual: https://docs.xenforo.com/manual/users
+- W3C WCAG 2.2, target size minimum (AA): https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum
+- MDN, reduced-motion accessibility: https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Media_queries/Using_for_accessibility
+- MDN, CSS Grid sizing with minmax(): https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/minmax
 
 ## Audit limitations
 The text-based reader cannot execute the JavaScript-driven forum UIs as a real signed-in browser. GTA5RP's root was denied (403), Black Russia and Majestic returned a JavaScript requirement, and Matreshka timed out on direct open; their publicly indexed pages were still useful for taxonomy/status research. This research does not claim to have tested login-only flows, submit forms, live responsive behavior, or all routes. Those require browser-based implementation QA during the next phase.
