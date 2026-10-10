@@ -252,6 +252,36 @@ Therefore:
 - Clean up stale cache-version strings in a controlled, tested update; do not bump versions on only some pages.
 - Keep production disabled until the entire forum flow, screenshots, static checks and security regression checks pass.
 
+## Existing implementation and data capabilities (repository inspection)
+
+The live codebase is not a blank slate. The schema and migrations already contain or define:
+
+- A forum tree with categories/forums, parent/child ordering, routes/slugs and posting modes.
+- Public-safe topic and author projections/counters used by the index and category lists.
+- Topic states/metadata: pinned, locked, archived, prefix, views and solution state.
+- Replies/posts with per-topic ordering and author identity.
+- Forum roles and role assignments, with permission checks that must remain authoritative.
+- Social capabilities: post reactions, topic bookmarks, topic watchers, reports and notifications.
+- Report workflow values in the current migration: `open`, `reviewing`, `resolved`, `dismissed`.
+- A permission-checked moderation RPC for topic actions. Moderation must continue to use this server/database path rather than client-side role checks.
+- Existing route templates/scripts for index, category, thread, search, members, public profile and reports/moderation; shared auth/session scripts and clean URL routing.
+- A browser smoke workflow and screenshot artifacts, along with static and Supabase-runtime checks.
+
+### UI-to-data mapping
+
+| UI element | Source of truth | Design rule |
+|---|---|---|
+| Section/category hierarchy | Forum node/category directory | Show only configured accessible nodes; never infer or fabricate nodes. |
+| Thread title and snippet | Topic rows / safe public view | Escape output, truncate previews gracefully, link to canonical clean URL. |
+| Pinned/locked/archived/solution marker | Topic fields / supported state | Show only a state that exists; label it with text, not color alone. |
+| Replies and last activity | Posts and cached public counts/timestamps | Use database-derived values; avoid hand-written counters. |
+| Identity and role badge | Authenticated identity + trusted role projection | A display name or role from local storage is never authority. |
+| Reactions/bookmarks/following | Existing social tables and policies | Controls must reflect persisted state and backend-confirmed mutations. |
+| Moderation/report workflow | Current RPC + report table/policies | Never show a moderation control to unauthorized users; backend still rejects unauthorized calls. |
+| Forum alerts/notifications | Notifications table and policies | Distinguish unread/read; avoid placeholder counts if not loaded. |
+
+The redesign should begin by mapping these existing sources into reusable page components. Before adding a database migration, verify that the requested state/function is not already supported by the schema, migration history or RPCs.
+
 ## Design and QA acceptance gates
 
 ### Layout/visual
