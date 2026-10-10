@@ -4,7 +4,7 @@
 
 Replace the current forum presentation through a deliberate, evidence-based redesign. This is a product and implementation contract, not a promise that the forum is already rebuilt or deployed.
 
-Reference projects to study for interaction and information architecture: Majestic RP, GTA5RP, RMRP, Matreshka RP, Black Russia, Region RP and similar roleplay communities. Do not copy logos, artwork, proprietary copy, or distinctive brand styling.
+Reference projects studied for information architecture and workflow patterns: Majestic RP, GTA5RP, RMRP, Matreshka RP, Black Russia, Region RP, GTA Role Play and Radmir. The dated observations, source links, confidence levels and audit limitations are recorded in [the forum reference audit](forum-reference-audit-2026-10.md). Do not copy logos, artwork, proprietary copy, or distinctive brand styling.
 
 ## Product principles
 
@@ -135,6 +135,15 @@ Check alignment, type scale, spacing, wrapping, modal bounds, focus, overflow, s
 
 ### Release
 Do not deploy to production until static, functional, security and responsive gates pass. Verify the actual production domain and clean routes after deployment; report any route not externally verified as unverified.
+
+## Research-backed design decisions
+
+- Use the reference audit as a pattern library, not as a requirement to imitate any one competitor.
+- Model formal processes (reports, appeals, applications and reviewable RP records) with explicit states only when the current data model supports them. Where the schema does not yet support a state, design it as a future capability rather than drawing a fake badge.
+- Keep the initial NaZerak tree deliberately shallower than large multi-server RP networks. Expand government/organization branches only where users need them; do not create filler sections or seed threads.
+- The forum index is content-first: primary section tree on the left, low-noise recent activity on a right rail at wide widths, then a single-column order on mobile. The recent activity rail moves below the section tree at tablet/mobile widths.
+- Replace accumulated/overridden forum styles with one organized design system and shared page primitives. Do not solve alignment problems by appending yet another broad CSS override.
+- Start implementation as a coherent vertical slice (index, category, thread) with one shared header, row pattern, status vocabulary and spacing grid; only then propagate the verified primitives to search, directory, profile and moderation screens.
 
 ## Delivery sequence
 
