@@ -21,7 +21,7 @@ body[data-forum] .forum-index-head__actions{display:flex;align-items:center;gap:
 body[data-forum] .forum-index-head__actions .button{min-height:46px;padding:12px 18px;font-size:14px}
 body[data-forum] .forum-v21-search{display:flex;align-items:center;gap:18px;margin:0 0 30px}
 body[data-forum] .forum-v21-search .forum-search{max-width:760px}
-body[data-forum] .forum-v21-search .forum-search__field input{min-height:52px;border-radius:10px;background:#0e1015;border-color:var(--f-line);font-size:15px}
+body[data-forum] .forum-v21-search .forum-search__field input{min-height:52px;border-radius:10px;background:#0e1015;border-color:var(--f-line);font-size:16px}
 body[data-forum] .forum-v21-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(290px,340px);gap:36px;align-items:start}
 body[data-forum] .forum-boards,body[data-forum] .forum-v21-side{min-width:0}
 body[data-forum] .forum-v21-section-head,body[data-forum] .forum-v21-panel>header{
