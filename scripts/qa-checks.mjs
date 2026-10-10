@@ -2,6 +2,8 @@ import fs from "node:fs";
 import path from "node:path";
 import process from "node:process";
 
+// CI regression probe for the cabinet auth lifecycle.
+
 const root = process.cwd();
 
 const requiredFiles = [
