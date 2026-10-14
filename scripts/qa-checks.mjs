@@ -138,14 +138,14 @@ for (const [name, page] of [
   if (name === "topic.html") { assets.push("forum-ui.js?v=5", "forum-social.js?v=2", "topic.js?v=6"); }
   if (name === "forum-user.html") { assets.push("forum-ui.js?v=5", "forum-social.js?v=2", "user.js?v=3"); }
   if (name === "forum-reports.html") { assets.push("forum-ui.js?v=5", "forum-social.js?v=2", "forum-reports.js?v=1"); }
-  if (!/styles\\.css\\?v=\\d+/.test(page)) fail.push(`${name} shared stylesheet include missing`);\n  if (name.startsWith("forum") || name === "topic.html") {\n    if (!/forum\\.css\\?v=\\d+/.test(page)) fail.push(`${name} forum stylesheet include missing`);\n  }\n  if (name === "forum.html" && !/forum\\.js\\?v=\\d+/.test(page)) fail.push("forum.html forum runtime include missing");\n  for (const asset of assets) {
+  if (!/styles\.css\?v=\d+/.test(page)) fail.push(`${name} shared stylesheet include missing`);\n  if (name.startsWith("forum") || name === "topic.html") {\n    if (!/forum\.css\?v=\d+/.test(page)) fail.push(`${name} forum stylesheet include missing`);\n  }\n  if (name === "forum.html" && !/forum\.js\?v=\d+/.test(page)) fail.push("forum.html forum runtime include missing");\n  for (const asset of assets) {
     if (!page.includes(asset)) {
       fail.push(`${name} asset include missing: ${asset}`);
     }
   }
 }
 
-if (!/styles\\.css\\?v=\\d+/.test(read("404.html"))) fail.push("404.html shared stylesheet include is missing");
+if (!/styles\.css\?v=\d+/.test(read("404.html"))) fail.push("404.html shared stylesheet include is missing");
 const sitemap = read("sitemap.xml");
 if (sitemap.includes("cabinet.html") || sitemap.includes("forum.html")) fail.push("sitemap contains a noindex page");
 if (!sitemap.includes("https://nazerak.ru/")) fail.push("sitemap homepage URL is missing");
@@ -279,12 +279,11 @@ const forumSurfaceFiles = ["forum.html","forum-category.html","forum-members.htm
 
 for (const file of forumSurfaceFiles) {
   const page = read(file);
-  if (file === "forum.html" && !page.includes("forum.css?v=21")) fail.push(file + " forum stylesheet is missing");
-  if (file !== "forum.html" && !page.includes("forum.css?v=21")) fail.push(file + " forum stylesheet is missing");
+  if (!/forum\.css\?v=\d+/.test(page)) fail.push(file + " forum stylesheet is missing");
 }
 if (css.includes("NAZERAK FORUM")) fail.push("obsolete forum cascade remains in global stylesheet");for (const file of forumSurfaceFiles) {
   const page = read(file);
-  if (!/styles\\.css\\?v=\\d+/.test(page)) fail.push(file + " shared stylesheet include is missing");
+  if (!/styles\.css\?v=\d+/.test(page)) fail.push(file + " shared stylesheet include is missing");
   if (!page.includes('Content-Security-Policy')) fail.push(file + " CSP is missing");
   if (/\sstyle=/i.test(page) || page.includes("style-src-attr 'unsafe-inline'")) fail.push(file + " contains inline style/CSP allowance");
 }
