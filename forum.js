@@ -16,6 +16,14 @@
   const syncAuthor=async()=>{if(!state.client||!state.user)return false;const r=await state.client.from("forum_authors").upsert({id:state.user.id,display_name:userName(state.user),avatar_url:userAvatar(state.user)||null,updated_at:new Date().toISOString(),last_seen_at:new Date().toISOString()},{onConflict:"id"});if(r.error){console.warn("[NaZerak Forum] author sync:",r.error.message);return false;}return true;};
 
   const topicsFor=(id)=>state.topics.filter(t=>Number(t.category_id)===Number(id));
+  const nodeIconId=(node)=>{
+    const key=String((node?.name||"")+" "+(node?.slug||"")).toLowerCase();
+    if(/правил|документ|закон|информац|официал/.test(key))return "book";
+    if(/государ|организац|суд|прокуратур|правительств|власт/.test(key))return "government";
+    if(/сообществ|участник|люд|общени|поддержк|заявк/.test(key))return "community";
+    if(/мир|город|игр|строитель|выживан/.test(key))return "grass-block";
+    return "map";
+  };
   const renderNodeTree=()=>{
     const root=qs("[data-forum-node-tree]");if(!root)return;
     const parents=state.nodes.filter(n=>n.node_type==="category").sort((a,b)=>Number(a.sort_order)-Number(b.sort_order)||Number(a.id)-Number(b.id));
@@ -29,7 +37,7 @@
         const latestHtml=latest
           ? '<a class="forum-board-row__last" href="/forum/topic/'+encodeURIComponent(latest.id)+'"><strong>'+escapeHtml(latest.title)+'</strong><span>'+escapeHtml(latest.author_name||"Игрок NaZerak")+' · '+relative(latest.last_post_at)+'</span></a>'
           : '<span class="forum-board-row__last forum-board-row__last--empty">Пока нет тем</span>';
-        return '<article class="forum-board-row"><a class="forum-board-row__forum" href="/forum/'+encodeURIComponent(node.route_slug||node.slug)+'"><span class="forum-category-card__icon">'+escapeHtml(node.icon||"•")+'</span><span><strong>'+escapeHtml(node.name)+'</strong></span></a><span class="forum-board-row__stat">'+topics.length+'</span><span class="forum-board-row__stat">'+posts+'</span>'+latestHtml+'</article>';
+        return '<article class="forum-board-row"><a class="forum-board-row__forum" href="/forum/'+encodeURIComponent(node.route_slug||node.slug)+'"><span class="forum-category-card__icon"><svg class="forum-pixel-icon" aria-hidden="true"><use href="/assets/icons/minecraft-ui.svg#'+nodeIconId(node)+'"></use></svg></span><span><strong>'+escapeHtml(node.name)+'</strong></span></a><span class="forum-board-row__stat">'+topics.length+'</span><span class="forum-board-row__stat">'+posts+'</span>'+latestHtml+'</article>';
       }).join("");
       return '<section class="forum-node-section"><header class="forum-node-section__head"><div><span class="section-kicker">SECTION</span><h3>'+escapeHtml(parent.name)+'<span>.</span></h3></div><span class="forum-node-section__count">'+children.length+' '+(children.length===1?"форум":children.length<5?"форума":"форумов")+'</span></header><div class="forum-board__columns"><span>Форум</span><span>Темы</span><span>Сообщения</span><span>Последнее сообщение</span></div><div class="forum-node-section__rows">'+rows+'</div></section>';
     }).join("");
