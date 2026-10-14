@@ -57,6 +57,7 @@ const requiredFiles = [
   "scripts/browser-smoke.mjs",
   "assets/images/README.md",
   "assets/images/home-hero.svg",
+  "assets/icons/minecraft-ui.svg",
   ".htaccess",
   "scripts/qa-server.mjs",
   "supabase/migrations/20261005130500_forum_public_members_directory.sql",
@@ -129,22 +130,22 @@ for (const [name, page] of [
   ["forum-user.html", read("forum-user.html")],
   ["forum-reports.html", read("forum-reports.html")]
 ]) {
-  const assets = ["auth-config.js?v=8", "supabase-loader.js?v=9", "auth.js?v=37", "script.js?v=23", "styles.css?v=42"];
-  if (name === "forum.html") { assets.push("forum.css?v=21", "forum-ui.js?v=5", "forum-social.js?v=2", "forum.js?v=9"); }
-  if (name === "forum-category.html") { assets.push("forum.css?v=21", "forum-ui.js?v=5", "forum-social.js?v=2", "forum-category.js?v=6"); }
-  if (name === "forum-members.html") { assets.push("forum.css?v=21", "forum-ui.js?v=5", "forum-social.js?v=2", "forum-members.js?v=2"); }
-  if (name === "forum-search.html") { assets.push("forum.css?v=21", "forum-ui.js?v=5", "forum-social.js?v=2", "forum-search.js?v=3"); }
-  if (name === "topic.html") { assets.push("forum.css?v=21", "forum-ui.js?v=5", "forum-social.js?v=2", "topic.js?v=6"); }
-  if (name === "forum-user.html") { assets.push("forum.css?v=21", "forum-ui.js?v=5", "forum-social.js?v=2", "user.js?v=3"); }
-  if (name === "forum-reports.html") { assets.push("forum.css?v=21", "forum-ui.js?v=5", "forum-social.js?v=2", "forum-reports.js?v=1"); }
-  for (const asset of assets) {
+  const assets = ["auth-config.js?v=8", "supabase-loader.js?v=9", "auth.js?v=37", "script.js?v=23"];
+  if (name === "forum.html") { assets.push("forum-ui.js?v=5", "forum-social.js?v=2"); }
+  if (name === "forum-category.html") { assets.push("forum-ui.js?v=5", "forum-social.js?v=2", "forum-category.js?v=6"); }
+  if (name === "forum-members.html") { assets.push("forum-ui.js?v=5", "forum-social.js?v=2", "forum-members.js?v=2"); }
+  if (name === "forum-search.html") { assets.push("forum-ui.js?v=5", "forum-social.js?v=2", "forum-search.js?v=3"); }
+  if (name === "topic.html") { assets.push("forum-ui.js?v=5", "forum-social.js?v=2", "topic.js?v=6"); }
+  if (name === "forum-user.html") { assets.push("forum-ui.js?v=5", "forum-social.js?v=2", "user.js?v=3"); }
+  if (name === "forum-reports.html") { assets.push("forum-ui.js?v=5", "forum-social.js?v=2", "forum-reports.js?v=1"); }
+  if (!/styles\\.css\\?v=\\d+/.test(page)) fail.push(`${name} shared stylesheet include missing`);\n  if (name.startsWith("forum") || name === "topic.html") {\n    if (!/forum\\.css\\?v=\\d+/.test(page)) fail.push(`${name} forum stylesheet include missing`);\n  }\n  if (name === "forum.html" && !/forum\\.js\\?v=\\d+/.test(page)) fail.push("forum.html forum runtime include missing");\n  for (const asset of assets) {
     if (!page.includes(asset)) {
       fail.push(`${name} asset include missing: ${asset}`);
     }
   }
 }
 
-if (!read("404.html").includes("styles.css?v=42")) fail.push("404.html styles cache version is stale");
+if (!/styles\\.css\\?v=\\d+/.test(read("404.html"))) fail.push("404.html shared stylesheet include is missing");
 const sitemap = read("sitemap.xml");
 if (sitemap.includes("cabinet.html") || sitemap.includes("forum.html")) fail.push("sitemap contains a noindex page");
 if (!sitemap.includes("https://nazerak.ru/")) fail.push("sitemap homepage URL is missing");
@@ -233,7 +234,7 @@ if (!/\.from\(["']profiles["']\)[\s\S]{0,220}\.insert\(\{\s*id:\s*user\.id/.test
 if (/nazerak\.is-a\.dev\/cabinet\.html/i.test(read("AUTH_SETUP.md"))) fail.push("obsolete custom-domain auth URL remains");
 if (/server-status-text|server-players|data-server-hero/.test(index)) fail.push("obsolete server statistics markup remains");
 if (!index.includes("home-hero") || !index.includes("home-world-grid") || !index.includes("home-connect")) fail.push("final homepage visual system missing");
-if (!index.includes("assets/images/home-hero.svg")) fail.push("homepage hero artwork is missing");
+if (!index.includes("static.planetminecraft.com/files/resource_media/screenshot/16238170_lrg.png")) fail.push("homepage real Minecraft background is missing");\nif (!read("assets/icons/minecraft-ui.svg").includes("id=\\"grass-block\\"")) fail.push("local pixel icon set is missing");\nif (!index.includes("minecraft-ui.svg#grass-block")) fail.push("homepage Minecraft-style icons are not wired");
 if (!index.includes("Начать играть") || !index.includes("Открыть форум")) fail.push("homepage connection CTA is misleading or stale");
 if (!index.includes("Discord")) fail.push("homepage community CTA is misleading or stale");
 if (!index.includes('data-auth-link-label>Войти')) fail.push("homepage auth link must default to neutral login state");
@@ -283,7 +284,7 @@ for (const file of forumSurfaceFiles) {
 }
 if (css.includes("NAZERAK FORUM")) fail.push("obsolete forum cascade remains in global stylesheet");for (const file of forumSurfaceFiles) {
   const page = read(file);
-  if (!page.includes("styles.css?v=42")) fail.push(file + " styles cache revision is stale");
+  if (!/styles\\.css\\?v=\\d+/.test(page)) fail.push(file + " shared stylesheet include is missing");
   if (!page.includes('Content-Security-Policy')) fail.push(file + " CSP is missing");
   if (/\sstyle=/i.test(page) || page.includes("style-src-attr 'unsafe-inline'")) fail.push(file + " contains inline style/CSP allowance");
 }
@@ -360,7 +361,7 @@ for (const token of [
 if (!index.includes('<link rel="canonical" href="https://nazerak.ru/">')) fail.push("homepage canonical URL is missing");
 if (!index.includes('<meta property="og:url" content="https://nazerak.ru/">')) fail.push("homepage og:url is missing");
 if (!index.includes('<meta name="twitter:card"')) fail.push("homepage twitter card is missing");
-if (!index.includes('<meta name="twitter:card" content="summary">')) fail.push("homepage twitter card is missing");
+if (!index.includes('<meta name="twitter:card" content="summary_large_image">')) fail.push("homepage Twitter large-image card is missing");
 if (index.includes('class="button button--primary magnetic"') || index.includes(' class="button button--ghost magnetic"')) fail.push("dead magnetic classes remain on homepage");
 if (script.includes("isTouch")) fail.push("unused touch detection remains");
 if (auth.includes("authDebug")) fail.push("temporary auth diagnostics remain");
