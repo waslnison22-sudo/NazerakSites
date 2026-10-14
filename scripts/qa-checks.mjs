@@ -138,7 +138,12 @@ for (const [name, page] of [
   if (name === "topic.html") { assets.push("forum-ui.js?v=5", "forum-social.js?v=2", "topic.js?v=6"); }
   if (name === "forum-user.html") { assets.push("forum-ui.js?v=5", "forum-social.js?v=2", "user.js?v=3"); }
   if (name === "forum-reports.html") { assets.push("forum-ui.js?v=5", "forum-social.js?v=2", "forum-reports.js?v=1"); }
-  if (!/styles\.css\?v=\d+/.test(page)) fail.push(`${name} shared stylesheet include missing`);\n  if (name.startsWith("forum") || name === "topic.html") {\n    if (!/forum\.css\?v=\d+/.test(page)) fail.push(`${name} forum stylesheet include missing`);\n  }\n  if (name === "forum.html" && !/forum\.js\?v=\d+/.test(page)) fail.push("forum.html forum runtime include missing");\n  for (const asset of assets) {
+  if (!/styles\.css\?v=\d+/.test(page)) fail.push(`${name} shared stylesheet include missing`);
+  if (name.startsWith("forum") || name === "topic.html") {
+    if (!/forum\.css\?v=\d+/.test(page)) fail.push(`${name} forum stylesheet include missing`);
+  }
+  if (name === "forum.html" && !/forum\.js\?v=\d+/.test(page)) fail.push("forum.html forum runtime include missing");
+  for (const asset of assets) {
     if (!page.includes(asset)) {
       fail.push(`${name} asset include missing: ${asset}`);
     }
@@ -234,7 +239,9 @@ if (!/\.from\(["']profiles["']\)[\s\S]{0,220}\.insert\(\{\s*id:\s*user\.id/.test
 if (/nazerak\.is-a\.dev\/cabinet\.html/i.test(read("AUTH_SETUP.md"))) fail.push("obsolete custom-domain auth URL remains");
 if (/server-status-text|server-players|data-server-hero/.test(index)) fail.push("obsolete server statistics markup remains");
 if (!index.includes("home-hero") || !index.includes("home-world-grid") || !index.includes("home-connect")) fail.push("final homepage visual system missing");
-if (!index.includes("static.planetminecraft.com/files/resource_media/screenshot/16238170_lrg.png")) fail.push("homepage real Minecraft background is missing");\nif (!read("assets/icons/minecraft-ui.svg").includes("id=\\"grass-block\\"")) fail.push("local pixel icon set is missing");\nif (!index.includes("minecraft-ui.svg#grass-block")) fail.push("homepage Minecraft-style icons are not wired");
+if (!index.includes("static.planetminecraft.com/files/resource_media/screenshot/16238170_lrg.png")) fail.push("homepage real Minecraft background is missing");
+if (!read("assets/icons/minecraft-ui.svg").includes('id="grass-block"')) fail.push("local pixel icon set is missing");
+if (!index.includes("minecraft-ui.svg#grass-block")) fail.push("homepage Minecraft-style icons are not wired");
 if (!index.includes("Начать играть") || !index.includes("Открыть форум")) fail.push("homepage connection CTA is misleading or stale");
 if (!index.includes("Discord")) fail.push("homepage community CTA is misleading or stale");
 if (!index.includes('data-auth-link-label>Войти')) fail.push("homepage auth link must default to neutral login state");
