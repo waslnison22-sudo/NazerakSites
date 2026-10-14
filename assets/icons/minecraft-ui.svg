@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+  <title>NaZerak pixel icon set</title>
+  <desc>Original pixel-inspired interface icons made for the NaZerak community website.</desc>
+  <symbol id="grass-block" viewBox="0 0 24 24">
+    <path fill="currentColor" d="M3 6h6V3h6v3h6v6h-3v3h-3v3H9v-3H6v-3H3z" opacity=".92"/>
+    <path fill="#8ebd79" d="M3 6h6V3h6v3h6v5H3z"/>
+    <path fill="#5b914f" d="M3 11h18v3H3zM6 14h12v3H6zM9 17h6v3H9z"/>
+    <path fill="#b9d89b" d="M6 6h3v2H6zM12 5h3v2h-3zM17 8h2v2h-2z"/>
+    <path fill="#6c5840" d="M3 14h3v3H3zM6 17h3v3H6zM9 20h6v1H9zM18 14h3v3h-3zM15 17h3v3h-3z"/>
+  </symbol>
+  <symbol id="diamond-sword" viewBox="0 0 24 24">
+    <path fill="#b8f3f0" d="M14 2h5v3h-2v3h-3v3h-3V8h3V5zM11 11h3v3h-3z"/>
+    <path fill="#55c8c4" d="M14 2h2v6h-3V5h1zM11 8h3v3h-3z"/>
+    <path fill="#d8e0e9" d="M9 11h3v3H9zM6 14h3v3H6zM3 17h3v3H3z"/>
+    <path fill="#8e9aa9" d="M9 14h3v3H9zM6 17h3v3H6z"/>
+    <path fill="#a7b2c0" d="M2 19h5v3H2zM5 16h3v3H5z"/>
+  </symbol>
+  <symbol id="government" viewBox="0 0 24 24">
+    <path fill="currentColor" d="M2 8 12 2l10 6v2H2zM4 12h3v7H4zM10.5 12h3v7h-3zM17 12h3v7h-3zM2 20h20v2H2z"/>
+    <path fill="#d9dbe2" d="M12 4 5 8h14z" opacity=".75"/>
+    <path fill="#8e929c" d="M3 10h18v2H3z"/>
+  </symbol>
+  <symbol id="community" viewBox="0 0 24 24">
+    <path fill="#b9d89b" d="M8 3h4v2h2v4h-2v2H8v-2H6V5h2zM16 6h3v2h2v4h-2v2h-3v-2h-2V8h2z"/>
+    <path fill="currentColor" d="M4 13h8v2h2v6H2v-6h2zM15 15h5v2h2v4h-7z"/>
+  </symbol>
+  <symbol id="book" viewBox="0 0 24 24">
+    <path fill="currentColor" d="M3 4h7q2 0 2 2v15q-1-2-3-2H3zM21 4h-7q-2 0-2 2v15q1-2 3-2h6z"/>
+    <path fill="#d9dbe2" d="M5 7h4v1H5zM5 10h4v1H5zM15 7h4v1h-4zM15 10h4v1h-4z" opacity=".75"/>
+  </symbol>
+  <symbol id="server" viewBox="0 0 24 24">
+    <path fill="currentColor" d="M3 3h18v7H3zM3 13h18v8H3z"/>
+    <path fill="#8ebd79" d="M6 5h3v3H6zM6 15h3v3H6z"/>
+    <path fill="#d9dbe2" d="M12 6h6v1h-6zM12 16h6v1h-6z" opacity=".85"/>
+  </symbol>
+  <symbol id="map" viewBox="0 0 24 24">
+    <path fill="currentColor" d="M2 5 8 3l8 2 6-2v16l-6 2-8-2-6 2z"/>
+    <path fill="#8ebd79" d="M4 7 7 6v11l-3 1z"/>
+    <path fill="#d9dbe2" d="M10 7 14 8v10l-4-1z" opacity=".8"/>
+    <path fill="#8ebd79" d="M17 7 20 6v11l-3 1z"/>
+  </symbol>
+</svg>
