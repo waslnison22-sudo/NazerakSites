@@ -130,7 +130,7 @@ for (const [name, page] of [
   ["forum-user.html", read("forum-user.html")],
   ["forum-reports.html", read("forum-reports.html")]
 ]) {
-  const assets = ["auth-config.js?v=8", "supabase-loader.js?v=9", "auth.js?v=37", "script.js?v=23"];
+  const assets = ["auth-config.js?v=8", "supabase-loader.js?v=9", "auth.js?v=37", "script.js?v=24"];
   if (name === "forum.html") { assets.push("forum-ui.js?v=5", "forum-social.js?v=2"); }
   if (name === "forum-category.html") { assets.push("forum-ui.js?v=5", "forum-social.js?v=2", "forum-category.js?v=6"); }
   if (name === "forum-members.html") { assets.push("forum-ui.js?v=5", "forum-social.js?v=2", "forum-members.js?v=2"); }
