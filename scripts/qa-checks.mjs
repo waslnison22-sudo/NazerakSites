@@ -312,8 +312,6 @@ for (const file of forumSurfaceFiles) {
   const page = read(file);
   if (/href="\.\/[^"]+\.html(?:[?#"])/i.test(page)) fail.push(file + " contains a legacy .html route link");
 }
-if (!read("script.js").includes("const mediaSources")) fail.push("media slot loader is missing");
-if (!read("script.js").includes('slot.getAttribute("data-image-src")')) fail.push("media slots must use explicit image sources");
 if (/ФОРУМ ГОТОВ|Форум готов|forum ready/i.test(forumPage) || /ФОРУМ ГОТОВ|Форум готов|forum ready/i.test(read("forum-category.html")) || /Форум готов/i.test(read("forum.js"))) fail.push("obsolete forum-ready copy remains");
 for (const file of ["forum.html","forum-category.html","topic.html"]) {
   const source = read(file);
@@ -369,6 +367,7 @@ if (!index.includes('<meta property="og:url" content="https://nazerak.ru/">')) f
 if (!index.includes('<meta name="twitter:card"')) fail.push("homepage twitter card is missing");
 if (!index.includes('<meta name="twitter:card" content="summary_large_image">')) fail.push("homepage Twitter large-image card is missing");
 if (index.includes('class="button button--primary magnetic"') || index.includes(' class="button button--ghost magnetic"')) fail.push("dead magnetic classes remain on homepage");
+if (/data-image-slot|mediaSources/.test(read("script.js"))) fail.push("dead media-slot loader remains");
 if (script.includes("isTouch")) fail.push("unused touch detection remains");
 if (auth.includes("authDebug")) fail.push("temporary auth diagnostics remain");
 if (auth.includes("document.body.dataset.cabinet")) fail.push("boolean cabinet attribute is read through dataset");
