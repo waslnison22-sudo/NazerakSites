@@ -14,7 +14,7 @@
 .home-v2 .button--ghost{border:1px solid rgba(255,255,255,.23);background:rgba(10,11,14,.2);color:#fff}
 .home-v2 .button--ghost:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.45)}
 .home-hero{min-height:min(900px,100svh);min-height: min(900px, 100vh);align-items:center;border-bottom:1px solid var(--home-line);background:#08090c}
-.home-hero__art{background-color:#0a0b0e;background-image:url('https://static.planetminecraft.com/files/resource_media/screenshot/16238170_lrg.png');background-position:center 48%;background-size:cover;transform:scale(1.005);filter:saturate(.78) contrast(1.05);animation:home-hero-reveal .9s ease-out both}
+.home-hero__art{background-color:#0a0b0e;background-image:url('https://static.planetminecraft.com/files/resource_media/screenshot/16238170_lrg.png'),url('./assets/images/home-hero.svg');background-position:center 48%;background-size:cover;transform:scale(1.005);filter:saturate(.78) contrast(1.05);animation:home-hero-reveal .9s ease-out both}
 .home-hero__veil{background:linear-gradient(90deg,rgba(5,6,9,.94) 0%,rgba(5,6,9,.78) 30%,rgba(5,6,9,.28) 65%,rgba(5,6,9,.1) 100%),linear-gradient(0deg,#07080b 0%,rgba(7,8,11,.1) 32%,rgba(7,8,11,.15) 78%,rgba(7,8,11,.46) 100%)}
 .home-hero__inner{width:100%;padding:150px 0 76px}
 .home-hero__copy{max-width:790px}
