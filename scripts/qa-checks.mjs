@@ -233,7 +233,7 @@ if (!auth.includes("const schedulePageAuthStateSync")) fail.push("background aut
 if (!auth.includes('event.key === null || event.key.startsWith("sb-")')) fail.push("auth storage event filter is missing");
 if (!auth.includes('label.textContent = state.user ? "Кабинет" : "Войти";')) fail.push("global auth link label state is missing");
 if (/https:\/\/minecraftstatus\.com/i.test(read("404.html"))) fail.push("obsolete status host remains in 404 CSP");
-if (/\.live-panel|\.section--live|#server-status-text|\.world-map\\b|\.hero-server-mark\\b/.test(css)) fail.push("obsolete live/dashboard CSS remains");
+if (/\.live-panel|\.section--live|#server-status-text|\.world-map\\b|\.hero-server-mark\\b/.test(css)) fail.push("obsolete live/dashboard CSS remains");\nif (/\\.hero-art\\b|\\.world-visual\\b|\\.partner-panel__visual\\b|\\.media-slot\\b|\\.feature-card\\b|\\.connect-card\\b/.test(css)) fail.push("unused legacy homepage CSS remains");
 if (!/\.from\(["']profiles["']\)[\s\S]{0,220}\.update\(/.test(auth)) fail.push("profile save must use least-privilege update flow");
 if (!/\.from\(["']profiles["']\)[\s\S]{0,220}\.insert\(\{\s*id:\s*user\.id/.test(auth)) fail.push("profile initialization insert is missing");
 if (/nazerak\.is-a\.dev\/cabinet\.html/i.test(read("AUTH_SETUP.md"))) fail.push("obsolete custom-domain auth URL remains");
