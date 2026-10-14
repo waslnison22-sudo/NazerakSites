@@ -137,33 +137,6 @@
     });
   });
 
-  // Artwork is opt-in: only an explicitly supplied data-image-src may load.
-  const mediaSources = Object.freeze({});
-
-  const hydrateMediaSlots = () => {
-    document.querySelectorAll("[data-image-slot]").forEach((slot) => {
-      if (!(slot instanceof HTMLElement) || !slot.classList.contains("media-slot")) return;
-      if (slot.querySelector(".media-slot__image")) return;
-      const source = slot.getAttribute("data-image-src") || mediaSources[slot.getAttribute("data-image-slot")];
-      if (!source) return;
-
-      const image = new Image();
-      image.className = "media-slot__image";
-      image.alt = slot.getAttribute("aria-label") || "";
-      image.decoding = "async";
-      image.loading = slot.getAttribute("data-image-slot") === "forum-hero" ? "eager" : "lazy";
-      if (slot.getAttribute("data-image-slot") === "forum-hero") image.fetchPriority = "high";
-      image.onload = () => {
-        slot.appendChild(image);
-        slot.classList.add("has-image");
-      };
-      image.onerror = () => {};
-      image.src = source;
-    });
-  };
-
-  hydrateMediaSlots();
-
   document.querySelectorAll("img").forEach((img) => {
     img.addEventListener("error", () => {
       img.classList.add("is-missing");
