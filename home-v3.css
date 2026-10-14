@@ -166,3 +166,14 @@
  .home-hero__copy>*,.home-eyebrow i,.home-v2 .brand__mark{animation:none!important;transition:none!important}
  .home-v2 .button::after{display:none}
 }
+
+
+/* NaZerak pixel icon language — original SVGs, local and cacheable. */
+.home-pixel-icon{width:28px;height:28px;flex:0 0 auto;color:#c9cbd2;image-rendering:pixelated;filter:drop-shadow(0 5px 12px rgba(0,0,0,.2))}
+.home-pixel-icon--server{width:19px;height:19px;color:#cbd0d8;filter:none}
+.home-feature__number{position:relative;gap:12px}
+.home-feature__number span{margin-right:auto}
+.home-feature__number .home-pixel-icon{margin-left:auto;opacity:.94;transition:transform .28s cubic-bezier(.2,.75,.25,1),filter .28s ease}
+.home-feature:hover .home-pixel-icon{transform:translateY(-3px) scale(1.06);filter:drop-shadow(0 8px 14px rgba(185,216,155,.14))}
+.home-connect__label{gap:10px}
+.home-connect__label i{display:none}
