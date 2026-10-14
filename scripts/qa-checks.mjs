@@ -234,7 +234,6 @@ if (!auth.includes('event.key === null || event.key.startsWith("sb-")')) fail.pu
 if (!auth.includes('label.textContent = state.user ? "Кабинет" : "Войти";')) fail.push("global auth link label state is missing");
 if (/\.live-panel|\.section--live|#server-status-text|\.world-map\b|\.hero-server-mark\b/.test(css)) fail.push("obsolete live/dashboard CSS remains");
 if (/\.hero-art\b|\.world-visual\b|\.partner-panel__visual\b|\.media-slot\b|\.feature-card\b|\.connect-card\b/.test(css)) fail.push("unused legacy homepage CSS remains");
-if (/\.live-panel|\.section--live|#server-status-text|\.world-map\\b|\.hero-server-mark\\b/.test(css)) fail.push("obsolete live/dashboard CSS remains");\nif (/\\.hero-art\\b|\\.world-visual\\b|\\.partner-panel__visual\\b|\\.media-slot\\b|\\.feature-card\\b|\\.connect-card\\b/.test(css)) fail.push("unused legacy homepage CSS remains");
 if (!/\.from\(["']profiles["']\)[\s\S]{0,220}\.update\(/.test(auth)) fail.push("profile save must use least-privilege update flow");
 if (!/\.from\(["']profiles["']\)[\s\S]{0,220}\.insert\(\{\s*id:\s*user\.id/.test(auth)) fail.push("profile initialization insert is missing");
 if (/nazerak\.is-a\.dev\/cabinet\.html/i.test(read("AUTH_SETUP.md"))) fail.push("obsolete custom-domain auth URL remains");
