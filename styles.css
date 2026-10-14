@@ -192,3 +192,18 @@ body{background:radial-gradient(900px 620px at 82% 0%,rgba(255,255,255,.025),tra
 .button:active{transform:translateY(0) scale(.985)}
 .cabinet-panel{backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
 @media(prefers-reduced-motion:reduce){:root{scroll-behavior:auto}*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+
+
+/* Restored shared mobile navigation after pruning the retired landing layout. */
+@media(max-width:760px){
+  .container{width:min(calc(100% - 32px),var(--container))}
+  .topbar__inner{min-height:64px}
+  .nav-toggle{display:block}
+  .nav{position:absolute;top:calc(100% + 7px);left:16px;right:16px;display:grid;gap:3px;padding:8px;border:1px solid rgba(255,255,255,.12);border-radius:14px;background:rgba(10,12,16,.96);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);box-shadow:0 24px 60px rgba(0,0,0,.38);opacity:0;visibility:hidden;transform:translateY(-6px);transition:opacity .2s ease,transform .2s ease,visibility .2s ease}
+  .nav.is-open{opacity:1;visibility:visible;transform:none}
+  .nav>a{justify-content:flex-start;min-height:44px;padding:0 12px}
+  .nav-discord,.nav-account{width:100%}
+  .footer__inner{align-items:flex-start;flex-direction:column}
+  .footer__right{align-items:flex-start}
+}
+@media(max-width:520px){.container{width:min(calc(100% - 24px),var(--container))}}
