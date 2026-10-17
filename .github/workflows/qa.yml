@@ -19,7 +19,7 @@ concurrency:
 jobs:
   static-qa:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -56,11 +56,23 @@ jobs:
       - name: Run production browser smoke test
         run: node scripts/browser-smoke.mjs
 
+      - name: Run responsive QA for forum and all redesign screens
+        run: node scripts/qa-redesign-preview.mjs
+
       - name: Upload forum visual QA screenshots
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: forum-hud-visual-qa
           path: artifacts/forum-hud/*.png
+          if-no-files-found: warn
+          retention-days: 7
+
+      - name: Upload redesign prototype screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nazerak-redesign-prototype-visual-qa
+          path: artifacts/redesign-preview/*.png
           if-no-files-found: warn
           retention-days: 7
