@@ -62,6 +62,9 @@ jobs:
       - name: Run full forum concept screen-gallery smoke test
         run: node scripts/forum-concept-screens-smoke.mjs
 
+      - name: Run redesigned homepage concept smoke test
+        run: node scripts/forum-homepage-concept-smoke.mjs
+
       - name: Upload forum visual QA screenshots
         if: always()
         uses: actions/upload-artifact@v4
