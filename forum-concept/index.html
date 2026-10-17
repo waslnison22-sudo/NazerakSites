@@ -41,7 +41,7 @@
     </div>
     <div class="heading-actions">
       <a class="button button--secondary" href="#activity"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/></svg> Найти тему</a>
-      <a class="button button--primary" href="#new-topic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg> Создать тему</a>
+      <button class="button button--primary" type="button" data-open-topic><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg> Создать тему</button>
     </div>
   </section>
 
@@ -165,6 +165,22 @@
   </div>
   <div class="footer-bottom"><span>NaZerak — независимый Minecraft-проект. Не связан с Mojang Studios или Microsoft.</span><a href="#forum">Наверх ↑</a></div>
 </footer>
+
+<dialog class="topic-dialog" aria-labelledby="topic-dialog-title" aria-describedby="topic-dialog-description">
+  <div class="topic-dialog__inner">
+    <div class="topic-dialog__top"><span class="section-label">НОВОЕ ОБСУЖДЕНИЕ</span><button type="button" class="topic-dialog__close" data-close-topic aria-label="Закрыть окно">×</button></div>
+    <h2 id="topic-dialog-title">Создать тему<span class="accent-period">.</span></h2>
+    <p id="topic-dialog-description" class="topic-dialog__description">В рабочей версии здесь будут проверка входа, реальные разделы и безопасная публикация. Сейчас это только демонстрация интерфейса.</p>
+    <form class="topic-demo-form">
+      <label class="topic-field"><span>Раздел</span><select name="category" required><option value="">Выбери раздел</option><option>Новости и документы</option><option>Игровой мир</option><option>Сообщество и поддержка</option></select></label>
+      <label class="topic-field"><span>Название темы</span><input name="title" minlength="3" maxlength="120" required placeholder="О чём хочешь поговорить?"></label>
+      <label class="topic-field"><span>Первое сообщение</span><textarea name="body" minlength="1" maxlength="12000" rows="4" required placeholder="Расскажи подробнее…"></textarea><small>До 12 000 символов</small></label>
+      <p class="topic-demo-notice" data-topic-notice role="status" aria-live="polite">Публикация отключена в дизайн-прототипе. Никакие данные не отправляются.</p>
+      <div class="topic-dialog__actions"><button type="button" class="button button--secondary" data-close-topic>Закрыть</button><button type="submit" class="button button--primary">Проверить форму →</button></div>
+    </form>
+  </div>
+</dialog>
+
 <script src="./concept.js" defer></script>
 </body>
 </html>
