@@ -130,7 +130,7 @@ for (const [name, page] of [
   ["forum-user.html", read("forum-user.html")],
   ["forum-reports.html", read("forum-reports.html")]
 ]) {
-  const assets = ["auth-config.js?v=8", "supabase-loader.js?v=9", "auth.js?v=37", "script.js?v=23", "styles.css?v=43"];
+  const assets = ["auth-config.js?v=8", "supabase-loader.js?v=9", "auth.js?v=37", "script.js?v=24", "styles.css?v=44"];
   if (name === "forum.html") { assets.push("forum.css?v=21", "forum-ui.js?v=5", "forum-social.js?v=2", "forum.js?v=9"); }
   if (name === "forum-category.html") { assets.push("forum.css?v=21", "forum-ui.js?v=5", "forum-social.js?v=2", "forum-category.js?v=6"); }
   if (name === "forum-members.html") { assets.push("forum.css?v=21", "forum-ui.js?v=5", "forum-social.js?v=2", "forum-members.js?v=2"); }
@@ -145,7 +145,7 @@ for (const [name, page] of [
   }
 }
 
-if (!read("404.html").includes("styles.css?v=43")) fail.push("404.html styles cache version is stale");
+if (!read("404.html").includes("styles.css?v=44")) fail.push("404.html styles cache version is stale");
 const sitemap = read("sitemap.xml");
 if (sitemap.includes("cabinet.html") || sitemap.includes("forum.html")) fail.push("sitemap contains a noindex page");
 if (!sitemap.includes("https://nazerak.ru/")) fail.push("sitemap homepage URL is missing");
@@ -286,7 +286,7 @@ for (const file of forumSurfaceFiles) {
 }
 if (css.includes("NAZERAK FORUM")) fail.push("obsolete forum cascade remains in global stylesheet");for (const file of forumSurfaceFiles) {
   const page = read(file);
-  if (!page.includes("styles.css?v=43")) fail.push(file + " styles cache revision is stale");
+  if (!page.includes("styles.css?v=44")) fail.push(file + " styles cache revision is stale");
   if (!page.includes('Content-Security-Policy')) fail.push(file + " CSP is missing");
   if (/\sstyle=/i.test(page) || page.includes("style-src-attr 'unsafe-inline'")) fail.push(file + " contains inline style/CSP allowance");
 }
