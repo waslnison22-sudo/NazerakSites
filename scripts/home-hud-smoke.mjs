@@ -34,6 +34,7 @@ try {
   check(hudStylesResponse.status() === 200, "standalone HUD stylesheet should return HTTP 200");
   const hudStylesSource = await hudStylesResponse.text();
   check(!/radial-gradient|clip-path\s*:[^;]*polygon|clip-path\s*:[^;]*circle/i.test(hudStylesSource), "homepage HUD stylesheet must not introduce abstract circles or triangles");
+  check(hudStylesSource.includes(".home-hud .nav>a.is-active"), "active section navigation should have a visible selected state");
   await page.emulateMedia({ reducedMotion: "reduce" });
   check(await page.evaluate(() => getComputedStyle(document.documentElement).scrollBehavior) === "auto", "reduced-motion preference should disable smooth scrolling");
   await page.emulateMedia({ reducedMotion: "no-preference" });
