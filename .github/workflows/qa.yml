@@ -56,6 +56,9 @@ jobs:
       - name: Run production browser smoke test
         run: node scripts/browser-smoke.mjs
 
+      - name: Run homepage HUD responsive smoke test
+        run: node scripts/home-hud-smoke.mjs
+
       - name: Run new forum concept responsive smoke test
         run: node scripts/forum-concept-smoke.mjs
 
