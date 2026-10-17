@@ -84,7 +84,7 @@
 <body>
 <div class="prototype-notice"><div class="wrap"><span class="notice-mark"><span class="notice-dot"></span> НАБОР ДИЗАЙН-ЭКРАНОВ · ДЕМО-ДАННЫЕ</span><span>Концепт для выбора направления — не опубликованный сайт</span></div></div>
 <header class="topbar" id="top"><div class="wrap topbar-inner">
-<a href="#home" class="brand" aria-label="NaZerak — начало"><span class="brand-mark">NZ</span><span class="brand-name">NaZerak<small>COMMUNITY</small></span></a>
+<a href="#home" data-view-button="home" class="brand" aria-label="NaZerak — начало"><span class="brand-mark">NZ</span><span class="brand-name">NaZerak<small>COMMUNITY</small></span></a>
 <nav class="nav" id="site-nav"><a href="#home" data-main-nav="home" data-view-button="home">Главная</a><a href="#forum" data-main-nav="forum" data-view-button="forum" class="active" aria-current="page">Форум</a><a href="#community" data-view-button="forum">Сообщество</a></nav>
 <a href="https://nazerak.ru/cabinet" class="account"><span class="account-mark">↗</span><span>Войти</span></a>
 <button class="mobile-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Открыть меню"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
@@ -101,7 +101,7 @@
 <button class="view-button" type="button" data-view-button="account" aria-pressed="false">Кабинет</button>
 </div></div>
 <main class="main wrap">
-<section class="screen" data-screen="home" hidden>
+<section class="screen" id="home" data-screen="home" hidden>
 <div class="hero-stage">
 <div class="hero-stage-copy"><div class="eyebrow">MINECRAFT · NAZERAK COMMUNITY</div><h1>Свой мир.<br><em>Свои правила.</em></h1><p>Игровой мир, сообщество и истории, которые создаются вместе. Всё для старта и общения — в одном месте.</p><div class="hero-stage-actions"><a class="btn btn-primary" href="#connect">Как начать играть <span aria-hidden="true">↗</span></a><button class="btn" type="button" data-copy-server>Скопировать IP</button><button class="btn btn-quiet" type="button" data-view-button="forum">Перейти на форум →</button></div><div class="sample-warning">Иллюстрация в этом прототипе задаёт композицию; для финального сайта нужен утверждённый игровой скриншот NaZerak, а не выдуманная статистика.</div></div>
 <div class="hero-art" aria-hidden="true"><div class="hero-ridge"></div><div class="hero-city"></div><span class="hero-note">NAZERAK / WORLD PREVIEW</span></div>
@@ -112,7 +112,7 @@
 <article class="followup-card" id="connect"><div class="eyebrow">03 / ПЕРВЫЙ ШАГ</div><h2>Подключись к серверу</h2><p>Адрес сервера: <code>nazehard.rustix.cc</code>. Поддерживаемую версию указывать после сверки с сервером.</p><button class="btn" type="button" data-copy-server>Скопировать IP</button></article>
 </div>
 </section>
-<section class="screen" data-screen="forum">
+<section class="screen" id="forum" data-screen="forum">
 <div class="breadcrumbs-inline"><span>NaZerak</span><i>/</i><span>Сообщество</span><i>/</i><b>Форум</b></div>
 <section class="intro"><div><div class="eyebrow">ОФИЦИАЛЬНОЕ СООБЩЕСТВО</div><h1>Форум NaZerak</h1><p>Обсуждай игровой мир, задавай вопросы и предлагай изменения. <strong>Всё важное о проекте — в одном месте.</strong></p></div><div class="actions"><button type="button" class="btn btn-primary" data-demo-create><span class="btn-icon" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="M10 4v12M4 10h12"/></svg></span>Создать тему</button><button class="btn" type="button" data-view-button="category">Открыть раздел ↗</button></div></section>
 <section class="toolbar"><label class="search"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></svg><span class="sr-only">Поиск по темам</span><input id="forum-search-input" type="search" placeholder="Найти тему или раздел…" autocomplete="off"></label><div class="filters" role="group" aria-label="Фильтр категорий"><button class="filter" aria-pressed="true" data-category-filter="all" type="button">Все темы</button><button class="filter" aria-pressed="false" data-category-filter="world" type="button">Игровой мир</button><button class="filter" aria-pressed="false" data-category-filter="help" type="button">Поддержка</button></div></section>
@@ -136,7 +136,7 @@
 <article class="activity"><span class="activity-line"></span><div class="activity-content"><div class="activity-label">ПРИМЕР ТЕМЫ</div><h3><a href="#topic" data-view-button="topic">Вопрос о подключении к серверу</a></h3><div class="byline"><b>Пример автора</b><span class="sep">·</span><span>демо-запись</span></div></div></article>
 </section><section class="side-block guide"><div class="eyebrow">ПЕРВЫЕ ШАГИ</div><h3>Только начинаешь?</h3><p>Нужные ссылки должны быть доступны до того, как игрок начнёт искать их по всему сайту.</p><div class="guide-links"><a href="#home" data-view-button="home">Как начать играть <span>↗</span></a><a href="#category" data-view-button="category">Правила сообщества <span>↗</span></a><a href="https://nazerak.ru/cabinet">Вход и профиль <span>↗</span></a></div></section><section class="side-block" id="community"><div class="side-head"><h2>Сообщество</h2></div><div class="status-card"><strong>Discord NaZerak</strong><p>Связь с игроками, новости и помощь.</p><a href="https://discord.gg/2KvsYYDHN6" class="text-link" target="_blank" rel="noopener noreferrer">Открыть Discord ↗</a></div><div class="status-card"><strong>Сервер Minecraft</strong><p><code>nazehard.rustix.cc</code></p></div></section></aside>
 </div></section>
-<section class="screen" data-screen="category" hidden>
+<section class="screen" id="category" data-screen="category" hidden>
 <div class="breadcrumbs-inline"><a href="#forum" data-view-button="forum">Форум</a><i>/</i><b>Поддержка и технические вопросы</b></div>
 <header class="category-banner"><div class="eyebrow">РАЗДЕЛ СООБЩЕСТВА</div><h1>Поддержка и технические вопросы</h1><p>Проблемы с подключением, игровые ошибки и вопросы, для которых нужно решение команды или сообщества.</p></header>
 <div class="category-page-layout"><section><div class="thread-toolbar"><div class="thread-filter" role="group" aria-label="Сортировка тем"><button class="active" type="button" data-thread-sort="recent">Последние</button><button type="button" data-thread-sort="unanswered">Без ответа</button><button type="button" data-thread-sort="solved">Решённые</button></div><button class="btn btn-primary" type="button" data-demo-create>＋ Новая тема</button></div>
@@ -147,7 +147,7 @@
 </div><div class="sample-warning">Все темы, авторы, статусы и числа на этом экране демонстрационные. Их нельзя переносить в production как реальные данные.</div>
 </section><aside class="topic-sidebar"><h2>О разделе</h2><a href="#category">Как оформить вопрос</a><a href="#category">Что приложить к сообщению</a><a href="#category">Правила поддержки</a></aside></div>
 </section>
-<section class="screen" data-screen="topic" hidden>
+<section class="screen" id="topic" data-screen="topic" hidden>
 <div class="breadcrumbs-inline"><a href="#forum" data-view-button="forum">Форум</a><i>/</i><a href="#category" data-view-button="category">Поддержка</a><i>/</i><b>Обсуждение</b></div>
 <header class="topic-head"><div class="eyebrow">ПРИМЕР ТЕМЫ <span class="pill">ДЕМО-ДАННЫЕ</span></div><h1>Не удаётся подключиться после обновления</h1><div class="thread-meta"><span>Пример автора</span><span>·</span><span>Дата не привязана к реальным данным</span><span>·</span><span>Раздел поддержки</span></div></header>
 <div class="topic-layout"><aside class="topic-sidebar"><h2>В этой теме</h2><a href="#first-post">Первое сообщение</a><a href="#reply-post">Ответ сообщества</a><a href="#category" data-view-button="category">Вернуться в раздел</a></aside><section>
@@ -155,7 +155,7 @@
 <article class="topic-post" id="reply-post"><aside class="post-author"><div class="post-avatar">NZ</div><strong>Участник сообщества</strong><span class="role-label">УЧАСТНИК · ДЕМО</span><p>Профиль участника</p></aside><div class="post-body"><div class="post-body-head"><span>Сообщение #2</span><time>Пример даты</time></div><p>Добавь точный текст ошибки и момент, когда она появляется. Если есть скриншот, приложи его. Не публикуй пароли, токены или другие секретные данные.</p><div class="post-actions"><button type="button" data-demo-create>Ответить</button><button type="button" data-demo-create>Цитировать</button></div></div></article>
 </section></div>
 </section>
-<section class="screen" data-screen="search" hidden>
+<section class="screen" id="search" data-screen="search" hidden>
 <header class="screen-head"><div><div class="eyebrow">ПОИСК ПО СООБЩЕСТВУ</div><h1>Найди нужное</h1><p>Поиск по заголовкам и содержимому обсуждений. Активные фильтры и поисковая фраза должны оставаться видимыми.</p></div></header>
 <label class="search" style="height:52px"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></svg><span class="sr-only">Поисковый запрос</span><input id="global-search" value="подключение" autocomplete="off"><button class="btn" id="clear-global-search" type="button">Очистить</button></label>
 <div class="thread-toolbar" style="margin-top:18px"><span class="small-meta" id="search-count">Примеры совпадений</span><div class="thread-filter"><button class="active" type="button">Все</button><button type="button">Темы</button><button type="button">Сообщения</button></div></div>
@@ -165,7 +165,7 @@
 <article class="search-result" data-search-result><h3><a href="#topic" data-view-button="topic">Вопрос о подключении к серверу</a></h3><p>…пример короткой темы без фактических данных сообщества…</p><div class="thread-meta"><span>Раздел поддержки</span><span>·</span><span>Пример совпадения</span></div></article>
 </div><div class="sample-warning">Демо-поиск фильтрует локальные примеры и не запрашивает Supabase.</div>
 </section>
-<section class="screen" data-screen="members" hidden>
+<section class="screen" id="members" data-screen="members" hidden>
 <header class="screen-head"><div><div class="eyebrow">ИГРОКИ И СООБЩЕСТВО</div><h1>Участники</h1><p>Профили, информация о роли и переход к активности участника без фальшивых онлайн-рейтингов.</p></div><button class="btn" type="button" data-view-button="profile">Посмотреть профиль ↗</button></header>
 <label class="search"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></svg><span class="sr-only">Поиск участника</span><input id="member-search" placeholder="Найти по нику…" autocomplete="off"></label>
 <div class="member-grid" id="member-grid" style="margin-top:18px">
@@ -174,12 +174,12 @@
 <article class="member-card" data-member><div class="member-top"><div class="member-avatar">NZ</div><div><h3>Команда NaZerak</h3><span>Роль: пример</span></div></div><p>Ролевые бейджи появляются только по данным действующей системы прав.</p><a href="#profile" data-view-button="profile" class="text-link">Открыть профиль →</a></article>
 </div><div class="empty" id="members-empty"><strong>Никого не найдено</strong><p>Попробуй другой ник.</p></div>
 </section>
-<section class="screen" data-screen="profile" hidden>
+<section class="screen" id="profile" data-screen="profile" hidden>
 <div class="breadcrumbs-inline"><a href="#forum" data-view-button="forum">Форум</a><i>/</i><a href="#members" data-view-button="members">Участники</a><i>/</i><b>Профиль</b></div>
 <section class="profile-head"><div class="profile-avatar">NZ</div><div><div class="eyebrow">ПРОФИЛЬ УЧАСТНИКА · ДЕМО</div><h1>Участник NaZerak</h1><p>Отображаемое имя · Дата регистрации не указана</p></div><button class="btn" type="button" data-demo-create>Написать</button></section>
 <div class="profile-content"><section><div class="section-title"><h2>Последняя активность</h2><span class="small-meta">Примеры</span></div><article class="profile-event"><strong><a href="#topic" data-view-button="topic">Не удаётся подключиться после обновления</a></strong><span>Пример темы · раздел поддержки</span></article><article class="profile-event"><strong><a href="#category" data-view-button="category">Предложение для сообщества</a></strong><span>Пример темы · идеи</span></article><article class="profile-event"><strong><a href="#topic" data-view-button="topic">Ответ в обсуждении</a></strong><span>Демо-событие активности</span></article></section><aside><div class="profile-panel"><h2>О профиле</h2><p>Публичные поля ограничиваются тем, что действительно доступно и разрешено показывать. Внутренний ID, электронная почта и приватные данные не выводятся.</p></div><div class="profile-panel"><h2>Игровой аккаунт</h2><p>Не привязан в данном макете. Статус берётся из фактической привязки Minecraft, а не из статического текста.</p></div></aside></div>
 </section>
-<section class="screen" data-screen="account" hidden>
+<section class="screen" id="account" data-screen="account" hidden>
 <div class="account-layout"><section class="account-copy"><div class="eyebrow">NAZERAK / АККАУНТ</div><h1>Один профиль для сообщества и игры.</h1><p>Вход через Discord — единая точка доступа к профилю, форуму и привязке Minecraft. Интерфейс объясняет, что происходит, и не раскрывает технические ошибки.</p><div class="account-points"><div class="account-point">Вход через Discord</div><div class="account-point">Привязка Minecraft при доступной функции</div><div class="account-point">Профиль и настройки в одном месте</div></div></section>
 <section class="login-card"><div class="eyebrow">ЛИЧНЫЙ КАБИНЕТ</div><h2>Войти в NaZerak</h2><p>Используй Discord-аккаунт, чтобы продолжить в сообществе.</p><button class="btn discord-btn" type="button" id="demo-discord">Войти через Discord ↗</button><p class="form-note">Это концепт экрана. Кнопка авторизации ведёт в существующий кабинет, а не запускает фиктивный вход.</p><a class="btn" style="width:100%;margin-top:2px" href="https://nazerak.ru/cabinet">Открыть действующий кабинет</a></section></div>
 </section>
