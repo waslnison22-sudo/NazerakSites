@@ -24,10 +24,16 @@ try {
   check(await page.locator(".hud-world-grid .hud-world-item").count() === 3, "world section should contain three aligned information columns");
   check(await page.locator(".hud-connect [data-copy=\"nazehard.rustix.cc\"] strong").textContent().then((value) => value?.trim()) === "nazehard.rustix.cc", "server address or copy control is missing");
   check(await page.locator('link[href*="home-hud.css"]').count() === 1, "isolated HUD stylesheet is not loaded");
+  check(await page.locator('link[href*="styles.css"]').count() === 0, "homepage must not inherit the legacy global stylesheet");
+  check(await page.locator("body.home-hud").evaluate((node) => getComputedStyle(node).backgroundImage === "none"), "homepage body must use a flat background without decorative gradients");
   check(await page.locator(".hud-hero__art").evaluate((node) => getComputedStyle(node).backgroundImage.includes("upload.wikimedia.org")), "Minecraft landscape background is not configured");
 
   const legacyDecor = await page.locator(".hero-art, .world-visual, .partner-panel, .hud-orbit, .hud-triangle, .home-v2").count();
   check(legacyDecor === 0, "obsolete geometric/homepage decoration remains in the DOM");
+  const hudStylesResponse = await page.request.get(new URL("/home-hud.css?v=2", baseUrl).toString());
+  check(hudStylesResponse.status() === 200, "standalone HUD stylesheet should return HTTP 200");
+  const hudStylesSource = await hudStylesResponse.text();
+  check(!/radial-gradient|clip-path\s*:[^;]*polygon|clip-path\s*:[^;]*circle/i.test(hudStylesSource), "homepage HUD stylesheet must not introduce abstract circles or triangles");
 
   const blankLinksSafe = await page.locator('a[target="_blank"]').evaluateAll((links) =>
     links.every((link) => /noopener/.test(link.getAttribute("rel") || ""))
