@@ -39,6 +39,8 @@ try {
 
   await page.locator("[data-topic-filter]").fill("постройки");
   check(await page.locator(".topic-row:visible").count() === 1, "category filter should reduce the topics to one match");
+  await page.locator("[data-topic-filter]").fill("phrase-not-in-demo-data");
+  check(await page.locator("[data-category-empty]").isVisible(), "category no-results state should be visible");
   await page.locator("[data-reset-category]").click();
   check(await page.locator(".topic-row:visible").count() === 6, "category reset should restore all demo topics");
 
@@ -62,6 +64,8 @@ try {
   await page.locator("[data-screen-tab='members']").click();
   await page.locator("[data-member-role]").selectOption({ label: "Модератор" });
   check(await page.locator("[data-member]:visible").count() === 1, "members role filter should match the moderator example");
+  await page.locator("[data-member-search]").fill("phrase-not-in-demo-data");
+  check(await page.locator("[data-members-empty]").isVisible(), "members no-results state should be visible");
   await page.locator("[data-reset-members]").click();
   check(await page.locator("[data-member]:visible").count() === 6, "members reset should restore all examples");
 
