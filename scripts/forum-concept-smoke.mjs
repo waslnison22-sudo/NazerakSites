@@ -82,7 +82,7 @@ try {
       check(await menu.getAttribute("aria-expanded") === "true", "mobile navigation expanded state should update");
       check(await page.locator("#mobile-nav").isVisible(), "mobile navigation links should be visible after opening");
       await page.locator("#mobile-nav a").first().click();
-      check(await page.getAttribute("aria-expanded").catch(() => null) !== "true", "navigation link should close menu");
+      check(await menu.getAttribute("aria-expanded") !== "true", "navigation link should close menu");
     }
     if (width === 320) {
       await page.screenshot({ path: path.join(artifactDir, "concept-mobile-320x844.png"), fullPage: true });
