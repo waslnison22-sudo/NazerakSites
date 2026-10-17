@@ -31,6 +31,10 @@ try {
 
     const title = await page.title();
     if (!title.includes("концепт нового форума")) fail("prototype document title is missing");
+    const visibleBodyText = await page.locator("body").innerText();
+    if (visibleBodyText.trimStart().startsWith("\\n")) fail(viewport.name + " contains a stray escaped newline at the top of the page");
+    const missingAnchors = await page.locator('a[href^="#"]').evaluateAll((links) => links.filter((link) => !document.getElementById(link.getAttribute("href").slice(1))).map((link) => link.getAttribute("href")));
+    if (missingAnchors.length) fail(viewport.name + " has broken in-page links: " + JSON.stringify(missingAnchors));
     if (!(await page.getByRole("heading", { name: "Форум NaZerak", level: 1 }).count())) fail("main heading is missing");
     if ((await page.locator(".category").count()) !== 6) fail("expected six visible category examples");
     if (!(await page.locator(".prototype-notice").innerText()).includes("DEMO-ДАННЫЕ")) fail("demo-data disclaimer is missing");
@@ -52,6 +56,8 @@ try {
     })));
     const unlabelled = buttons.filter((button) => !button.text && !button.label);
     if (unlabelled.length) fail(viewport.name + " contains unlabeled buttons: " + JSON.stringify(unlabelled));
+    const undersized = buttons.filter((button) => button.width < 44 || button.height < 44);
+    if (undersized.length) fail(viewport.name + " contains visible buttons below the 44px target: " + JSON.stringify(undersized));
 
     fs.mkdirSync(output, { recursive: true });
     await page.screenshot({
