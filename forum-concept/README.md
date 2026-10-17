@@ -5,12 +5,18 @@ This folder is a **standalone, non-production design prototype** for a new forum
 ## Open locally
 Open `index.html` in a modern browser. The concept uses only local HTML, CSS and JavaScript; it does not require a build step or external fonts/CDNs.
 
+## Interactive screen gallery
+Open [`screens.html`](./screens.html) to switch between seven standalone UI states: category, topic and replies, search, members, public profile, personal cabinet, and moderation. Interactions are local-only previews; no Supabase request or publication occurs.
+
+The gallery is linked from the main concept navigation as **Все экраны**.
+
 ## What to review
 - Desktop layout at 1440 px and 1280 px
 - Tablet layout around 768–1024 px
 - Mobile layout at 390 px and narrow 320 px
 - Mobile menu opens/closes and exposes its state accessibly
-- Search filters sample board rows, reports results and can be cleared
+- Search filters sample board rows and all-screen examples, reports results and can be cleared
+- Category sorting, topic reactions/quotes, search filters, member role filters, profile tabs, cabinet settings, and a guarded moderation preview
 - Long text wraps without overlapping counts or controls
 
 ## Data & production boundary
