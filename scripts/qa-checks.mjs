@@ -145,7 +145,7 @@ for (const [name, page] of [
   }
 }
 
-if (!read("404.html").includes("styles.css?v=42")) fail.push("404.html styles cache version is stale");
+if (!read("404.html").includes("styles.css?v=43")) fail.push("404.html styles cache version is stale");
 const sitemap = read("sitemap.xml");
 if (sitemap.includes("cabinet.html") || sitemap.includes("forum.html")) fail.push("sitemap contains a noindex page");
 if (!sitemap.includes("https://nazerak.ru/")) fail.push("sitemap homepage URL is missing");
@@ -286,7 +286,7 @@ for (const file of forumSurfaceFiles) {
 }
 if (css.includes("NAZERAK FORUM")) fail.push("obsolete forum cascade remains in global stylesheet");for (const file of forumSurfaceFiles) {
   const page = read(file);
-  if (!page.includes("styles.css?v=42")) fail.push(file + " styles cache revision is stale");
+  if (!page.includes("styles.css?v=43")) fail.push(file + " styles cache revision is stale");
   if (!page.includes('Content-Security-Policy')) fail.push(file + " CSP is missing");
   if (/\sstyle=/i.test(page) || page.includes("style-src-attr 'unsafe-inline'")) fail.push(file + " contains inline style/CSP allowance");
 }
