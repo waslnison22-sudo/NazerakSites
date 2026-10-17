@@ -69,9 +69,6 @@ img{display:block;max-width:100%}
 .not-found__eyebrow{justify-content:center}
 .not-found__title{margin:0;font-size:clamp(70px,14vw,150px);line-height:.9;letter-spacing:-.07em}
 .not-found__copy{max-width:500px;margin:22px auto 28px;color:var(--muted)}
-.reveal{opacity:1;transform:none}
-html.js-ready .reveal{opacity:0;transform:translateY(14px);transition:opacity .5s ease,transform .5s ease}
-html.js-ready .reveal.is-visible{opacity:1;transform:none}
 @media(max-width:760px){
   .topbar__inner{min-height:64px}
   .nav-toggle{display:block}
@@ -86,7 +83,6 @@ html.js-ready .reveal.is-visible{opacity:1;transform:none}
 @media(prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
-  html.js-ready .reveal,.reveal{opacity:1!important;transform:none!important}
 }
 /* =========================================================
    NAZERAK ACCOUNT / REDESIGN
