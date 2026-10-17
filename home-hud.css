@@ -100,7 +100,8 @@
 @media (max-width: 900px) {
   .home-hud .container, .home-hud .hud-hero__inner { width: min(calc(100% - 36px), 1240px); }
   .hud-hero { min-height: 660px; }
-  .hud-section__head, .hud-start, .hud-community { grid-template-columns: 1fr; gap: 30px; }
+  .hud-section__head, .hud-start, .hud-community { grid-template-columns: minmax(0, 1fr); gap: 30px; }
+  .hud-section__head > *, .hud-start > *, .hud-community > * { min-width: 0; }
   .hud-section__head { align-items: start; }
   .hud-world-grid { margin-top: 34px; }
   .hud-world-item { padding-right: 18px; }
@@ -149,6 +150,7 @@
   .hud-connect__top { font-size: 8px; }
   .hud-connect__details { gap: 12px; }
   .hud-community__links>a { padding: 17px 0; }
+  .hud-start h2 { font-size: clamp(32px, 10vw, 40px); }
   .hud-footer__credit { max-width: 100%; }
 }
 @media (prefers-reduced-motion: reduce) {
