@@ -1,29 +1,14 @@
 (() => {
   "use strict";
 
-  document.documentElement.classList.add("js-ready");
-
   const year = document.getElementById("year");
   if (year) year.textContent = String(new Date().getFullYear());
 
-  const progress = document.querySelector(".scroll-progress span");
   const toggle = document.querySelector(".nav-toggle");
   const nav =
     document.getElementById("site-nav") ||
     document.getElementById("cabinet-nav") ||
     document.getElementById("forum-nav");
-  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-  const updateProgress = () => {
-    if (!progress) return;
-    const max = document.documentElement.scrollHeight - window.innerHeight;
-    const percent = max > 0 ? (window.scrollY / max) * 100 : 0;
-    progress.style.width = percent.toFixed(2) + "%";
-  };
-
-  updateProgress();
-  window.addEventListener("scroll", updateProgress, { passive: true });
-
   if (toggle && nav) {
     const closeNav = () => {
       nav.classList.remove("is-open");
@@ -69,25 +54,6 @@
     );
 
     sections.forEach((section) => sectionObserver.observe(section));
-  }
-
-  const revealItems = document.querySelectorAll(".reveal");
-
-  if (!("IntersectionObserver" in window) || reduceMotion) {
-    revealItems.forEach((item) => item.classList.add("is-visible"));
-  } else {
-    const observer = new IntersectionObserver(
-      (entries, currentObserver) => {
-        entries.forEach((entry) => {
-          if (!entry.isIntersecting) return;
-          entry.target.classList.add("is-visible");
-          currentObserver.unobserve(entry.target);
-        });
-      },
-      { threshold: 0.12, rootMargin: "0px 0px -40px 0px" }
-    );
-
-    revealItems.forEach((item) => observer.observe(item));
   }
 
   document.querySelectorAll("[data-copy]").forEach((button) => {
