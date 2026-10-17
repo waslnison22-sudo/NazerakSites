@@ -213,5 +213,6 @@ html { background: #07070a; scroll-behavior: smooth; }
   .hud-footer__credit { max-width: 100%; }
 }
 @media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
   .home-hud *, .home-hud *::before, .home-hud *::after { transition-duration: .001ms !important; animation-duration: .001ms !important; }
 }
