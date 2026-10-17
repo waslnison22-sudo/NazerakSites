@@ -8,6 +8,7 @@ const requiredFiles = [
   "index.html",
   "cabinet.html",
   "styles.css",
+  "home-hud.css",
   "forum.css",
   "script.js",
   "auth.js",
@@ -55,8 +56,8 @@ const requiredFiles = [
   "supabase/migrations/20261003225344_forum_runtime_integrity_20261004.sql",
   "scripts/runtime-smoke.mjs",
   "scripts/browser-smoke.mjs",
+  "scripts/home-hud-smoke.mjs",
   "assets/images/README.md",
-  "assets/images/home-hero.svg",
   ".htaccess",
   "scripts/qa-server.mjs",
   "supabase/migrations/20261005130500_forum_public_members_directory.sql",
@@ -129,7 +130,7 @@ for (const [name, page] of [
   ["forum-user.html", read("forum-user.html")],
   ["forum-reports.html", read("forum-reports.html")]
 ]) {
-  const assets = ["auth-config.js?v=8", "supabase-loader.js?v=9", "auth.js?v=37", "script.js?v=23", "styles.css?v=42"];
+  const assets = ["auth-config.js?v=8", "supabase-loader.js?v=9", "auth.js?v=37", "script.js?v=23", "styles.css?v=43"];
   if (name === "forum.html") { assets.push("forum.css?v=21", "forum-ui.js?v=5", "forum-social.js?v=2", "forum.js?v=9"); }
   if (name === "forum-category.html") { assets.push("forum.css?v=21", "forum-ui.js?v=5", "forum-social.js?v=2", "forum-category.js?v=6"); }
   if (name === "forum-members.html") { assets.push("forum.css?v=21", "forum-ui.js?v=5", "forum-social.js?v=2", "forum-members.js?v=2"); }
@@ -232,8 +233,10 @@ if (!/\.from\(["']profiles["']\)[\s\S]{0,220}\.update\(/.test(auth)) fail.push("
 if (!/\.from\(["']profiles["']\)[\s\S]{0,220}\.insert\(\{\s*id:\s*user\.id/.test(auth)) fail.push("profile initialization insert is missing");
 if (/nazerak\.is-a\.dev\/cabinet\.html/i.test(read("AUTH_SETUP.md"))) fail.push("obsolete custom-domain auth URL remains");
 if (/server-status-text|server-players|data-server-hero/.test(index)) fail.push("obsolete server statistics markup remains");
-if (!index.includes("home-hero") || !index.includes("home-world-grid") || !index.includes("home-connect")) fail.push("final homepage visual system missing");
-if (!index.includes("assets/images/home-hero.svg")) fail.push("homepage hero artwork is missing");
+if (!index.includes('class="hud-hero"') || !index.includes("hud-world-grid") || !index.includes("hud-connect")) fail.push("homepage visual system missing");
+if (!index.includes("home-hud.css?v=1")) fail.push("isolated homepage HUD stylesheet is missing");
+if (!index.includes("upload.wikimedia.org/wikipedia/commons/9/9a/Minecraft_-_1.18_mountains.jpg")) fail.push("homepage Minecraft background is missing");
+if (index.includes("assets/images/home-hero.svg") || index.includes("home-v2") || index.includes("hero-art__grid")) fail.push("obsolete geometric homepage markup remains");
 if (!index.includes("Начать играть") || !index.includes("Открыть форум")) fail.push("homepage connection CTA is misleading or stale");
 if (!index.includes("Discord")) fail.push("homepage community CTA is misleading or stale");
 if (!index.includes('data-auth-link-label>Войти')) fail.push("homepage auth link must default to neutral login state");
