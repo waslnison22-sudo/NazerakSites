@@ -78,7 +78,7 @@ html { background: #07070a; scroll-behavior: smooth; }
 .home-hud .brand__name { font-size: 17px; letter-spacing: -.035em; }
 .home-hud .nav { display: flex; align-items: center; gap: 5px; }
 .home-hud .nav>a { min-height: 42px; padding: 0 14px; border: 1px solid transparent; border-radius: 7px; color: #c3c5cc; font-size: 12px; font-weight: 650; transition: color .16s ease, background .16s ease, border-color .16s ease; }
-.home-hud .nav>a:hover, .home-hud .nav>a:focus-visible { color: #fff; background: #14161b; border-color: #292b32; }
+.home-hud .nav>a:hover, .home-hud .nav>a:focus-visible, .home-hud .nav>a.is-active { color: #fff; background: #14161b; border-color: #292b32; }
 .home-hud .nav-discord { width: auto; }
 .home-hud .nav-account { gap: 8px !important; border-color: #292b32 !important; background: #101217; }
 .home-hud .nav-account__avatar { width: 23px; height: 23px; border-radius: 5px; background: #24262d; color: #fff; font-size: 10px; }
