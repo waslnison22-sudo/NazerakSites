@@ -36,6 +36,11 @@
   const status = document.querySelector("#search-status");
   const rows = Array.from(document.querySelectorAll(".board-row"));
   const groups = Array.from(document.querySelectorAll(".forum-group"));
+  const emptyState = document.createElement("div");
+  emptyState.className = "no-results";
+  emptyState.hidden = true;
+  emptyState.textContent = "Совпадений нет. Попробуй другое слово или очисти поиск.";
+  document.querySelector(".concept-note")?.before(emptyState);
 
   if (!search || !status || rows.length === 0) return;
 
@@ -61,13 +66,14 @@
     });
 
     clearButton.hidden = search.value.length === 0;
+    emptyState.hidden = !(term && visibleRows === 0);
 
     if (!term) {
       status.textContent = "Начни вводить текст — список разделов отфильтруется.";
     } else if (visibleRows === 0) {
       status.textContent = "Ничего не найдено. Попробуй другое слово.";
     } else {
-      status.textContent = "Найдено разделов: " + visibleRows + ".";
+      status.textContent = "Найдено подразделов: " + visibleRows + ".";
     }
   };
 
@@ -82,6 +88,34 @@
   document.querySelector(".search-form")?.addEventListener("submit", (event) => {
     event.preventDefault();
   });
+
+  const topicDialog = document.querySelector(".topic-dialog");
+  const openTopic = document.querySelector("[data-open-topic]");
+  const closeTopicButtons = Array.from(document.querySelectorAll("[data-close-topic]"));
+  const topicForm = document.querySelector(".topic-demo-form");
+  const topicNotice = document.querySelector("[data-topic-notice]");
+
+  if (topicDialog && typeof topicDialog.showModal === "function") {
+    openTopic?.addEventListener("click", () => topicDialog.showModal());
+    closeTopicButtons.forEach((button) => button.addEventListener("click", () => topicDialog.close()));
+    topicDialog.addEventListener("click", (event) => {
+      if (event.target === topicDialog) topicDialog.close();
+    });
+    topicForm?.addEventListener("submit", (event) => {
+      event.preventDefault();
+      if (topicNotice) {
+        topicNotice.textContent = "Форма заполнена корректно. Публикация отключена: данные никуда не отправляются.";
+      }
+    });
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && topicDialog.open) topicDialog.close();
+    });
+  } else if (openTopic) {
+    openTopic.addEventListener("click", () => {
+      const note = document.querySelector(".concept-note");
+      note?.scrollIntoView({ block: "center" });
+    });
+  }
 
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
     document.body.classList.add("reduce-motion");
