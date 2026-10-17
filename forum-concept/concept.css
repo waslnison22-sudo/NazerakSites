@@ -289,3 +289,26 @@ body.reduce-motion *,body.reduce-motion *:before,body.reduce-motion *:after{scro
   .footer-meta{letter-spacing:.05em}
 }
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}}
+
+
+/* Demo topic composer — deliberately disconnected from production data */
+.topic-dialog{width:min(560px,calc(100% - 28px));max-height:min(88vh,820px);padding:0;border:1px solid #3a3e48;border-radius:12px;background:#101217;color:var(--text);box-shadow:0 32px 100px rgba(0,0,0,.65)}
+.topic-dialog::backdrop{background:rgba(2,3,5,.78);backdrop-filter:blur(3px)}
+.topic-dialog__inner{padding:24px}
+.topic-dialog__top{display:flex;align-items:center;justify-content:space-between;gap:20px}
+.topic-dialog__close{display:grid;place-items:center;width:36px;height:36px;border:1px solid #30343d;border-radius:7px;background:#171920;color:#c9cdd4;font-size:21px;cursor:pointer}
+.topic-dialog__close:hover{background:#232630;color:#fff}
+.topic-dialog h2{margin:17px 0 8px;font-size:30px;line-height:1.1;letter-spacing:-.05em}
+.topic-dialog__description{margin:0 0 22px;color:#a3a8b2;font-size:12px;line-height:1.7}
+.topic-demo-form{display:grid;gap:15px}
+.topic-field{display:grid;gap:7px;min-width:0}
+.topic-field>span{font-size:11px;font-weight:750;color:#dfe1e6}
+.topic-field input,.topic-field select,.topic-field textarea{width:100%;min-width:0;border:1px solid #353943;border-radius:7px;background:#0b0d11;color:#f3f4f6;padding:12px;font:inherit;font-size:12px;outline:none}
+.topic-field input,.topic-field select{min-height:45px}
+.topic-field textarea{resize:vertical;min-height:108px;line-height:1.6}
+.topic-field input:focus,.topic-field select:focus,.topic-field textarea:focus{border-color:#9a3744;box-shadow:0 0 0 3px rgba(230,55,74,.08)}
+.topic-field input::placeholder,.topic-field textarea::placeholder{color:#6e7480}
+.topic-field small{color:#787f8b;font-size:10px}
+.topic-demo-notice{margin:0;padding:10px 12px;border:1px solid #34303a;background:#18141a;color:#b6aab3;font-size:10px;line-height:1.6}
+.topic-dialog__actions{display:flex;justify-content:flex-end;gap:9px;padding-top:3px}
+@media(max-width:560px){.topic-dialog__inner{padding:18px}.topic-dialog h2{font-size:26px}.topic-dialog__actions .button{flex:1;padding:0 10px}}
