@@ -37,12 +37,35 @@ try {
   for (const width of [1440, 1280, 1024, 768, 390, 320]) {
     await page.setViewportSize({ width, height: width < 500 ? 844 : 900 });
     await page.waitForTimeout(50);
-    const sizes = await page.evaluate(() => ({
-      document: document.documentElement.scrollWidth,
-      body: document.body.scrollWidth
-    }));
-    check(sizes.document <= width + 1, "document overflows viewport at " + width + "px: " + sizes.document);
-    check(sizes.body <= width + 1, "body overflows viewport at " + width + "px: " + sizes.body);
+    const sizes = await page.evaluate(() => {
+      const overflow = [...document.querySelectorAll("body *")]
+        .map((node) => {
+          const rect = node.getBoundingClientRect();
+          const style = getComputedStyle(node);
+          return {
+            tag: node.tagName.toLowerCase(),
+            className: typeof node.className === "string" ? node.className : "",
+            text: (node.innerText || "").trim().replace(/\\s+/g, " ").slice(0, 72),
+            left: Math.round(rect.left),
+            right: Math.round(rect.right),
+            width: Math.round(rect.width),
+            scrollWidth: node.scrollWidth,
+            clientWidth: node.clientWidth,
+            position: style.position,
+            display: style.display
+          };
+        })
+        .filter((item) => item.display !== "none" && (item.right > window.innerWidth + 1 || item.left < -1 || item.scrollWidth > item.clientWidth + 2))
+        .sort((left, right) => right.right - left.right)
+        .slice(0, 8);
+      return {
+        document: document.documentElement.scrollWidth,
+        body: document.body.scrollWidth,
+        overflow
+      };
+    });
+    check(sizes.document <= width + 1, "document overflows viewport at " + width + "px: " + sizes.document + "; elements: " + JSON.stringify(sizes.overflow));
+    check(sizes.body <= width + 1, "body overflows viewport at " + width + "px: " + sizes.body + "; elements: " + JSON.stringify(sizes.overflow));
 
     if (width === 1440 || width === 390) {
       const outDir = path.join(process.cwd(), "artifacts", "forum-hud");
