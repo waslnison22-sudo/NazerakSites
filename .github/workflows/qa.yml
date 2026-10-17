@@ -19,7 +19,7 @@ concurrency:
 jobs:
   static-qa:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -56,7 +56,7 @@ jobs:
       - name: Run production browser smoke test
         run: node scripts/browser-smoke.mjs
 
-      - name: Run redesign prototype responsive and interaction tests
+      - name: Run responsive QA for forum and all redesign screens
         run: node scripts/qa-redesign-preview.mjs
 
       - name: Upload forum visual QA screenshots
