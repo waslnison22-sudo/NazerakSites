@@ -59,7 +59,7 @@
 
   // Accessible onboarding stepper on the homepage.
   const startTabs = [...document.querySelectorAll("[data-start-tab]")];
-  const startPanels = [...document.querySelectorAll("[data-start-panel]")];
+  const startPanels = [...document.querySelectorAll("[data-guide-panel]")];
   const activateStartStep = (step, focusTab = false) => {
     const selected = String(step);
     const nextTab = startTabs.find((tab) => tab.dataset.startTab === selected);
