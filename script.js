@@ -71,7 +71,7 @@
       tab.tabIndex = active ? 0 : -1;
     });
     startPanels.forEach((panel) => {
-      panel.hidden = panel.dataset.startPanel !== selected;
+      panel.hidden = panel.dataset.guidePanel !== selected;
     });
     if (focusTab) nextTab.focus();
   };
