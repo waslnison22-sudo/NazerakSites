@@ -150,7 +150,7 @@ jobs:
           grep -q "Добро пожаловать" /tmp/nazerak-home.html
           grep -q "assets/images/nazerak-autumn-hero.webp" /tmp/nazerak-home.html &&
           grep -q "home-hud.css?v=3" /tmp/nazerak-home.html
-          curl -k -L -sS "$SITE_URL/assets/images/nazerak-autumn-hero.webp" -o /tmp/nazerak-hero.webp
+          curl -k -f -L -sS "$SITE_URL/assets/images/nazerak-autumn-hero.webp" -o /tmp/nazerak-hero.webp
           test -s /tmp/nazerak-hero.webp
           echo "PASS: production homepage and its local autumn hero asset are served."
 
