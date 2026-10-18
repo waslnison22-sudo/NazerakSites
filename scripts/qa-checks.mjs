@@ -5,6 +5,7 @@ import process from "node:process";
 const root = process.cwd();
 
 const requiredFiles = [
+  ".github/workflows/deploy-production.yml",
   "index.html",
   "cabinet.html",
   "styles.css",
@@ -101,6 +102,7 @@ const auth = read("auth.js");
 const loader = read("supabase-loader.js");
 const config = read("auth-config.js");
 const schema = read("supabase/schema.sql");
+const deployWorkflow = read(".github/workflows/deploy-production.yml");
 
 const allSource = [index, cabinet, css, script, auth, loader, config, schema].join("\n");
 
@@ -244,6 +246,15 @@ if (index.includes("assets/images/home-hero.svg") || index.includes("home-v2") |
 if (!index.includes("Подключиться к серверу") || !index.includes("Узнать больше")) fail.push("homepage hero actions are missing");
 if (!index.includes("Discord")) fail.push("homepage community CTA is misleading or stale");
 if (!index.includes('data-auth-link-label>Войти')) fail.push("homepage auth link must default to neutral login state");
+if (!deployWorkflow.includes("--exclude='./forum-concept'")) fail.push("production deploy must keep forum-concept drafts out of public web root");
+if (!deployWorkflow.includes("test -f .deploy/assets/images/nazerak-autumn-hero.webp")) fail.push("production deploy does not validate local autumn hero asset");
+if (!deployWorkflow.includes("grep -q 'home-hud.css?v=3' .deploy/index.html")) fail.push("production deploy does not validate the isolated homepage HUD stylesheet");
+if (!deployWorkflow.includes('grep -q "styles.css?v=44" "$HOME/www/nazerak.ru/forum.html" &&')) fail.push("production deploy forum stylesheet guard is stale");
+if (deployWorkflow.includes("test -f .deploy/assets/images/home-hero.svg") || deployWorkflow.includes('grep -q "styles.css?v=42"')) fail.push("production deploy still contains stale homepage asset or stylesheet checks");
+if (!deployWorkflow.includes('grep -q "Добро пожаловать" /tmp/nazerak-home.html')) fail.push("production deploy does not validate the new homepage content");
+if (!deployWorkflow.includes('grep -q "assets/images/nazerak-autumn-hero.webp" /tmp/nazerak-home.html')) fail.push("production deploy does not validate homepage hero path");
+if (!deployWorkflow.includes('curl -k -L -sS "$SITE_URL/assets/images/nazerak-autumn-hero.webp"')) fail.push("production deploy does not verify the published autumn hero asset");
+if (!deployWorkflow.includes('rm -f -- \\"\\$HOME/www/nazerak.ru/assets/images/home-hero.svg\\"')) fail.push("production deploy does not remove the obsolete homepage hero file");
 if (!cabinet.includes('class="nav-account is-active"') || !cabinet.includes('aria-current="page"')) fail.push("cabinet account route must be marked active");
 if (!auth.includes('document.body.hasAttribute("data-cabinet")')) fail.push("cabinet page detection must use attribute presence");
 if (auth.includes("document.body.dataset.cabinet")) fail.push("cabinet detection must not use empty dataset boolean");
