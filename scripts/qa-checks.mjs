@@ -246,6 +246,9 @@ if (index.includes("assets/images/home-hero.svg") || index.includes("home-v2") |
 if (!index.includes("Подключиться к серверу") || !index.includes("Узнать больше")) fail.push("homepage hero actions are missing");
 if (!index.includes("Discord")) fail.push("homepage community CTA is misleading or stale");
 if (!index.includes('data-auth-link-label>Войти')) fail.push("homepage auth link must default to neutral login state");
+if (!index.includes('<a href="#community">Сообщество</a>')) fail.push("homepage community navigation must lead to the community section");
+if (!index.includes('<a href="/forum/pravila-i-dokumenty">Правила</a>')) fail.push("homepage rules navigation must lead to the rules category");
+if (index.includes('<a href="#community" title="Раздел поддержки проекта">Донат</a>')) fail.push("homepage must not advertise a donation route that is not implemented");
 if (!deployWorkflow.includes("--exclude='./forum-concept'")) fail.push("production deploy must keep forum-concept drafts out of public web root");
 if (!deployWorkflow.includes("test -f .deploy/assets/images/nazerak-autumn-hero.webp")) fail.push("production deploy does not validate local autumn hero asset");
 if (!deployWorkflow.includes("grep -q 'home-hud.css?v=3' .deploy/index.html")) fail.push("production deploy does not validate the isolated homepage HUD stylesheet");

@@ -16,6 +16,8 @@ try {
  check(await page.locator("h1").count()===1,"homepage must contain one primary heading");
  check((await page.locator("h1").textContent())?.includes("Добро пожаловать"),"welcome heading missing");
  check(await page.locator(".hud-world-grid .hud-world-item").count()===3,"three world category columns are required");
+  check(await page.locator("#site-nav a[href=\"/forum/pravila-i-dokumenty\"]").textContent().then((value)=>value?.trim())==="Правила","rules navigation must target the rules category");
+  check(await page.locator("#site-nav a[href=\"#community\"]").textContent().then((value)=>value?.trim())==="Сообщество","community navigation must have a working section target");
  check(await page.locator('.hud-connect [data-copy="nazehard.rustix.cc"]').count()===1,"server IP copy control missing");
  check((await page.locator(".server-address__copy strong").textContent())?.trim()==="nazehard.rustix.cc","server address does not match project IP");
  check(await page.locator('link[href*="home-hud.css"]').count()===1,"isolated HUD stylesheet missing");
