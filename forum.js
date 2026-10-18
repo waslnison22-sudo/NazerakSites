@@ -3,7 +3,7 @@
 
   const allowedViews=["all","new","unanswered","mine","bookmarks","watched"];
   const requestedView=new URLSearchParams(location.search).get("view")||"all";
-  const state = { client:null, user:null, nodes:[], topics:[], permissions:null, search:"", view:allowedViews.includes(requestedView)?requestedView:"all" };
+  const state = { client:null, user:null, nodes:[], topics:[], permissions:null, search:"", viewError:"", view:allowedViews.includes(requestedView)?requestedView:"all" };
   const qs=(s,r=document)=>r.querySelector(s);
   const qsa=(s,r=document)=>Array.from(r.querySelectorAll(s));
   const escapeHtml=(v)=>String(v==null?"":v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
@@ -74,9 +74,9 @@
       const meta=viewMeta[state.view]||viewMeta.all;
       const needsLogin=["mine","bookmarks","watched"].includes(state.view)&&!state.user;
       const heading=qs("[data-forum-empty-title]"),copy=qs("[data-forum-empty-copy]"),kicker=qs("[data-forum-empty-kicker]"),login=qs("[data-view-login]");
-      if(heading)heading.textContent=needsLogin?"Войди, чтобы увидеть свои темы":q?"Ничего не найдено":meta.emptyTitle;
-      if(copy)copy.textContent=needsLogin?"Авторизуйся через Discord — тогда здесь появятся твои темы, закладки и подписки.":q?"Попробуй изменить поисковый запрос.":meta.emptyCopy;
-      if(kicker)kicker.textContent=needsLogin?"DISCORD":q?"ПОИСК":"ПУСТО";
+      if(heading)heading.textContent=state.viewError?"Не удалось загрузить список":needsLogin?"Войди, чтобы увидеть свои темы":q?"Ничего не найдено":meta.emptyTitle;
+      if(copy)copy.textContent=state.viewError?state.viewError:needsLogin?"Авторизуйся через Discord — тогда здесь появятся твои темы, закладки и подписки.":q?"Попробуй изменить поисковый запрос.":meta.emptyCopy;
+      if(kicker)kicker.textContent=state.viewError?"ОШИБКА":needsLogin?"DISCORD":q?"ПОИСК":"ПУСТО";
       if(login)login.hidden=!needsLogin;
       return;
     }
@@ -97,6 +97,7 @@
   };
 
   const loadData=async()=>{
+    state.viewError="";
     const topicFields="id,category_id,category_name,parent_name,author_public_id,author_name,author_avatar_url,primary_role_slug,primary_role_badge,title,body,is_pinned,is_locked,prefix,last_post_at,reply_count";
     const nodesRequest=state.client.from("forum_node_directory").select("id,slug,name,description,sort_order,icon,posting_mode,node_type,parent_id,route_slug,parent_name").order("sort_order",{ascending:true}).order("id",{ascending:true});
     const statsRequest=state.client.from("forum_community_stats").select("member_count,online_count").maybeSingle();
@@ -118,11 +119,22 @@
         :Promise.resolve({data:[],error:null});
     }else{
       let query=state.client.from("forum_topic_list").select(topicFields);
-      if(state.view==="mine"&&state.user)query=query.eq("author_public_id",state.user.id);
-      if(state.view==="unanswered")query=query.eq("reply_count",0);
-      if(state.view==="new")query=query.order("last_post_at",{ascending:false}).limit(100);
-      else query=query.order("is_pinned",{ascending:false}).order("last_post_at",{ascending:false}).limit(100);
-      topicsRequest=query;
+      if(state.view==="mine"&&state.user){
+        const own=await withTimeout(state.client.rpc("forum_my_public_id"),7000,"Не удалось определить форумный профиль. Попробуй обновить страницу.");
+        if(own.error||!own.data){
+          state.viewError="Не удалось определить твой публичный профиль форума. Проверь вход в аккаунт и попробуй ещё раз.";
+          showMessage(state.viewError,"error");
+          topicsRequest=Promise.resolve({data:[],error:null});
+        }else{
+          query=query.eq("author_public_id",own.data);
+          topicsRequest=query.order("last_post_at",{ascending:false}).limit(100);
+        }
+      }else{
+        if(state.view==="unanswered")query=query.eq("reply_count",0);
+        if(state.view==="new")query=query.order("last_post_at",{ascending:false}).limit(100);
+        else query=query.order("is_pinned",{ascending:false}).order("last_post_at",{ascending:false}).limit(100);
+        topicsRequest=query;
+      }
     }
     const res=await withTimeout(Promise.all([nodesRequest,topicsRequest,statsRequest,permissionsRequest]),10000,"Загрузка форума превысила 10 секунд. Проверь соединение и попробуй обновить страницу.");
     if(res[0].error)throw new Error(res[0].error.message||"Не удалось загрузить структуру форума.");
