@@ -249,7 +249,7 @@ if (!index.includes("home-hud.css?v=4")) fail.push("isolated homepage HUD styles
 if (!cabinet.includes("cabinet-hud.css?v=1")) fail.push("dedicated cabinet HUD stylesheet is missing");
 if (!deployWorkflow.includes('test -f "$HOME/www/nazerak.ru/cabinet-hud.css"')) fail.push("production remote-root guard does not verify the cabinet stylesheet");
 if (!cabinet.includes("script.js?v=25")) fail.push("cabinet is missing the interactive shared script revision");
-if (!cabinet.includes("brand__mark svg")) fail.push("cabinet brand mark is missing");
+if (!cabinet.includes('class="brand__mark" aria-hidden="true"><svg')) fail.push("cabinet brand mark is missing");
 if (!index.includes('class="hud-about-section"') || !index.includes('class="hud-guide-section"') || !index.includes('class="hud-faq-section"')) fail.push("homepage project structure is incomplete");
 if (!index.includes('class="hud-hero__image"')) fail.push("homepage must render hero asset as a full-frame image element");
 if (!script.includes("data-start-tab") || !script.includes("data-start-next")) fail.push("homepage onboarding stepper handlers are missing");
