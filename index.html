@@ -1,45 +1,83 @@
 <!doctype html>
 <html lang="ru">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<base href="/"><meta name="theme-color" content="#07070a">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#07070a">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://unpkg.com; connect-src 'self' https://ujlbyzvdsncvqbrhasuw.supabase.co; img-src 'self' data: https://cdn.discordapp.com https://media.discordapp.net; style-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; frame-src 'none'; form-action 'self';">
-<meta name="description" content="NaZerak — Minecraft-проект с собственным миром, форумом и сообществом.">
+<meta name="description" content="NaZerak — Minecraft roleplay-проект с собственным миром, организациями и сообществом игроков.">
 <link rel="canonical" href="https://nazerak.ru/">
-<meta property="og:type" content="website"><meta property="og:title" content="NaZerak — свой мир, свои правила"><meta property="og:description" content="Minecraft-проект с городом, государственными структурами и живым сообществом."><meta property="og:url" content="https://nazerak.ru/"><meta property="og:image" content="https://nazerak.ru/assets/images/home-hero.svg">
-<meta name="twitter:card" content="summary"><meta name="twitter:title" content="NaZerak — свой мир, свои правила"><meta name="twitter:description" content="Minecraft-проект с собственным миром и сообществом."><meta name="twitter:image" content="https://nazerak.ru/assets/images/home-hero.svg">
-<link rel="preload" as="image" href="./assets/images/home-hero.svg">
-<link rel="icon" href="./favicon.svg?v=6" type="image/svg+xml"><link rel="stylesheet" href="./styles.css?v=42"><title>NaZerak — Minecraft project</title>
+<meta property="og:type" content="website">
+<meta property="og:title" content="NaZerak — свой мир, свои правила">
+<meta property="og:description" content="Собственный мир, ролевые истории и сообщество игроков NaZerak.">
+<meta property="og:url" content="https://nazerak.ru/">
+<meta property="og:image" content="https://nazerak.ru/assets/images/nazerak-autumn-hero.webp">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="NaZerak — свой мир, свои правила">
+<meta name="twitter:description" content="Собственный мир, ролевые истории и сообщество игроков NaZerak.">
+<meta name="twitter:image" content="https://nazerak.ru/assets/images/nazerak-autumn-hero.webp">
+<link rel="icon" href="./favicon.svg?v=6" type="image/svg+xml">
+<link rel="stylesheet" href="./home-hud.css?v=3">
+<title>NaZerak — свой мир, свои правила</title>
 </head>
-<body class="home-v2">
+<body class="home-hud">
 <a class="skip-link" href="#main-content">К содержимому</a>
-<header class="topbar" id="top"><div class="container topbar__inner">
-<a class="brand" href="#top" aria-label="NaZerak — главная"><span class="brand__mark">NZ</span><span class="brand__name">NaZerak</span></a>
-<button class="nav-toggle" type="button" aria-controls="site-nav" aria-expanded="false" aria-label="Открыть меню"><span></span><span></span><span></span><span class="sr-only">Открыть меню</span></button>
-<nav class="nav" id="site-nav" aria-label="Основная навигация"><a href="#world">Мир</a><a href="#start">Старт</a><a href="/forum">Форум</a><a href="https://discord.gg/2KvsYYDHN6" target="_blank" rel="noopener noreferrer" class="nav-discord" aria-label="Discord">↗</a><a class="nav-account" data-auth-link href="/cabinet"><span class="nav-account__avatar"><img data-auth-link-avatar alt="" hidden><span data-auth-link-fallback>◉</span></span><span data-auth-link-label>Войти</span></a></nav>
-</div></header>
-
+<header class="topbar" id="top">
+  <div class="container topbar__inner">
+    <a class="brand" href="#top" aria-label="NaZerak — главная"><span class="brand__mark" aria-hidden="true">N</span><span class="brand__name">NaZerak</span></a>
+    <button class="nav-toggle" type="button" aria-controls="site-nav" aria-expanded="false" aria-label="Открыть меню"><span></span><span></span><span></span><span class="sr-only">Открыть меню</span></button>
+    <nav class="nav" id="site-nav" aria-label="Основная навигация">
+      <a href="#hero" class="is-active" aria-current="location">Главная</a><a href="/forum">Форум</a><a href="#community">Сообщество</a><a href="#start">Сервер</a><a href="/forum/pravila-i-dokumenty">Правила</a><a href="#world">О проекте</a>
+      <a class="nav-search" href="/search" aria-label="Поиск по форуму" title="Поиск"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.4"></circle><path d="m15.5 15.5 4.5 4.5"></path></svg></a>
+      <a class="nav-login" data-auth-link href="/cabinet"><span data-auth-link-label>Войти</span></a><a class="nav-register" href="/cabinet">Регистрация</a>
+    </nav>
+  </div>
+</header>
 <main id="main-content">
-<section class="home-hero"><div class="home-hero__art" aria-hidden="true"></div><div class="home-hero__veil" aria-hidden="true"></div><div class="container home-hero__inner">
-<div class="home-hero__copy"><span class="home-eyebrow">MINECRAFT / NAZERAK</span><h1>Свой мир.<br><em>Свои правила.</em></h1><p>NaZerak — Minecraft-проект с живым сообществом, городом, государственными структурами и пространством, которое развивается вместе с игроками.</p>
-<div class="home-hero__actions"><a class="button button--primary" href="#start">Начать играть <span>→</span></a><a class="button button--ghost" href="/forum">Открыть форум</a></div>
-<div class="home-hero__meta"><span><b>1.21.11</b><small>версия</small></span><span><b>nazehard.rustix.cc</b><small>адрес сервера</small></span><span><b>Java Edition</b><small>платформа</small></span></div></div>
-</div></section>
-
-<section class="home-section" id="world"><div class="container">
-<div class="home-section-head"><div><span class="home-eyebrow">THE WORLD</span><h2>Не лобби.<br><span>Настоящий мир.</span></h2></div><p>NaZerak строится как единая игровая среда: город, дороги, организации, государство и обычная жизнь игроков связаны между собой.</p></div>
-<div class="home-world-grid"><article class="home-feature home-feature--large"><div class="home-feature__number">01</div><h3>Город и инфраструктура</h3><p>Районы, общественные пространства, дороги и объекты появляются как часть общей архитектуры мира, а не как набор случайных декораций.</p></article><article class="home-feature"><div class="home-feature__number">02</div><h3>Государство</h3><p>Правительство, суд, прокуратура и силовые структуры получают собственное место в жизни проекта.</p></article><article class="home-feature"><div class="home-feature__number">03</div><h3>Сообщество</h3><p>Форум и Discord объединяют новости, помощь, предложения и обсуждения игроков.</p></article></div>
-</div></section>
-
-<section class="home-section home-section--dark" id="start"><div class="container">
-<div class="home-start"><div><span class="home-eyebrow">START HERE</span><h2>Подключение<br><span>без лишних экранов.</span></h2><p>Скопируй адрес сервера, запусти Java Edition 1.21.11 и подключись. Если нужен контекст проекта — он собран на форуме.</p></div>
-<div class="home-connect"><div class="home-connect__label">SERVER ADDRESS</div><button class="home-server" type="button" data-copy="nazehard.rustix.cc"><strong>nazehard.rustix.cc</strong><span>Копировать</span></button><div class="home-connect__details"><span><b>1.21.11</b> версия</span><span><b>Java Edition</b> клиент</span></div></div></div>
-</div></section>
-
-<section class="home-section"><div class="container"><div class="home-community"><div><span class="home-eyebrow">COMMUNITY</span><h2>Проект начинается<br><span>с людей.</span></h2><p>Форум — для длинных обсуждений и официальной информации. Discord — для живого общения и новостей.</p></div><div class="home-community__actions"><a class="button button--primary" href="/forum">Перейти на форум →</a><a class="button button--ghost" href="https://discord.gg/2KvsYYDHN6" target="_blank" rel="noopener noreferrer">Discord ↗</a></div></div></div></section>
+  <section class="hud-hero" id="hero" aria-labelledby="hero-title">
+    <div class="hud-hero__art" aria-hidden="true"></div><div class="hud-hero__veil" aria-hidden="true"></div>
+    <div class="container hud-hero__inner"><div class="hud-hero__copy">
+      <p class="hud-eyebrow"><span aria-hidden="true"></span>ROLEPLAY + MINECRAFT</p>
+      <h1 id="hero-title">Добро пожаловать<br>на <em>NaZerak</em></h1>
+      <p class="hud-hero__lead">Уникальный ролевой мир с организациями, собственными историями и активным сообществом игроков. Здесь начинается твоя история.</p>
+      <div class="hud-actions">
+        <a class="button button--primary" href="#start"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 5 11 7-11 7z"></path></svg>Подключиться к серверу</a>
+        <a class="button button--ghost" href="#world"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4.5h5.5c1.3 0 2.3.8 2.5 1.7.2-.9 1.2-1.7 2.5-1.7H20v14h-4.5c-1.3 0-2.3.8-2.5 1.7-.2-.9-1.2-1.7-2.5-1.7H5z"></path><path d="M13 6.5v13"></path></svg>Узнать больше <span aria-hidden="true" class="button-arrow">↓</span></a>
+      </div>
+    </div></div>
+  </section>
+  <section class="hud-world-section" id="world" aria-label="Мир и подключение к NaZerak">
+    <div class="container hud-overview-grid">
+      <div class="hud-world">
+        <p class="section-kicker">МИР NaZerak</p>
+        <div class="hud-world-grid">
+          <article class="hud-world-item"><span class="world-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3.5 20.5V8.5h5v12M8.5 12.5h7v8M15.5 5.5h5v15h-5M5.5 5.5h1M17.5 9.5h1M17.5 13.5h1M17.5 17.5h1M11 15.5h1M11 18.5h1M5.5 11.5h1M5.5 15.5h1"></path></svg></span><div><h2>Город</h2><p>Современные постройки, инфраструктура и новые возможности.</p></div></article>
+          <article class="hud-world-item"><span class="world-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m3 8 9-4.5L21 8zM4.5 19.5h15M6 9.5v8M10 9.5v8M14 9.5v8M18 9.5v8M3.5 21h17"></path></svg></span><div><h2>Государство</h2><p>Законы, фракции и организации создают живую ролевую среду.</p></div></article>
+          <article class="hud-world-item"><span class="world-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8.5 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM16.5 12a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5ZM3 20v-2.2A4.8 4.8 0 0 1 7.8 13h1.4a4.8 4.8 0 0 1 4.8 4.8V20zM15 14h1.4a4.6 4.6 0 0 1 4.6 4.6V20h-5"></path></svg></span><div><h2>Сообщество</h2><p>Игроки, события, поддержка и дружеская атмосфера.</p></div></article>
+        </div>
+      </div>
+      <aside class="hud-connect" id="start" aria-labelledby="connect-title">
+        <p class="section-kicker" id="connect-title">Подключение к серверу</p>
+        <div class="server-address"><span class="server-address__icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="3.5" width="16" height="6.5" rx="1"></rect><rect x="4" y="14" width="16" height="6.5" rx="1"></rect><path d="M7 6.7h.01M7 17.2h.01M10 6.7h6M10 17.2h6"></path></svg></span><span class="server-address__copy"><small>IP-АДРЕС</small><strong>nazehard.rustix.cc</strong></span><span class="icon-copy" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="8" y="8" width="11" height="12" rx="1.5"></rect><path d="M16 8V5.5A1.5 1.5 0 0 0 14.5 4h-9A1.5 1.5 0 0 0 4 5.5v10A1.5 1.5 0 0 0 5.5 17H8"></path></svg></span></div>
+        <div class="server-meta">
+          <span class="server-chip"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3.5h10l3 4.5v8l-3 4.5H7L4 16V8z"></path><path d="M8 8.5h.01M16 15.5h.01M8.5 12h7"></path></svg><span>Версия: <strong>1.21.11</strong></span></span>
+          <span class="server-chip"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="12" rx="1.5"></rect><path d="M8 20h8M12 17v3"></path></svg><span>Java Edition</span></span>
+          <button class="button button--copy" type="button" data-copy="nazehard.rustix.cc"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="11" height="12" rx="1.5"></rect><path d="M16 8V5.5A1.5 1.5 0 0 0 14.5 4h-9A1.5 1.5 0 0 0 4 5.5v10A1.5 1.5 0 0 0 5.5 17H8"></path></svg><span>Скопировать IP</span><strong class="sr-only">nazehard.rustix.cc</strong></button>
+        </div><p class="server-feedback" role="status" aria-live="polite"></p>
+      </aside>
+    </div>
+  </section>
+  <section class="hud-community-section" id="community" aria-label="Сообщество NaZerak">
+    <div class="container hud-community-grid">
+      <div class="community-intro"><p class="section-kicker">Наше сообщество</p><p>Следи за новостями, общайся с игроками и будь в курсе событий проекта.</p></div>
+      <a class="community-card" href="/forum"><span class="community-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 5.5h16v11H10l-5 3v-3H4z"></path><path d="M8 9.5h8M8 13h5"></path></svg></span><span class="community-card__copy"><strong>Форум</strong><small>Обсуждения, идеи, поддержка</small></span><span class="community-card__arrow" aria-hidden="true">→</span></a>
+      <a class="community-card" href="https://discord.gg/2KvsYYDHN6" target="_blank" rel="noopener noreferrer"><span class="community-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 6.5a16 16 0 0 1 10 0l2 3.5-.5 7-3 1.5-1.5-2M7 6.5 5 10l.5 7 3 1.5 1.5-2M8.5 10.5h.01M15.5 10.5h.01M9 14c2 1.5 4 1.5 6 0"></path></svg></span><span class="community-card__copy"><strong>Discord</strong><small>Общение, события, голосовой чат</small></span><span class="community-card__arrow" aria-hidden="true">→</span></a>
+      <aside class="community-note">NaZerak — это не просто сервер, это сообщество людей, которые создают историю вместе.</aside>
+    </div>
+  </section>
 </main>
-
-<footer class="footer"><div class="container footer__inner"><div><a class="brand brand--footer" href="#top"><span class="brand__mark">NZ</span><span class="brand__name">NaZerak</span></a><p class="footer__copy">Minecraft-проект с собственным миром и сообществом.</p><p class="footer__legal">NaZerak не связан с Mojang Studios или Microsoft.</p></div><div class="footer__right"><span>© <span id="year"></span> NaZerak</span><a href="#top">Наверх ↑</a></div></div></footer>
-<noscript><div class="noscript-message">Для корректной работы интерактивных элементов требуется JavaScript.</div></noscript>
-<script src="./auth-config.js?v=8" defer></script><script src="./supabase-loader.js?v=9" defer></script><script src="./auth.js?v=37" defer></script><script src="./script.js?v=23" defer></script>
-</body></html>
+<footer class="hud-footer"><div class="container hud-footer__inner"><span>© <span id="year"></span> NaZerak</span><span>NaZerak не связан с Mojang Studios или Microsoft.</span></div></footer>
+<noscript><div class="noscript-message">JavaScript нужен для мобильного меню и копирования IP. Адрес сервера: nazehard.rustix.cc.</div></noscript>
+<script src="./auth-config.js?v=8" defer></script><script src="./supabase-loader.js?v=9" defer></script><script src="./auth.js?v=37" defer></script><script src="./script.js?v=24" defer></script>
+</body>
+</html>

@@ -5,9 +5,11 @@ import process from "node:process";
 const root = process.cwd();
 
 const requiredFiles = [
+  ".github/workflows/deploy-production.yml",
   "index.html",
   "cabinet.html",
   "styles.css",
+  "home-hud.css",
   "forum.css",
   "script.js",
   "auth.js",
@@ -55,8 +57,9 @@ const requiredFiles = [
   "supabase/migrations/20261003225344_forum_runtime_integrity_20261004.sql",
   "scripts/runtime-smoke.mjs",
   "scripts/browser-smoke.mjs",
+  "scripts/home-hud-smoke.mjs",
   "assets/images/README.md",
-  "assets/images/home-hero.svg",
+  "assets/images/nazerak-autumn-hero.webp",
   ".htaccess",
   "scripts/qa-server.mjs",
   "supabase/migrations/20261005130500_forum_public_members_directory.sql",
@@ -99,6 +102,7 @@ const auth = read("auth.js");
 const loader = read("supabase-loader.js");
 const config = read("auth-config.js");
 const schema = read("supabase/schema.sql");
+const deployWorkflow = read(".github/workflows/deploy-production.yml");
 
 const allSource = [index, cabinet, css, script, auth, loader, config, schema].join("\n");
 
@@ -129,7 +133,9 @@ for (const [name, page] of [
   ["forum-user.html", read("forum-user.html")],
   ["forum-reports.html", read("forum-reports.html")]
 ]) {
-  const assets = ["auth-config.js?v=8", "supabase-loader.js?v=9", "auth.js?v=37", "script.js?v=23", "styles.css?v=42"];
+  const assets = ["auth-config.js?v=8", "supabase-loader.js?v=9", "auth.js?v=37", "script.js?v=24"];
+  if (name !== "index.html") assets.push("styles.css?v=44");
+  if (name === "index.html") assets.push("home-hud.css?v=3");
   if (name === "forum.html") { assets.push("forum.css?v=21", "forum-ui.js?v=5", "forum-social.js?v=2", "forum.js?v=9"); }
   if (name === "forum-category.html") { assets.push("forum.css?v=21", "forum-ui.js?v=5", "forum-social.js?v=2", "forum-category.js?v=6"); }
   if (name === "forum-members.html") { assets.push("forum.css?v=21", "forum-ui.js?v=5", "forum-social.js?v=2", "forum-members.js?v=2"); }
@@ -144,7 +150,7 @@ for (const [name, page] of [
   }
 }
 
-if (!read("404.html").includes("styles.css?v=42")) fail.push("404.html styles cache version is stale");
+if (!read("404.html").includes("styles.css?v=44")) fail.push("404.html styles cache version is stale");
 const sitemap = read("sitemap.xml");
 if (sitemap.includes("cabinet.html") || sitemap.includes("forum.html")) fail.push("sitemap contains a noindex page");
 if (!sitemap.includes("https://nazerak.ru/")) fail.push("sitemap homepage URL is missing");
@@ -232,11 +238,26 @@ if (!/\.from\(["']profiles["']\)[\s\S]{0,220}\.update\(/.test(auth)) fail.push("
 if (!/\.from\(["']profiles["']\)[\s\S]{0,220}\.insert\(\{\s*id:\s*user\.id/.test(auth)) fail.push("profile initialization insert is missing");
 if (/nazerak\.is-a\.dev\/cabinet\.html/i.test(read("AUTH_SETUP.md"))) fail.push("obsolete custom-domain auth URL remains");
 if (/server-status-text|server-players|data-server-hero/.test(index)) fail.push("obsolete server statistics markup remains");
-if (!index.includes("home-hero") || !index.includes("home-world-grid") || !index.includes("home-connect")) fail.push("final homepage visual system missing");
-if (!index.includes("assets/images/home-hero.svg")) fail.push("homepage hero artwork is missing");
-if (!index.includes("Начать играть") || !index.includes("Открыть форум")) fail.push("homepage connection CTA is misleading or stale");
+if (!index.includes('class="hud-hero"') || !index.includes("hud-world-grid") || !index.includes("hud-connect")) fail.push("homepage visual system missing");
+if (!index.includes("home-hud.css?v=3")) fail.push("isolated homepage HUD stylesheet is missing");
+if (index.includes("styles.css?v=44")) fail.push("homepage must not inherit the legacy global stylesheet");
+if (!index.includes("assets/images/nazerak-autumn-hero.webp")) fail.push("local autumn Minecraft hero background is missing");
+if (index.includes("assets/images/home-hero.svg") || index.includes("home-v2") || index.includes("hero-art__grid")) fail.push("obsolete geometric homepage markup remains");
+if (!index.includes("Подключиться к серверу") || !index.includes("Узнать больше")) fail.push("homepage hero actions are missing");
 if (!index.includes("Discord")) fail.push("homepage community CTA is misleading or stale");
 if (!index.includes('data-auth-link-label>Войти')) fail.push("homepage auth link must default to neutral login state");
+if (!index.includes('<a href="#community">Сообщество</a>')) fail.push("homepage community navigation must lead to the community section");
+if (!index.includes('<a href="/forum/pravila-i-dokumenty">Правила</a>')) fail.push("homepage rules navigation must lead to the rules category");
+if (index.includes('<a href="#community" title="Раздел поддержки проекта">Донат</a>')) fail.push("homepage must not advertise a donation route that is not implemented");
+if (!deployWorkflow.includes("--exclude='./forum-concept'")) fail.push("production deploy must keep forum-concept drafts out of public web root");
+if (!deployWorkflow.includes("test -f .deploy/assets/images/nazerak-autumn-hero.webp")) fail.push("production deploy does not validate local autumn hero asset");
+if (!deployWorkflow.includes("grep -q 'home-hud.css?v=3' .deploy/index.html")) fail.push("production deploy does not validate the isolated homepage HUD stylesheet");
+if (!deployWorkflow.includes('grep -q "styles.css?v=44" "$HOME/www/nazerak.ru/forum.html" &&')) fail.push("production deploy forum stylesheet guard is stale");
+if (deployWorkflow.includes("test -f .deploy/assets/images/home-hero.svg") || deployWorkflow.includes('grep -q "styles.css?v=42"')) fail.push("production deploy still contains stale homepage asset or stylesheet checks");
+if (!deployWorkflow.includes('grep -q "Добро пожаловать" /tmp/nazerak-home.html')) fail.push("production deploy does not validate the new homepage content");
+if (!deployWorkflow.includes('grep -q "assets/images/nazerak-autumn-hero.webp" /tmp/nazerak-home.html')) fail.push("production deploy does not validate homepage hero path");
+if (!deployWorkflow.includes('curl -k -f -L -sS "$SITE_URL/assets/images/nazerak-autumn-hero.webp"')) fail.push("production deploy does not verify the published autumn hero asset");
+if (!deployWorkflow.split("\n").some((line) => line.includes("rm -f --") && line.includes("home-hero.svg"))) fail.push("production deploy does not remove the obsolete homepage hero file");
 if (!cabinet.includes('class="nav-account is-active"') || !cabinet.includes('aria-current="page"')) fail.push("cabinet account route must be marked active");
 if (!auth.includes('document.body.hasAttribute("data-cabinet")')) fail.push("cabinet page detection must use attribute presence");
 if (auth.includes("document.body.dataset.cabinet")) fail.push("cabinet detection must not use empty dataset boolean");
@@ -283,7 +304,7 @@ for (const file of forumSurfaceFiles) {
 }
 if (css.includes("NAZERAK FORUM")) fail.push("obsolete forum cascade remains in global stylesheet");for (const file of forumSurfaceFiles) {
   const page = read(file);
-  if (!page.includes("styles.css?v=42")) fail.push(file + " styles cache revision is stale");
+  if (!page.includes("styles.css?v=44")) fail.push(file + " styles cache revision is stale");
   if (!page.includes('Content-Security-Policy')) fail.push(file + " CSP is missing");
   if (/\sstyle=/i.test(page) || page.includes("style-src-attr 'unsafe-inline'")) fail.push(file + " contains inline style/CSP allowance");
 }
