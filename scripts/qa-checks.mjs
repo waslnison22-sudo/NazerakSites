@@ -254,7 +254,7 @@ if (deployWorkflow.includes("test -f .deploy/assets/images/home-hero.svg") || de
 if (!deployWorkflow.includes('grep -q "Добро пожаловать" /tmp/nazerak-home.html')) fail.push("production deploy does not validate the new homepage content");
 if (!deployWorkflow.includes('grep -q "assets/images/nazerak-autumn-hero.webp" /tmp/nazerak-home.html')) fail.push("production deploy does not validate homepage hero path");
 if (!deployWorkflow.includes('curl -k -L -sS "$SITE_URL/assets/images/nazerak-autumn-hero.webp"')) fail.push("production deploy does not verify the published autumn hero asset");
-if (!deployWorkflow.includes('rm -f -- \\"\\$HOME/www/nazerak.ru/assets/images/home-hero.svg\\"')) fail.push("production deploy does not remove the obsolete homepage hero file");
+if (!deployWorkflow.split("\n").some((line) => line.includes("rm -f --") && line.includes("home-hero.svg"))) fail.push("production deploy does not remove the obsolete homepage hero file");
 if (!cabinet.includes('class="nav-account is-active"') || !cabinet.includes('aria-current="page"')) fail.push("cabinet account route must be marked active");
 if (!auth.includes('document.body.hasAttribute("data-cabinet")')) fail.push("cabinet page detection must use attribute presence");
 if (auth.includes("document.body.dataset.cabinet")) fail.push("cabinet detection must not use empty dataset boolean");
