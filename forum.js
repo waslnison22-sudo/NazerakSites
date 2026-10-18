@@ -1,7 +1,9 @@
 (() => {
   "use strict";
 
-  const state = { client:null, user:null, nodes:[], topics:[], permissions:null, search:"" };
+  const allowedViews=["all","new","unanswered","mine","bookmarks","watched"];
+  const requestedView=new URLSearchParams(location.search).get("view")||"all";
+  const state = { client:null, user:null, nodes:[], topics:[], permissions:null, search:"", view:allowedViews.includes(requestedView)?requestedView:"all" };
   const qs=(s,r=document)=>r.querySelector(s);
   const qsa=(s,r=document)=>Array.from(r.querySelectorAll(s));
   const escapeHtml=(v)=>String(v==null?"":v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
@@ -37,15 +39,49 @@
     if(count)count.textContent=n+" "+(n===1?"форум":n<5?"форума":"форумов");
   };
 
+  const viewMeta={
+    all:{title:"Форум",lead:"Выбирай раздел, находи нужные обсуждения и участвуй в жизни NaZerak.",emptyTitle:"Тем пока нет",emptyCopy:"Создай первую тему — она появится здесь автоматически."},
+    new:{title:"Новое",lead:"Последние активные обсуждения форума в одном списке.",emptyTitle:"Пока нет новых тем",emptyCopy:"Когда появятся обсуждения, они будут показаны здесь."},
+    unanswered:{title:"Без ответа",lead:"Темы, в которых ещё нет ответов. Здесь можно помочь другим участникам.",emptyTitle:"Все темы получили ответ",emptyCopy:"Сейчас нет обсуждений без ответа — загляни позже."},
+    mine:{title:"Мои темы",lead:"Темы, созданные из твоего аккаунта NaZerak.",emptyTitle:"У тебя пока нет тем",emptyCopy:"Созданные тобой обсуждения будут собраны здесь."},
+    bookmarks:{title:"Закладки",lead:"Темы, которые ты сохранил, чтобы вернуться к ним позже.",emptyTitle:"Закладок пока нет",emptyCopy:"Открой тему и нажми «В закладки», чтобы сохранить её здесь."},
+    watched:{title:"Подписки",lead:"Темы, за которыми ты следишь и в которых ждёшь новых ответов.",emptyTitle:"Нет отслеживаемых тем",emptyCopy:"Подпишись на интересную тему, чтобы быстро находить её здесь."}
+  };
+  const updateViewChrome=()=>{
+    const meta=viewMeta[state.view]||viewMeta.all;
+    const title=qs(".forum-index-head h1"),lead=qs(".forum-index-head p"),layout=qs("[data-forum-index-layout]");
+    if(title)title.textContent=meta.title;
+    if(lead)lead.textContent=meta.lead;
+    if(layout)layout.dataset.view=state.view;
+    qsa("[data-forum-view-link]").forEach(link=>{
+      const active=link.dataset.forumViewLink===state.view;
+      link.classList.toggle("is-active",active);
+      if(active)link.setAttribute("aria-current","page");else link.removeAttribute("aria-current");
+    });
+    const create=qs("[data-forum-create]");
+    if(create)create.hidden=Boolean(state.view==="bookmarks"||state.view==="watched");
+  };
+
   const renderTopics=()=>{
-    const root=qs("[data-forum-topic-list]"),empty=qs("[data-forum-empty]");if(!root||!empty)return;
-    const indexGrid=qs(".forum-index-grid");
+    const root=qs("[data-forum-topic-list]"),empty=qs("[data-forum-empty]");
+    if(!root||!empty)return;
     const q=state.search.trim().toLowerCase();
     const topics=q?state.topics.filter(t=>[t.title,t.body,t.category_name,t.author_name,t.parent_name].join(" ").toLowerCase().includes(q)):state.topics;
     const noun=topics.length===1?"тема":topics.length<5?"темы":"тем";
     qs("[data-forum-result-count]")?.replaceChildren(document.createTextNode(topics.length+" "+noun));
-    if(!topics.length){root.hidden=true;empty.hidden=false;indexGrid?.classList.add("is-empty-activity");return;}
-    root.hidden=false;empty.hidden=true;indexGrid?.classList.remove("is-empty-activity");
+    if(!topics.length){
+      root.hidden=true;empty.hidden=false;
+      const meta=viewMeta[state.view]||viewMeta.all;
+      const needsLogin=["mine","bookmarks","watched"].includes(state.view)&&!state.user;
+      const heading=qs("[data-forum-empty-title]"),copy=qs("[data-forum-empty-copy]"),kicker=qs("[data-forum-empty-kicker]"),login=qs("[data-view-login]");
+      if(heading)heading.textContent=needsLogin?"Войди, чтобы увидеть свои темы":q?"Ничего не найдено":meta.emptyTitle;
+      if(copy)copy.textContent=needsLogin?"Авторизуйся через Discord — тогда здесь появятся твои темы, закладки и подписки.":q?"Попробуй изменить поисковый запрос.":meta.emptyCopy;
+      if(kicker)kicker.textContent=needsLogin?"DISCORD":q?"ПОИСК":"ПУСТО";
+      if(login)login.hidden=!needsLogin;
+      return;
+    }
+    root.hidden=false;empty.hidden=true;
+    const login=qs("[data-view-login]");if(login)login.hidden=true;
     root.innerHTML=topics.map(t=>{
       const avatar=safeUrl(t.author_avatar_url),av=avatar?'<img src="'+escapeHtml(avatar)+'" alt="">':escapeHtml((t.author_name||"N").slice(0,1).toUpperCase());
       const publicId=escapeHtml(t.author_public_id||"");
@@ -61,21 +97,47 @@
   };
 
   const loadData=async()=>{
-    const req=[
-      state.client.from("forum_node_directory").select("id,slug,name,description,sort_order,icon,posting_mode,node_type,parent_id,route_slug,parent_name").order("sort_order",{ascending:true}).order("id",{ascending:true}),
-      state.client.from("forum_topic_list").select("id,category_id,category_name,parent_name,author_public_id,author_name,author_avatar_url,primary_role_slug,primary_role_badge,title,body,is_pinned,is_locked,prefix,last_post_at,reply_count").order("is_pinned",{ascending:false}).order("last_post_at",{ascending:false}).limit(100),
-      state.client.from("forum_community_stats").select("member_count,online_count").maybeSingle()
-    ];
-    if(state.user)req.push(state.client.from("forum_my_permissions").select("can_publish_official,can_moderate_forum,can_manage_roles,can_manage_categories").maybeSingle());
-    const res=await withTimeout(Promise.all(req),10000,"Загрузка форума превысила 10 секунд. Проверь соединение и попробуй обновить страницу.");
+    const topicFields="id,category_id,category_name,parent_name,author_public_id,author_name,author_avatar_url,primary_role_slug,primary_role_badge,title,body,is_pinned,is_locked,prefix,last_post_at,reply_count";
+    const nodesRequest=state.client.from("forum_node_directory").select("id,slug,name,description,sort_order,icon,posting_mode,node_type,parent_id,route_slug,parent_name").order("sort_order",{ascending:true}).order("id",{ascending:true});
+    const statsRequest=state.client.from("forum_community_stats").select("member_count,online_count").maybeSingle();
+    const permissionsRequest=state.user
+      ?state.client.from("forum_my_permissions").select("can_publish_official,can_moderate_forum,can_manage_roles,can_manage_categories").maybeSingle()
+      :Promise.resolve({data:null,error:null});
+    const privateView=["mine","bookmarks","watched"].includes(state.view);
+    let topicsRequest;
+    if(privateView&&!state.user){
+      showMessage("Войди через Discord, чтобы открыть этот личный список.");
+      topicsRequest=Promise.resolve({data:[],error:null});
+    }else if(state.view==="bookmarks"||state.view==="watched"){
+      const table=state.view==="bookmarks"?"forum_topic_bookmarks":"forum_topic_watchers";
+      const collection=await withTimeout(state.client.from(table).select("topic_id").eq("user_id",state.user.id).order("created_at",{ascending:false}).limit(200),7000,"Не удалось загрузить личный список. Попробуй обновить страницу.");
+      if(collection.error)throw new Error("Не удалось загрузить личный список.");
+      const ids=[...new Set((collection.data||[]).map(row=>Number(row.topic_id)).filter(Number.isFinite))];
+      topicsRequest=ids.length
+        ?state.client.from("forum_topic_list").select(topicFields).in("id",ids).order("last_post_at",{ascending:false}).limit(100)
+        :Promise.resolve({data:[],error:null});
+    }else{
+      let query=state.client.from("forum_topic_list").select(topicFields);
+      if(state.view==="mine"&&state.user)query=query.eq("author_public_id",state.user.id);
+      if(state.view==="unanswered")query=query.eq("reply_count",0);
+      if(state.view==="new")query=query.order("last_post_at",{ascending:false}).limit(100);
+      else query=query.order("is_pinned",{ascending:false}).order("last_post_at",{ascending:false}).limit(100);
+      topicsRequest=query;
+    }
+    const res=await withTimeout(Promise.all([nodesRequest,topicsRequest,statsRequest,permissionsRequest]),10000,"Загрузка форума превысила 10 секунд. Проверь соединение и попробуй обновить страницу.");
     if(res[0].error)throw new Error(res[0].error.message||"Не удалось загрузить структуру форума.");
     if(res[1].error)throw new Error(res[1].error.message||"Не удалось загрузить темы форума.");
     if(res[2].error)console.warn("[NaZerak Forum] stats:",res[2].error.message);
-    state.nodes=res[0].data||[];state.topics=res[1].data||[];state.permissions=state.user?res[3]?.data||null:null;
+    state.nodes=res[0].data||[];
+    state.topics=res[1].data||[];
+    state.permissions=state.user?res[3]?.data||null:null;
     const stats=res[2].data||{member_count:0,online_count:0};
     qs("[data-forum-online-count]")?.replaceChildren(document.createTextNode(String(Number(stats.online_count||0))));
     qs("[data-forum-member-count]")?.replaceChildren(document.createTextNode(String(Number(stats.member_count||0))));
-    renderNodeTree();fillCategorySelect();renderTopics();
+    updateViewChrome();
+    renderNodeTree();
+    fillCategorySelect();
+    renderTopics();
   };
 
   const openCreate=()=>{
@@ -112,6 +174,7 @@
     state.client=window.NaZerakAuth?.client||await waitForClient();
     if(!state.client){showMessage("Форум не смог подключиться к данным.","error");return;}
     state.user=window.NaZerakAuth?.user||null;
+    updateViewChrome();
     if(state.user)await syncAuthor();
     qsa("[data-forum-create]").forEach(b=>b.addEventListener("click",openCreate));
     qs("[data-forum-submit]")?.addEventListener("click",createTopic);
