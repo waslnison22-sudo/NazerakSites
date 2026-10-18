@@ -41,10 +41,10 @@ try {
  check(await page.locator(".brand__mark svg").count()===1,"abstract NaZerak brand mark is missing");
  check(await page.locator(".hud-step-tab").count()===3,"onboarding step tabs are missing");
  await page.locator('[data-start-tab="2"]').click();
- check(await page.locator('[data-start-panel="2"]').isVisible(),"onboarding tab did not switch to step two");
+ check(await page.locator('[data-guide-panel="2"]').isVisible(),"onboarding tab did not switch to step two");
  check(await page.locator('[data-start-tab="2"]').getAttribute("aria-selected")==="true","onboarding tab state is not accessible");
  await page.locator('[data-start-next="3"]').click();
- check(await page.locator('[data-start-panel="3"]').isVisible(),"onboarding next button did not advance to step three");
+ check(await page.locator('[data-guide-panel="3"]').isVisible(),"onboarding next button did not advance to step three");
  await page.locator('[data-start-tab="1"]').click();
  const faq=page.locator(".hud-faq-item").first();
  await faq.locator("summary").click();
