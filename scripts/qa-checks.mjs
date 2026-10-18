@@ -137,7 +137,7 @@ for (const [name, page] of [
 ]) {
   const assets = ["auth-config.js?v=8", "supabase-loader.js?v=9", "auth.js?v=37", "script.js?v=24"];
   if (name === "index.html" || name === "cabinet.html") {
-    assets.splice(assets.indexOf("script.js?v=24"), 1, "script.js?v=25");
+    assets.splice(assets.indexOf("script.js?v=24"), 1, "script.js?v=26");
   }
   if (name !== "index.html") assets.push("styles.css?v=44");
   if (name === "index.html") assets.push("home-hud.css?v=4");
@@ -248,7 +248,7 @@ if (!index.includes('class="hud-hero"') || !index.includes("hud-world-grid") || 
 if (!index.includes("home-hud.css?v=4")) fail.push("isolated homepage HUD stylesheet is missing");
 if (!cabinet.includes("cabinet-hud.css?v=1")) fail.push("dedicated cabinet HUD stylesheet is missing");
 if (!deployWorkflow.includes('test -f "$HOME/www/nazerak.ru/cabinet-hud.css"')) fail.push("production remote-root guard does not verify the cabinet stylesheet");
-if (!cabinet.includes("script.js?v=25")) fail.push("cabinet is missing the interactive shared script revision");
+if (!cabinet.includes("script.js?v=26")) fail.push("cabinet is missing the interactive shared script revision");
 if (!cabinet.includes('class="brand__mark" aria-hidden="true"><svg')) fail.push("cabinet brand mark is missing");
 if (!index.includes('class="hud-about-section"') || !index.includes('class="hud-guide-section"') || !index.includes('class="hud-faq-section"')) fail.push("homepage project structure is incomplete");
 if (!index.includes('class="hud-hero__image"')) fail.push("homepage must render hero asset as a full-frame image element");
