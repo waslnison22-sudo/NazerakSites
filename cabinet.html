@@ -139,40 +139,20 @@
               <div class="account-panel__head">
                 <div>
                   <span class="account-label">01 / ИГРОВОЙ ПРОФИЛЬ</span>
-                  <h2>Minecraft</h2>
+                  <h2>Привязка Minecraft</h2>
                 </div>
-                <span class="account-pill" data-profile-state>НЕ ЗАПОЛНЕН</span>
+                <span class="account-pill account-pill--neutral">НАСТРОЙКА В ЛАУНЧЕРЕ</span>
               </div>
 
               <p class="account-panel__intro">
-                Укажи игровой ник, который используешь на NaZerak. Пока сервер не подтверждает владение ником, он хранится как данные профиля.
+                Игровое имя и профиль будут настраиваться в NaZerak Launcher после входа через Discord.
+                Этот сайт больше не запрашивает и не сохраняет Minecraft-ник.
               </p>
-
-              <form class="account-form" id="minecraft-profile-form">
-                <label for="minecraft-username">Minecraft ник</label>
-                <div class="account-input-row">
-                  <input
-                    id="minecraft-username"
-                    name="minecraft_username"
-                    maxlength="16"
-                    minlength="3"
-                    pattern="[A-Za-z0-9_]{3,16}"
-                    autocomplete="off"
-                    spellcheck="false"
-                    data-minecraft-input
-                    placeholder="Steve_01"
-                    required
-                  >
-                  <button class="button button--primary" type="submit">
-                    <span>Сохранить</span><span aria-hidden="true">→</span>
-                  </button>
-                </div>
-                <small>3–16 символов · латинские буквы, цифры и _</small>
-              </form>
-
-              <button class="button button--ghost account-retry" type="button" data-profile-retry hidden>
-                <span>Повторить загрузку профиля</span><span aria-hidden="true">↻</span>
-              </button>
+              <div class="account-state-card">
+                <span class="account-label">NAZERAK LAUNCHER</span>
+                <h3>Заверши настройку профиля в лаунчере.</h3>
+                <p>Открой NaZerak Launcher, войди через свой Discord-аккаунт и следуй шагам регистрации. Пароль Discord вводится только на стороне Discord.</p>
+              </div>
             </section>
 
             <section class="account-panel" id="connection">
@@ -276,7 +256,7 @@
   <noscript><div class="noscript-message">Для входа в личный кабинет требуется включить JavaScript.</div></noscript>
   <script src="./auth-config.js?v=8" defer></script>
   <script src="./supabase-loader.js?v=9" defer></script>
-  <script src="./auth.js?v=37" defer></script>
+  <script src="./auth.js?v=38" defer></script>
   <script src="./script.js?v=26" defer></script>
 </body>
 </html>
