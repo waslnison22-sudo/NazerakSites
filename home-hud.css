@@ -140,3 +140,5 @@ html{background:#07070a;scroll-behavior:smooth}
 .home-hud .hud-hero__art{background-image:url("https://images.unsplash.com/photo-1762515993692-7b9946f76858?auto=format&fit=crop&w=2400&q=85");background-position:center 55%;background-size:cover}
 @media(max-width:900px){.home-hud .hud-guide-steps{grid-template-columns:1fr}.home-hud .hud-guide-step{min-height:0}.home-hud .hud-guide-heading{grid-template-columns:1fr;gap:14px}}
 @media(max-width:680px){.home-hud .hud-guide-section{padding:48px 0}.home-hud .hud-guide-heading h2{font-size:34px}.home-hud .hud-guide-step{padding:22px 19px}.home-hud .hud-guide-server{grid-template-columns:1fr}.home-hud .hud-guide-server>span{grid-column:auto}.home-hud .hud-guide-server button{width:100%}}
+
+/* Hero photo: Pascal Debrunner / Unsplash, used under the Unsplash License. */
