@@ -16,8 +16,9 @@ try{
  check(await page.locator("h1").count()===1,"cabinet should contain one primary heading");
  check(await page.locator(".account-login__copy h2").textContent().then(x=>x?.includes("Войти")),"guest login copy missing");
  check(await page.locator("[data-discord-login]").count()===1,"Discord login action missing");
- check(await page.locator("#minecraft-profile-form").count()===1,"Minecraft profile form contract missing");
- check(await page.locator("[data-minecraft-input]").getAttribute("pattern")==="[A-Za-z0-9_]{3,16}","Minecraft username validation contract changed");
+ check(await page.locator("#minecraft-profile-form").count()===0,"website must not show a Minecraft nickname form");
+ check(await page.locator("[data-minecraft-input]").count()===0,"website must not render a Minecraft nickname input");
+ check(await page.locator(".account-panel--minecraft .account-state-card h3").textContent().then(x=>x?.includes("лаунчере")), "Minecraft setup must be directed to the launcher");
  check(await page.locator("[data-sign-out]").count()>=2,"sign-out controls missing from authenticated view");
  check(await page.locator(".account-mark-emblem svg").count()===1,"abstract account emblem missing");
  check(await page.locator(".brand__mark svg").count()===2,"header and footer brand marks should match");
