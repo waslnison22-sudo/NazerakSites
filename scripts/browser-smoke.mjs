@@ -333,37 +333,28 @@ const testCabinetProfileTimeout = async () => {
     const context = await browser.newContext({ viewport: { width: 1280, height: 900 } });
     await installFakeSupabase(context);
     const page = await context.newPage();
-    const finishDiagnostics = attachDiagnostics(page, "cabinet profile timeout");
+    const finishDiagnostics = attachDiagnostics(page, "cabinet without Minecraft nickname flow");
 
     await page.goto(BASE + "/cabinet?smoke=profile-timeout", { waitUntil: "networkidle", timeout: TIMEOUT });
-    await page.waitForSelector('[data-account-view="user"]:not([hidden])', { timeout: 5000 });
-    await page.waitForFunction(() =>
-      (document.querySelector("[data-auth-message]")?.textContent || "").includes("Игровой профиль пока не удалось загрузить")
-    , { timeout: 9000 });
+    await page.waitForSelector('[data-account-view="user"]:not([hidden])', { timeout: 10000 });
 
     const state = await page.evaluate(() => ({
       userVisible: !document.querySelector('[data-account-view="user"]').hidden,
       busy: document.querySelector("main")?.getAttribute("aria-busy"),
-      metrics: window.__nazerakFakeMetrics
+      metrics: window.__nazerakFakeMetrics,
+      oldNicknameForm: Boolean(document.querySelector("#minecraft-profile-form, #minecraft-username, [data-minecraft-input], [data-profile-retry]")),
+      copy: document.querySelector("#minecraft-profile")?.textContent || ""
     }));
-    if (!state.userVisible || state.busy === "true" || state.metrics.profileInserts !== 0) {
-      throw new Error("profile timeout changed auth state or attempted INSERT: " + JSON.stringify(state));
+
+    if (!state.userVisible || state.busy === "true" || state.metrics.profileReads !== 0 || state.metrics.profileInserts !== 0) {
+      throw new Error("cabinet queried or wrote a Minecraft nickname profile: " + JSON.stringify(state));
     }
-
-    const profileRetry = page.locator("[data-profile-retry]");
-    if (!(await profileRetry.isVisible())) throw new Error("profile retry control is not visible after failure");
-    await profileRetry.click();
-    await page.waitForFunction(() =>
-      document.querySelector("[data-minecraft-input]")?.value === "NaZerakTest"
-    , { timeout: 5000 });
-
-    const recoveredProfile = await page.evaluate(() => window.__nazerakFakeMetrics);
-    if (recoveredProfile.profileReads < 2 || recoveredProfile.profileInserts !== 0) {
-      throw new Error("profile retry did not recover without INSERT: " + JSON.stringify(recoveredProfile));
+    if (state.oldNicknameForm || !state.copy.includes("NaZerak Launcher")) {
+      throw new Error("cabinet still exposes the old Minecraft nickname form or lacks launcher guidance.");
     }
     finishDiagnostics();
     await context.close();
-    console.log("PASS: profile timeout isolation");
+    console.log("PASS: Discord cabinet without Minecraft nickname flow");
   } finally {
     await browser.close();
   }
@@ -393,12 +384,12 @@ const testCabinetSignedIn = async () => {
       throw new Error("signed-in cabinet state invalid: " + JSON.stringify(state));
     }
 
-    const input = page.locator("#minecraft-username");
-    await input.fill("NaZerakTest");
-    await page.locator('#minecraft-profile-form button[type="submit"]').click();
-    await page.waitForFunction(() =>
-      (document.querySelector("[data-auth-message]")?.textContent || "").includes("сохранён")
-    , { timeout: 5000 });
+    if (await page.locator("#minecraft-username, #minecraft-profile-form, [data-minecraft-input]").count() !== 0) {
+      throw new Error("website still exposes a Minecraft nickname input");
+    }
+    if (!(await page.locator("#minecraft-profile").textContent()).includes("NaZerak Launcher")) {
+      throw new Error("website does not direct the player to launcher profile setup");
+    }
 
     const minecraftPanel = page.locator("#minecraft-profile");
     const connectionPanel = page.locator("#connection");
