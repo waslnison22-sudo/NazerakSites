@@ -10,7 +10,11 @@ const requiredFiles = [
   "cabinet.html",
   "styles.css",
   "home-hud.css",
+  "cabinet-hud.css",
   "forum.css",
+  "forum-v2.css",
+  "scripts/forum-shell-smoke.mjs",
+  "supabase/migrations/20261018193000_forum_my_public_id.sql",
   "script.js",
   "auth.js",
   "auth-config.js",
@@ -58,6 +62,7 @@ const requiredFiles = [
   "scripts/runtime-smoke.mjs",
   "scripts/browser-smoke.mjs",
   "scripts/home-hud-smoke.mjs",
+  "scripts/cabinet-hud-smoke.mjs",
   "assets/images/README.md",
   "assets/images/nazerak-autumn-hero.webp",
   ".htaccess",
@@ -134,15 +139,19 @@ for (const [name, page] of [
   ["forum-reports.html", read("forum-reports.html")]
 ]) {
   const assets = ["auth-config.js?v=8", "supabase-loader.js?v=9", "auth.js?v=37", "script.js?v=24"];
+  if (name === "index.html" || name === "cabinet.html") {
+    assets.splice(assets.indexOf("script.js?v=24"), 1, "script.js?v=26");
+  }
   if (name !== "index.html") assets.push("styles.css?v=44");
-  if (name === "index.html") assets.push("home-hud.css?v=3");
-  if (name === "forum.html") { assets.push("forum.css?v=21", "forum-ui.js?v=5", "forum-social.js?v=2", "forum.js?v=9"); }
-  if (name === "forum-category.html") { assets.push("forum.css?v=21", "forum-ui.js?v=5", "forum-social.js?v=2", "forum-category.js?v=6"); }
-  if (name === "forum-members.html") { assets.push("forum.css?v=21", "forum-ui.js?v=5", "forum-social.js?v=2", "forum-members.js?v=2"); }
-  if (name === "forum-search.html") { assets.push("forum.css?v=21", "forum-ui.js?v=5", "forum-social.js?v=2", "forum-search.js?v=3"); }
-  if (name === "topic.html") { assets.push("forum.css?v=21", "forum-ui.js?v=5", "forum-social.js?v=2", "topic.js?v=6"); }
-  if (name === "forum-user.html") { assets.push("forum.css?v=21", "forum-ui.js?v=5", "forum-social.js?v=2", "user.js?v=3"); }
-  if (name === "forum-reports.html") { assets.push("forum.css?v=21", "forum-ui.js?v=5", "forum-social.js?v=2", "forum-reports.js?v=1"); }
+  if (name === "index.html") assets.push("home-hud.css?v=4");
+  if (name === "cabinet.html") assets.push("cabinet-hud.css?v=1");
+  if (name === "forum.html") { assets.push("forum.css?v=21", "forum-v2.css?v=2", "forum-ui.js?v=5", "forum-social.js?v=2", "forum.js?v=10"); }
+  if (name === "forum-category.html") { assets.push("forum.css?v=21", "forum-v2.css?v=2", "forum-ui.js?v=5", "forum-social.js?v=2", "forum-category.js?v=6"); }
+  if (name === "forum-members.html") { assets.push("forum.css?v=21", "forum-v2.css?v=2", "forum-ui.js?v=5", "forum-social.js?v=2", "forum-members.js?v=2"); }
+  if (name === "forum-search.html") { assets.push("forum.css?v=21", "forum-v2.css?v=2", "forum-ui.js?v=5", "forum-social.js?v=2", "forum-search.js?v=3"); }
+  if (name === "topic.html") { assets.push("forum.css?v=21", "forum-v2.css?v=2", "forum-ui.js?v=5", "forum-social.js?v=2", "topic.js?v=6"); }
+  if (name === "forum-user.html") { assets.push("forum.css?v=21", "forum-v2.css?v=2", "forum-ui.js?v=5", "forum-social.js?v=2", "user.js?v=3"); }
+  if (name === "forum-reports.html") { assets.push("forum.css?v=21", "forum-v2.css?v=2", "forum-ui.js?v=5", "forum-social.js?v=2", "forum-reports.js?v=1"); }
   for (const asset of assets) {
     if (!page.includes(asset)) {
       fail.push(`${name} asset include missing: ${asset}`);
@@ -239,7 +248,16 @@ if (!/\.from\(["']profiles["']\)[\s\S]{0,220}\.insert\(\{\s*id:\s*user\.id/.test
 if (/nazerak\.is-a\.dev\/cabinet\.html/i.test(read("AUTH_SETUP.md"))) fail.push("obsolete custom-domain auth URL remains");
 if (/server-status-text|server-players|data-server-hero/.test(index)) fail.push("obsolete server statistics markup remains");
 if (!index.includes('class="hud-hero"') || !index.includes("hud-world-grid") || !index.includes("hud-connect")) fail.push("homepage visual system missing");
-if (!index.includes("home-hud.css?v=3")) fail.push("isolated homepage HUD stylesheet is missing");
+if (!index.includes("home-hud.css?v=4")) fail.push("isolated homepage HUD stylesheet is missing");
+if (!cabinet.includes("cabinet-hud.css?v=1")) fail.push("dedicated cabinet HUD stylesheet is missing");
+if (!deployWorkflow.includes('test -f "$HOME/www/nazerak.ru/cabinet-hud.css"')) fail.push("production remote-root guard does not verify the cabinet stylesheet");
+if (!cabinet.includes("script.js?v=26")) fail.push("cabinet is missing the interactive shared script revision");
+if (!cabinet.includes('class="brand__mark" aria-hidden="true"><svg')) fail.push("cabinet brand mark is missing");
+if (!index.includes('class="hud-about-section"') || !index.includes('class="hud-guide-section"') || !index.includes('class="hud-faq-section"')) fail.push("homepage project structure is incomplete");
+if (!index.includes('class="hud-hero__image"')) fail.push("homepage must render hero asset as a full-frame image element");
+if (!script.includes("data-start-tab") || !script.includes("data-start-next")) fail.push("homepage onboarding stepper handlers are missing");
+if (!read("cabinet-hud.css").includes("body[data-cabinet] .account-login")) fail.push("cabinet redesign styles are missing");
+if (!read("scripts/cabinet-hud-smoke.mjs").includes("Discord login action missing")) fail.push("cabinet browser regression tests are missing");
 if (index.includes("styles.css?v=44")) fail.push("homepage must not inherit the legacy global stylesheet");
 if (!index.includes("assets/images/nazerak-autumn-hero.webp")) fail.push("local autumn Minecraft hero background is missing");
 if (index.includes("assets/images/home-hero.svg") || index.includes("home-v2") || index.includes("hero-art__grid")) fail.push("obsolete geometric homepage markup remains");
@@ -251,7 +269,7 @@ if (!index.includes('<a href="/forum/pravila-i-dokumenty">Правила</a>')) 
 if (index.includes('<a href="#community" title="Раздел поддержки проекта">Донат</a>')) fail.push("homepage must not advertise a donation route that is not implemented");
 if (!deployWorkflow.includes("--exclude='./forum-concept'")) fail.push("production deploy must keep forum-concept drafts out of public web root");
 if (!deployWorkflow.includes("test -f .deploy/assets/images/nazerak-autumn-hero.webp")) fail.push("production deploy does not validate local autumn hero asset");
-if (!deployWorkflow.includes("grep -q 'home-hud.css?v=3' .deploy/index.html")) fail.push("production deploy does not validate the isolated homepage HUD stylesheet");
+if (!deployWorkflow.includes("grep -q 'home-hud.css?v=4' .deploy/index.html")) fail.push("production deploy does not validate the isolated homepage HUD stylesheet");
 if (!deployWorkflow.includes('grep -q "styles.css?v=44" "$HOME/www/nazerak.ru/forum.html" &&')) fail.push("production deploy forum stylesheet guard is stale");
 if (deployWorkflow.includes("test -f .deploy/assets/images/home-hero.svg") || deployWorkflow.includes('grep -q "styles.css?v=42"')) fail.push("production deploy still contains stale homepage asset or stylesheet checks");
 if (!deployWorkflow.includes('grep -q "Добро пожаловать" /tmp/nazerak-home.html')) fail.push("production deploy does not validate the new homepage content");
@@ -349,6 +367,19 @@ if (!read("forum-ui.js").includes("data-forum-user")) fail.push("forum hover pro
 if (read("forum.html").match(/data-forum-state|forum-state|форум готов|Форум готов/i)) fail.push("obsolete forum ready status must not return");
 if (read("forum-category.html").match(/доступ.*публикац|публикац.*доступ|кто.*может.*публика/i)) fail.push("forum publication-access helper copy must not return");
 if (!read("forum.html").includes('class="forum-page forum-v21"') || !read("forum.html").includes('class="forum-v21-layout"')) fail.push("forum v21 layout markup is missing");
+const forumSurfaceFiles = ["forum.html","forum-category.html","forum-members.html","forum-search.html","forum-user.html","forum-reports.html","topic.html"];
+for (const file of forumSurfaceFiles) {
+  if (!read(file).includes("forum-v2.css?v=2")) fail.push(file + " is missing the unified forum stylesheet");
+}
+for (const route of ["new","unanswered","mine","bookmarks","watched"]) {
+  if (!read(".htaccess").includes("RewriteRule ^forum/" + route + "/?$ forum.html?view=" + route)) fail.push("forum route rewrite is missing: " + route);
+}
+if (!read("forum.js").includes("location.pathname.match")) fail.push("forum clean-route view detection is missing");
+const personalViewMigration = read("supabase/migrations/20261018193000_forum_my_public_id.sql");
+if (!personalViewMigration.includes("create or replace function public.forum_my_public_id()") || !personalViewMigration.includes("set search_path = ''")) fail.push("secure public-ID RPC migration is incomplete");
+if (!deployWorkflow.includes("test -f .deploy/forum-v2.css")) fail.push("production deploy does not stage the new forum stylesheet");
+if (!deployWorkflow.includes('test -f "$HOME/www/nazerak.ru/forum-v2.css"')) fail.push("production remote-root guard does not verify the new forum stylesheet");
+
 
 if (!read("user.js").includes('from("forum_author_directory")')) fail.push("forum user directory query missing");
 for (const file of ["forum.js","forum-category.js","topic.js"]) {
