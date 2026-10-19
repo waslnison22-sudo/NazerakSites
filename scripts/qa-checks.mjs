@@ -191,8 +191,11 @@ if (auth.includes("data-media-retry") || auth.includes("data-media-disclosure") 
 if (css.includes("data-media-disclosure") || /\.login-panel\b|\.account-container\b|\.account-layout\b|\.account-page--clean\b|\.account-clean\b|\.account-card-clean\b/.test(css)) fail.push("legacy cabinet CSS remains");
 if (!auth.includes("const withTimeout")) fail.push("request timeout guard is missing");
 if (!auth.includes("const syncForumAccount")) fail.push("Discord forum-account sync is missing");
+if (/\.from\(["']profiles["']\)/.test(auth)) fail.push("website cabinet must not read or write the old Minecraft nickname profile table");
+if (cabinet.includes('id="minecraft-profile-form"') || cabinet.includes("data-minecraft-input")) fail.push("website nickname form must remain removed");
+if (!cabinet.includes("НАСТРОЙКА В ЛАУНЧЕРЕ") || !cabinet.includes("Этот сайт больше не запрашивает и не сохраняет Minecraft-ник")) fail.push("cabinet must direct Minecraft profile setup to the launcher");
 if (!auth.includes("Загрузка Supabase SDK превысила 9 секунд.")) fail.push("Supabase SDK bootstrap wait is not bounded");
-if (!auth.includes("profiles read timed out or failed")) fail.push("profile read timeout guard is missing");
+
 if (!auth.includes('client.auth.onAuthStateChange((event, session) =>')) fail.push("auth listener is missing");
 const listenerIndex = auth.indexOf('client.auth.onAuthStateChange((event, session) =>');
 const clientCreateIndex = auth.indexOf('client = factory(config.url, config.publishableKey');
@@ -210,7 +213,7 @@ if (auth.includes('redirectTarget.hash = "media-application"')) fail.push("OAuth
 if (!auth.includes('setAccountView("guest");')) fail.push("cabinet must expose guest login as safe fallback");
 if (!auth.includes('event === "TOKEN_REFRESHED"')) fail.push("token refresh event handling is missing");
 if (!auth.includes("NETWORK OFFLINE")) fail.push("offline auth guard is missing");
-if (!auth.includes("Повторное сохранение профиля превысило 7 секунд.")) fail.push("profile save duplicate-race recovery is missing");
+
 
 if (!auth.includes("nextUserId === currentUserId && nextUserId")) fail.push("background auth sync must avoid cabinet flicker");
 if (!auth.includes('setAuthStatus("DISCORD READY", "ready")')) fail.push("signed-out cabinet status reset is missing");
@@ -243,8 +246,8 @@ if (!auth.includes('event.key === null || event.key.startsWith("sb-")')) fail.pu
 if (!auth.includes('label.textContent = state.user ? "Кабинет" : "Войти";')) fail.push("global auth link label state is missing");
 if (/https:\/\/minecraftstatus\.com/i.test(read("404.html"))) fail.push("obsolete status host remains in 404 CSP");
 if (/\.live-panel|\.section--live|#server-status-text|\.world-map\\b|\.hero-server-mark\\b/.test(css)) fail.push("obsolete live/dashboard CSS remains");
-if (!/\.from\(["']profiles["']\)[\s\S]{0,220}\.update\(/.test(auth)) fail.push("profile save must use least-privilege update flow");
-if (!/\.from\(["']profiles["']\)[\s\S]{0,220}\.insert\(\{\s*id:\s*user\.id/.test(auth)) fail.push("profile initialization insert is missing");
+
+
 if (/nazerak\.is-a\.dev\/cabinet\.html/i.test(read("AUTH_SETUP.md"))) fail.push("obsolete custom-domain auth URL remains");
 if (/server-status-text|server-players|data-server-hero/.test(index)) fail.push("obsolete server statistics markup remains");
 if (!index.includes('class="hud-hero"') || !index.includes("hud-world-grid") || !index.includes("hud-connect")) fail.push("homepage visual system missing");
