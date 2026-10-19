@@ -286,6 +286,7 @@ const installFakeSupabase = async (context) => {
             limit() { return chain; },
             insert() { return chain; },
             update() { return chain; },
+            upsert() { return chain; },
             delete() { return chain; },
             maybeSingle: async () => ({ data: null, error: null }),
             single: async () => ({ data: null, error: null }),
