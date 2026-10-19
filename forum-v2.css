@@ -44,7 +44,7 @@ body[data-forum] .nav>a:hover,body[data-forum-category-page] .nav>a:hover,body[d
 .forum-v21-search .forum-search{flex:1;min-width:0}
 .forum-search__field{min-height:44px;border:1px solid #303641;border-radius:8px;background:#0d1016;transition:border-color .16s ease,background .16s ease}
 .forum-search__field:focus-within{border-color:#68717f;background:#10141b}
-.forum-search__field input{min-height:44px;color:#f5f6f8;font-size:12px}
+.forum-search__field input{min-height:44px;color:#f5f6f8;font-size:16px}
 .forum-search__field input::placeholder{color:#707987}
 .forum-search__icon{color:#8993a1}
 .forum-result-count{color:#86909e;font-size:10px;font-weight:750;white-space:nowrap}
@@ -159,7 +159,7 @@ body[data-forum] .nav>a:hover,body[data-forum-category-page] .nav>a:hover,body[d
 .forum-modal__copy{margin:12px 0 20px;color:#9ca5b2;font-size:12px;line-height:1.7}
 .forum-form-field{display:grid;gap:8px;margin:0 0 15px}
 .forum-form-field label{color:#dce0e6;font-size:11px;font-weight:780}
-.forum-form-field input,.forum-form-field select,.forum-form-field textarea{width:100%;min-height:43px;border:1px solid #323944;border-radius:7px;background:#090c11;color:#f3f5f7;padding:11px 12px;font:inherit;font-size:12px}
+.forum-form-field input,.forum-form-field select,.forum-form-field textarea{width:100%;min-height:44px;border:1px solid #323944;border-radius:7px;background:#090c11;color:#f3f5f7;padding:11px 12px;font:inherit;font-size:16px}
 .forum-form-field textarea{min-height:150px;resize:vertical;line-height:1.7}
 .forum-form-field small{color:#818b99;font-size:10px;line-height:1.5}
 .forum-modal__footer{position:sticky;bottom:-1px;margin-top:22px;padding-top:14px;border-top:1px solid #282e38;background:#0e1117}
