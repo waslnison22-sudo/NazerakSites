@@ -136,7 +136,7 @@ for (const [name, page] of [
   const assets = ["auth-config.js?v=8", "supabase-loader.js?v=9", "auth.js?v=37", "script.js?v=24"];
   if (name !== "index.html") assets.push("styles.css?v=44");
   if (name === "index.html") assets.push("home-hud.css?v=3");
-  if (name === "forum.html") { assets.push("forum.css?v=21", "forum-ui.js?v=5", "forum-social.js?v=2", "forum.js?v=9"); }
+  if (name === "forum.html") { assets.push("forum.css?v=21", "forum-v2.css", "forum-ui.js?v=5", "forum-social.js?v=2", "forum.js?v=10"); }
   if (name === "forum-category.html") { assets.push("forum.css?v=21", "forum-ui.js?v=5", "forum-social.js?v=2", "forum-category.js?v=6"); }
   if (name === "forum-members.html") { assets.push("forum.css?v=21", "forum-ui.js?v=5", "forum-social.js?v=2", "forum-members.js?v=2"); }
   if (name === "forum-search.html") { assets.push("forum.css?v=21", "forum-ui.js?v=5", "forum-social.js?v=2", "forum-search.js?v=3"); }
@@ -300,6 +300,8 @@ const forumSurfaceFiles = ["forum.html","forum-category.html","forum-members.htm
 for (const file of forumSurfaceFiles) {
   const page = read(file);
   if (file === "forum.html" && !page.includes("forum.css?v=21")) fail.push(file + " forum stylesheet is missing");
+  if (file === "forum.html" && !page.includes("forum-v2.css")) fail.push(file + " XenForo-inspired UX stylesheet is missing");
+  if (file === "forum.html" && !page.includes("forum.js?v=10")) fail.push(file + " personal views script version is stale");
   if (file !== "forum.html" && !page.includes("forum.css?v=21")) fail.push(file + " forum stylesheet is missing");
 }
 if (css.includes("NAZERAK FORUM")) fail.push("obsolete forum cascade remains in global stylesheet");for (const file of forumSurfaceFiles) {
