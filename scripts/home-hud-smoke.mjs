@@ -23,6 +23,7 @@ try {
  check(await page.locator('link[href*="home-hud.css"]').count()===1,"isolated HUD stylesheet missing");
  check(await page.locator('link[href*="styles.css"]').count()===0,"homepage must not inherit global styles");
  check(await page.locator(".hud-hero__image").count()===1,"hero should use a real image element rather than a cropped CSS background");
+ await page.waitForFunction(()=>{const n=document.querySelector(".hud-hero__image");return !!n&&n.complete&&n.naturalWidth>0},{},{timeout:20000});
  check(await page.locator(".hud-hero__image").evaluate(n=>n.naturalWidth>0&&n.naturalHeight>0),"hero image failed to load");
  check(await page.locator(".hud-hero__image").evaluate(n=>getComputedStyle(n).objectFit==="cover"),"hero should preserve the full image frame without cropping");
  check((await page.locator(".hud-hero__image").getAttribute("src")||"").startsWith("https://images.unsplash.com/photo-1762515993692-7b9946f76858"),"homepage must use the selected autumn landscape from Unsplash");
