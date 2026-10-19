@@ -68,9 +68,8 @@ jobs:
           printf "%s\n" "${{ github.event.workflow_run.head_sha }}" > .deploy/__nazerak_deploy_sha.txt
           test -f .deploy/forum.html
           test -f .deploy/forum-v2.css
-          test -f .deploy/assets/images/nazerak-autumn-hero.webp
           test -f .deploy/cabinet-hud.css
-          grep -q 'home-hud.css?v=4' .deploy/index.html
+          grep -q 'home-hud.css?v=5' .deploy/index.html
           grep -q 'cabinet-hud.css?v=1' .deploy/cabinet.html
           grep -q 'forum.css?v=21' .deploy/forum.html
           grep -q 'forum-v2.css?v=2' .deploy/forum.html
@@ -117,7 +116,7 @@ jobs:
             grep -q "forum.css?v=21" "$HOME/www/nazerak.ru/forum.html" &&
             test -f "$HOME/www/nazerak.ru/forum.css" &&
             grep -Fq ".forum-v21-layout{" "$HOME/www/nazerak.ru/forum.css" &&
-            grep -q "home-hud.css?v=4" "$HOME/www/nazerak.ru/index.html" &&
+            grep -q "home-hud.css?v=5" "$HOME/www/nazerak.ru/index.html" &&
             test -f "$HOME/www/nazerak.ru/cabinet-hud.css" &&
             grep -q "cabinet-hud.css?v=1" "$HOME/www/nazerak.ru/cabinet.html" &&
             grep -q "styles.css?v=44" "$HOME/www/nazerak.ru/forum.html" &&
@@ -166,8 +165,8 @@ jobs:
 
           curl -k -L -sS "$SITE_URL/" -o /tmp/nazerak-home.html
           grep -q "Добро пожаловать" /tmp/nazerak-home.html
-          grep -q "assets/images/nazerak-autumn-hero.webp" /tmp/nazerak-home.html &&
-          grep -q "home-hud.css?v=4" /tmp/nazerak-home.html
+          grep -q "images.unsplash.com/photo-1762515993692-7b9946f76858" /tmp/nazerak-home.html &&
+          grep -q "home-hud.css?v=5" /tmp/nazerak-home.html
           curl -k -f -L -sS "$SITE_URL/cabinet" -o /tmp/nazerak-cabinet.html
           grep -q "cabinet-hud.css?v=1" /tmp/nazerak-cabinet.html
           curl -k -f -L -sS "$SITE_URL/cabinet-hud.css?v=1" -o /tmp/nazerak-cabinet.css
