@@ -44,7 +44,7 @@ body[data-forum] .nav>a:hover,body[data-forum-category-page] .nav>a:hover,body[d
 .forum-v21-search .forum-search{flex:1;min-width:0}
 .forum-search__field{min-height:44px;border:1px solid #303641;border-radius:8px;background:#0d1016;transition:border-color .16s ease,background .16s ease}
 .forum-search__field:focus-within{border-color:#68717f;background:#10141b}
-.forum-search__field input{min-height:44px;color:#f5f6f8;font-size:16px}
+.forum-search__field input{min-height:48px;color:#f5f6f8;font-size:16px}
 .forum-search__field input::placeholder{color:#707987}
 .forum-search__icon{color:#8993a1}
 .forum-result-count{color:#86909e;font-size:10px;font-weight:750;white-space:nowrap}
