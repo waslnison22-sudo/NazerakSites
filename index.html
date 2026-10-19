@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#07070a">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://unpkg.com; connect-src 'self' https://ujlbyzvdsncvqbrhasuw.supabase.co; img-src 'self' data: https://cdn.discordapp.com https://media.discordapp.net; style-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; frame-src 'none'; form-action 'self';">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://unpkg.com; connect-src 'self' https://ujlbyzvdsncvqbrhasuw.supabase.co; img-src 'self' data: https://cdn.discordapp.com https://media.discordapp.net https://images.unsplash.com; style-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; frame-src 'none'; form-action 'self';">
 <meta name="description" content="NaZerak — Minecraft roleplay-проект с собственным миром, организациями и сообществом игроков.">
 <link rel="canonical" href="https://nazerak.ru/">
 <meta property="og:type" content="website">
@@ -27,7 +27,7 @@
     <a class="brand" href="#top" aria-label="NaZerak — главная"><span class="brand__mark" aria-hidden="true"><svg viewBox="0 0 48 48" focusable="false"><path d="M12 14h24M12 24h15M12 34h24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><path d="M34 11 16 37" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></svg></span><span class="brand__name">NaZerak</span></a>
     <button class="nav-toggle" type="button" aria-controls="site-nav" aria-expanded="false" aria-label="Открыть меню"><span></span><span></span><span></span><span class="sr-only">Открыть меню</span></button>
     <nav class="nav" id="site-nav" aria-label="Основная навигация">
-      <a href="#hero" class="is-active" aria-current="location">Главная</a><a href="/forum">Форум</a><a href="#community">Сообщество</a><a href="#start">Сервер</a><a href="/forum/pravila-i-dokumenty">Правила</a><a href="#about">О проекте</a>
+      <a href="#hero" class="is-active" aria-current="location">Главная</a><a href="/forum">Форум</a><a href="#community">Сообщество</a><a href="#start">Сервер</a><a href="/forum/pravila-i-dokumenty">Правила</a><a href="#about">О проекте</a><a href="#guide">Как начать</a>
       <a class="nav-search" href="/search" aria-label="Поиск по форуму" title="Поиск"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.4"></circle><path d="m15.5 15.5 4.5 4.5"></path></svg></a>
       <a class="nav-login" data-auth-link href="/cabinet"><span data-auth-link-label>Войти</span></a><a class="nav-register" href="/cabinet">Регистрация</a>
     </nav>
@@ -35,7 +35,7 @@
 </header>
 <main id="main-content">
   <section class="hud-hero" id="hero" aria-labelledby="hero-title">
-    <img class="hud-hero__image" src="./assets/images/nazerak-autumn-hero.webp" alt="" decoding="async" fetchpriority="high"><div class="hud-hero__art" aria-hidden="true"></div><div class="hud-hero__veil" aria-hidden="true"></div>
+    <img class="hud-hero__image" src="https://images.unsplash.com/photo-1762515993692-7b9946f76858?auto=format&fit=crop&w=2400&q=85" alt="" decoding="async" fetchpriority="high"><div class="hud-hero__art" aria-hidden="true"></div><div class="hud-hero__veil" aria-hidden="true"></div>
     <div class="container hud-hero__inner"><div class="hud-hero__copy">
       <p class="hud-eyebrow"><span aria-hidden="true"></span>ROLEPLAY + MINECRAFT</p>
       <h1 id="hero-title">Добро пожаловать<br>на <em>NaZerak</em></h1>
@@ -95,37 +95,30 @@
     </div>
   </section>
   <section class="hud-guide-section" id="guide" aria-labelledby="guide-title">
-    <div class="container hud-guide-layout">
-      <div class="hud-guide-intro">
-        <p class="section-kicker">ПЕРВЫЙ ШАГ</p>
-        <h2 id="guide-title">Начать проще,<br>чем кажется.</h2>
-        <p>Подготовь Minecraft Java Edition, подключись к серверу и познакомься с сообществом. Переключай шаги, чтобы увидеть порядок действий.</p>
-        <a class="button button--ghost" href="https://discord.gg/2KvsYYDHN6" target="_blank" rel="noopener noreferrer">Задать вопрос в Discord <span aria-hidden="true">↗</span></a>
+    <div class="container">
+      <div class="hud-guide-heading">
+        <div><p class="section-kicker">СТАРТ В NaZerak</p><h2 id="guide-title">Три шага — и ты в игре.</h2></div>
+        <p>Собственный лаунчер NaZerak подготовит игровой клиент и поможет подключиться к нашему серверу.</p>
       </div>
-      <div class="hud-guide-card">
-        <div class="hud-step-tabs" role="tablist" aria-label="Шаги подключения">
-          <button type="button" class="hud-step-tab is-selected" id="step-tab-1" role="tab" aria-selected="true" aria-controls="step-panel-1" data-start-tab="1">01 <span>Подготовка</span></button>
-          <button type="button" class="hud-step-tab" id="step-tab-2" role="tab" aria-selected="false" aria-controls="step-panel-2" data-start-tab="2" tabindex="-1">02 <span>Подключение</span></button>
-          <button type="button" class="hud-step-tab" id="step-tab-3" role="tab" aria-selected="false" aria-controls="step-panel-3" data-start-tab="3" tabindex="-1">03 <span>Сообщество</span></button>
-        </div>
-        <div class="hud-step-panel" id="step-panel-1" role="tabpanel" aria-labelledby="step-tab-1" data-guide-panel="1">
-          <span class="hud-step-number">ШАГ 01 / 03</span><h3>Проверь версию игры</h3>
-          <p>Для подключения подготовь Minecraft Java Edition версии <strong>1.21.11</strong>. Серверный адрес и версия собраны на этой странице.</p>
-          <button type="button" class="button button--primary" data-start-next="2">Дальше: подключение <span aria-hidden="true">→</span></button>
-        </div>
-        <div class="hud-step-panel" id="step-panel-2" role="tabpanel" aria-labelledby="step-tab-2" data-guide-panel="2" hidden>
-          <span class="hud-step-number">ШАГ 02 / 03</span><h3>Добавь сервер</h3>
-          <p>Открой список многопользовательских серверов, добавь адрес и подключись: <strong>nazehard.rustix.cc</strong>.</p>
-          <button type="button" class="button button--primary" data-copy="nazehard.rustix.cc"><span>Скопировать IP</span><span aria-hidden="true">↗</span></button>
-          <button type="button" class="button button--text" data-start-next="3">Следующий шаг <span aria-hidden="true">→</span></button>
-        </div>
-        <div class="hud-step-panel" id="step-panel-3" role="tabpanel" aria-labelledby="step-tab-3" data-guide-panel="3" hidden>
-          <span class="hud-step-number">ШАГ 03 / 03</span><h3>Познакомься с игроками</h3>
-          <p>Знакомься с сообществом, следи за объявлениями и задавай вопросы на официальных площадках NaZerak.</p>
-          <div class="hud-step-links"><a href="/forum">Открыть форум <span aria-hidden="true">→</span></a><a href="https://discord.gg/2KvsYYDHN6" target="_blank" rel="noopener noreferrer">Перейти в Discord <span aria-hidden="true">↗</span></a></div>
-          <button type="button" class="button button--text" data-start-next="1">Повторить шаги <span aria-hidden="true">↻</span></button>
-        </div>
+      <div class="hud-guide-steps">
+        <article class="hud-guide-step">
+          <span class="hud-guide-step__number">01</span><span class="hud-guide-step__icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3v12m-5-5 5 5 5-5M4 17v3h16v-3"/></svg></span>
+          <h3>Скачай лаунчер</h3><p>Установи официальный лаунчер NaZerak для Windows. Он будет отдельной точкой входа в наш игровой мир.</p>
+          <a class="button button--primary hud-launcher-download is-unavailable" href="#launcher-download" aria-describedby="launcher-download-status" aria-disabled="true">Скачать лаунчер <span aria-hidden="true">↓</span></a>
+          <p class="hud-download-status" id="launcher-download-status" role="status">Публичная сборка ещё готовится. Кнопка загрузки станет активной после публикации проверенного установщика.</p>
+        </article>
+        <article class="hud-guide-step">
+          <span class="hud-guide-step__number">02</span><span class="hud-guide-step__icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M5 20v-1.5a7 7 0 0 1 14 0V20z"/></svg></span>
+          <h3>Зарегистрируйся</h3><p>Войди через Discord в аккаунт NaZerak. Для запуска Minecraft также потребуется авторизация Microsoft и действующая лицензия Java Edition.</p>
+          <a class="hud-guide-link" href="/cabinet">Открыть кабинет <span aria-hidden="true">→</span></a>
+        </article>
+        <article class="hud-guide-step">
+          <span class="hud-guide-step__number">03</span><span class="hud-guide-step__icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m4 7 8-4 8 4-8 4zM4 7v10l8 4 8-4V7M12 11v10"/></svg></span>
+          <h3>Скачай файлы и играй</h3><p>В лаунчере скачай необходимые игровые файлы, нажми «Играть» и подключайся к серверу NaZerak.</p>
+          <div class="hud-guide-server"><span>АДРЕС СЕРВЕРА</span><strong>nazehard.rustix.cc</strong><button type="button" data-copy="nazehard.rustix.cc" aria-label="Скопировать адрес сервера">Копировать IP</button></div>
+        </article>
       </div>
+      <p class="hud-guide-footnote">NaZerak не распространяет игровые файлы Minecraft самостоятельно: загрузка клиента выполняется через лаунчер с официальных источников.</p>
     </div>
   </section>
   <section class="hud-faq-section" id="faq" aria-labelledby="faq-title">
@@ -155,7 +148,7 @@
     <div class="container hud-community-grid">
       <div class="community-intro"><p class="section-kicker">Наше сообщество</p><p>Следи за новостями, общайся с игроками и будь в курсе событий проекта.</p></div>
       <a class="community-card" href="/forum"><span class="community-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 5.5h16v11H10l-5 3v-3H4z"></path><path d="M8 9.5h8M8 13h5"></path></svg></span><span class="community-card__copy"><strong>Форум</strong><small>Обсуждения, идеи, поддержка</small></span><span class="community-card__arrow" aria-hidden="true">→</span></a>
-      <a class="community-card" href="https://discord.gg/2KvsYYDHN6" target="_blank" rel="noopener noreferrer"><span class="community-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 6.5a16 16 0 0 1 10 0l2 3.5-.5 7-3 1.5-1.5-2M7 6.5 5 10l.5 7 3 1.5 1.5-2M8.5 10.5h.01M15.5 10.5h.01M9 14c2 1.5 4 1.5 6 0"></path></svg></span><span class="community-card__copy"><strong>Discord</strong><small>Общение, события, голосовой чат</small></span><span class="community-card__arrow" aria-hidden="true">→</span></a>
+      <a class="community-card" href="https://discord.gg/2KvsYYDHN6" target="_blank" rel="noopener noreferrer"><span class="community-icon" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" stroke="none" d="M19.73 4.36a19.8 19.8 0 0 0-4.88-1.5.07.07 0 0 0-.08.04c-.21.38-.45.88-.62 1.27a18.3 18.3 0 0 0-5.48 0c-.17-.4-.41-.89-.63-1.27a.08.08 0 0 0-.08-.04 19.7 19.7 0 0 0-4.88 1.5.07.07 0 0 0-.03.03C-.22 8.9-1.07 13.3-.64 17.65a.1.1 0 0 0 .04.07 19.9 19.9 0 0 0 5.99 3.02.08.08 0 0 0 .09-.03c.46-.63.87-1.3 1.22-2a.08.08 0 0 0-.04-.11 13.1 13.1 0 0 1-1.87-.89.08.08 0 0 1-.01-.13c.13-.1.25-.2.37-.3a.08.08 0 0 1 .08-.01c3.92 1.8 8.16 1.8 12.03 0a.08.08 0 0 1 .08.01c.12.1.24.21.37.3a.08.08 0 0 1-.01.13c-.6.35-1.22.65-1.87.89a.08.08 0 0 0-.04.11c.36.7.77 1.36 1.22 2a.08.08 0 0 0 .09.03 19.8 19.8 0 0 0 5.99-3.02.08.08 0 0 0 .04-.07c.5-5.02-.84-9.39-3.51-13.26a.06.06 0 0 0-.03-.03ZM8.02 14.8c-1.17 0-2.13-1.08-2.13-2.41s.94-2.42 2.13-2.42c1.2 0 2.15 1.1 2.13 2.42 0 1.33-.94 2.41-2.13 2.41Zm7.96 0c-1.17 0-2.13-1.08-2.13-2.41s.94-2.42 2.13-2.42c1.2 0 2.15 1.1 2.13 2.42 0 1.33-.94 2.41-2.13 2.41Z"/></svg></span><span class="community-card__copy"><strong>Discord</strong><small>Общение, события, голосовой чат</small></span><span class="community-card__arrow" aria-hidden="true">→</span></a>
       <aside class="community-note">NaZerak — это не просто сервер, это сообщество людей, которые создают историю вместе.</aside>
     </div>
   </section>
