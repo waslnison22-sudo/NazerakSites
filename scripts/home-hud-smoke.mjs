@@ -25,10 +25,7 @@ try {
  check(await page.locator(".hud-hero__image").count()===1,"hero should use a real image element rather than a cropped CSS background");
  check(await page.locator(".hud-hero__image").evaluate(n=>n.naturalWidth>0&&n.naturalHeight>0),"hero image failed to load");
  check(await page.locator(".hud-hero__image").evaluate(n=>getComputedStyle(n).objectFit==="cover"),"hero should preserve the full image frame without cropping");
- const asset=await page.request.get(new URL("/assets/images/nazerak-autumn-hero.webp",baseUrl).toString());
- check(asset.status()===200,"local autumn hero image should return HTTP 200");
- check((asset.headers()["content-type"]||"").includes("image/webp"),"autumn asset must be served as WebP");
- check((await asset.body()).byteLength>5000,"autumn hero asset looks incomplete");
+ check((await page.locator(".hud-hero__image").getAttribute("src")||"").startsWith("https://images.unsplash.com/photo-1762515993692-7b9946f76858"),"homepage must use the selected autumn landscape from Unsplash");
  check(await page.locator(".hero-art,.world-visual,.partner-panel,.hud-orbit,.hud-triangle,.home-v2,.hud-circle").count()===0,"obsolete abstract decorations remain");
  const cssResponse=await page.request.get(new URL("/home-hud.css?v=5",baseUrl).toString());
  check(cssResponse.status()===200,"standalone HUD stylesheet should return HTTP 200");
