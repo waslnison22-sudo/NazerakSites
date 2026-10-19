@@ -189,7 +189,26 @@ const testStaticPage = async ({ path, name, viewport, check }) => {
   const finishDiagnostics = attachDiagnostics(page, name);
 
   try {
-    await page.goto(BASE + path, { waitUntil: "networkidle", timeout: TIMEOUT });
+    await page.goto(BASE + path, { waitUntil: path === "/forum" ? "load" : "networkidle", timeout: TIMEOUT });
+
+    // The forum index can keep Supabase/realtime requests open, so use its
+    // specific hydration markers instead of waiting for networkidle there.
+    if (path === "/forum") {
+      await page.waitForSelector(".forum-v21-layout", { state: "visible", timeout: 10000 });
+      await page.waitForFunction(
+        () => document.querySelectorAll("[data-forum-node-tree] .forum-board-row").length > 0,
+        { timeout: 10000 }
+      );
+    }
+    if (path.startsWith("/forum-category.html")) {
+      await page.waitForFunction(() => {
+        const title = document.querySelector("[data-category-title]")?.textContent?.trim() || "";
+        return title.length > 0 && !/загрузка/i.test(title);
+      }, { timeout: 10000 });
+    }
+    if (path === "/members") {
+      await page.waitForSelector("[data-members-list]", { timeout: 10000 });
+    }
     await check(page);
     await assertForumVisualBaseline(page, name);
     if (await page.locator(".forum-page, .topic-page, .forum-user-page").count()) {
