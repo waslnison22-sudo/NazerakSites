@@ -201,7 +201,10 @@ const testStaticPage = async ({ path, name, viewport, check }) => {
       );
     }
     if (path.startsWith("/forum-category.html")) {
-      await page.waitForSelector("[data-category-title]", { timeout: 10000 });
+      await page.waitForFunction(() => {
+        const title = document.querySelector("[data-category-title]")?.textContent?.trim() || "";
+        return title.length > 0 && !/загрузка/i.test(title);
+      }, { timeout: 10000 });
     }
     if (path === "/members") {
       await page.waitForSelector("[data-members-list]", { timeout: 10000 });
