@@ -189,7 +189,23 @@ const testStaticPage = async ({ path, name, viewport, check }) => {
   const finishDiagnostics = attachDiagnostics(page, name);
 
   try {
-    await page.goto(BASE + path, { waitUntil: "networkidle", timeout: TIMEOUT });
+    await page.goto(BASE + path, { waitUntil: "load", timeout: TIMEOUT });
+
+    // Forum pages can keep Supabase/realtime requests open, so networkidle is
+    // not a reliable readiness signal. Wait for the page-specific hydrated UI.
+    if (path === "/forum") {
+      await page.waitForSelector(".forum-v21-layout", { state: "visible", timeout: 10000 });
+      await page.waitForFunction(
+        () => document.querySelectorAll("[data-forum-node-tree] .forum-board-row").length > 0,
+        { timeout: 10000 }
+      );
+    }
+    if (path.startsWith("/forum-category.html")) {
+      await page.waitForSelector("[data-category-title]", { timeout: 10000 });
+    }
+    if (path === "/members") {
+      await page.waitForSelector("[data-members-list]", { timeout: 10000 });
+    }
     await check(page);
     await assertForumVisualBaseline(page, name);
     if (await page.locator(".forum-page, .topic-page, .forum-user-page").count()) {
