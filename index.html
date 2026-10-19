@@ -16,18 +16,18 @@
 <meta name="twitter:title" content="NaZerak — свой мир, свои правила">
 <meta name="twitter:description" content="Собственный мир, ролевые истории и сообщество игроков NaZerak.">
 <meta name="twitter:image" content="https://nazerak.ru/assets/images/nazerak-autumn-hero.webp">
-<link rel="icon" href="./favicon.svg?v=6" type="image/svg+xml">
-<link rel="stylesheet" href="./home-hud.css?v=3">
+<link rel="icon" href="./favicon.svg?v=7" type="image/svg+xml">
+<link rel="stylesheet" href="./home-hud.css?v=4">
 <title>NaZerak — свой мир, свои правила</title>
 </head>
 <body class="home-hud">
 <a class="skip-link" href="#main-content">К содержимому</a>
 <header class="topbar" id="top">
   <div class="container topbar__inner">
-    <a class="brand" href="#top" aria-label="NaZerak — главная"><span class="brand__mark" aria-hidden="true">N</span><span class="brand__name">NaZerak</span></a>
+    <a class="brand" href="#top" aria-label="NaZerak — главная"><span class="brand__mark" aria-hidden="true"><svg viewBox="0 0 48 48" focusable="false"><path d="M12 14h24M12 24h15M12 34h24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><path d="M34 11 16 37" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></svg></span><span class="brand__name">NaZerak</span></a>
     <button class="nav-toggle" type="button" aria-controls="site-nav" aria-expanded="false" aria-label="Открыть меню"><span></span><span></span><span></span><span class="sr-only">Открыть меню</span></button>
     <nav class="nav" id="site-nav" aria-label="Основная навигация">
-      <a href="#hero" class="is-active" aria-current="location">Главная</a><a href="/forum">Форум</a><a href="#community">Сообщество</a><a href="#start">Сервер</a><a href="/forum/pravila-i-dokumenty">Правила</a><a href="#world">О проекте</a>
+      <a href="#hero" class="is-active" aria-current="location">Главная</a><a href="/forum">Форум</a><a href="#community">Сообщество</a><a href="#start">Сервер</a><a href="/forum/pravila-i-dokumenty">Правила</a><a href="#about">О проекте</a>
       <a class="nav-search" href="/search" aria-label="Поиск по форуму" title="Поиск"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.4"></circle><path d="m15.5 15.5 4.5 4.5"></path></svg></a>
       <a class="nav-login" data-auth-link href="/cabinet"><span data-auth-link-label>Войти</span></a><a class="nav-register" href="/cabinet">Регистрация</a>
     </nav>
@@ -35,7 +35,7 @@
 </header>
 <main id="main-content">
   <section class="hud-hero" id="hero" aria-labelledby="hero-title">
-    <div class="hud-hero__art" aria-hidden="true"></div><div class="hud-hero__veil" aria-hidden="true"></div>
+    <img class="hud-hero__image" src="./assets/images/nazerak-autumn-hero.webp" alt="" decoding="async" fetchpriority="high"><div class="hud-hero__art" aria-hidden="true"></div><div class="hud-hero__veil" aria-hidden="true"></div>
     <div class="container hud-hero__inner"><div class="hud-hero__copy">
       <p class="hud-eyebrow"><span aria-hidden="true"></span>ROLEPLAY + MINECRAFT</p>
       <h1 id="hero-title">Добро пожаловать<br>на <em>NaZerak</em></h1>
@@ -67,6 +67,90 @@
       </aside>
     </div>
   </section>
+
+  <section class="hud-about-section" id="about" aria-labelledby="about-title">
+    <div class="container">
+      <div class="hud-section-heading">
+        <p class="section-kicker">ИДЕЯ ПРОЕКТА</p>
+        <h2 id="about-title">Не просто зайти в игру.<br><em>Стать частью мира.</em></h2>
+        <p>NaZerak — русскоязычный Minecraft RP-проект, в котором игроки создают собственные истории, взаимодействуют друг с другом и развивают общий игровой мир. Здесь важны не только постройки, но и решения, роли и последствия.</p>
+      </div>
+      <div class="hud-about-grid">
+        <article class="hud-about-card">
+          <span class="hud-card-index">01</span>
+          <h3>Твоя роль</h3>
+          <p>Выбери, каким будет твой персонаж, и отыгрывай его историю через поступки и взаимодействие с другими игроками.</p>
+        </article>
+        <article class="hud-about-card">
+          <span class="hud-card-index">02</span>
+          <h3>Общий мир</h3>
+          <p>Город, организации и события становятся интереснее, когда в них участвуют реальные решения сообщества.</p>
+        </article>
+        <article class="hud-about-card">
+          <span class="hud-card-index">03</span>
+          <h3>Живое сообщество</h3>
+          <p>Знакомься с игроками, обсуждай идеи на форуме и участвуй в жизни NaZerak вне игры.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+  <section class="hud-guide-section" id="guide" aria-labelledby="guide-title">
+    <div class="container hud-guide-layout">
+      <div class="hud-guide-intro">
+        <p class="section-kicker">ПЕРВЫЙ ШАГ</p>
+        <h2 id="guide-title">Начать проще,<br>чем кажется.</h2>
+        <p>Подготовь Minecraft Java Edition, подключись к серверу и познакомься с сообществом. Переключай шаги, чтобы увидеть порядок действий.</p>
+        <a class="button button--ghost" href="https://discord.gg/2KvsYYDHN6" target="_blank" rel="noopener noreferrer">Задать вопрос в Discord <span aria-hidden="true">↗</span></a>
+      </div>
+      <div class="hud-guide-card">
+        <div class="hud-step-tabs" role="tablist" aria-label="Шаги подключения">
+          <button type="button" class="hud-step-tab is-selected" id="step-tab-1" role="tab" aria-selected="true" aria-controls="step-panel-1" data-start-tab="1">01 <span>Подготовка</span></button>
+          <button type="button" class="hud-step-tab" id="step-tab-2" role="tab" aria-selected="false" aria-controls="step-panel-2" data-start-tab="2" tabindex="-1">02 <span>Подключение</span></button>
+          <button type="button" class="hud-step-tab" id="step-tab-3" role="tab" aria-selected="false" aria-controls="step-panel-3" data-start-tab="3" tabindex="-1">03 <span>Сообщество</span></button>
+        </div>
+        <div class="hud-step-panel" id="step-panel-1" role="tabpanel" aria-labelledby="step-tab-1" data-guide-panel="1">
+          <span class="hud-step-number">ШАГ 01 / 03</span><h3>Проверь версию игры</h3>
+          <p>Для подключения подготовь Minecraft Java Edition версии <strong>1.21.11</strong>. Серверный адрес и версия собраны на этой странице.</p>
+          <button type="button" class="button button--primary" data-start-next="2">Дальше: подключение <span aria-hidden="true">→</span></button>
+        </div>
+        <div class="hud-step-panel" id="step-panel-2" role="tabpanel" aria-labelledby="step-tab-2" data-guide-panel="2" hidden>
+          <span class="hud-step-number">ШАГ 02 / 03</span><h3>Добавь сервер</h3>
+          <p>Открой список многопользовательских серверов, добавь адрес и подключись: <strong>nazehard.rustix.cc</strong>.</p>
+          <button type="button" class="button button--primary" data-copy="nazehard.rustix.cc"><span>Скопировать IP</span><span aria-hidden="true">↗</span></button>
+          <button type="button" class="button button--text" data-start-next="3">Следующий шаг <span aria-hidden="true">→</span></button>
+        </div>
+        <div class="hud-step-panel" id="step-panel-3" role="tabpanel" aria-labelledby="step-tab-3" data-guide-panel="3" hidden>
+          <span class="hud-step-number">ШАГ 03 / 03</span><h3>Познакомься с игроками</h3>
+          <p>Знакомься с сообществом, следи за объявлениями и задавай вопросы на официальных площадках NaZerak.</p>
+          <div class="hud-step-links"><a href="/forum">Открыть форум <span aria-hidden="true">→</span></a><a href="https://discord.gg/2KvsYYDHN6" target="_blank" rel="noopener noreferrer">Перейти в Discord <span aria-hidden="true">↗</span></a></div>
+          <button type="button" class="button button--text" data-start-next="1">Повторить шаги <span aria-hidden="true">↻</span></button>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="hud-faq-section" id="faq" aria-labelledby="faq-title">
+    <div class="container hud-faq-layout">
+      <div>
+        <p class="section-kicker">FAQ</p>
+        <h2 id="faq-title">Частые вопросы.</h2>
+        <p class="hud-faq-lead">Короткие ответы перед первым подключением.</p>
+      </div>
+      <div class="hud-faq-list">
+        <details class="hud-faq-item">
+          <summary>Какая версия Minecraft нужна?<span aria-hidden="true"></span></summary>
+          <p>Для подключения используй Minecraft Java Edition версии 1.21.11.</p>
+        </details>
+        <details class="hud-faq-item">
+          <summary>Какой адрес у сервера?<span aria-hidden="true"></span></summary>
+          <p>Адрес сервера: <strong>nazehard.rustix.cc</strong>. Кнопка копирования доступна в блоке подключения и в пошаговой инструкции выше.</p>
+        </details>
+        <details class="hud-faq-item">
+          <summary>Где задавать вопросы и обсуждать проект?<span aria-hidden="true"></span></summary>
+          <p>Для общения и поддержки используй <a href="https://discord.gg/2KvsYYDHN6" target="_blank" rel="noopener noreferrer">официальный Discord</a> и <a href="/forum">форум NaZerak</a>.</p>
+        </details>
+      </div>
+    </div>
+  </section>
   <section class="hud-community-section" id="community" aria-label="Сообщество NaZerak">
     <div class="container hud-community-grid">
       <div class="community-intro"><p class="section-kicker">Наше сообщество</p><p>Следи за новостями, общайся с игроками и будь в курсе событий проекта.</p></div>
@@ -78,6 +162,6 @@
 </main>
 <footer class="hud-footer"><div class="container hud-footer__inner"><span>© <span id="year"></span> NaZerak</span><span>NaZerak не связан с Mojang Studios или Microsoft.</span></div></footer>
 <noscript><div class="noscript-message">JavaScript нужен для мобильного меню и копирования IP. Адрес сервера: nazehard.rustix.cc.</div></noscript>
-<script src="./auth-config.js?v=8" defer></script><script src="./supabase-loader.js?v=9" defer></script><script src="./auth.js?v=37" defer></script><script src="./script.js?v=24" defer></script>
+<script src="./auth-config.js?v=8" defer></script><script src="./supabase-loader.js?v=9" defer></script><script src="./auth.js?v=37" defer></script><script src="./script.js?v=26" defer></script>
 </body>
 </html>
