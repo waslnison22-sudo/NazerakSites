@@ -311,7 +311,7 @@
     }
   };
 
-  const renderUser = (user, profile) => {
+  const renderUser = (user) => {
     const name = userDisplayName(user);
     const discordName = userDiscordName(user);
     const avatar = userAvatar(user);
@@ -329,17 +329,6 @@
     qsa("[data-last-sign-in]").forEach((el) => {
       el.textContent = formatDate(user?.last_sign_in_at);
     });
-    qsa("[data-minecraft-name]").forEach((el) => {
-      el.textContent = profile?.minecraft_username || "Не привязан";
-    });
-    qsa("[data-minecraft-input]").forEach((input) => {
-      input.value = profile?.minecraft_username || "";
-    });
-    qsa("[data-profile-state]").forEach((el) => {
-      el.textContent = profile?.minecraft_username ? "ЗАПОЛНЕН" : "НЕ ЗАПОЛНЕН";
-      el.dataset.state = profile?.minecraft_username ? "ready" : "empty";
-    });
-
     qsa("[data-user-avatar]").forEach((img) => {
       img.hidden = !avatar;
       if (avatar) {
@@ -354,78 +343,6 @@
     qsa("[data-user-initial]").forEach((el) => {
       el.textContent = initials;
     });
-  };
-
-  const loadProfile = async (user) => {
-    if (!client || !user) return { status: "error", data: null };
-
-    try {
-      const { data, error } = await withTimeout(
-        client
-          .from("profiles")
-          .select("id, minecraft_username, created_at, updated_at")
-          .eq("id", user.id)
-          .maybeSingle(),
-        6000,
-        "Загрузка игрового профиля превысила 6 секунд."
-      );
-
-      if (error) {
-        console.warn("[NaZerak Auth] profiles read unavailable:", error.message);
-        return { status: "error", data: null };
-      }
-
-      return data
-        ? { status: "found", data }
-        : { status: "missing", data: null };
-    } catch (error) {
-      console.warn(
-        "[NaZerak Auth] profiles read timed out or failed:",
-        error instanceof Error ? error.message : String(error)
-      );
-      return { status: "error", data: null };
-    }
-  };
-
-  const ensureProfile = async (user) => {
-    if (!client || !user) return null;
-
-    const lookup = await loadProfile(user);
-    if (lookup.status === "found") return lookup.data;
-    // Never interpret a timeout/RLS/API error as an absent row: doing so could
-    // trigger an unauthorized or duplicate INSERT and obscure the real failure.
-    if (lookup.status !== "missing") return null;
-
-    try {
-      const { data, error } = await withTimeout(
-        client
-          .from("profiles")
-          .insert({ id: user.id })
-          .select("id, minecraft_username, created_at, updated_at")
-          .single(),
-        6000,
-        "Создание игрового профиля превысило 6 секунд."
-      );
-
-      if (!error) return data;
-
-      if (
-        error.code === "23505" ||
-        /duplicate|unique/i.test(error.message || "")
-      ) {
-        const retry = await loadProfile(user);
-        return retry.status === "found" ? retry.data : null;
-      }
-
-      console.warn("[NaZerak Auth] profile initialization unavailable:", error.message);
-    } catch (error) {
-      console.warn(
-        "[NaZerak Auth] profile initialization timed out or failed:",
-        error instanceof Error ? error.message : String(error)
-      );
-    }
-
-    return null;
   };
 
   const signIn = async (button) => {
@@ -523,111 +440,9 @@
     }
 
     state.user = null;
-    state.profile = null;
+
     renderAuthLinks();
     window.location.replace("./");
-  };
-
-  const saveProfile = async (event) => {
-    event.preventDefault();
-
-    const form = event.currentTarget;
-    const input = qs("#minecraft-username", form);
-    const button = qs("button[type='submit']", form);
-    const value = escapeText(input?.value);
-
-    if (!client || !state.user || !input) {
-      showMessage("Сессия пользователя ещё не готова. Обнови страницу и попробуй снова.", "error");
-      return;
-    }
-
-    if (!/^[A-Za-z0-9_]{3,16}$/.test(value)) {
-      showMessage(
-        "Minecraft-ник должен содержать 3–16 символов: латинские буквы, цифры и _.",
-        "error"
-      );
-      input.focus();
-      return;
-    }
-
-    setBusy(button, true, "Сохраняем…");
-    showMessage("");
-
-    let data = null;
-    let error = null;
-
-    try {
-      const result = await withTimeout(
-        client
-          .from("profiles")
-          .update({
-            minecraft_username: value,
-            updated_at: new Date().toISOString()
-          })
-          .eq("id", state.user.id)
-          .select("id, minecraft_username, created_at, updated_at")
-          .maybeSingle(),
-        7000,
-        "Сохранение профиля превысило 7 секунд."
-      );
-
-      data = result.data;
-      error = result.error;
-
-      if (!error && !data) {
-        const insertResult = await withTimeout(
-          client
-            .from("profiles")
-            .insert({
-              id: state.user.id,
-              minecraft_username: value
-            })
-            .select("id, minecraft_username, created_at, updated_at")
-            .single(),
-          7000,
-          "Создание профиля превысило 7 секунд."
-        );
-        data = insertResult.data;
-        error = insertResult.error;
-      }
-
-      if (
-        error &&
-        (error.code === "23505" || /duplicate|unique/i.test(error.message || ""))
-      ) {
-        const retryResult = await withTimeout(
-          client
-            .from("profiles")
-            .update({
-              minecraft_username: value,
-              updated_at: new Date().toISOString()
-            })
-            .eq("id", state.user.id)
-            .select("id, minecraft_username, created_at, updated_at")
-            .maybeSingle(),
-          7000,
-          "Повторное сохранение профиля превысило 7 секунд."
-        );
-        data = retryResult.data;
-        error = retryResult.error;
-      }
-    } catch (caughtError) {
-      error = caughtError;
-    }
-
-    setBusy(button, false);
-
-    if (error || !data) {
-      showMessage(
-        "Не удалось сохранить профиль. Проверь подключение к Supabase и права RLS.",
-        "error"
-      );
-      return;
-    }
-
-    state.profile = data;
-    renderUser(state.user, state.profile);
-    showMessage("Игровой профиль сохранён.", "success");
   };
 
   const waitForInitialSession = async () => {
@@ -724,27 +539,6 @@
 
   let renderSequence = 0;
 
-  const hydrateCabinetData = async (user, sequence) => {
-    const profile = await ensureProfile(user);
-
-    if (sequence !== renderSequence || state.user?.id !== user.id) return;
-
-    state.profile = profile;
-    renderUser(user, profile);
-
-    const retry = qs("[data-profile-retry]");
-    if (retry) retry.hidden = profile !== null;
-
-    if (profile === null) {
-      showMessage(
-        "Игровой профиль пока не удалось загрузить. Сам аккаунт работает; можно повторить загрузку позже.",
-        "error"
-      );
-    } else {
-      showMessage("");
-    }
-  };
-
   const renderCabinet = async (session = undefined) => {
     if (!document.body.hasAttribute("data-cabinet")) return;
     const sequence = ++renderSequence;
@@ -779,7 +573,7 @@
     if (result.error) {
       console.warn("[NaZerak Auth] session lookup failed:", result.error.message);
       state.user = null;
-      state.profile = null;
+
       state.loading = false;
       showMessage(
         "Не удалось проверить авторизацию вовремя. Попробуй повторить проверку.",
@@ -815,13 +609,11 @@
 
     // The account shell is rendered immediately. Profile/history are optional
     // data and must never be allowed to hide or block the logged-in cabinet.
-    renderUser(user, null);
+    renderUser(user);
     setAuthStatus("SIGNED IN", "signed-in");
     setAccountView("user");
 
-    void hydrateCabinetData(user, sequence);
-
-  };
+};
 
   let cabinetRenderQueue = Promise.resolve();
   let queuedCabinetRenderKey = null;
@@ -919,16 +711,6 @@
       });
     });
 
-    qsa("#minecraft-profile-form").forEach((form) => {
-      form.addEventListener("submit", saveProfile);
-    });
-
-    qsa("[data-profile-retry]").forEach((button) => {
-      button.addEventListener("click", () => {
-        if (state.user) void hydrateCabinetData(state.user, renderSequence);
-      });
-    });
-
     await bootstrapClient();
 
     if (!configured || !client) {
@@ -951,7 +733,7 @@
       if (event === "SIGNED_OUT") {
         renderSequence += 1;
         state.user = null;
-        state.profile = null;
+
         state.loading = false;
         renderAuthLinks();
         if (document.body.hasAttribute("data-cabinet")) {
