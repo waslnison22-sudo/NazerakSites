@@ -367,8 +367,8 @@ if (!read("forum-ui.js").includes("data-forum-user")) fail.push("forum hover pro
 if (read("forum.html").match(/data-forum-state|forum-state|форум готов|Форум готов/i)) fail.push("obsolete forum ready status must not return");
 if (read("forum-category.html").match(/доступ.*публикац|публикац.*доступ|кто.*может.*публика/i)) fail.push("forum publication-access helper copy must not return");
 if (!read("forum.html").includes('class="forum-page forum-v21"') || !read("forum.html").includes('class="forum-v21-layout"')) fail.push("forum v21 layout markup is missing");
-const forumSurfaceFiles = ["forum.html","forum-category.html","forum-members.html","forum-search.html","forum-user.html","forum-reports.html","topic.html"];
-for (const file of forumSurfaceFiles) {
+const forumUnifiedSurfaceFiles = ["forum.html","forum-category.html","forum-members.html","forum-search.html","forum-user.html","forum-reports.html","topic.html"];
+for (const file of forumUnifiedSurfaceFiles) {
   if (!read(file).includes("forum-v2.css?v=2")) fail.push(file + " is missing the unified forum stylesheet");
 }
 for (const route of ["new","unanswered","mine","bookmarks","watched"]) {
