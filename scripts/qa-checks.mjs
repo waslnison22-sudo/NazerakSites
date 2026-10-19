@@ -138,7 +138,7 @@ for (const [name, page] of [
   ["forum-user.html", read("forum-user.html")],
   ["forum-reports.html", read("forum-reports.html")]
 ]) {
-  const assets = ["auth-config.js?v=8", "supabase-loader.js?v=9", "auth.js?v=37", "script.js?v=24"];
+  const assets = ["auth-config.js?v=8", "supabase-loader.js?v=9", "auth.js?v=38", "script.js?v=24"];
   if (name === "index.html" || name === "cabinet.html") {
     assets.splice(assets.indexOf("script.js?v=24"), 1, "script.js?v=26");
   }
