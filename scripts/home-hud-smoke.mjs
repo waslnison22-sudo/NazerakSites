@@ -24,13 +24,13 @@ try {
  check(await page.locator('link[href*="styles.css"]').count()===0,"homepage must not inherit global styles");
  check(await page.locator(".hud-hero__image").count()===1,"hero should use a real image element rather than a cropped CSS background");
  check(await page.locator(".hud-hero__image").evaluate(n=>n.naturalWidth>0&&n.naturalHeight>0),"hero image failed to load");
- check(await page.locator(".hud-hero__image").evaluate(n=>getComputedStyle(n).objectFit==="contain"),"hero should preserve the full image frame without cropping");
+ check(await page.locator(".hud-hero__image").evaluate(n=>getComputedStyle(n).objectFit==="cover"),"hero should preserve the full image frame without cropping");
  const asset=await page.request.get(new URL("/assets/images/nazerak-autumn-hero.webp",baseUrl).toString());
  check(asset.status()===200,"local autumn hero image should return HTTP 200");
  check((asset.headers()["content-type"]||"").includes("image/webp"),"autumn asset must be served as WebP");
  check((await asset.body()).byteLength>5000,"autumn hero asset looks incomplete");
  check(await page.locator(".hero-art,.world-visual,.partner-panel,.hud-orbit,.hud-triangle,.home-v2,.hud-circle").count()===0,"obsolete abstract decorations remain");
- const cssResponse=await page.request.get(new URL("/home-hud.css?v=4",baseUrl).toString());
+ const cssResponse=await page.request.get(new URL("/home-hud.css?v=5",baseUrl).toString());
  check(cssResponse.status()===200,"standalone HUD stylesheet should return HTTP 200");
  const cssText=await cssResponse.text();
  check(!/radial-gradient|clip-path\s*:[^;]*polygon|clip-path\s*:[^;]*circle/i.test(cssText),"homepage CSS must not create abstract circles or triangles");
@@ -39,13 +39,11 @@ try {
  check(await page.locator(".hud-about-card").count()===3,"project explanation should contain three content cards");
  check(await page.locator(".hud-faq-item").count()>=3,"FAQ content is missing");
  check(await page.locator(".brand__mark svg").count()===1,"abstract NaZerak brand mark is missing");
- check(await page.locator(".hud-step-tab").count()===3,"onboarding step tabs are missing");
- await page.locator('[data-start-tab="2"]').click();
- check(await page.locator('[data-guide-panel="2"]').isVisible(),"onboarding tab did not switch to step two");
- check(await page.locator('[data-start-tab="2"]').getAttribute("aria-selected")==="true","onboarding tab state is not accessible");
- await page.locator('[data-start-next="3"]').click();
- check(await page.locator('[data-guide-panel="3"]').isVisible(),"onboarding next button did not advance to step three");
- await page.locator('[data-start-tab="1"]').click();
+ check(await page.locator(".hud-guide-step").count()===3,"launcher onboarding must contain exactly three steps");
+ check((await page.locator(".hud-guide-step h3").allTextContents()).map(s=>s.trim()).join("|")==="Скачай лаунчер|Зарегистрируйся|Скачай файлы и играй","launcher onboarding step order is wrong");
+ check(await page.locator(".hud-launcher-download").count()===1,"launcher download CTA missing");
+ check(await page.locator(".hud-launcher-download").getAttribute("aria-disabled")==="true","download CTA must stay unavailable until a verified public installer exists");
+ check(await page.locator(".community-card[href^='https://discord.gg'] .community-icon svg path[fill='currentColor']").count()===1,"Discord icon should use a clean brand mark");
  const faq=page.locator(".hud-faq-item").first();
  await faq.locator("summary").click();
  check(await faq.evaluate(n=>n.open),"FAQ item did not expand");
@@ -75,5 +73,5 @@ try {
  check(!(await page.locator("#site-nav").evaluate(n=>n.classList.contains("is-open"))),"Escape did not close mobile nav");
  check(browserErrors.length===0,"browser errors: "+browserErrors.join(" | "));
  if(failures.length){console.error(failures.join("\n"));process.exitCode=1}
- else console.log("Homepage HUD smoke passed: full-frame hero asset, project sections, accessible onboarding tabs, FAQ, server copy and seven viewports.");
+ else console.log("Homepage HUD smoke passed: Unsplash autumn hero, project sections, launcher onboarding, FAQ, server copy and seven viewports.");
 } finally {await browser.close()}
