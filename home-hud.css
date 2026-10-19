@@ -111,3 +111,32 @@ html{background:#07070a;scroll-behavior:smooth}
 @media(prefers-reduced-motion:reduce){
  .home-hud .hud-about-card,.home-hud .hud-step-tab,.home-hud .hud-faq-item summary span::after{transition:none}
 }
+
+/* Launcher-first onboarding: 3 explicit steps, no outdated manual server setup. */
+.home-hud .hud-guide-section{padding:76px 0;background:linear-gradient(180deg,#0b0d11 0%,#080a0e 100%);border-top:1px solid #1d222a;border-bottom:1px solid #1d222a}
+.home-hud .hud-guide-heading{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(260px,.8fr);gap:42px;align-items:end;margin-bottom:30px}
+.home-hud .hud-guide-heading h2{margin:12px 0 0;color:#f4f5f7;font-size:clamp(30px,3.4vw,44px);line-height:1.05;letter-spacing:-.045em}
+.home-hud .hud-guide-heading>p{max-width:470px;margin:0 0 3px;color:#a5abb6;font-size:14px;line-height:1.8}
+.home-hud .hud-guide-steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.home-hud .hud-guide-step{position:relative;min-width:0;min-height:300px;padding:25px 24px 23px;border:1px solid #252a33;border-radius:10px;background:linear-gradient(145deg,#12161d 0%,#0c0f14 100%);box-shadow:0 18px 45px rgba(0,0,0,.13)}
+.home-hud .hud-guide-step__number{position:absolute;top:21px;right:23px;color:#505865;font-size:12px;font-weight:800;letter-spacing:.12em}
+.home-hud .hud-guide-step__icon{width:45px;height:45px;display:grid;place-items:center;margin-bottom:23px;border:1px solid rgba(255,41,66,.27);border-radius:9px;background:rgba(255,41,66,.09);color:#ff5f74}
+.home-hud .hud-guide-step__icon svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.home-hud .hud-guide-step h3{margin:0 0 10px;color:#f3f4f6;font-size:20px;line-height:1.25;letter-spacing:-.025em}
+.home-hud .hud-guide-step>p:not(.hud-download-status){margin:0;color:#9da5b1;font-size:13px;line-height:1.8}
+.home-hud .hud-guide-step .button{margin-top:20px;min-height:46px;font-size:12px}
+.home-hud .hud-launcher-download.is-unavailable{opacity:.62;cursor:not-allowed;pointer-events:none}
+.home-hud .hud-download-status{margin:10px 0 0;color:#89919e;font-size:11px;line-height:1.6}
+.home-hud .hud-guide-link{display:inline-flex;gap:9px;align-items:center;margin-top:19px;color:#ff7888;font-size:13px;font-weight:750}
+.home-hud .hud-guide-server{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px 12px;align-items:center;margin-top:18px;padding:12px;border:1px solid #282e38;border-radius:7px;background:#090c11}
+.home-hud .hud-guide-server>span{grid-column:1/-1;color:#7f8896;font-size:9px;font-weight:800;letter-spacing:.12em}
+.home-hud .hud-guide-server strong{color:#f0f2f5;font-size:13px;overflow-wrap:anywhere}
+.home-hud .hud-guide-server button{min-height:36px;padding:0 10px;border:1px solid #414955;border-radius:5px;background:#151a22;color:#dfe3e9;font-size:10px;font-weight:700}
+.home-hud .hud-guide-server button:hover{border-color:#ff5f74}
+.home-hud .hud-guide-footnote{margin:19px 0 0;color:#727b89;font-size:11px;line-height:1.7}
+.home-hud .community-card[href^="https://discord.gg"] .community-icon{border-color:#303957;background:#171e33;color:#c9d4ff}
+.home-hud .community-card[href^="https://discord.gg"] .community-icon svg{width:24px;height:24px}
+.home-hud .hud-hero__image{object-fit:cover;object-position:center 55%}
+.home-hud .hud-hero__art{background-image:url("https://images.unsplash.com/photo-1762515993692-7b9946f76858?auto=format&amp;fit=crop&amp;w=2400&amp;q=85");background-position:center 55%;background-size:cover}
+@media(max-width:900px){.home-hud .hud-guide-steps{grid-template-columns:1fr}.home-hud .hud-guide-step{min-height:0}.home-hud .hud-guide-heading{grid-template-columns:1fr;gap:14px}}
+@media(max-width:680px){.home-hud .hud-guide-section{padding:48px 0}.home-hud .hud-guide-heading h2{font-size:34px}.home-hud .hud-guide-step{padding:22px 19px}.home-hud .hud-guide-server{grid-template-columns:1fr}.home-hud .hud-guide-server>span{grid-column:auto}.home-hud .hud-guide-server button{width:100%}}
