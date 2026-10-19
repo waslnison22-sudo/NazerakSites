@@ -9,6 +9,7 @@ const port = Number(process.env.PORT || 4173);
 const routeToFile = (pathname) => {
   if (pathname === "/" || pathname === "") return "index.html";
   if (pathname === "/forum" || pathname === "/forum/") return "forum.html";
+  if (/^\/forum\/(?:new|unanswered|mine|bookmarks|watched)\/?$/i.test(pathname)) return "forum.html";
   if (/^\/forum\/topic\/[^/]+\/?$/i.test(pathname)) return "topic.html";
   if (/^\/forum\/[^/]+\/?$/i.test(pathname)) return "forum-category.html";
   if (pathname === "/members" || pathname === "/members/") return "forum-members.html";
