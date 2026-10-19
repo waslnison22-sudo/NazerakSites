@@ -29,7 +29,7 @@ body[data-forum] .nav>a:hover,body[data-forum-category-page] .nav>a:hover,body[d
 .forum-user{width:min(calc(100% - 48px),1120px)}
 .forum-page :where(a,button,input,textarea,select),.topic-page :where(a,button,input,textarea,select),.forum-user-page :where(a,button,input,textarea,select){font-family:inherit}
 .forum-page :where(a,button,input,textarea,select):focus-visible,.topic-page :where(a,button,input,textarea,select):focus-visible,.forum-user-page :where(a,button,input,textarea,select):focus-visible{outline:2px solid #ff7180;outline-offset:3px}
-.forum-page .button,.topic-page .button,.forum-user-page .button{min-height:42px;border-radius:8px;font-size:12px;font-weight:800;box-shadow:none}
+.forum-page .button,.topic-page .button,.forum-user-page .button{min-height:44px;border-radius:8px;font-size:12px;font-weight:800;box-shadow:none}
 .forum-page .button--primary,.topic-page .button--primary,.forum-user-page .button--primary{background:#ef465b;border-color:#ef465b;color:white}
 .forum-page .button--primary:hover,.topic-page .button--primary:hover,.forum-user-page .button--primary:hover{background:#ff5c70;border-color:#ff5c70}
 .forum-page .button--ghost,.topic-page .button--ghost,.forum-user-page .button--ghost{background:#11151b;border-color:#303641;color:#e4e7ec}
@@ -44,7 +44,7 @@ body[data-forum] .nav>a:hover,body[data-forum-category-page] .nav>a:hover,body[d
 .forum-v21-search .forum-search{flex:1;min-width:0}
 .forum-search__field{min-height:44px;border:1px solid #303641;border-radius:8px;background:#0d1016;transition:border-color .16s ease,background .16s ease}
 .forum-search__field:focus-within{border-color:#68717f;background:#10141b}
-.forum-search__field input{min-height:42px;color:#f5f6f8;font-size:12px}
+.forum-search__field input{min-height:44px;color:#f5f6f8;font-size:12px}
 .forum-search__field input::placeholder{color:#707987}
 .forum-search__icon{color:#8993a1}
 .forum-result-count{color:#86909e;font-size:10px;font-weight:750;white-space:nowrap}
