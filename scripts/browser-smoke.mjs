@@ -189,10 +189,10 @@ const testStaticPage = async ({ path, name, viewport, check }) => {
   const finishDiagnostics = attachDiagnostics(page, name);
 
   try {
-    await page.goto(BASE + path, { waitUntil: "load", timeout: TIMEOUT });
+    await page.goto(BASE + path, { waitUntil: path === "/forum" ? "load" : "networkidle", timeout: TIMEOUT });
 
-    // Forum pages can keep Supabase/realtime requests open, so networkidle is
-    // not a reliable readiness signal. Wait for the page-specific hydrated UI.
+    // The forum index can keep Supabase/realtime requests open, so use its
+    // specific hydration markers instead of waiting for networkidle there.
     if (path === "/forum") {
       await page.waitForSelector(".forum-v21-layout", { state: "visible", timeout: 10000 });
       await page.waitForFunction(
