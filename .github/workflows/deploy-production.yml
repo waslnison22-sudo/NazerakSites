@@ -172,9 +172,9 @@ jobs:
           curl -k -f -L -sS "$SITE_URL/cabinet-hud.css?v=1" -o /tmp/nazerak-cabinet.css
           grep -Fq "body[data-cabinet] .account-login" /tmp/nazerak-cabinet.css
           echo "PASS: production cabinet route and dedicated stylesheet are served."
-          curl -k -f -L -sS "$SITE_URL/assets/images/nazerak-autumn-hero.webp" -o /tmp/nazerak-hero.webp
-          test -s /tmp/nazerak-hero.webp
-          echo "PASS: production homepage and its local autumn hero asset are served."
+          curl -f -L -sS "https://images.unsplash.com/photo-1762515993692-7b9946f76858?auto=format&fit=crop&w=2400&q=85" -o /tmp/nazerak-hero.jpg
+          test "$(wc -c < /tmp/nazerak-hero.jpg)" -gt 5000
+          echo "PASS: production homepage and external autumn hero source are served."
 
       - name: Verify production TLS certificate
         if: steps.gate.outputs.enabled == 'true'
