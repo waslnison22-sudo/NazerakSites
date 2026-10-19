@@ -202,7 +202,7 @@ const clientCreateIndex = auth.indexOf('client = factory(config.url, config.publ
 if (listenerIndex === -1 || clientCreateIndex === -1 || listenerIndex < clientCreateIndex) fail.push("auth listener wiring is incomplete");
 if (auth.indexOf('client.auth.onAuthStateChange((event, session) =>') === -1) fail.push("auth listener registration is missing");
 if (!auth.includes("state.user = session?.user || null")) fail.push("global auth link state is not updated from auth events");
-if (auth.indexOf('setAccountView("user")') > auth.indexOf("void hydrateCabinetData")) fail.push("cabinet waits for optional data before showing user view");
+if (auth.includes("hydrateCabinetData")) fail.push("cabinet must not wait for removed website profile data");
 if (!auth.includes("const setButtonLabel")) fail.push("button label helper is missing");
 if (!auth.includes('const text = qs("span", element);')) fail.push("status text helper is missing");
 
