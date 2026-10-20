@@ -425,7 +425,12 @@ if (!auth.includes('hostname.endsWith(".github.io")')) fail.push("legacy GitHub 
 if (!auth.includes('target.searchParams.set("auth_redirect", "legacy_pages")')) fail.push("legacy OAuth callbacks must not pass PKCE data to a different origin");
 if (!auth.includes('query.has("code")')) fail.push("legacy OAuth callback detection is missing");
 if (!auth.includes("OLD CALLBACK URL")) fail.push("legacy OAuth callback must explain that the user needs to retry on the official domain");
-if (auth.includes("target.search = window.location.search;\n      target.hash = window.location.hash;")) fail.push("legacy callback must not blindly forward query and token fragments between origins");
+const legacyCallbackBlock = auth.slice(auth.indexOf("if (isAuthCallback)"), auth.indexOf("window.location.replace(target.href)"));
+if (!legacyCallbackBlock.includes('target.searchParams.set("auth_redirect", "legacy_pages")') ||
+    legacyCallbackBlock.includes("target.search = window.location.search") ||
+    legacyCallbackBlock.includes("target.hash = window.location.hash")) {
+  fail.push("legacy callback must discard auth parameters rather than forwarding PKCE data across origins");
+}
 if (!auth.includes('document.addEventListener("error", restoreAvatarFallback, true);')) fail.push("failed profile images must have a fallback");
 for (const pagePath of ["index.html","cabinet.html","forum.html","forum-category.html","forum-members.html","forum-search.html","topic.html","forum-user.html","forum-reports.html"]) {
   const page = read(pagePath);
