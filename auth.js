@@ -29,14 +29,21 @@
     const query = new URLSearchParams(window.location.search);
     const fragment = new URLSearchParams(window.location.hash.replace(/^#/, ""));
     const isAuthCallback =
-      query.has("code") || query.has("error") || query.has("error_description") ||
+      query.has("code") || query.has("error") || query.has("error_code") || query.has("error_description") ||
       fragment.has("access_token") || fragment.has("refresh_token") ||
-      fragment.has("error") || fragment.has("error_description");
+      fragment.has("error") || fragment.has("error_code") || fragment.has("error_description");
     const legacyPath = window.location.pathname.replace(/^\/NazerakSites(?=\/|$)/i, "") || "/";
-    const pathname = isAuthCallback ? "/cabinet.html" : legacyPath;
-    const target = new URL(pathname, PRODUCTION_ORIGIN);
-    target.search = window.location.search;
-    target.hash = window.location.hash;
+    const target = new URL(isAuthCallback ? "/cabinet.html" : legacyPath, PRODUCTION_ORIGIN);
+
+    if (isAuthCallback) {
+      // PKCE's verifier lives in localStorage, which is scoped to the origin.
+      // Do not forward a one-time auth code or tokens from github.io to nazerak.ru.
+      target.searchParams.set("auth_redirect", "legacy_pages");
+    } else {
+      target.search = window.location.search;
+      target.hash = window.location.hash;
+    }
+
     window.location.replace(target.href);
     return true;
   };
@@ -103,6 +110,17 @@
   };
 
   const showOAuthError = () => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("auth_redirect") === "legacy_pages") {
+      showMessage(
+        "Вход через Discord вернулся на старый адрес GitHub Pages. Чтобы безопасно завершить авторизацию, нажми «Войти» ещё раз на официальном сайте https://nazerak.ru.",
+        "error"
+      );
+      setAuthStatus("OLD CALLBACK URL", "error");
+      window.history.replaceState(null, "", window.location.pathname);
+      return true;
+    }
+
     const result = readOAuthError();
     if (!result) return false;
 
