@@ -46,6 +46,8 @@ try {
  check(await page.locator(".hud-faq-item").count()>=3,"FAQ content is missing");
  check((await page.locator(".brand__mark").first().textContent())?.trim()==="N","previous NaZerak brand mark should be restored");
  check(await page.locator(".brand__mark svg").count()===0,"temporary bars/slash brand icon must not return");
+ const markStyle=await page.locator(".brand__mark").first().evaluate(el=>{const s=getComputedStyle(el);return{background:s.backgroundColor,borderStyle:s.borderTopStyle,borderWidth:s.borderTopWidth,width:parseFloat(s.width)}});
+ check(markStyle.borderStyle==="none"&&parseFloat(markStyle.borderWidth)===0,"homepage N mark should not retain the temporary boxed SVG treatment: "+JSON.stringify(markStyle));
  check(await page.locator(".hud-guide-step").count()===3,"launcher onboarding must contain exactly three steps");
  check((await page.locator(".hud-guide-step h3").allTextContents()).map(s=>s.trim()).join("|")==="Скачай лаунчер|Зарегистрируйся|Скачай файлы и играй","launcher onboarding step order is wrong");
  check(await page.locator(".hud-launcher-download").count()===1,"launcher download CTA missing");
