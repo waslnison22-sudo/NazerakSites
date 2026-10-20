@@ -10,6 +10,7 @@ const requiredFiles = [
   "cabinet.html",
   "styles.css",
   "home-hud.css",
+  "cabinet-hud.css",
   "forum.css",
   "script.js",
   "auth.js",
@@ -58,6 +59,7 @@ const requiredFiles = [
   "scripts/runtime-smoke.mjs",
   "scripts/browser-smoke.mjs",
   "scripts/home-hud-smoke.mjs",
+  "scripts/cabinet-hud-smoke.mjs",
   "assets/images/README.md",
   "assets/images/nazerak-autumn-hero.webp",
   ".htaccess",
@@ -134,8 +136,12 @@ for (const [name, page] of [
   ["forum-reports.html", read("forum-reports.html")]
 ]) {
   const assets = ["auth-config.js?v=8", "supabase-loader.js?v=9", "auth.js?v=37", "script.js?v=24"];
+  if (name === "index.html" || name === "cabinet.html") {
+    assets.splice(assets.indexOf("script.js?v=24"), 1, "script.js?v=26");
+  }
   if (name !== "index.html") assets.push("styles.css?v=44");
-  if (name === "index.html") assets.push("home-hud.css?v=3");
+  if (name === "index.html") assets.push("home-hud.css?v=4");
+  if (name === "cabinet.html") assets.push("cabinet-hud.css?v=1");
   if (name === "forum.html") { assets.push("forum.css?v=21", "forum-ui.js?v=5", "forum-social.js?v=2", "forum.js?v=9"); }
   if (name === "forum-category.html") { assets.push("forum.css?v=21", "forum-ui.js?v=5", "forum-social.js?v=2", "forum-category.js?v=6"); }
   if (name === "forum-members.html") { assets.push("forum.css?v=21", "forum-ui.js?v=5", "forum-social.js?v=2", "forum-members.js?v=2"); }
@@ -239,7 +245,16 @@ if (cabinet.includes("id=\"minecraft-profile-form\"") || cabinet.includes("data-
 if (/nazerak\.is-a\.dev\/cabinet\.html/i.test(read("AUTH_SETUP.md"))) fail.push("obsolete custom-domain auth URL remains");
 if (/server-status-text|server-players|data-server-hero/.test(index)) fail.push("obsolete server statistics markup remains");
 if (!index.includes('class="hud-hero"') || !index.includes("hud-world-grid") || !index.includes("hud-connect")) fail.push("homepage visual system missing");
-if (!index.includes("home-hud.css?v=3")) fail.push("isolated homepage HUD stylesheet is missing");
+if (!index.includes("home-hud.css?v=4")) fail.push("isolated homepage HUD stylesheet is missing");
+if (!cabinet.includes("cabinet-hud.css?v=1")) fail.push("dedicated cabinet HUD stylesheet is missing");
+if (!deployWorkflow.includes('test -f "$HOME/www/nazerak.ru/cabinet-hud.css"')) fail.push("production remote-root guard does not verify the cabinet stylesheet");
+if (!cabinet.includes("script.js?v=26")) fail.push("cabinet is missing the interactive shared script revision");
+if (!cabinet.includes('class="brand__mark" aria-hidden="true"><svg')) fail.push("cabinet brand mark is missing");
+if (!index.includes('class="hud-about-section"') || !index.includes('class="hud-guide-section"') || !index.includes('class="hud-faq-section"')) fail.push("homepage project structure is incomplete");
+if (!index.includes('class="hud-hero__image"')) fail.push("homepage must render hero asset as a full-frame image element");
+if (!script.includes("data-start-tab") || !script.includes("data-start-next")) fail.push("homepage onboarding stepper handlers are missing");
+if (!read("cabinet-hud.css").includes("body[data-cabinet] .account-login")) fail.push("cabinet redesign styles are missing");
+if (!read("scripts/cabinet-hud-smoke.mjs").includes("Discord login action missing")) fail.push("cabinet browser regression tests are missing");
 if (index.includes("styles.css?v=44")) fail.push("homepage must not inherit the legacy global stylesheet");
 if (!index.includes("assets/images/nazerak-autumn-hero.webp")) fail.push("local autumn Minecraft hero background is missing");
 if (index.includes("assets/images/home-hero.svg") || index.includes("home-v2") || index.includes("hero-art__grid")) fail.push("obsolete geometric homepage markup remains");
@@ -251,7 +266,7 @@ if (!index.includes('<a href="/forum/pravila-i-dokumenty">Правила</a>')) 
 if (index.includes('<a href="#community" title="Раздел поддержки проекта">Донат</a>')) fail.push("homepage must not advertise a donation route that is not implemented");
 if (!deployWorkflow.includes("--exclude='./forum-concept'")) fail.push("production deploy must keep forum-concept drafts out of public web root");
 if (!deployWorkflow.includes("test -f .deploy/assets/images/nazerak-autumn-hero.webp")) fail.push("production deploy does not validate local autumn hero asset");
-if (!deployWorkflow.includes("grep -q 'home-hud.css?v=3' .deploy/index.html")) fail.push("production deploy does not validate the isolated homepage HUD stylesheet");
+if (!deployWorkflow.includes("grep -q 'home-hud.css?v=4' .deploy/index.html")) fail.push("production deploy does not validate the isolated homepage HUD stylesheet");
 if (!deployWorkflow.includes('grep -q "styles.css?v=44" "$HOME/www/nazerak.ru/forum.html" &&')) fail.push("production deploy forum stylesheet guard is stale");
 if (deployWorkflow.includes("test -f .deploy/assets/images/home-hero.svg") || deployWorkflow.includes('grep -q "styles.css?v=42"')) fail.push("production deploy still contains stale homepage asset or stylesheet checks");
 if (!deployWorkflow.includes('grep -q "Добро пожаловать" /tmp/nazerak-home.html')) fail.push("production deploy does not validate the new homepage content");
