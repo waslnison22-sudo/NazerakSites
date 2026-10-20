@@ -147,6 +147,7 @@ const testSameOriginLinks = async (page, name) => {
 const testPagesCanonicalization = async () => {
   const browser = await chromium.launch({ headless: true });
   const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+  let officialCallbackUrl = null;
   try {
     await page.route("https://nazerak-pages-smoke.github.io/**", async (route) => {
       if (route.request().resourceType() === "script") {
@@ -160,18 +161,41 @@ const testPagesCanonicalization = async () => {
       }
     });
     await page.route("https://nazerak.ru/**", async (route) => {
-      await route.fulfill({ status: 200, contentType: "text/html", body: "<!doctype html><html><body><main data-canonical-arrival>Official NaZerak</main></body></html>" });
+      const request = route.request();
+      if (request.isNavigationRequest()) officialCallbackUrl = request.url();
+      if (request.resourceType() === "script") {
+        await route.fulfill({ status: 200, contentType: "application/javascript", body: fs.readFileSync("auth.js", "utf8") });
+        return;
+      }
+      await route.fulfill({
+        status: 200,
+        contentType: "text/html",
+        body: '<!doctype html><html><head><meta charset="utf-8"></head><body data-cabinet><main data-canonical-arrival>Official NaZerak</main><div data-auth-message role="status" hidden></div><div data-auth-status><span></span></div><script src="/auth.js?v=39" defer></script></body></html>'
+      });
     });
     await page.goto("https://nazerak-pages-smoke.github.io/NazerakSites/?code=sample-pkce-code&state=smoke#oauth", { waitUntil: "domcontentloaded" });
-    await page.waitForURL(url =>
-      url.origin === "https://nazerak.ru" &&
-      url.pathname === "/cabinet.html" &&
-      url.search === "?code=sample-pkce-code&state=smoke" &&
-      url.hash === "#oauth",
-      { timeout: 10000 }
-    );
-    if (!(await page.locator("[data-canonical-arrival]").count())) throw new Error("legacy Pages callback did not reach the official NaZerak origin");
-    console.log("PASS: canonical redirect from GitHub Pages OAuth callback");
+    await page.waitForFunction(() => {
+      const message = document.querySelector("[data-auth-message]");
+      return !!message && !message.hidden && /старый адрес GitHub Pages/i.test(message.textContent || "");
+    }, {}, { timeout: 10000 });
+    if (!officialCallbackUrl) throw new Error("legacy callback never navigated to the official origin");
+    const callback = new URL(officialCallbackUrl);
+    if (callback.origin !== "https://nazerak.ru" || callback.pathname !== "/cabinet.html") {
+      throw new Error("legacy callback target should be the official cabinet: " + officialCallbackUrl);
+    }
+    if (callback.searchParams.has("code") || callback.searchParams.has("state") || callback.hash) {
+      throw new Error("legacy callback must not forward PKCE code, state or token fragment across origins");
+    }
+    if (callback.searchParams.get("auth_redirect") !== "legacy_pages") {
+      throw new Error("legacy callback should be marked so the user receives a retry message");
+    }
+    if (new URL(page.url()).search || new URL(page.url()).hash) {
+      throw new Error("legacy callback marker should be removed from the visible URL after messaging");
+    }
+    if (!(await page.locator("[data-canonical-arrival]").count())) {
+      throw new Error("legacy Pages callback did not reach the official NaZerak origin");
+    }
+    console.log("PASS: safe canonical redirect from GitHub Pages OAuth callback");
   } finally { await browser.close(); }
 };
 
