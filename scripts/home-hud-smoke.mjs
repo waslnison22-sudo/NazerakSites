@@ -20,7 +20,7 @@ try {
   check(await page.locator("#site-nav a[href=\"#community\"]").textContent().then((value)=>value?.trim())==="Сообщество","community navigation must have a working section target");
  check(await page.locator('.hud-connect [data-copy="nazehard.rustix.cc"]').count()===1,"server IP copy control missing");
  check((await page.locator(".server-address__copy strong").textContent())?.trim()==="nazehard.rustix.cc","server address does not match project IP");
- check(await page.locator('link[href*="home-hud.css?v=6"]').count()===1,"isolated HUD stylesheet v6 missing");
+ check(await page.locator('link[href*="home-hud.css?v=7"]').count()===1,"isolated HUD stylesheet v6 missing");
  check(await page.locator('link[href*="styles.css"]').count()===0,"homepage must not inherit global styles");
  check(await page.locator(".hud-hero__image").count()===1,"hero should use a real image element rather than a cropped CSS background");
  await page.waitForFunction(()=>{const n=document.querySelector(".hud-hero__image");return !!n&&n.complete&&n.naturalWidth>0},{},{timeout:20000});
