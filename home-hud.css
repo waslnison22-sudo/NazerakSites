@@ -135,7 +135,7 @@ html{background:#07070a;scroll-behavior:smooth}
 .home-hud .hud-guide-server button:hover{border-color:#ff5f74}
 .home-hud .hud-guide-footnote{margin:19px 0 0;color:#727b89;font-size:11px;line-height:1.7}
 .home-hud .community-card[href^="https://discord.gg"] .community-icon{border-color:#303957;background:#171e33;color:#c9d4ff}
-.home-hud .community-card[href^="https://discord.gg"] .community-icon svg{width:24px;height:24px}
+.home-hud .community-card[href^="https://discord.gg"] .community-icon svg{display:block;width:25px;height:25px;overflow:visible;flex:0 0 25px}
 .home-hud .hud-hero__image{object-fit:cover;object-position:center 55%}
 .home-hud .hud-hero__art{background-image:url("https://images.unsplash.com/photo-1762515993692-7b9946f76858?auto=format&fit=crop&w=2400&q=85");background-position:center 55%;background-size:cover}
 @media(max-width:900px){.home-hud .hud-guide-steps{grid-template-columns:1fr}.home-hud .hud-guide-step{min-height:0}.home-hud .hud-guide-heading{grid-template-columns:1fr;gap:14px}}
