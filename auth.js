@@ -42,6 +42,8 @@
   };
 
   const accountUrl = () =>
+    new URL("/cabinet", isLocalDevelopmentHost() ? window.location.origin : PRODUCTION_ORIGIN).href;
+  const oauthRedirectUrl = () =>
     new URL("/cabinet.html", isLocalDevelopmentHost() ? window.location.origin : PRODUCTION_ORIGIN).href;
   const escapeText = (value) => String(value ?? "").trim();
 
@@ -443,7 +445,7 @@
 
     setBusy(button, true, "Переходим в Discord…");
 
-    const redirectTarget = new URL(accountUrl());
+    const redirectTarget = new URL(oauthRedirectUrl());
     redirectTarget.hash = "";
 
     try {
