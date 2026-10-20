@@ -10,7 +10,11 @@ const requiredFiles = [
   "cabinet.html",
   "styles.css",
   "home-hud.css",
+  "cabinet-hud.css",
   "forum.css",
+  "forum-v2.css",
+  "scripts/forum-shell-smoke.mjs",
+  "supabase/migrations/20261018193000_forum_my_public_id.sql",
   "script.js",
   "auth.js",
   "auth-config.js",
@@ -58,6 +62,7 @@ const requiredFiles = [
   "scripts/runtime-smoke.mjs",
   "scripts/browser-smoke.mjs",
   "scripts/home-hud-smoke.mjs",
+  "scripts/cabinet-hud-smoke.mjs",
   "assets/images/README.md",
   "assets/images/nazerak-autumn-hero.webp",
   ".htaccess",
@@ -133,16 +138,20 @@ for (const [name, page] of [
   ["forum-user.html", read("forum-user.html")],
   ["forum-reports.html", read("forum-reports.html")]
 ]) {
-  const assets = ["auth-config.js?v=8", "supabase-loader.js?v=9", "auth.js?v=37", "script.js?v=24"];
+  const assets = ["auth-config.js?v=8", "supabase-loader.js?v=9", "auth.js?v=38", "script.js?v=24"];
+  if (name === "index.html" || name === "cabinet.html") {
+    assets.splice(assets.indexOf("script.js?v=24"), 1, "script.js?v=26");
+  }
   if (name !== "index.html") assets.push("styles.css?v=44");
-  if (name === "index.html") assets.push("home-hud.css?v=3");
-  if (name === "forum.html") { assets.push("forum.css?v=21", "forum-ui.js?v=5", "forum-social.js?v=2", "forum.js?v=9"); }
-  if (name === "forum-category.html") { assets.push("forum.css?v=21", "forum-ui.js?v=5", "forum-social.js?v=2", "forum-category.js?v=6"); }
-  if (name === "forum-members.html") { assets.push("forum.css?v=21", "forum-ui.js?v=5", "forum-social.js?v=2", "forum-members.js?v=2"); }
-  if (name === "forum-search.html") { assets.push("forum.css?v=21", "forum-ui.js?v=5", "forum-social.js?v=2", "forum-search.js?v=3"); }
-  if (name === "topic.html") { assets.push("forum.css?v=21", "forum-ui.js?v=5", "forum-social.js?v=2", "topic.js?v=6"); }
-  if (name === "forum-user.html") { assets.push("forum.css?v=21", "forum-ui.js?v=5", "forum-social.js?v=2", "user.js?v=3"); }
-  if (name === "forum-reports.html") { assets.push("forum.css?v=21", "forum-ui.js?v=5", "forum-social.js?v=2", "forum-reports.js?v=1"); }
+  if (name === "index.html") assets.push("home-hud.css?v=5");
+  if (name === "cabinet.html") assets.push("cabinet-hud.css?v=1");
+  if (name === "forum.html") { assets.push("forum.css?v=21", "forum-v2.css?v=2", "forum-ui.js?v=5", "forum-social.js?v=2", "forum.js?v=10"); }
+  if (name === "forum-category.html") { assets.push("forum.css?v=21", "forum-v2.css?v=2", "forum-ui.js?v=5", "forum-social.js?v=2", "forum-category.js?v=6"); }
+  if (name === "forum-members.html") { assets.push("forum.css?v=21", "forum-v2.css?v=2", "forum-ui.js?v=5", "forum-social.js?v=2", "forum-members.js?v=2"); }
+  if (name === "forum-search.html") { assets.push("forum.css?v=21", "forum-v2.css?v=2", "forum-ui.js?v=5", "forum-social.js?v=2", "forum-search.js?v=3"); }
+  if (name === "topic.html") { assets.push("forum.css?v=21", "forum-v2.css?v=2", "forum-ui.js?v=5", "forum-social.js?v=2", "topic.js?v=6"); }
+  if (name === "forum-user.html") { assets.push("forum.css?v=21", "forum-v2.css?v=2", "forum-ui.js?v=5", "forum-social.js?v=2", "user.js?v=3"); }
+  if (name === "forum-reports.html") { assets.push("forum.css?v=21", "forum-v2.css?v=2", "forum-ui.js?v=5", "forum-social.js?v=2", "forum-reports.js?v=1"); }
   for (const asset of assets) {
     if (!page.includes(asset)) {
       fail.push(`${name} asset include missing: ${asset}`);
@@ -182,15 +191,18 @@ if (auth.includes("data-media-retry") || auth.includes("data-media-disclosure") 
 if (css.includes("data-media-disclosure") || /\.login-panel\b|\.account-container\b|\.account-layout\b|\.account-page--clean\b|\.account-clean\b|\.account-card-clean\b/.test(css)) fail.push("legacy cabinet CSS remains");
 if (!auth.includes("const withTimeout")) fail.push("request timeout guard is missing");
 if (!auth.includes("const syncForumAccount")) fail.push("Discord forum-account sync is missing");
+if (/\.from\(["']profiles["']\)/.test(auth)) fail.push("website cabinet must not read or write the old Minecraft nickname profile table");
+if (cabinet.includes('id="minecraft-profile-form"') || cabinet.includes("data-minecraft-input")) fail.push("website nickname form must remain removed");
+if (!cabinet.includes("НАСТРОЙКА В ЛАУНЧЕРЕ") || !cabinet.includes("Этот сайт больше не запрашивает и не сохраняет Minecraft-ник")) fail.push("cabinet must direct Minecraft profile setup to the launcher");
 if (!auth.includes("Загрузка Supabase SDK превысила 9 секунд.")) fail.push("Supabase SDK bootstrap wait is not bounded");
-if (auth.includes("const loadProfile = async") || auth.includes("const ensureProfile = async")) fail.push("website must not load Minecraft nickname profiles");
+
 if (!auth.includes('client.auth.onAuthStateChange((event, session) =>')) fail.push("auth listener is missing");
 const listenerIndex = auth.indexOf('client.auth.onAuthStateChange((event, session) =>');
 const clientCreateIndex = auth.indexOf('client = factory(config.url, config.publishableKey');
 if (listenerIndex === -1 || clientCreateIndex === -1 || listenerIndex < clientCreateIndex) fail.push("auth listener wiring is incomplete");
 if (auth.indexOf('client.auth.onAuthStateChange((event, session) =>') === -1) fail.push("auth listener registration is missing");
 if (!auth.includes("state.user = session?.user || null")) fail.push("global auth link state is not updated from auth events");
-if (auth.includes("hydrateCabinetData")) fail.push("cabinet must not depend on the removed Minecraft nickname profile flow");
+if (auth.includes("hydrateCabinetData")) fail.push("cabinet must not wait for removed website profile data");
 if (!auth.includes("const setButtonLabel")) fail.push("button label helper is missing");
 if (!auth.includes('const text = qs("span", element);')) fail.push("status text helper is missing");
 
@@ -201,7 +213,7 @@ if (auth.includes('redirectTarget.hash = "media-application"')) fail.push("OAuth
 if (!auth.includes('setAccountView("guest");')) fail.push("cabinet must expose guest login as safe fallback");
 if (!auth.includes('event === "TOKEN_REFRESHED"')) fail.push("token refresh event handling is missing");
 if (!auth.includes("NETWORK OFFLINE")) fail.push("offline auth guard is missing");
-if (auth.includes("const saveProfile = async")) fail.push("website must not save Minecraft nicknames");
+
 
 if (!auth.includes("nextUserId === currentUserId && nextUserId")) fail.push("background auth sync must avoid cabinet flicker");
 if (!auth.includes('setAuthStatus("DISCORD READY", "ready")')) fail.push("signed-out cabinet status reset is missing");
@@ -234,14 +246,27 @@ if (!auth.includes('event.key === null || event.key.startsWith("sb-")')) fail.pu
 if (!auth.includes('label.textContent = state.user ? "Кабинет" : "Войти";')) fail.push("global auth link label state is missing");
 if (/https:\/\/minecraftstatus\.com/i.test(read("404.html"))) fail.push("obsolete status host remains in 404 CSP");
 if (/\.live-panel|\.section--live|#server-status-text|\.world-map\\b|\.hero-server-mark\\b/.test(css)) fail.push("obsolete live/dashboard CSS remains");
-if (/\.from\(["']profiles["']\)/.test(auth)) fail.push("website cabinet must not read or write the old Minecraft nickname profile table");
-if (cabinet.includes("id=\"minecraft-profile-form\"") || cabinet.includes("data-minecraft-input")) fail.push("website nickname form must remain removed");
+
+
 if (/nazerak\.is-a\.dev\/cabinet\.html/i.test(read("AUTH_SETUP.md"))) fail.push("obsolete custom-domain auth URL remains");
 if (/server-status-text|server-players|data-server-hero/.test(index)) fail.push("obsolete server statistics markup remains");
 if (!index.includes('class="hud-hero"') || !index.includes("hud-world-grid") || !index.includes("hud-connect")) fail.push("homepage visual system missing");
-if (!index.includes("home-hud.css?v=3")) fail.push("isolated homepage HUD stylesheet is missing");
+if (!index.includes("home-hud.css?v=5")) fail.push("isolated homepage HUD stylesheet is missing");
+if (!cabinet.includes("cabinet-hud.css?v=1")) fail.push("dedicated cabinet HUD stylesheet is missing");
+if (!deployWorkflow.includes('test -f "$HOME/www/nazerak.ru/cabinet-hud.css"')) fail.push("production remote-root guard does not verify the cabinet stylesheet");
+if (!cabinet.includes("script.js?v=26")) fail.push("cabinet is missing the interactive shared script revision");
+if (!cabinet.includes('class="brand__mark" aria-hidden="true"><svg')) fail.push("cabinet brand mark is missing");
+if (!index.includes('class="hud-about-section"') || !index.includes('class="hud-guide-section"') || !index.includes('class="hud-faq-section"')) fail.push("homepage project structure is incomplete");
+if (!index.includes('class="hud-hero__image"')) fail.push("homepage must render hero asset as a full-frame image element");
+if (!index.includes("Скачай лаунчер") || !index.includes("Зарегистрируйся") || !index.includes("Скачай файлы и играй")) fail.push("launcher onboarding must include all three ordered steps");
+if (!index.includes("hud-launcher-download") || !index.includes('aria-disabled="true"')) fail.push("launcher download CTA must stay unavailable until a public installer exists");
+if (!index.includes('src="./assets/images/nazerak-autumn-hero.webp"')) fail.push("homepage must use the local Minecraft hero asset");
+if (index.includes("images.unsplash.com")) fail.push("homepage must not depend on an external stock-photo host");
+if (!index.includes("M19.942 5.659") || !index.includes("viewBox=\"0 0 24 24\" aria-hidden=\"true\" focusable=\"false\"")) fail.push("Discord brand icon must use the clean vector mark");
+if (!read("cabinet-hud.css").includes("body[data-cabinet] .account-login")) fail.push("cabinet redesign styles are missing");
+if (!read("scripts/cabinet-hud-smoke.mjs").includes("Discord login action missing")) fail.push("cabinet browser regression tests are missing");
 if (index.includes("styles.css?v=44")) fail.push("homepage must not inherit the legacy global stylesheet");
-if (!index.includes("assets/images/nazerak-autumn-hero.webp")) fail.push("local autumn Minecraft hero background is missing");
+if (!read("home-hud.css").includes('url("./assets/images/nazerak-autumn-hero.webp")')) fail.push("homepage CSS fallback must use the local Minecraft hero asset");
 if (index.includes("assets/images/home-hero.svg") || index.includes("home-v2") || index.includes("hero-art__grid")) fail.push("obsolete geometric homepage markup remains");
 if (!index.includes("Подключиться к серверу") || !index.includes("Узнать больше")) fail.push("homepage hero actions are missing");
 if (!index.includes("Discord")) fail.push("homepage community CTA is misleading or stale");
@@ -250,13 +275,13 @@ if (!index.includes('<a href="#community">Сообщество</a>')) fail.push(
 if (!index.includes('<a href="/forum/pravila-i-dokumenty">Правила</a>')) fail.push("homepage rules navigation must lead to the rules category");
 if (index.includes('<a href="#community" title="Раздел поддержки проекта">Донат</a>')) fail.push("homepage must not advertise a donation route that is not implemented");
 if (!deployWorkflow.includes("--exclude='./forum-concept'")) fail.push("production deploy must keep forum-concept drafts out of public web root");
-if (!deployWorkflow.includes("test -f .deploy/assets/images/nazerak-autumn-hero.webp")) fail.push("production deploy does not validate local autumn hero asset");
-if (!deployWorkflow.includes("grep -q 'home-hud.css?v=3' .deploy/index.html")) fail.push("production deploy does not validate the isolated homepage HUD stylesheet");
+if (!deployWorkflow.includes("test -f .deploy/assets/images/nazerak-autumn-hero.webp")) fail.push("production deploy must validate the local Minecraft hero asset");
+if (!deployWorkflow.includes("grep -q 'home-hud.css?v=5' .deploy/index.html")) fail.push("production deploy does not validate the isolated homepage HUD stylesheet");
 if (!deployWorkflow.includes('grep -q "styles.css?v=44" "$HOME/www/nazerak.ru/forum.html" &&')) fail.push("production deploy forum stylesheet guard is stale");
 if (deployWorkflow.includes("test -f .deploy/assets/images/home-hero.svg") || deployWorkflow.includes('grep -q "styles.css?v=42"')) fail.push("production deploy still contains stale homepage asset or stylesheet checks");
 if (!deployWorkflow.includes('grep -q "Добро пожаловать" /tmp/nazerak-home.html')) fail.push("production deploy does not validate the new homepage content");
-if (!deployWorkflow.includes('grep -q "assets/images/nazerak-autumn-hero.webp" /tmp/nazerak-home.html')) fail.push("production deploy does not validate homepage hero path");
-if (!deployWorkflow.includes('curl -k -f -L -sS "$SITE_URL/assets/images/nazerak-autumn-hero.webp"')) fail.push("production deploy does not verify the published autumn hero asset");
+if (!deployWorkflow.includes('grep -q "assets/images/nazerak-autumn-hero.webp" /tmp/nazerak-home.html')) fail.push("production deploy does not validate homepage Minecraft hero path");
+if (!deployWorkflow.includes('curl -k -f -L -sS -D /tmp/nazerak-hero.headers "$SITE_URL/assets/images/nazerak-autumn-hero.webp" -o /tmp/nazerak-hero.webp')) fail.push("production deploy does not verify the local Minecraft hero image");
 if (!deployWorkflow.split("\n").some((line) => line.includes("rm -f --") && line.includes("home-hero.svg"))) fail.push("production deploy does not remove the obsolete homepage hero file");
 if (!cabinet.includes('class="nav-account is-active"') || !cabinet.includes('aria-current="page"')) fail.push("cabinet account route must be marked active");
 if (!auth.includes('document.body.hasAttribute("data-cabinet")')) fail.push("cabinet page detection must use attribute presence");
@@ -349,6 +374,19 @@ if (!read("forum-ui.js").includes("data-forum-user")) fail.push("forum hover pro
 if (read("forum.html").match(/data-forum-state|forum-state|форум готов|Форум готов/i)) fail.push("obsolete forum ready status must not return");
 if (read("forum-category.html").match(/доступ.*публикац|публикац.*доступ|кто.*может.*публика/i)) fail.push("forum publication-access helper copy must not return");
 if (!read("forum.html").includes('class="forum-page forum-v21"') || !read("forum.html").includes('class="forum-v21-layout"')) fail.push("forum v21 layout markup is missing");
+const forumUnifiedSurfaceFiles = ["forum.html","forum-category.html","forum-members.html","forum-search.html","forum-user.html","forum-reports.html","topic.html"];
+for (const file of forumUnifiedSurfaceFiles) {
+  if (!read(file).includes("forum-v2.css?v=2")) fail.push(file + " is missing the unified forum stylesheet");
+}
+for (const route of ["new","unanswered","mine","bookmarks","watched"]) {
+  if (!read(".htaccess").includes("RewriteRule ^forum/" + route + "/?$ forum.html?view=" + route)) fail.push("forum route rewrite is missing: " + route);
+}
+if (!read("forum.js").includes("location.pathname.match")) fail.push("forum clean-route view detection is missing");
+const personalViewMigration = read("supabase/migrations/20261018193000_forum_my_public_id.sql");
+if (!personalViewMigration.includes("create or replace function public.forum_my_public_id()") || !personalViewMigration.includes("set search_path = ''")) fail.push("secure public-ID RPC migration is incomplete");
+if (!deployWorkflow.includes("test -f .deploy/forum-v2.css")) fail.push("production deploy does not stage the new forum stylesheet");
+if (!deployWorkflow.includes('test -f "$HOME/www/nazerak.ru/forum-v2.css"')) fail.push("production remote-root guard does not verify the new forum stylesheet");
+
 
 if (!read("user.js").includes('from("forum_author_directory")')) fail.push("forum user directory query missing");
 for (const file of ["forum.js","forum-category.js","topic.js"]) {

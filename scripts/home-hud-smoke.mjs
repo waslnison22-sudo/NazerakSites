@@ -22,17 +22,35 @@ try {
  check((await page.locator(".server-address__copy strong").textContent())?.trim()==="nazehard.rustix.cc","server address does not match project IP");
  check(await page.locator('link[href*="home-hud.css"]').count()===1,"isolated HUD stylesheet missing");
  check(await page.locator('link[href*="styles.css"]').count()===0,"homepage must not inherit global styles");
- check(await page.locator(".hud-hero__art").evaluate(n=>getComputedStyle(n).backgroundImage.includes("nazerak-autumn-hero.webp")),"local autumn landscape is not configured");
- const asset=await page.request.get(new URL("/assets/images/nazerak-autumn-hero.webp",baseUrl).toString());
- check(asset.status()===200,"local autumn hero image should return HTTP 200");
- check((asset.headers()["content-type"]||"").includes("image/webp"),"autumn asset must be served as WebP");
- check((await asset.body()).byteLength>5000,"autumn hero asset looks incomplete");
+ check(await page.locator(".hud-hero__image").count()===1,"hero should use a real image element rather than a cropped CSS background");
+ await page.waitForFunction(()=>{const n=document.querySelector(".hud-hero__image");return !!n&&n.complete&&n.naturalWidth>0},{},{timeout:20000});
+ check(await page.locator(".hud-hero__image").evaluate(n=>n.naturalWidth>0&&n.naturalHeight>0),"hero image failed to load");
+ check(await page.locator(".hud-hero__image").evaluate(n=>getComputedStyle(n).objectFit==="cover"),"hero should preserve the full image frame without cropping");
+ check((await page.locator(".hud-hero__image").getAttribute("src"))==="./assets/images/nazerak-autumn-hero.webp","homepage must use the local Minecraft hero asset");
+ const heroAsset=await page.request.get(new URL("/assets/images/nazerak-autumn-hero.webp",baseUrl).toString());
+ check(heroAsset.status()===200,"local Minecraft hero asset should return HTTP 200");
+ check((heroAsset.headers()["content-type"]||"").toLowerCase().includes("image/webp"),"local Minecraft hero asset must be served as WebP");
+ check((await heroAsset.body()).byteLength>5000,"local Minecraft hero asset looks incomplete");
  check(await page.locator(".hero-art,.world-visual,.partner-panel,.hud-orbit,.hud-triangle,.home-v2,.hud-circle").count()===0,"obsolete abstract decorations remain");
- const cssResponse=await page.request.get(new URL("/home-hud.css?v=3",baseUrl).toString());
+ const cssResponse=await page.request.get(new URL("/home-hud.css?v=5",baseUrl).toString());
  check(cssResponse.status()===200,"standalone HUD stylesheet should return HTTP 200");
  const cssText=await cssResponse.text();
  check(!/radial-gradient|clip-path\s*:[^;]*polygon|clip-path\s*:[^;]*circle/i.test(cssText),"homepage CSS must not create abstract circles or triangles");
  check(cssText.includes(".home-hud .nav>a.is-active"),"active navigation style missing");
+ for(const id of ["about","guide","faq"]) check(await page.locator("#"+id).count()===1,"missing homepage section #"+id);
+ check(await page.locator(".hud-about-card").count()===3,"project explanation should contain three content cards");
+ check(await page.locator(".hud-faq-item").count()>=3,"FAQ content is missing");
+ check(await page.locator(".brand__mark svg").count()===1,"abstract NaZerak brand mark is missing");
+ check(await page.locator(".hud-guide-step").count()===3,"launcher onboarding must contain exactly three steps");
+ check((await page.locator(".hud-guide-step h3").allTextContents()).map(s=>s.trim()).join("|")==="Скачай лаунчер|Зарегистрируйся|Скачай файлы и играй","launcher onboarding step order is wrong");
+ check(await page.locator(".hud-launcher-download").count()===1,"launcher download CTA missing");
+ check(await page.locator(".hud-launcher-download").getAttribute("aria-disabled")==="true","download CTA must stay unavailable until a verified public installer exists");
+ check(await page.locator(".community-card[href^='https://discord.gg'] .community-icon svg path[fill='currentColor']").count()===1,"Discord icon should use a clean brand mark");
+ const faq=page.locator(".hud-faq-item").first();
+ await faq.locator("summary").click();
+ check(await faq.evaluate(n=>n.open),"FAQ item did not expand");
+ await faq.locator("summary").click();
+ check(!(await faq.evaluate(n=>n.open)),"FAQ item did not collapse");
  await page.emulateMedia({reducedMotion:"reduce"});
  check(await page.evaluate(()=>getComputedStyle(document.documentElement).scrollBehavior)==="auto","reduced motion should disable smooth scrolling");
  await page.emulateMedia({reducedMotion:"no-preference"});
@@ -57,5 +75,5 @@ try {
  check(!(await page.locator("#site-nav").evaluate(n=>n.classList.contains("is-open"))),"Escape did not close mobile nav");
  check(browserErrors.length===0,"browser errors: "+browserErrors.join(" | "));
  if(failures.length){console.error(failures.join("\n"));process.exitCode=1}
- else console.log("Homepage HUD smoke passed: autumn asset, accurate server details, reference layout, seven viewports and mobile navigation.");
+ else console.log("Homepage HUD smoke passed: local Minecraft hero, project sections, launcher onboarding, FAQ, server copy and seven viewports.");
 } finally {await browser.close()}

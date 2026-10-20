@@ -56,6 +56,43 @@
     sections.forEach((section) => sectionObserver.observe(section));
   }
 
+
+  // Accessible onboarding stepper on the homepage.
+  const startTabs = [...document.querySelectorAll("[data-start-tab]")];
+  const startPanels = [...document.querySelectorAll("[data-guide-panel]")];
+  const activateStartStep = (step, focusTab = false) => {
+    const selected = String(step);
+    const nextTab = startTabs.find((tab) => tab.dataset.startTab === selected);
+    if (!nextTab) return;
+    startTabs.forEach((tab) => {
+      const active = tab === nextTab;
+      tab.classList.toggle("is-selected", active);
+      tab.setAttribute("aria-selected", String(active));
+      tab.tabIndex = active ? 0 : -1;
+    });
+    startPanels.forEach((panel) => {
+      panel.hidden = panel.dataset.guidePanel !== selected;
+    });
+    if (focusTab) nextTab.focus();
+  };
+  startTabs.forEach((tab, index) => {
+    tab.addEventListener("click", () => activateStartStep(tab.dataset.startTab));
+    tab.addEventListener("keydown", (event) => {
+      if (!["ArrowRight", "ArrowLeft", "Home", "End"].includes(event.key)) return;
+      event.preventDefault();
+      let nextIndex = index;
+      if (event.key === "ArrowRight") nextIndex = (index + 1) % startTabs.length;
+      if (event.key === "ArrowLeft") nextIndex = (index - 1 + startTabs.length) % startTabs.length;
+      if (event.key === "Home") nextIndex = 0;
+      if (event.key === "End") nextIndex = startTabs.length - 1;
+      activateStartStep(startTabs[nextIndex].dataset.startTab, true);
+    });
+  });
+  document.querySelectorAll("[data-start-next]").forEach((button) => {
+    button.addEventListener("click", () => activateStartStep(button.dataset.startNext));
+  });
+  if (startTabs.length) activateStartStep(startTabs.find((tab) => tab.getAttribute("aria-selected") === "true")?.dataset.startTab || startTabs[0].dataset.startTab);
+
   document.querySelectorAll("[data-copy]").forEach((button) => {
     button.addEventListener("click", async () => {
       const value = button.getAttribute("data-copy");
