@@ -425,10 +425,13 @@ if (!auth.includes('hostname.endsWith(".github.io")')) fail.push("legacy GitHub 
 if (!auth.includes('target.searchParams.set("auth_redirect", "legacy_pages")')) fail.push("legacy OAuth callbacks must not pass PKCE data to a different origin");
 if (!auth.includes('query.has("code")')) fail.push("legacy OAuth callback detection is missing");
 if (!auth.includes("OLD CALLBACK URL")) fail.push("legacy OAuth callback must explain that the user needs to retry on the official domain");
-const legacyCallbackBlock = auth.slice(auth.indexOf("if (isAuthCallback)"), auth.indexOf("window.location.replace(target.href)"));
-if (!legacyCallbackBlock.includes('target.searchParams.set("auth_redirect", "legacy_pages")') ||
-    legacyCallbackBlock.includes("target.search = window.location.search") ||
-    legacyCallbackBlock.includes("target.hash = window.location.hash")) {
+const legacyCallbackStart = auth.indexOf("if (isAuthCallback)");
+const legacyCallbackElse = auth.indexOf("} else {", legacyCallbackStart);
+const legacyCallbackBranch = auth.slice(legacyCallbackStart, legacyCallbackElse);
+if (legacyCallbackStart < 0 || legacyCallbackElse < 0 ||
+    !legacyCallbackBranch.includes('target.searchParams.set("auth_redirect", "legacy_pages")') ||
+    legacyCallbackBranch.includes("target.search = window.location.search") ||
+    legacyCallbackBranch.includes("target.hash = window.location.hash")) {
   fail.push("legacy callback must discard auth parameters rather than forwarding PKCE data across origins");
 }
 if (!auth.includes('document.addEventListener("error", restoreAvatarFallback, true);')) fail.push("failed profile images must have a fallback");
