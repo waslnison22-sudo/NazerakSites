@@ -71,7 +71,7 @@ jobs:
           test -f .deploy/cabinet-hud.css
           test -f .deploy/assets/images/nazerak-autumn-hero.webp
           grep -q 'assets/images/nazerak-autumn-hero.webp' .deploy/index.html
-          grep -q 'home-hud.css?v=6' .deploy/index.html
+          grep -q 'home-hud.css?v=7' .deploy/index.html
           grep -q 'auth.js?v=39' .deploy/cabinet.html
           grep -q 'favicon.svg?v=8' .deploy/index.html
           grep -q 'cabinet-hud.css?v=1' .deploy/cabinet.html
@@ -120,7 +120,7 @@ jobs:
             grep -q "forum.css?v=21" "$HOME/www/nazerak.ru/forum.html" &&
             test -f "$HOME/www/nazerak.ru/forum.css" &&
             grep -Fq ".forum-v21-layout{" "$HOME/www/nazerak.ru/forum.css" &&
-            grep -q "home-hud.css?v=6" "$HOME/www/nazerak.ru/index.html" &&
+            grep -q "home-hud.css?v=7" "$HOME/www/nazerak.ru/index.html" &&
             grep -q "auth.js?v=39" "$HOME/www/nazerak.ru/cabinet.html" &&
             grep -q "favicon.svg?v=8" "$HOME/www/nazerak.ru/index.html" &&
             test -f "$HOME/www/nazerak.ru/cabinet-hud.css" &&
@@ -174,7 +174,7 @@ jobs:
           curl -k -L -sS "$SITE_URL/" -o /tmp/nazerak-home.html
           grep -q "Добро пожаловать" /tmp/nazerak-home.html
           grep -q "assets/images/nazerak-autumn-hero.webp" /tmp/nazerak-home.html &&
-          grep -q "home-hud.css?v=6" /tmp/nazerak-home.html
+          grep -q "home-hud.css?v=7" /tmp/nazerak-home.html
           grep -q "favicon.svg?v=8" /tmp/nazerak-home.html
           curl -k -f -L -sS "$SITE_URL/cabinet" -o /tmp/nazerak-cabinet.html
           grep -q "cabinet-hud.css?v=1" /tmp/nazerak-cabinet.html
