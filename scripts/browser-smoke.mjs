@@ -245,7 +245,8 @@ const testStaticPage = async ({ path, name, viewport, check }) => {
   const finishDiagnostics = attachDiagnostics(page, name);
 
   try {
-    await page.goto(BASE + path, { waitUntil: path === "/forum" ? "load" : "networkidle", timeout: TIMEOUT });
+    // Static HTML should wait for the document, not networkidle: Supabase/CDN calls can remain in flight while the UI is already ready.
+    await page.goto(BASE + path, { waitUntil: "load", timeout: TIMEOUT });
 
     // The forum index can keep Supabase/realtime requests open, so use its
     // specific hydration markers instead of waiting for networkidle there.
