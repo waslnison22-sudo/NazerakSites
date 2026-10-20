@@ -262,7 +262,7 @@ if (!index.includes("Скачай лаунчер") || !index.includes("Заре�
 if (!index.includes("hud-launcher-download") || !index.includes('aria-disabled="true"')) fail.push("launcher download CTA must stay unavailable until a public installer exists");
 if (!index.includes('src="./assets/images/nazerak-autumn-hero.webp"')) fail.push("homepage must use the local Minecraft hero asset");
 if (index.includes("images.unsplash.com")) fail.push("homepage must not depend on an external stock-photo host");
-if (!index.includes("M19.73 4.36")) fail.push("Discord brand icon must use a clean Discord mark");
+if (!index.includes("M19.942 5.659") || !index.includes("viewBox=\"0 0 24 24\" aria-hidden=\"true\" focusable=\"false\"")) fail.push("Discord brand icon must use the clean vector mark");
 if (!read("cabinet-hud.css").includes("body[data-cabinet] .account-login")) fail.push("cabinet redesign styles are missing");
 if (!read("scripts/cabinet-hud-smoke.mjs").includes("Discord login action missing")) fail.push("cabinet browser regression tests are missing");
 if (index.includes("styles.css?v=44")) fail.push("homepage must not inherit the legacy global stylesheet");
