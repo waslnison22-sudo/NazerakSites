@@ -690,6 +690,15 @@ await testStaticPage({
     await page.locator('[data-forum-search-form]').evaluate((form) => form.requestSubmit());
     if (!new URL(page.url()).searchParams.get("q")?.includes("na")) throw new Error("search did not update query URL");
     if (!(await clear.isVisible())) throw new Error("search clear control did not appear for a query");
+    // Search is interactive before auth/data bootstraps. Wait for the loaded
+    // results state before asserting which empty-state copy should be visible.
+    await page.waitForFunction(() => {
+      const results = document.querySelector("[data-search-results]");
+      const empty = document.querySelector("[data-search-empty]");
+      const title = empty?.querySelector("h3")?.textContent?.trim() || "";
+      return !!results && !results.hidden ||
+        !!empty && !empty.hidden && /не найдено/i.test(title);
+    }, {}, { timeout: 12000 });
     if (await page.locator("[data-search-empty]").isVisible()) {
       const emptyTitle = (await page.locator("[data-search-empty] h3").textContent() || "").trim();
       if (!/не найдено/i.test(emptyTitle)) throw new Error("search no-results state still looks like an empty query: " + emptyTitle);
