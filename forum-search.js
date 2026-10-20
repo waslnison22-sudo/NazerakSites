@@ -139,6 +139,7 @@
     if (window.NaZerakAuth?.ready) await window.NaZerakAuth.ready;
     state.client = window.NaZerakAuth?.client || await waitForClient();
     if (!state.client) {
+      document.documentElement.dataset.forumSearchReady = "error";
       if (error) {
         error.textContent = "Не удалось подключиться к данным форума. Обнови страницу и попробуй снова.";
         error.hidden = false;
@@ -158,12 +159,14 @@
       if (result.error) throw new Error(result.error.message || "Не удалось загрузить темы.");
       state.topics = result.data || [];
       state.ready = true;
+      document.documentElement.dataset.forumSearchReady = "true";
       if (error) error.hidden = true;
       // The user may have typed, submitted or cleared a query while data loaded.
       state.q = input ? input.value : (new URLSearchParams(window.location.search).get("q") || "");
       if (clear) clear.hidden = !state.q;
       render();
     } catch (caughtError) {
+      document.documentElement.dataset.forumSearchReady = "error";
       if (error) {
         error.textContent = caughtError instanceof Error
           ? caughtError.message
