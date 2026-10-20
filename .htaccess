@@ -32,6 +32,13 @@ RewriteCond %{THE_REQUEST} \s/+cabinet\.html(?:[?\s]) [NC]
 RewriteRule ^cabinet\.html$ /cabinet [R=301,L]
 
 # Clean routes -> existing static HTML files.
+# Forum discovery views use the existing forum shell and query state.
+RewriteRule ^forum/new/?$ forum.html?view=new [L,QSA]
+RewriteRule ^forum/unanswered/?$ forum.html?view=unanswered [L,QSA]
+RewriteRule ^forum/mine/?$ forum.html?view=mine [L,QSA]
+RewriteRule ^forum/bookmarks/?$ forum.html?view=bookmarks [L,QSA]
+RewriteRule ^forum/watched/?$ forum.html?view=watched [L,QSA]
+
 RewriteRule ^forum/reports/?$ forum-reports.html [L]
 RewriteRule ^forum/?$ forum.html [L]
 RewriteRule ^forum/topic/([^/]+)/?$ topic.html?id=$1 [L,QSA]

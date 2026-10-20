@@ -8,15 +8,16 @@
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://unpkg.com; connect-src 'self' https://ujlbyzvdsncvqbrhasuw.supabase.co; img-src 'self' data: https://cdn.discordapp.com https://media.discordapp.net; style-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; frame-src 'none'; form-action 'self';">
   <meta name="description" content="Профиль пользователя форума NaZerak.">
   <meta name="robots" content="noindex,nofollow,noarchive">
-  <link rel="icon" href="./favicon.svg?v=6" type="image/svg+xml">
+  <link rel="icon" href="./favicon.svg?v=7" type="image/svg+xml">
   <link rel="stylesheet" href="./styles.css?v=44">
   <link rel="stylesheet" href="./forum.css?v=21">
+<link rel="stylesheet" href="./forum-v2.css?v=2">
   <title>NaZerak — профиль пользователя</title>
 </head>
 <body data-forum-user-page>
   <a class="skip-link" href="#main-content">К содержимому</a>
   <header class="topbar" id="top"><div class="container topbar__inner">
-    <a class="brand" href="./" aria-label="NaZerak — на главную"><span class="brand__mark" aria-hidden="true">NZ</span><span class="brand__name">NaZerak</span></a>
+    <a class="brand" href="./" aria-label="NaZerak — на главную"><span class="brand__mark" aria-hidden="true"><svg viewBox="0 0 48 48" focusable="false"><path d="M12 14h24M12 24h15M12 34h24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><path d="M34 11 16 37" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></svg></span><span class="brand__name">NaZerak</span></a>
     <button class="nav-toggle" type="button" aria-controls="user-nav" aria-expanded="false" aria-label="Открыть меню"><span></span><span></span><span></span><span class="sr-only">Открыть меню</span></button>
     <nav class="nav" id="user-nav" aria-label="Навигация форума">
         <a class="nav-forum is-active" href="/forum">Форум</a>
@@ -25,6 +26,8 @@
         <a class="nav-account" data-auth-link href="/cabinet"><span class="nav-account__avatar"><img data-auth-link-avatar alt="" hidden><span data-auth-link-fallback>◉</span></span><span data-auth-link-label>Войти</span></a>
       </nav>
   </div></header>
+<nav class="forum-global-subnav" aria-label="Разделы форума"><div class="forum-global-subnav__inner"><a data-forum-view-link="all" href="/forum">Обзор</a><a data-forum-view-link="new" href="/forum/new">Новое</a><a data-forum-view-link="unanswered" href="/forum/unanswered">Без ответа</a><a data-forum-view-link="mine" href="/forum/mine">Мои темы</a><a data-forum-view-link="bookmarks" href="/forum/bookmarks">Закладки</a><a data-forum-view-link="watched" href="/forum/watched">Подписки</a><a href="/members">Участники</a><a href="/search">Поиск</a></div></nav>
+
 
   <main class="forum-user-page" id="main-content" tabindex="-1">
     <div class="container forum-user">
@@ -58,11 +61,11 @@
     </div>
   </main>
 
-  <footer class="footer"><div class="container footer__inner"><div><a class="brand brand--footer" href="./"><span class="brand__mark" aria-hidden="true">NZ</span><span class="brand__name">NaZerak</span></a><p class="footer__copy">Профиль участника форума NaZerak.</p></div><div class="footer__right"><span>© <span id="year"></span> NaZerak</span><a href="#top">Наверх ↑</a></div></div></footer>
+  <footer class="footer"><div class="container footer__inner"><div><a class="brand brand--footer" href="./"><span class="brand__mark" aria-hidden="true"><svg viewBox="0 0 48 48" focusable="false"><path d="M12 14h24M12 24h15M12 34h24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><path d="M34 11 16 37" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></svg></span><span class="brand__name">NaZerak</span></a><p class="footer__copy">Профиль участника форума NaZerak.</p></div><div class="footer__right"><span>© <span id="year"></span> NaZerak</span><a href="#top">Наверх ↑</a></div></div></footer>
   <noscript><div class="noscript-message">Для профиля требуется включить JavaScript.</div></noscript>
   <script src="./auth-config.js?v=8" defer></script>
   <script src="./supabase-loader.js?v=9" defer></script>
-  <script src="./auth.js?v=37" defer></script>
+  <script src="./auth.js?v=38" defer></script>
   <script src="./forum-ui.js?v=5" defer></script><script src="./forum-social.js?v=2" defer></script>
   <script src="./user.js?v=3" defer></script>
   <script src="./script.js?v=24" defer></script>
