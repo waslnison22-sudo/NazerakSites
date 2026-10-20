@@ -25,11 +25,11 @@ try {
  check(await page.locator(".hud-hero__image").count()===1,"hero should use a real image element rather than a cropped CSS background");
  await page.waitForFunction(()=>{const n=document.querySelector(".hud-hero__image");return !!n&&n.complete&&n.naturalWidth>0},{},{timeout:20000});
  check(await page.locator(".hud-hero__image").evaluate(n=>n.naturalWidth>0&&n.naturalHeight>0),"hero image failed to load");
- check(await page.locator(".hud-hero__image").evaluate(n=>getComputedStyle(n).objectFit==="contain"),"foreground hero image must not crop the original image frame");
- const heroLayers=await page.evaluate(()=>{const read=(selector)=>{const el=document.querySelector(selector);if(!el)return null;const s=getComputedStyle(el),r=el.getBoundingClientRect();return{display:s.display,position:s.position,zIndex:s.zIndex,width:Math.round(r.width),height:Math.round(r.height)}};return{art:read(".hud-hero__art"),image:read(".hud-hero__image"),veil:read(".hud-hero__veil"),content:read(".hud-hero__inner")};});
- check(heroLayers.art?.display!=="none"&&heroLayers.art?.zIndex==="0","hero backdrop must be visible above the section background: "+JSON.stringify(heroLayers));
- check(heroLayers.image?.zIndex==="1"&&heroLayers.image?.width>0&&heroLayers.image?.height>0,"foreground photo must occupy a visible positive z-layer: "+JSON.stringify(heroLayers));
- check(heroLayers.veil?.zIndex==="2"&&heroLayers.content?.zIndex==="3","hero veil and content must remain above artwork: "+JSON.stringify(heroLayers));
+ check(await page.locator(".hud-hero__image").evaluate(n=>getComputedStyle(n).objectFit==="cover"),"existing hero photo must fill the hero background");
+ const heroLayers=await page.evaluate(()=>{const read=(selector)=>{const el=document.querySelector(selector);if(!el)return null;const s=getComputedStyle(el),r=el.getBoundingClientRect();return{display:s.display,position:s.position,zIndex:s.zIndex,opacity:s.opacity,visibility:s.visibility,objectFit:s.objectFit,width:Math.round(r.width),height:Math.round(r.height)}};return{art:read(".hud-hero__art"),image:read(".hud-hero__image"),veil:read(".hud-hero__veil"),content:read(".hud-hero__inner")};});
+ check(heroLayers.art?.display==="none","duplicate CSS backdrop should stay disabled; the existing img is the only background: "+JSON.stringify(heroLayers));
+ check(heroLayers.image?.zIndex==="0"&&heroLayers.image?.width>0&&heroLayers.image?.height>0&&heroLayers.image?.opacity==="1"&&heroLayers.image?.visibility==="visible","existing photo must be visible at a positive layer: "+JSON.stringify(heroLayers));
+ check(heroLayers.veil?.zIndex==="1"&&heroLayers.content?.zIndex==="2","veil and hero text must be layered above the existing photo: "+JSON.stringify(heroLayers));
  check((await page.locator(".hud-hero__image").getAttribute("src"))==="./assets/images/nazerak-autumn-hero.webp","homepage must use the local Minecraft hero asset");
  const heroAsset=await page.request.get(new URL("/assets/images/nazerak-autumn-hero.webp",baseUrl).toString());
  check(heroAsset.status()===200,"local Minecraft hero asset should return HTTP 200");
