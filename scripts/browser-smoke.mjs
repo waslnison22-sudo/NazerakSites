@@ -717,8 +717,9 @@ await testStaticPage({
     await page.waitForFunction(() => {
       const status = document.documentElement.dataset.forumSearchReady;
       return status === "true" || status === "error";
-    }, { timeout: 12000 });
-    if (document.documentElement.dataset.forumSearchReady !== "true") {
+    }, null, { timeout: 12000 });
+    const searchState = await page.evaluate(() => document.documentElement.dataset.forumSearchReady);
+    if (searchState !== "true") {
       throw new Error("search data did not reach a ready state");
     }
     await page.waitForFunction(() => {
@@ -726,7 +727,7 @@ await testStaticPage({
       const empty = document.querySelector("[data-search-empty]");
       const results = document.querySelector("[data-search-results]");
       return empty?.hidden || /не найдено/i.test(title) || results?.querySelectorAll(".forum-topic-row").length > 0;
-    }, { timeout: 5000 });
+    }, null, { timeout: 5000 });
     if (await page.locator("[data-search-empty]").isVisible()) {
       const emptyTitle = (await page.locator("[data-search-empty] h3").textContent() || "").trim();
       if (!/не найдено/i.test(emptyTitle)) throw new Error("search no-results state still looks like an empty query: " + emptyTitle);
