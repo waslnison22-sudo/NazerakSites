@@ -142,13 +142,12 @@ html{background:#07070a;scroll-behavior:smooth}
 
 /* Hero photo: Pascal Debrunner / Unsplash, used under the Unsplash License. */
 
-/* Verified hero layers: the page background must never paint over the photo. */
-.home-hud .hud-hero{isolation:isolate}
-.home-hud .hud-hero__art{display:block;position:absolute;z-index:0;inset:-8px;background-image:url("./assets/images/nazerak-autumn-hero.webp");background-position:center 55%;background-size:cover;filter:brightness(.38) blur(3px);transform:scale(1.015)}
-.home-hud .hud-hero__image{position:absolute;z-index:1;inset:0;width:100%;height:100%;object-fit:contain;object-position:right center}
-.home-hud .hud-hero__veil{z-index:2}
-.home-hud .hud-hero__inner{position:relative;z-index:3}
+/* The existing local hero photo is the backdrop. Keep it in the visible stack below the veil and copy. */
+.home-hud .hud-hero{position:relative;isolation:isolate;background:#090a0e}
+.home-hud .hud-hero__art{display:none!important}
+.home-hud .hud-hero__image{position:absolute;z-index:0;inset:0;display:block;width:100%;height:100%;max-height:none;object-fit:cover;object-position:center 55%;opacity:1;visibility:visible}
+.home-hud .hud-hero__veil{position:absolute;z-index:1;inset:0;background:linear-gradient(90deg,rgba(7,7,10,.94) 0%,rgba(7,7,10,.78) 25%,rgba(7,7,10,.28) 58%,rgba(7,7,10,.05) 100%),linear-gradient(0deg,rgba(7,7,10,.96) 0%,rgba(7,7,10,.22) 30%,transparent 62%)}
+.home-hud .hud-hero__inner{position:relative;z-index:2}
 @media(max-width:680px){
- .home-hud .hud-hero__image{inset:0;width:100%;height:100%;object-fit:contain;object-position:center top}
- .home-hud .hud-hero__art{background-position:center 30%}
+ .home-hud .hud-hero__image{inset:0;width:100%;height:100%;object-fit:cover;object-position:center 45%}
 }
