@@ -24,8 +24,10 @@
     qs("[data-user-topic-count]").textContent=String(p.topic_count||0);
     qs("[data-user-post-count]").textContent=String(p.post_count||0);
     qs("[data-user-initial]").textContent=(p.display_name||"N").slice(0,1).toUpperCase();
-    const img=qs("[data-user-avatar]");
-    if(p.avatar_url){img.hidden=false;img.src=p.avatar_url;img.alt="";}
+    const img=qs("[data-user-avatar]"),avatar=safeUrl(p.avatar_url);
+    img.hidden=!avatar;
+    if(avatar){img.src=avatar;img.alt="";}else img.removeAttribute("src");
+    qs("[data-user-initial]").hidden=!!avatar;
     const roles=Array.isArray(p.role_slugs)?p.role_slugs:[];
     qs("[data-user-roles]").innerHTML=roles.map(r=>typeof r==="string"?window.NaZerakForumUI.roleBadge(r,"Игрок","•"):window.NaZerakForumUI.roleBadge(r.slug||r.role_slug||"player",r.name||"Игрок",r.badge||"•")).join("");
     let topics;try{topics=await withTimeout(client.from("forum_topic_list").select("id,title,category_name,last_post_at,reply_count,is_pinned,author_public_id,primary_role_slug").eq("author_public_id",publicId).order("last_post_at",{ascending:false}).limit(10),8000,"Загрузка тем профиля превысила 8 секунд.");}catch(e){showMessage(e instanceof Error?e.message:"Не удалось загрузить темы профиля.");return;}

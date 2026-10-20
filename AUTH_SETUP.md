@@ -74,7 +74,7 @@ Client Secret вводится только в Supabase Dashboard.
 
 ### Site URL
 
-Текущий production URL:
+Production:
 
 ```text
 https://nazerak.ru/
@@ -82,21 +82,23 @@ https://nazerak.ru/
 
 ### Redirect URLs
 
-Production:
+Добавь оба production URL — OAuth callback и чистый маршрут кабинета:
 
 ```text
 https://nazerak.ru/cabinet.html
+https://nazerak.ru/cabinet
 ```
 
 Локальное тестирование:
 
 ```text
 http://localhost:8000/cabinet.html
+http://localhost:8000/cabinet
 ```
 
-Старые GitHub Pages URL для production больше не используются.
+OAuth теперь отправляет callback на `https://nazerak.ru/cabinet.html`. Если после Discord пользователь попадает на GitHub Pages, Site URL или Redirect URLs в Supabase могут быть устаревшими, либо вход начат со старого адреса Pages. Начинай вход с `https://nazerak.ru`; код перенаправляет GitHub Pages на официальный домен до запуска OAuth. Не указывай GitHub Pages как production Site URL.
 
-Production URL лучше добавлять точным совпадением.
+Указывай адреса точным совпадением.
 
 ## 6. Что уже сделано в GitHub
 

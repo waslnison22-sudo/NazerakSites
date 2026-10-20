@@ -19,7 +19,30 @@
 
   const qs = (selector, root = document) => root.querySelector(selector);
   const qsa = (selector, root = document) => [...root.querySelectorAll(selector)];
-  const accountUrl = () => new URL("/cabinet", window.location.origin).href;
+  const PRODUCTION_ORIGIN = "https://nazerak.ru";
+  const isLocalDevelopmentHost = () =>
+    ["localhost", "127.0.0.1", "::1"].includes(window.location.hostname.toLowerCase());
+
+  const canonicalizeLegacyHost = () => {
+    const hostname = window.location.hostname.toLowerCase();
+    if (!hostname.endsWith(".github.io")) return false;
+    const query = new URLSearchParams(window.location.search);
+    const fragment = new URLSearchParams(window.location.hash.replace(/^#/, ""));
+    const isAuthCallback =
+      query.has("code") || query.has("error") || query.has("error_description") ||
+      fragment.has("access_token") || fragment.has("refresh_token") ||
+      fragment.has("error") || fragment.has("error_description");
+    const legacyPath = window.location.pathname.replace(/^\/NazerakSites(?=\/|$)/i, "") || "/";
+    const pathname = isAuthCallback ? "/cabinet.html" : legacyPath;
+    const target = new URL(pathname, PRODUCTION_ORIGIN);
+    target.search = window.location.search;
+    target.hash = window.location.hash;
+    window.location.replace(target.href);
+    return true;
+  };
+
+  const accountUrl = () =>
+    new URL("/cabinet.html", isLocalDevelopmentHost() ? window.location.origin : PRODUCTION_ORIGIN).href;
   const escapeText = (value) => String(value ?? "").trim();
 
   const safeHttpUrl = (value) => {
@@ -178,17 +201,55 @@
       ""
     );
     if (!candidate) return "";
-
     try {
-      const host = new URL(candidate).hostname.toLowerCase();
-      return host === "cdn.discordapp.com" ||
-        host === "media.discordapp.net"
-        ? candidate
-        : "";
+      return ["cdn.discordapp.com", "media.discordapp.net", "images-ext-1.discordapp.net"]
+        .includes(new URL(candidate).hostname.toLowerCase()) ? candidate : "";
     } catch {
       return "";
     }
   };
+
+  const avatarImageSelector =
+    "[data-auth-link-avatar], [data-user-avatar], [data-topic-author-avatar], " +
+    ".forum-avatar img, .forum-member-card__avatar img, .forum-user-card__avatar img";
+
+  const restoreAvatarFallback = (event) => {
+    const image = event.target;
+    if (!(image instanceof HTMLImageElement) || !image.matches(avatarImageSelector)) return;
+    image.hidden = true;
+    image.removeAttribute("src");
+    const wrapper = image.parentElement;
+    if (!wrapper) return;
+    const fallback = wrapper.querySelector(
+      ":scope > [data-auth-link-fallback], :scope > [data-user-initial], :scope > [data-topic-author-initial]"
+    );
+    if (fallback) {
+      if (!fallback.hasAttribute("data-auth-link-fallback")) {
+        const name =
+          image.alt?.replace(/^Аватар Discord\s*/i, "").trim() ||
+          wrapper.closest(".forum-member-card")?.querySelector(".forum-member-card__body strong")?.textContent ||
+          wrapper.closest(".forum-user-link")?.querySelector("span:not(.forum-avatar)")?.textContent ||
+          wrapper.closest(".topic-post__author")?.querySelector("strong")?.textContent ||
+          wrapper.closest(".forum-user-card")?.querySelector(".forum-user-card__name")?.textContent ||
+          fallback.textContent?.trim() ||
+          "N";
+        fallback.textContent = String(name).trim().slice(0, 1).toUpperCase() || "N";
+      }
+      fallback.hidden = false;
+      return;
+    }
+    if (wrapper.matches(".forum-avatar, .forum-member-card__avatar, .forum-user-card__avatar")) {
+      const name =
+        image.alt?.replace(/^Аватар Discord\s*/i, "").trim() ||
+        wrapper.closest(".forum-member-card")?.querySelector(".forum-member-card__body strong")?.textContent ||
+        wrapper.closest(".forum-user-link")?.querySelector("span:not(.forum-avatar)")?.textContent ||
+        wrapper.closest(".topic-post__author")?.querySelector("strong")?.textContent ||
+        wrapper.closest(".forum-user-card")?.querySelector(".forum-user-card__name")?.textContent ||
+        "N";
+      wrapper.replaceChildren(document.createTextNode(String(name).trim().slice(0, 1).toUpperCase() || "N"));
+    }
+  };
+  document.addEventListener("error", restoreAvatarFallback, true);
 
 
   const syncForumAccount = async (user) => {
@@ -342,10 +403,16 @@
     const initials = name.slice(0, 1).toUpperCase() || "N";
     qsa("[data-user-initial]").forEach((el) => {
       el.textContent = initials;
+      el.hidden = !!avatar;
     });
   };
 
   const signIn = async (button) => {
+    if (canonicalizeLegacyHost()) return;
+    if (!isLocalDevelopmentHost() && window.location.origin !== PRODUCTION_ORIGIN) {
+      window.location.replace(new URL("/cabinet", PRODUCTION_ORIGIN).href);
+      return;
+    }
     setBusy(button, true, "Подключаем Discord…");
     showMessage("");
     setAuthStatus("CONNECTING AUTH", "loading");
@@ -681,6 +748,7 @@
 
   const init = async () => {
     if (initialized) return;
+    if (canonicalizeLegacyHost()) return;
     initialized = true;
     document.documentElement.classList.add("auth-ready");
     renderAuthLinks();

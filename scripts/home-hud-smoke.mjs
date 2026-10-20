@@ -20,12 +20,16 @@ try {
   check(await page.locator("#site-nav a[href=\"#community\"]").textContent().then((value)=>value?.trim())==="Сообщество","community navigation must have a working section target");
  check(await page.locator('.hud-connect [data-copy="nazehard.rustix.cc"]').count()===1,"server IP copy control missing");
  check((await page.locator(".server-address__copy strong").textContent())?.trim()==="nazehard.rustix.cc","server address does not match project IP");
- check(await page.locator('link[href*="home-hud.css"]').count()===1,"isolated HUD stylesheet missing");
+ check(await page.locator('link[href*="home-hud.css?v=6"]').count()===1,"isolated HUD stylesheet v6 missing");
  check(await page.locator('link[href*="styles.css"]').count()===0,"homepage must not inherit global styles");
  check(await page.locator(".hud-hero__image").count()===1,"hero should use a real image element rather than a cropped CSS background");
  await page.waitForFunction(()=>{const n=document.querySelector(".hud-hero__image");return !!n&&n.complete&&n.naturalWidth>0},{},{timeout:20000});
  check(await page.locator(".hud-hero__image").evaluate(n=>n.naturalWidth>0&&n.naturalHeight>0),"hero image failed to load");
- check(await page.locator(".hud-hero__image").evaluate(n=>getComputedStyle(n).objectFit==="cover"),"hero should preserve the full image frame without cropping");
+ check(await page.locator(".hud-hero__image").evaluate(n=>getComputedStyle(n).objectFit==="contain"),"foreground hero image must not crop the original image frame");
+ const heroLayers=await page.evaluate(()=>{const read=(selector)=>{const el=document.querySelector(selector);if(!el)return null;const s=getComputedStyle(el),r=el.getBoundingClientRect();return{display:s.display,position:s.position,zIndex:s.zIndex,width:Math.round(r.width),height:Math.round(r.height)}};return{art:read(".hud-hero__art"),image:read(".hud-hero__image"),veil:read(".hud-hero__veil"),content:read(".hud-hero__inner")};});
+ check(heroLayers.art?.display!=="none"&&heroLayers.art?.zIndex==="0","hero backdrop must be visible above the section background: "+JSON.stringify(heroLayers));
+ check(heroLayers.image?.zIndex==="1"&&heroLayers.image?.width>0&&heroLayers.image?.height>0,"foreground photo must occupy a visible positive z-layer: "+JSON.stringify(heroLayers));
+ check(heroLayers.veil?.zIndex==="2"&&heroLayers.content?.zIndex==="3","hero veil and content must remain above artwork: "+JSON.stringify(heroLayers));
  check((await page.locator(".hud-hero__image").getAttribute("src"))==="./assets/images/nazerak-autumn-hero.webp","homepage must use the local Minecraft hero asset");
  const heroAsset=await page.request.get(new URL("/assets/images/nazerak-autumn-hero.webp",baseUrl).toString());
  check(heroAsset.status()===200,"local Minecraft hero asset should return HTTP 200");
@@ -40,7 +44,8 @@ try {
  for(const id of ["about","guide","faq"]) check(await page.locator("#"+id).count()===1,"missing homepage section #"+id);
  check(await page.locator(".hud-about-card").count()===3,"project explanation should contain three content cards");
  check(await page.locator(".hud-faq-item").count()>=3,"FAQ content is missing");
- check(await page.locator(".brand__mark svg").count()===1,"abstract NaZerak brand mark is missing");
+ check((await page.locator(".brand__mark").first().textContent())?.trim()==="N","previous NaZerak brand mark should be restored");
+ check(await page.locator(".brand__mark svg").count()===0,"temporary bars/slash brand icon must not return");
  check(await page.locator(".hud-guide-step").count()===3,"launcher onboarding must contain exactly three steps");
  check((await page.locator(".hud-guide-step h3").allTextContents()).map(s=>s.trim()).join("|")==="Скачай лаунчер|Зарегистрируйся|Скачай файлы и играй","launcher onboarding step order is wrong");
  check(await page.locator(".hud-launcher-download").count()===1,"launcher download CTA missing");

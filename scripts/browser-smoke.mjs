@@ -143,6 +143,62 @@ const testSameOriginLinks = async (page, name) => {
   }
 };
 
+
+const testPagesCanonicalization = async () => {
+  const browser = await chromium.launch({ headless: true });
+  const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+  try {
+    await page.route("https://nazerak-pages-smoke.github.io/**", async (route) => {
+      if (route.request().resourceType() === "script") {
+        await route.fulfill({ status: 200, contentType: "application/javascript", body: fs.readFileSync("auth.js", "utf8") });
+      } else {
+        await route.fulfill({
+          status: 200,
+          contentType: "text/html",
+          body: '<!doctype html><html><head><meta charset="utf-8"></head><body><main>Legacy Pages host</main><script src="/NazerakSites/auth.js?v=39" defer></script></body></html>'
+        });
+      }
+    });
+    await page.route("https://nazerak.ru/**", async (route) => {
+      await route.fulfill({ status: 200, contentType: "text/html", body: "<!doctype html><html><body><main data-canonical-arrival>Official NaZerak</main></body></html>" });
+    });
+    await page.goto("https://nazerak-pages-smoke.github.io/NazerakSites/?code=sample-pkce-code&state=smoke#oauth", { waitUntil: "domcontentloaded" });
+    await page.waitForURL(url =>
+      url.origin === "https://nazerak.ru" &&
+      url.pathname === "/cabinet.html" &&
+      url.search === "?code=sample-pkce-code&state=smoke" &&
+      url.hash === "#oauth",
+      { timeout: 10000 }
+    );
+    if (!(await page.locator("[data-canonical-arrival]").count())) throw new Error("legacy Pages callback did not reach the official NaZerak origin");
+    console.log("PASS: canonical redirect from GitHub Pages OAuth callback");
+  } finally { await browser.close(); }
+};
+
+const testAvatarFallback = async () => {
+  const browser = await chromium.launch({ headless: true });
+  const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+  try {
+    await page.goto(BASE + "/cabinet", { waitUntil: "domcontentloaded", timeout: TIMEOUT });
+    await page.waitForFunction(() => typeof window.NaZerakAuth !== "undefined", { timeout: 10000 });
+    await page.evaluate(() => {
+      const wrapper = document.createElement("span");
+      wrapper.className = "forum-avatar";
+      wrapper.setAttribute("data-avatar-fallback-test", "");
+      const image = document.createElement("img");
+      image.alt = "Example User";
+      image.src = "data:image/png;base64,not-a-valid-image";
+      wrapper.append(image);
+      document.body.append(wrapper);
+    });
+    await page.waitForFunction(() => {
+      const wrapper = document.querySelector("[data-avatar-fallback-test]");
+      return !!wrapper && wrapper.textContent.trim() === "E" && !wrapper.querySelector("img");
+    }, { timeout: 5000 });
+    console.log("PASS: forum avatar fallback");
+  } finally { await browser.close(); }
+};
+
 const testOAuthStart = async () => {
   const browser = await chromium.launch({ headless: true });
   const context = await browser.newContext({ viewport: { width: 1280, height: 900 } });
@@ -173,8 +229,8 @@ const testOAuthStart = async () => {
     if (parsed.searchParams.get("provider") !== "discord" && !parsed.pathname.endsWith("/authorize")) {
       throw new Error("OAuth authorize request does not look like a Discord authorization request: " + authorizeRequest);
     }
-    if (parsed.searchParams.get("redirect_to") !== BASE + "/cabinet") {
-      throw new Error("OAuth redirect_to is not /cabinet: " + (parsed.searchParams.get("redirect_to") || ""));
+    if (parsed.searchParams.get("redirect_to") !== BASE + "/cabinet.html") {
+      throw new Error("OAuth redirect_to is not /cabinet.html: " + (parsed.searchParams.get("redirect_to") || ""));
     }
 
     console.log("PASS: OAuth start");
@@ -723,6 +779,8 @@ const test404 = async () => {
 await test404();
 
 await testOAuthStart();
+await testPagesCanonicalization();
+await testAvatarFallback();
 await testCabinetAnonymous({ width: 1440, height: 1000 }, "cabinet anonymous desktop");
 await testCabinetAnonymous({ width: 390, height: 844 }, "cabinet anonymous mobile");
 await testCabinetAnonymous({ width: 768, height: 1024 }, "cabinet tablet");

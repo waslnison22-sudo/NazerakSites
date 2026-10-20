@@ -6,7 +6,7 @@
   const safeUrl=v=>{try{const u=new URL(String(v||""));return /^https?:$/.test(u.protocol)?u.href:""}catch{return""}};
   const timeout=async(p,ms,msg)=>{let t;try{return await Promise.race([p,new Promise((_,rej)=>{t=setTimeout(()=>rej(new Error(msg)),ms)})])}finally{clearTimeout(t)}};
   const userName=u=>{const m=u?.user_metadata||{};return String(m.global_name||m.full_name||m.name||m.user_name||m.preferred_username||"Игрок NaZerak").trim().slice(0,64)||"Игрок NaZerak"};
-  const userAvatar=u=>safeUrl(u?.user_metadata?.avatar_url||u?.user_metadata?.picture);
+  const userAvatar=u=>{const m=u?.user_metadata||{};const url=safeUrl(m.avatar_url||m.picture||m.custom_claims?.avatar_url);if(!url)return null;try{return ["cdn.discordapp.com","media.discordapp.net","images-ext-1.discordapp.net"].includes(new URL(url).hostname.toLowerCase())?url:null;}catch{return null;}};
   const message=(m,k="info")=>{const n=qs("[data-topic-message]");if(!n)return;n.textContent=m;n.dataset.kind=k;n.hidden=!m};
   const idFromUrl=()=>{const m=location.pathname.match(/^\/forum\/topic\/([^/]+)\/?$/i);return Number(decodeURIComponent(m?.[1]||new URLSearchParams(location.search).get("id")||""))};
   const canManage=()=>Boolean(state.permissions?.can_moderate_forum);
@@ -98,8 +98,8 @@
     qs("[data-topic-title]").textContent=topic.title;
     qs("[data-topic-date]").textContent=new Intl.DateTimeFormat("ru-RU",{day:"2-digit",month:"long",year:"numeric",hour:"2-digit",minute:"2-digit"}).format(new Date(topic.created_at));
     qs("[data-topic-author]").textContent=topic.author_name||"Игрок NaZerak";
-    const img=qs("[data-topic-author-avatar]"),avatar=safeUrl(topic.author_avatar_url);img.hidden=!avatar;if(avatar)img.src=avatar;
-    qs("[data-topic-author-initial]").textContent=(topic.author_name||"N").slice(0,1).toUpperCase();
+    const img=qs("[data-topic-author-avatar]"),avatar=safeUrl(topic.author_avatar_url);img.hidden=!avatar;if(avatar)img.src=avatar;else img.removeAttribute("src");
+    const authorInitial=qs("[data-topic-author-initial]");authorInitial.textContent=(topic.author_name||"N").slice(0,1).toUpperCase();authorInitial.hidden=!!avatar;
     renderActions();renderSocialBar();
     const root=qs("[data-topic-posts]");
     const opener={id:null,body:topic.body,created_at:topic.created_at,updated_at:topic.updated_at,edited_at:null,author_public_id:topic.author_public_id,author_display_name:topic.author_name,author_avatar_url:topic.author_avatar_url,author_role_slug:topic.primary_role_slug,author_role_name:topic.primary_role_name,author_role_badge:topic.primary_role_badge};
