@@ -20,7 +20,7 @@ try {
   check(await page.locator("#site-nav a[href=\"#community\"]").textContent().then((value)=>value?.trim())==="Сообщество","community navigation must have a working section target");
  check(await page.locator('.hud-connect [data-copy="nazehard.rustix.cc"]').count()===1,"server IP copy control missing");
  check((await page.locator(".server-address__copy strong").textContent())?.trim()==="nazehard.rustix.cc","server address does not match project IP");
- check(await page.locator('link[href*="home-hud.css?v=7"]').count()===1,"isolated HUD stylesheet v6 missing");
+ check(await page.locator('link[href*="home-hud.css?v=7"]').count()===1,"isolated HUD stylesheet v7 missing");
  check(await page.locator('link[href*="styles.css"]').count()===0,"homepage must not inherit global styles");
  check(await page.locator(".hud-hero__image").count()===1,"hero should use a real image element rather than a cropped CSS background");
  await page.waitForFunction(()=>{const n=document.querySelector(".hud-hero__image");return !!n&&n.complete&&n.naturalWidth>0},{},{timeout:20000});
@@ -36,7 +36,7 @@ try {
  check((heroAsset.headers()["content-type"]||"").toLowerCase().includes("image/webp"),"local Minecraft hero asset must be served as WebP");
  check((await heroAsset.body()).byteLength>5000,"local Minecraft hero asset looks incomplete");
  check(await page.locator(".hero-art,.world-visual,.partner-panel,.hud-orbit,.hud-triangle,.home-v2,.hud-circle").count()===0,"obsolete abstract decorations remain");
- const cssResponse=await page.request.get(new URL("/home-hud.css?v=5",baseUrl).toString());
+ const cssResponse=await page.request.get(new URL("/home-hud.css?v=7",baseUrl).toString());
  check(cssResponse.status()===200,"standalone HUD stylesheet should return HTTP 200");
  const cssText=await cssResponse.text();
  check(!/radial-gradient|clip-path\s*:[^;]*polygon|clip-path\s*:[^;]*circle/i.test(cssText),"homepage CSS must not create abstract circles or triangles");
