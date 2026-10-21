@@ -10,7 +10,7 @@
 <link rel="icon" href="./favicon.svg?v=8" type="image/svg+xml">
 <link rel="stylesheet" href="./styles.css?v=44">
 <link rel="stylesheet" href="./forum.css?v=21">
-<link rel="stylesheet" href="./forum-v2.css?v=2">
+<link rel="stylesheet" href="./forum-v2.css?v=3">
 <title>NaZerak — форум</title>
 </head>
 <body data-forum>
@@ -18,18 +18,17 @@
 <header class="topbar" id="top"><div class="container topbar__inner">
 <a class="brand" href="./" aria-label="NaZerak — главная"><span class="brand__mark" aria-hidden="true">N</span><span class="brand__name">NaZerak</span></a>
 <button class="nav-toggle" type="button" aria-controls="forum-nav" aria-expanded="false" aria-label="Открыть меню"><span></span><span></span><span></span><span class="sr-only">Открыть меню</span></button>
-<nav class="nav" id="forum-nav" aria-label="Навигация форума">
-<a class="is-active" href="/forum" aria-current="page">Форум</a><a href="/members">Участники</a><a href="/search">Поиск</a><span class="forum-nav-notifications" data-forum-notifications hidden></span>
+<nav class="nav" id="forum-nav" aria-label="Основная навигация">
+<a href="/#hero">Главная</a><a class="is-active" href="/forum" aria-current="page">Форум</a><a href="/#community">Сообщество</a><a href="/#start">Сервер</a><a href="/forum/pravila-i-dokumenty">Правила</a><a href="/#about">О проекте</a><span class="forum-nav-notifications" data-forum-notifications hidden></span>
 <a class="nav-account" data-auth-link href="/cabinet"><span class="nav-account__avatar"><img data-auth-link-avatar alt="" hidden><span data-auth-link-fallback>◉</span></span><span data-auth-link-label>Войти</span></a>
 </nav></div></header>
 <nav class="forum-global-subnav" aria-label="Разделы форума"><div class="forum-global-subnav__inner"><a data-forum-view-link="all" href="/forum">Обзор</a><a data-forum-view-link="new" href="/forum/new">Новое</a><a data-forum-view-link="unanswered" href="/forum/unanswered">Без ответа</a><a data-forum-view-link="mine" href="/forum/mine">Мои темы</a><a data-forum-view-link="bookmarks" href="/forum/bookmarks">Закладки</a><a data-forum-view-link="watched" href="/forum/watched">Подписки</a><a href="/members">Участники</a><a href="/search">Поиск</a></div></nav>
 
 
 <main class="forum-page forum-v21" id="main-content" tabindex="-1"><div class="container forum">
-<header class="forum-index-head">
-<div><span class="section-kicker">NAZERAK COMMUNITY</span><h1>Форум</h1><p>Главное место для обсуждений проекта. Выбирай раздел, открывай тему и оставайся в разговоре.</p></div>
-<div class="forum-index-head__actions"><button class="button button--primary" type="button" data-forum-create>Новая тема <span aria-hidden="true">+</span></button><a class="button button--ghost" href="/search">Поиск</a></div>
-</header>
+<section class="forum-showcase" aria-labelledby="forum-showcase-title">
+<div class="forum-showcase__content"><span class="forum-showcase__eyebrow"><span aria-hidden="true">◉</span> Форум NaZerak</span><h1 id="forum-showcase-title">Сообщество, которое<br>создаёт <em>нашу историю</em></h1><p>Общайся, делись идеями, находи друзей и будь в курсе всех событий проекта. Форум — это сердце нашего сообщества.</p><div class="forum-showcase__actions"><button class="button button--primary" type="button" data-forum-create>✎ Создать тему</button><a class="button button--ghost" href="/forum/pravila-i-dokumenty">▤ Правила форума</a></div></div>
+</section>
 <div class="forum-message auth-message" data-forum-message role="status" aria-live="polite" hidden></div>
 
 <section class="forum-v21-search" aria-label="Поиск по форуму">
@@ -44,6 +43,7 @@
 </section>
 
 <aside class="forum-v21-side">
+<section class="forum-v21-panel forum-profile-panel"><div class="forum-profile-panel__identity"><span class="nav-account__avatar forum-profile-panel__avatar"><img data-auth-link-avatar alt="" hidden><span data-auth-link-fallback>◉</span></span><div><a data-auth-link href="/cabinet"><strong data-auth-link-label>Мой профиль</strong></a><span class="forum-profile-panel__hint">Аккаунт NaZerak</span></div></div><a class="forum-profile-panel__row" href="/cabinet">♙ Мой профиль <span>→</span></a><a class="forum-profile-panel__row" href="/forum/mine">▤ Мои темы <span>→</span></a><a class="forum-profile-panel__row" href="/forum/watched">♡ Подписки <span>→</span></a><a class="forum-profile-panel__login" data-auth-link href="/cabinet">Войти через Discord <span>→</span></a></section>
 <section class="forum-v21-panel"><header><div><span class="section-kicker">LATEST</span><h2>Последние темы</h2></div><a href="/search" aria-label="Все темы">Все →</a></header><div class="forum-topic-list" data-forum-topic-list aria-live="polite"></div><div class="forum-empty" data-forum-empty hidden><span class="section-kicker" data-forum-empty-kicker>ПУСТО</span><h3 data-forum-empty-title>Тем пока нет</h3><p data-forum-empty-copy>Создай первую тему — она появится здесь автоматически.</p><a class="button button--primary" data-view-login href="/cabinet" hidden>Войти через Discord</a></div></section>
 <section class="forum-v21-panel forum-v21-links"><header><div><span class="section-kicker">COMMUNITY</span><h2>Быстрый доступ</h2></div></header>
 <a href="/forum/pravila-i-dokumenty"><strong>Правила и документы</strong><span>Официальная информация</span></a>
@@ -51,7 +51,12 @@
 <a href="/forum/zayavki"><strong>Обращения и заявки</strong><span>Вопросы и поддержка</span></a>
 <a href="https://discord.gg/2KvsYYDHN6" target="_blank" rel="noopener noreferrer"><strong>Discord</strong><span>Официальное сообщество ↗</span></a>
 </section></aside>
-</div></div></main>
+</div><section class="forum-feature-cards" aria-label="Полезные разделы">
+<a class="forum-feature-card forum-feature-card--server" href="/#start"><span class="forum-feature-card__image" aria-hidden="true"></span><span class="forum-feature-card__body"><strong>Подключение к серверу</strong><span>Подробная инструкция по подключению и настройке игры.</span><em>Узнать больше →</em></span></a>
+<a class="forum-feature-card forum-feature-card--government" href="/forum"><span class="forum-feature-card__image" aria-hidden="true"></span><span class="forum-feature-card__body"><strong>Государство</strong><span>Фракции, департаменты и государственные структуры.</span><em>Узнать больше →</em></span></a>
+<a class="forum-feature-card forum-feature-card--world" href="/forum"><span class="forum-feature-card__image" aria-hidden="true"></span><span class="forum-feature-card__body"><strong>Игровой мир</strong><span>Механики, экономика, ивенты и развитие персонажа.</span><em>Узнать больше →</em></span></a>
+<a class="forum-feature-card forum-feature-card--community" href="/members"><span class="forum-feature-card__image" aria-hidden="true"></span><span class="forum-feature-card__body"><strong>Сообщество</strong><span>Общайся, находи друзей и участвуй в жизни проекта.</span><em>Узнать больше →</em></span></a>
+</section></div></main>
 
 <dialog class="forum-modal" data-forum-modal aria-labelledby="forum-modal-title"><form class="forum-modal__dialog" method="dialog" data-forum-form>
 <button class="forum-modal__close" type="submit" value="cancel" aria-label="Закрыть">×</button><span class="section-kicker">NEW TOPIC</span><h2 id="forum-modal-title">Новая тема</h2><p class="forum-modal__copy">Выбери раздел и напиши первое сообщение.</p>
@@ -62,7 +67,7 @@
 <div class="forum-modal__footer"><div class="forum-modal__buttons"><button class="button button--ghost" type="submit" value="cancel">Отмена</button><button class="button button--primary" type="button" data-forum-submit>Опубликовать →</button></div></div>
 </form></dialog>
 
-<footer class="footer"><div class="container footer__inner"><div><a class="brand brand--footer" href="./"><span class="brand__mark" aria-hidden="true">N</span><span class="brand__name">NaZerak</span></a><p class="footer__copy">Официальный форум NaZerak.</p><p class="footer__legal">NaZerak — независимый Minecraft-проект. Не связан с Mojang Studios или Microsoft.</p></div><div class="footer__right"><span>© <span id="year"></span> NaZerak</span><a href="#top">Наверх ↑</a></div></div></footer>
+<footer class="footer forum-reference-footer"><div class="container footer__inner"><div><a class="brand brand--footer" href="/"><span class="brand__mark" aria-hidden="true">N</span><span class="brand__name">NaZerak</span></a><p class="footer__copy">Больше, чем просто сервер.</p><p class="footer__legal">NaZerak — независимый Minecraft-проект. Не связан с Mojang Studios или Microsoft.</p></div><nav class="forum-reference-footer__nav" aria-label="Ссылки в подвале"><a href="/">Главная</a><a href="/forum">Форум</a><a href="/#community">Сообщество</a><a href="/#start">Сервер</a><a href="/forum/pravila-i-dokumenty">Правила</a><a href="/#about">О проекте</a></nav><div class="footer__right"><span>© <span id="year"></span> NaZerak. Все права защищены.</span><a href="#top">Наверх ↑</a></div></div></footer>
 <noscript><div class="noscript-message">Для форума требуется JavaScript.</div></noscript>
 <script src="./auth-config.js?v=8" defer></script><script src="./supabase-loader.js?v=9" defer></script><script src="./auth.js?v=39" defer></script><script src="./forum-ui.js?v=5" defer></script><script src="./forum-social.js?v=2" defer></script><script src="./forum.js?v=10" defer></script><script src="./script.js?v=24" defer></script>
 </body></html>
