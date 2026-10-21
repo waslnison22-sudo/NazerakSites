@@ -563,7 +563,7 @@ await testStaticPage({
   name: "forum index desktop",
   viewport: { width: 1440, height: 900 },
   check: async (page) => {
-    if (!(await page.locator("h1").textContent()).includes("Форум")) throw new Error("forum heading missing");
+    if (!(await page.locator("h1").textContent()).includes("Сообщество")) throw new Error("forum showcase heading missing");
     const layout = await page.locator(".forum-v21-layout").evaluate((node) => {
       const style = getComputedStyle(node);
       const rect = node.getBoundingClientRect();
