@@ -40,8 +40,16 @@
 - [x] Confirm latest QA, GitHub Pages build and production deploy runs succeeded for the same production commit.
 - [x] Create feature branch from production baseline.
 - [x] Establish audit ledger.
-- [ ] Complete page/asset/route inventory.
-- [ ] Make bounded fixes, review diffs, and run CI.
+- [x] Initial page/asset/route inventory: static HTML + shared JS/CSS, Apache clean-route rules, Supabase Auth, forum, cabinet, and production/Pages workflows.
+- [x] Fix cabinet brand-mark mismatch and add a computed-style regression assertion.
+- [ ] Complete route/asset/security review and remaining bounded fixes.
+- [ ] Run branch CI, review complete diff, and record outcomes.
+
+### Batch 1 — Visual consistency
+- Changed `cabinet-hud.css` so the header/footer N mark is no longer boxed and matches the red unboxed mark used across the site.
+- Changed `scripts/cabinet-hud-smoke.mjs` to assert the computed border and background, preventing the inconsistency from returning.
+- Commits: `76a7d896f118be7e0afaa820c89c92508f6aa659`, `04d58f76c73dd61bd073cb90d01a0ac63eef6c92`.
+- Verification: source-level review only so far; browser smoke has not yet run on this branch.
 
 ### Next actions
 1. Inspect every page entry point and shared script/style contracts; compare canonical links and asset paths.
