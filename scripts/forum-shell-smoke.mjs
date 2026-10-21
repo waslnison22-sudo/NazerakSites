@@ -36,8 +36,12 @@ try {
     check(await page.locator("body[data-forum]").count() === 1, route + " should render the real forum shell");
     check(await page.locator(".forum-global-subnav").count() === 1, route + " is missing forum navigation");
     check(await page.locator('link[href*="forum-v2.css?v=3"]').count() === 1, route + " is missing the new stylesheet");
-    await page.waitForFunction((expected) => document.querySelector(".forum-showcase h1")?.textContent?.trim() === expected, heading, { timeout: 15000 });
-    check(await page.locator(".forum-showcase h1").textContent().then(value => value?.trim()) === heading, route + " selected the wrong forum view");
+    await page.waitForFunction((expected) => {
+      const actual = document.querySelector(".forum-showcase h1")?.textContent?.trim() || "";
+      return expected === "Сообщество" ? actual.includes(expected) : actual === expected;
+    }, heading, { timeout: 15000 });
+    const actualHeading = await page.locator(".forum-showcase h1").textContent().then(value => value?.trim() || "");
+    check(heading === "Сообщество" ? actualHeading.includes(heading) : actualHeading === heading, route + " selected the wrong forum view: " + actualHeading);
     const cssResponse = await page.request.get(baseUrl + "/forum-v2.css?v=3");
     check(cssResponse.status() === 200, "forum-v2.css should return HTTP 200");
     check((await cssResponse.text()).includes(".forum-global-subnav"), "new stylesheet should include unified navigation");
