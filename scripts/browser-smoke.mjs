@@ -143,6 +143,86 @@ const testSameOriginLinks = async (page, name) => {
   }
 };
 
+
+const testPagesCanonicalization = async () => {
+  const browser = await chromium.launch({ headless: true });
+  const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+  let officialCallbackUrl = null;
+  try {
+    await page.route("https://nazerak-pages-smoke.github.io/**", async (route) => {
+      if (route.request().resourceType() === "script") {
+        await route.fulfill({ status: 200, contentType: "application/javascript", body: fs.readFileSync("auth.js", "utf8") });
+      } else {
+        await route.fulfill({
+          status: 200,
+          contentType: "text/html",
+          body: '<!doctype html><html><head><meta charset="utf-8"></head><body><main>Legacy Pages host</main><script src="/NazerakSites/auth.js?v=39" defer></script></body></html>'
+        });
+      }
+    });
+    await page.route("https://nazerak.ru/**", async (route) => {
+      const request = route.request();
+      if (request.isNavigationRequest()) officialCallbackUrl = request.url();
+      if (request.resourceType() === "script") {
+        await route.fulfill({ status: 200, contentType: "application/javascript", body: fs.readFileSync("auth.js", "utf8") });
+        return;
+      }
+      await route.fulfill({
+        status: 200,
+        contentType: "text/html",
+        body: '<!doctype html><html><head><meta charset="utf-8"></head><body data-cabinet><main id="main-content" data-canonical-arrival>Official NaZerak</main><div data-auth-message role="status" hidden></div><div data-auth-status><span></span></div><div data-account-view="guest" hidden></div><script>window.NAZERAK_SUPABASE_CONFIG={url:"https://auth-smoke.supabase.co",publishableKey:"sb_publishable_browser_smoke_123456789"};window.supabase={createClient:()=>({auth:{onAuthStateChange:()=>({}),getSession:async()=>({data:{session:null},error:null})}})};</script><script src="/auth.js?v=39" defer></script></body></html>'
+      });
+    });
+    await page.goto("https://nazerak-pages-smoke.github.io/NazerakSites/?code=sample-pkce-code&state=smoke#oauth", { waitUntil: "domcontentloaded" });
+    await page.waitForFunction(() => {
+      const message = document.querySelector("[data-auth-message]");
+      return !!message && !message.hidden && /старый адрес GitHub Pages/i.test(message.textContent || "");
+    }, {}, { timeout: 10000 });
+    if (!officialCallbackUrl) throw new Error("legacy callback never navigated to the official origin");
+    const callback = new URL(officialCallbackUrl);
+    if (callback.origin !== "https://nazerak.ru" || callback.pathname !== "/cabinet.html") {
+      throw new Error("legacy callback target should be the official cabinet: " + officialCallbackUrl);
+    }
+    if (callback.searchParams.has("code") || callback.searchParams.has("state") || callback.hash) {
+      throw new Error("legacy callback must not forward PKCE code, state or token fragment across origins");
+    }
+    if (callback.searchParams.get("auth_redirect") !== "legacy_pages") {
+      throw new Error("legacy callback should be marked so the user receives a retry message");
+    }
+    if (new URL(page.url()).search || new URL(page.url()).hash) {
+      throw new Error("legacy callback marker should be removed from the visible URL after messaging");
+    }
+    if (!(await page.locator("[data-canonical-arrival]").count())) {
+      throw new Error("legacy Pages callback did not reach the official NaZerak origin");
+    }
+    console.log("PASS: safe canonical redirect from GitHub Pages OAuth callback");
+  } finally { await browser.close(); }
+};
+
+const testAvatarFallback = async () => {
+  const browser = await chromium.launch({ headless: true });
+  const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+  try {
+    await page.goto(BASE + "/cabinet", { waitUntil: "domcontentloaded", timeout: TIMEOUT });
+    await page.waitForFunction(() => typeof window.NaZerakAuth !== "undefined", { timeout: 10000 });
+    await page.evaluate(() => {
+      const wrapper = document.createElement("span");
+      wrapper.className = "forum-avatar";
+      wrapper.setAttribute("data-avatar-fallback-test", "");
+      const image = document.createElement("img");
+      image.alt = "Example User";
+      image.src = "data:image/png;base64,not-a-valid-image";
+      wrapper.append(image);
+      document.body.append(wrapper);
+    });
+    await page.waitForFunction(() => {
+      const wrapper = document.querySelector("[data-avatar-fallback-test]");
+      return !!wrapper && wrapper.textContent.trim() === "E" && !wrapper.querySelector("img");
+    }, { timeout: 5000 });
+    console.log("PASS: forum avatar fallback");
+  } finally { await browser.close(); }
+};
+
 const testOAuthStart = async () => {
   const browser = await chromium.launch({ headless: true });
   const context = await browser.newContext({ viewport: { width: 1280, height: 900 } });
@@ -173,8 +253,8 @@ const testOAuthStart = async () => {
     if (parsed.searchParams.get("provider") !== "discord" && !parsed.pathname.endsWith("/authorize")) {
       throw new Error("OAuth authorize request does not look like a Discord authorization request: " + authorizeRequest);
     }
-    if (parsed.searchParams.get("redirect_to") !== BASE + "/cabinet") {
-      throw new Error("OAuth redirect_to is not /cabinet: " + (parsed.searchParams.get("redirect_to") || ""));
+    if (parsed.searchParams.get("redirect_to") !== BASE + "/cabinet.html") {
+      throw new Error("OAuth redirect_to is not /cabinet.html: " + (parsed.searchParams.get("redirect_to") || ""));
     }
 
     console.log("PASS: OAuth start");
@@ -189,7 +269,8 @@ const testStaticPage = async ({ path, name, viewport, check }) => {
   const finishDiagnostics = attachDiagnostics(page, name);
 
   try {
-    await page.goto(BASE + path, { waitUntil: path === "/forum" ? "load" : "networkidle", timeout: TIMEOUT });
+    // Static HTML should wait for the document, not networkidle: Supabase/CDN calls can remain in flight while the UI is already ready.
+    await page.goto(BASE + path, { waitUntil: "load", timeout: TIMEOUT });
 
     // The forum index can keep Supabase/realtime requests open, so use its
     // specific hydration markers instead of waiting for networkidle there.
@@ -633,6 +714,20 @@ await testStaticPage({
     await page.locator('[data-forum-search-form]').evaluate((form) => form.requestSubmit());
     if (!new URL(page.url()).searchParams.get("q")?.includes("na")) throw new Error("search did not update query URL");
     if (!(await clear.isVisible())) throw new Error("search clear control did not appear for a query");
+    await page.waitForFunction(() => {
+      const status = document.documentElement.dataset.forumSearchReady;
+      return status === "true" || status === "error";
+    }, null, { timeout: 12000 });
+    const searchState = await page.evaluate(() => document.documentElement.dataset.forumSearchReady);
+    if (searchState !== "true") {
+      throw new Error("search data did not reach a ready state");
+    }
+    await page.waitForFunction(() => {
+      const title = document.querySelector("[data-search-empty] h3")?.textContent || "";
+      const empty = document.querySelector("[data-search-empty]");
+      const results = document.querySelector("[data-search-results]");
+      return empty?.hidden || /не найдено/i.test(title) || results?.querySelectorAll(".forum-topic-row").length > 0;
+    }, null, { timeout: 5000 });
     if (await page.locator("[data-search-empty]").isVisible()) {
       const emptyTitle = (await page.locator("[data-search-empty] h3").textContent() || "").trim();
       if (!/не найдено/i.test(emptyTitle)) throw new Error("search no-results state still looks like an empty query: " + emptyTitle);
@@ -723,6 +818,8 @@ const test404 = async () => {
 await test404();
 
 await testOAuthStart();
+await testPagesCanonicalization();
+await testAvatarFallback();
 await testCabinetAnonymous({ width: 1440, height: 1000 }, "cabinet anonymous desktop");
 await testCabinetAnonymous({ width: 390, height: 844 }, "cabinet anonymous mobile");
 await testCabinetAnonymous({ width: 768, height: 1024 }, "cabinet tablet");

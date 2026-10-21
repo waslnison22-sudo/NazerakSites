@@ -1,6 +1,12 @@
 (() => {
   "use strict";
   const qs=(s,r=document)=>r.querySelector(s);
+  const safeUrl=(value)=>{
+    try{
+      const url=new URL(String(value||""));
+      return /^https?:$/.test(url.protocol)&&["cdn.discordapp.com","media.discordapp.net","images-ext-1.discordapp.net"].includes(url.hostname.toLowerCase())?url.href:"";
+    }catch{return""}
+  };
   const escapeHtml=(v)=>String(v==null?"":v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
   const formatDate=(v)=>{const d=new Date(v);if(Number.isNaN(d.getTime()))return"—";return new Intl.DateTimeFormat("ru-RU",{day:"2-digit",month:"long",year:"numeric"}).format(d)};
   const showMessage=(m,k)=>{const n=qs("[data-user-message]");if(!n)return;n.textContent=m;n.dataset.kind=k||"error";n.hidden=!m};
@@ -24,10 +30,13 @@
     qs("[data-user-topic-count]").textContent=String(p.topic_count||0);
     qs("[data-user-post-count]").textContent=String(p.post_count||0);
     qs("[data-user-initial]").textContent=(p.display_name||"N").slice(0,1).toUpperCase();
-    const img=qs("[data-user-avatar]");
-    if(p.avatar_url){img.hidden=false;img.src=p.avatar_url;img.alt="";}
+    const img=qs("[data-user-avatar]"),avatar=safeUrl(p.avatar_url);
+    img.hidden=!avatar;
+    if(avatar){img.src=avatar;img.alt="";}else img.removeAttribute("src");
+    qs("[data-user-initial]").hidden=!!avatar;
     const roles=Array.isArray(p.role_slugs)?p.role_slugs:[];
-    qs("[data-user-roles]").innerHTML=roles.map(r=>typeof r==="string"?window.NaZerakForumUI.roleBadge(r,"Игрок","•"):window.NaZerakForumUI.roleBadge(r.slug||r.role_slug||"player",r.name||"Игрок",r.badge||"•")).join("");
+    const visibleRoles=roles.length?roles:[{slug:p.primary_role_slug||"player",name:p.primary_role_name||"Игрок",badge:p.primary_role_badge||"•"}];
+    qs("[data-user-roles]").innerHTML=visibleRoles.map(r=>typeof r==="string"?window.NaZerakForumUI.roleBadge(r,"Игрок","•"):window.NaZerakForumUI.roleBadge(r.slug||r.role_slug||"player",r.name||"Игрок",r.badge||"•")).join("");
     let topics;try{topics=await withTimeout(client.from("forum_topic_list").select("id,title,category_name,last_post_at,reply_count,is_pinned,author_public_id,primary_role_slug").eq("author_public_id",publicId).order("last_post_at",{ascending:false}).limit(10),8000,"Загрузка тем профиля превысила 8 секунд.");}catch(e){showMessage(e instanceof Error?e.message:"Не удалось загрузить темы профиля.");return;}
     const root=qs("[data-user-topics]");
     if(topics.error){root.innerHTML='<div class="forum-user__empty">Не удалось загрузить последние темы.</div>';return;}if(!topics.data||!topics.data.length){root.innerHTML='<div class="forum-user__empty">Пока нет опубликованных тем.</div>';return;}

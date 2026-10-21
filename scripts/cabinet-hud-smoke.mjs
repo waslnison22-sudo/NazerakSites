@@ -21,7 +21,8 @@ try{
  check(await page.locator(".account-panel--minecraft .account-state-card h3").textContent().then(x=>x?.includes("лаунчере")), "Minecraft setup must be directed to the launcher");
  check(await page.locator("[data-sign-out]").count()>=2,"sign-out controls missing from authenticated view");
  check(await page.locator(".account-mark-emblem svg").count()===1,"abstract account emblem missing");
- check(await page.locator(".brand__mark svg").count()===2,"header and footer brand marks should match");
+ check(await page.locator(".brand__mark").count()===2,"header and footer brand marks should both exist");
+ check((await page.locator(".brand__mark").allTextContents()).every(value=>value.trim()==="N"),"header and footer should use the restored NaZerak N mark");
  const css=await page.request.get(new URL("/cabinet-hud.css?v=1",baseUrl).toString());
  check(css.status()===200,"cabinet-specific stylesheet should return HTTP 200");
  check((await css.text()).includes("body[data-cabinet] .account-login"),"dedicated cabinet design rules are missing");

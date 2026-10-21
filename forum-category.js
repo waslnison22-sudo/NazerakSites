@@ -5,7 +5,7 @@
   const esc=v=>String(v==null?"":v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
   const safeUrl=v=>{try{const u=new URL(String(v||""));return /^https?:$/.test(u.protocol)?u.href:""}catch{return""}};
   const userName=u=>{const m=u?.user_metadata||{};return String(m.global_name||m.full_name||m.name||"Игрок NaZerak").trim().slice(0,64)||"Игрок NaZerak"};
-  const userAvatar=u=>safeUrl(u?.user_metadata?.avatar_url||u?.user_metadata?.picture);
+  const userAvatar=u=>{const m=u?.user_metadata||{};const url=safeUrl(m.avatar_url||m.picture||m.custom_claims?.avatar_url);if(!url)return null;try{return ["cdn.discordapp.com","media.discordapp.net","images-ext-1.discordapp.net"].includes(new URL(url).hostname.toLowerCase())?url:null;}catch{return null;}};
   const timeout=async(p,ms,msg)=>{let t;try{return await Promise.race([p,new Promise((_,rej)=>{t=setTimeout(()=>rej(new Error(msg)),ms)})])}finally{clearTimeout(t)}};
   const wait=async()=>{for(let i=0;i<100;i++){if(window.NaZerakAuth?.client)return window.NaZerakAuth.client;await new Promise(r=>setTimeout(r,100))}return null};
   const msg=(m,k="info")=>{const n=qs("[data-category-message]");if(!n)return;n.textContent=m;n.dataset.kind=k;n.hidden=!m};

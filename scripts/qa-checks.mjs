@@ -138,17 +138,17 @@ for (const [name, page] of [
   ["forum-user.html", read("forum-user.html")],
   ["forum-reports.html", read("forum-reports.html")]
 ]) {
-  const assets = ["auth-config.js?v=8", "supabase-loader.js?v=9", "auth.js?v=38", "script.js?v=24"];
+  const assets = ["auth-config.js?v=8", "supabase-loader.js?v=9", "auth.js?v=39", "script.js?v=24"];
   if (name === "index.html" || name === "cabinet.html") {
     assets.splice(assets.indexOf("script.js?v=24"), 1, "script.js?v=26");
   }
   if (name !== "index.html") assets.push("styles.css?v=44");
-  if (name === "index.html") assets.push("home-hud.css?v=5");
+  if (name === "index.html") assets.push("home-hud.css?v=7");
   if (name === "cabinet.html") assets.push("cabinet-hud.css?v=1");
   if (name === "forum.html") { assets.push("forum.css?v=21", "forum-v2.css?v=2", "forum-ui.js?v=5", "forum-social.js?v=2", "forum.js?v=10"); }
   if (name === "forum-category.html") { assets.push("forum.css?v=21", "forum-v2.css?v=2", "forum-ui.js?v=5", "forum-social.js?v=2", "forum-category.js?v=6"); }
   if (name === "forum-members.html") { assets.push("forum.css?v=21", "forum-v2.css?v=2", "forum-ui.js?v=5", "forum-social.js?v=2", "forum-members.js?v=2"); }
-  if (name === "forum-search.html") { assets.push("forum.css?v=21", "forum-v2.css?v=2", "forum-ui.js?v=5", "forum-social.js?v=2", "forum-search.js?v=3"); }
+  if (name === "forum-search.html") { assets.push("forum.css?v=21", "forum-v2.css?v=2", "forum-ui.js?v=5", "forum-social.js?v=2", "forum-search.js?v=5"); }
   if (name === "topic.html") { assets.push("forum.css?v=21", "forum-v2.css?v=2", "forum-ui.js?v=5", "forum-social.js?v=2", "topic.js?v=6"); }
   if (name === "forum-user.html") { assets.push("forum.css?v=21", "forum-v2.css?v=2", "forum-ui.js?v=5", "forum-social.js?v=2", "user.js?v=3"); }
   if (name === "forum-reports.html") { assets.push("forum.css?v=21", "forum-v2.css?v=2", "forum-ui.js?v=5", "forum-social.js?v=2", "forum-reports.js?v=1"); }
@@ -251,11 +251,11 @@ if (/\.live-panel|\.section--live|#server-status-text|\.world-map\\b|\.hero-serv
 if (/nazerak\.is-a\.dev\/cabinet\.html/i.test(read("AUTH_SETUP.md"))) fail.push("obsolete custom-domain auth URL remains");
 if (/server-status-text|server-players|data-server-hero/.test(index)) fail.push("obsolete server statistics markup remains");
 if (!index.includes('class="hud-hero"') || !index.includes("hud-world-grid") || !index.includes("hud-connect")) fail.push("homepage visual system missing");
-if (!index.includes("home-hud.css?v=5")) fail.push("isolated homepage HUD stylesheet is missing");
+if (!index.includes("home-hud.css?v=7")) fail.push("isolated homepage HUD stylesheet is missing");
 if (!cabinet.includes("cabinet-hud.css?v=1")) fail.push("dedicated cabinet HUD stylesheet is missing");
 if (!deployWorkflow.includes('test -f "$HOME/www/nazerak.ru/cabinet-hud.css"')) fail.push("production remote-root guard does not verify the cabinet stylesheet");
 if (!cabinet.includes("script.js?v=26")) fail.push("cabinet is missing the interactive shared script revision");
-if (!cabinet.includes('class="brand__mark" aria-hidden="true"><svg')) fail.push("cabinet brand mark is missing");
+if (!cabinet.includes('class="brand__mark" aria-hidden="true">N</span>')) fail.push("cabinet brand mark is missing");
 if (!index.includes('class="hud-about-section"') || !index.includes('class="hud-guide-section"') || !index.includes('class="hud-faq-section"')) fail.push("homepage project structure is incomplete");
 if (!index.includes('class="hud-hero__image"')) fail.push("homepage must render hero asset as a full-frame image element");
 if (!index.includes("Скачай лаунчер") || !index.includes("Зарегистрируйся") || !index.includes("Скачай файлы и играй")) fail.push("launcher onboarding must include all three ordered steps");
@@ -276,7 +276,7 @@ if (!index.includes('<a href="/forum/pravila-i-dokumenty">Правила</a>')) 
 if (index.includes('<a href="#community" title="Раздел поддержки проекта">Донат</a>')) fail.push("homepage must not advertise a donation route that is not implemented");
 if (!deployWorkflow.includes("--exclude='./forum-concept'")) fail.push("production deploy must keep forum-concept drafts out of public web root");
 if (!deployWorkflow.includes("test -f .deploy/assets/images/nazerak-autumn-hero.webp")) fail.push("production deploy must validate the local Minecraft hero asset");
-if (!deployWorkflow.includes("grep -q 'home-hud.css?v=5' .deploy/index.html")) fail.push("production deploy does not validate the isolated homepage HUD stylesheet");
+if (!deployWorkflow.includes("grep -q 'home-hud.css?v=7' .deploy/index.html")) fail.push("production deploy does not validate the isolated homepage HUD stylesheet");
 if (!deployWorkflow.includes('grep -q "styles.css?v=44" "$HOME/www/nazerak.ru/forum.html" &&')) fail.push("production deploy forum stylesheet guard is stale");
 if (deployWorkflow.includes("test -f .deploy/assets/images/home-hero.svg") || deployWorkflow.includes('grep -q "styles.css?v=42"')) fail.push("production deploy still contains stale homepage asset or stylesheet checks");
 if (!deployWorkflow.includes('grep -q "Добро пожаловать" /tmp/nazerak-home.html')) fail.push("production deploy does not validate the new homepage content");
@@ -417,6 +417,35 @@ for (const token of [
 }
 
 if (!index.includes('<link rel="canonical" href="https://nazerak.ru/">')) fail.push("homepage canonical URL is missing");
+if (!index.includes('<span class="brand__mark" aria-hidden="true">N</span>')) fail.push("homepage previous NaZerak mark is missing");
+if (index.includes('<span class="brand__mark" aria-hidden="true"><svg viewBox="0 0 48 48"')) fail.push("temporary bars/slash brand icon returned");
+if (!auth.includes('const PRODUCTION_ORIGIN = "https://nazerak.ru";')) fail.push("OAuth production origin must be pinned to nazerak.ru");
+if (!auth.includes('new URL("/cabinet.html", isLocalDevelopmentHost() ? window.location.origin : PRODUCTION_ORIGIN).href')) fail.push("OAuth callback must use the exact documented cabinet.html URL");
+if (!auth.includes('hostname.endsWith(".github.io")')) fail.push("legacy GitHub Pages must canonicalize before OAuth");
+if (!auth.includes('target.searchParams.set("auth_redirect", "legacy_pages")')) fail.push("legacy OAuth callbacks must not pass PKCE data to a different origin");
+if (!auth.includes('query.has("code")')) fail.push("legacy OAuth callback detection is missing");
+if (!auth.includes("OLD CALLBACK URL")) fail.push("legacy OAuth callback must explain that the user needs to retry on the official domain");
+const legacyCallbackStart = auth.indexOf("if (isAuthCallback)");
+const legacyCallbackElse = auth.indexOf("} else {", legacyCallbackStart);
+const legacyCallbackReplace = auth.indexOf("window.location.replace(target.href)", legacyCallbackElse);
+const legacyCallbackBranch = auth.slice(legacyCallbackStart, legacyCallbackElse);
+const legacyNonAuthBranch = auth.slice(legacyCallbackElse, legacyCallbackReplace);
+if (legacyCallbackStart < 0 || legacyCallbackElse < 0 || legacyCallbackReplace < 0 ||
+    !legacyCallbackBranch.includes('target.searchParams.set("auth_redirect", "legacy_pages")') ||
+    legacyCallbackBranch.includes("target.search = window.location.search") ||
+    legacyCallbackBranch.includes("target.hash = window.location.hash") ||
+    !legacyNonAuthBranch.includes("target.search = window.location.search") ||
+    !legacyNonAuthBranch.includes("target.hash = window.location.hash")) {
+  fail.push("legacy callback must discard auth data while preserving query/hash only for ordinary navigation");
+}
+if (!auth.includes('document.addEventListener("error", restoreAvatarFallback, true);')) fail.push("failed profile images must have a fallback");
+for (const pagePath of ["index.html","cabinet.html","forum.html","forum-category.html","forum-members.html","forum-search.html","topic.html","forum-user.html","forum-reports.html"]) {
+  const page = read(pagePath);
+  if (!page.includes("https://images-ext-1.discordapp.net")) fail.push(pagePath + " CSP does not allow the Discord image proxy");
+  if (!page.includes("auth.js?v=39")) fail.push(pagePath + " is missing updated auth.js");
+  if (!page.includes("favicon.svg?v=8")) fail.push(pagePath + " is missing restored favicon cache key");
+}
+if (!read("404.html").includes("favicon.svg?v=8")) fail.push("404 page is missing restored favicon cache key");
 if (!index.includes('<meta property="og:url" content="https://nazerak.ru/">')) fail.push("homepage og:url is missing");
 if (!index.includes('<meta name="twitter:card"')) fail.push("homepage twitter card is missing");
 if (!index.includes('<meta name="twitter:card" content="summary">')) fail.push("homepage twitter card is missing");
