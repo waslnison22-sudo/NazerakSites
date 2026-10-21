@@ -26,10 +26,10 @@
 |---|---|---|---|---|
 | AUTH-01 | P1 | Confirmed in prior incident; external cause unverified | User was returned to `waslnison22-sudo.github.io/NazerakSites/?code=...`. Code now pins the OAuth redirect to the official domain and safely avoids copying a PKCE code across origins. Supabase Site URL / Redirect URLs are documented but not verified in the live dashboard. | Mitigation shipped; live provider config blocked |
 | VIS-01 | P2 | Confirmed | Homepage stylesheet currently references `assets/images/nazerak-autumn-hero.webp`; user-provided replacement art must remain the source of truth and must be checked as a real repo asset before release. | Verify asset bytes and rendering in browser |
-| BRAND-01 | P2 | Confirmed | `cabinet-hud.css` gives `.brand__mark` a boxed border/background while other pages use a naked red “N”; brand mark may look inconsistent between cabinet and public pages. | To fix after visual regression check |
+| BRAND-01 | P2 | Confirmed | `cabinet-hud.css` gave `.brand__mark` a boxed border/background while other pages use a naked red “N”. | Fixed in branch; cabinet browser smoke passed on `dc2d8a8ffa728aa81ba7a23a927fc3e844ea4c2d` |
 | CSP-01 | P1 | Likely | Multiple HTML pages repeat a meta CSP; policies are not fully consistent (404 has a narrower Discord image host allowlist). Inline-script/style behavior and all external requests must be audited before changing CSP. | Audit required |
 | ROUTE-01 | P2 | Confirmed | Apache `.htaccess` implements clean URLs and legacy redirects; GitHub Pages does not execute Apache rewrite rules. Route parity between production hosting and Pages must be explicit. | Audit required |
-| QA-01 | P2 | Confirmed | `scripts/qa-checks.mjs` contains a broad required-file list and browser smoke tests exist, but this session cannot run them locally. The production QA workflow is the execution evidence. | Use CI on each patch |
+| QA-01 | P2 | Confirmed | `scripts/qa-checks.mjs` and browser/route smoke workflows exist; local shell is unavailable in this session. | Latest branch CI passed: run `39613576791`, job `119269896021`, commit `dc2d8a8ffa728aa81ba7a23a927fc3e844ea4c2d` |
 | UI-01 | P2 | Hypothesis | Multiple page-specific stylesheets (`styles.css`, `forum.css`, `forum-v2.css`, `cabinet-hud.css`, `home-hud.css`) can drift; shared tokens and route-level consistency need a full pass. | Inspect affected selectors and screenshots where available |
 | AUTH-02 | P1 | Unverified | Real provider sign-in after the recent deployment was not confirmed end-to-end by a human session. Passing simulated OAuth smoke does not prove the Discord/Supabase dashboard configuration is correct. | Requires live test after config confirmation |
 
@@ -43,15 +43,17 @@
 - [x] Initial page/asset/route inventory: static HTML + shared JS/CSS, Apache clean-route rules, Supabase Auth, forum, cabinet, and production/Pages workflows.
 - [x] Fix cabinet brand-mark mismatch and add a computed-style regression assertion.
 - [ ] Complete route/asset/security review and remaining bounded fixes.
-- [ ] Run branch CI, review complete diff, and record outcomes.
+- [x] Run branch CI and record outcomes for the current batch.
+- [ ] Review the complete PR diff before promoting it out of draft.
 
 ### Batch 1 — Visual consistency
 - Changed `cabinet-hud.css` so the header/footer N mark is no longer boxed and matches the red unboxed mark used across the site.
 - Changed `scripts/cabinet-hud-smoke.mjs` to assert the computed border and background, preventing the inconsistency from returning.
 - Commits: `76a7d896f118be7e0afaa820c89c92508f6aa659`, `04d58f76c73dd61bd073cb90d01a0ac63eef6c92`.
-- Verification: source-level review only so far; browser smoke has not yet run on this branch.
+- Verification: `NaZerak QA PASSED`; `NaZerak runtime smoke PASSED`; browser smoke passed homepage desktop/mobile, forum routes and responsive widths, search, category, members, profile, 404, OAuth start and safe legacy callback, avatar fallback, and anonymous cabinet desktop/mobile/tablet. Additional forum shell, homepage HUD, cabinet HUD, forum concept, screen gallery, and homepage concept smoke tests all passed. CI run: `39613576791`, job `119269896021`, commit `dc2d8a8ffa728aa81ba7a23a927fc3e844ea4c2d`. First run failed because the runner could not resolve the Playwright download host; retry succeeded. These are automated smoke tests, not a live end-to-end Discord signup or an accessibility certification.
 
 ### Next actions
-1. Inspect every page entry point and shared script/style contracts; compare canonical links and asset paths.
-2. Verify the user-supplied homepage image is present in the repo and trace every reference before changing image layout.
-3. Fix confirmed consistency/accessibility defects with minimal shared-token changes, then add regression assertions.
+1. Complete route-by-route CSP and canonical/redirect audit, preserving provider requirements and clean routes.
+2. Confirm the user-supplied homepage artwork is present as a tracked asset and verify its live crop; do not generate or invent replacement artwork.
+3. Verify real Discord signup/login after confirming Supabase Site URL and Redirect URLs; mocked browser smoke does not prove live provider configuration.
+4. Inspect full PR diff and decide whether additional bounded fixes are warranted before removing draft status.
