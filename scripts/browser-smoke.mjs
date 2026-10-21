@@ -610,7 +610,7 @@ await testStaticPage({
   name: "forum narrow mobile",
   viewport: { width: 320, height: 740 },
   check: async (page) => {
-    if (!(await page.locator("h1").textContent()).includes("Форум")) throw new Error("narrow mobile forum heading missing");
+    if (!(await page.locator("h1").textContent()).includes("Сообщество")) throw new Error("narrow mobile forum showcase heading missing");
     const metrics = await page.evaluate(() => {
       const menu = document.querySelector(".nav-toggle").getBoundingClientRect();
       return {
