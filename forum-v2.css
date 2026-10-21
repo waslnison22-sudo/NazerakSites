@@ -309,7 +309,7 @@ body[data-forum] .forum-global-subnav{display:none}
 body[data-forum] .forum-page{padding:0 0 28px;min-height:0;overflow:visible}
 body[data-forum] .forum{width:min(calc(100% - 48px),1280px)}
 body[data-forum] .forum-v21{padding-top:0}
-body[data-forum] .forum-showcase{position:relative;isolation:isolate;min-height:258px;margin:0 calc((min(100vw,100%) - min(calc(100vw - 48px),1280px))/ -2) 0;padding:34px max(24px,calc((100% - 1280px)/2)) 22px;overflow:hidden;background:#0b1118}
+body[data-forum] .forum-showcase{position:relative;isolation:isolate;width:100vw;margin:0 0 0 calc(50% - 50vw);min-height:258px;padding:34px max(24px,calc((100vw - 1280px)/2)) 22px;overflow:hidden;background:#0b1118}
 body[data-forum] .forum-showcase:before{content:"";position:absolute;z-index:-2;inset:-4px;background-image:linear-gradient(90deg,rgba(3,6,10,.94) 0%,rgba(3,6,10,.75) 29%,rgba(3,6,10,.2) 66%,rgba(3,6,10,.05) 100%),linear-gradient(0deg,rgba(4,8,13,.45),transparent 48%),url("./assets/images/nazerak-autumn-hero.webp");background-size:cover;background-position:center 48%;filter:saturate(1.05)}
 body[data-forum] .forum-showcase:after{content:"";position:absolute;z-index:-1;inset:0;background:linear-gradient(180deg,rgba(4,7,11,.08),rgba(4,7,11,.12) 60%,rgba(4,7,11,.64))}
 body[data-forum] .forum-showcase__content{width:min(100%,1280px);margin:0 auto}
