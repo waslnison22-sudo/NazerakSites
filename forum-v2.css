@@ -305,7 +305,13 @@ body[data-forum] .nav{gap:4px;flex:1;justify-content:flex-end}
 body[data-forum] .nav>a{min-height:44px;padding:0 11px;font-size:12px;white-space:nowrap}
 body[data-forum] .nav>a.is-active{background:transparent;box-shadow:inset 0 -2px #ff2942;border-radius:0;color:#fff}
 body[data-forum] .nav-account{margin-left:8px;border:1px solid #1c2634!important;border-radius:9px!important;background:rgba(11,17,26,.8)!important}
-body[data-forum] .forum-global-subnav{display:none}
+body[data-forum] .forum-global-subnav{display:block;position:relative;z-index:3;margin:0;background:rgba(5,8,13,.9);border-bottom:1px solid rgba(120,145,173,.17);backdrop-filter:blur(12px)}
+body[data-forum] .forum-global-subnav__inner{width:min(calc(100% - 48px),1280px);min-height:36px;gap:5px;align-items:center}
+body[data-forum] .forum-global-subnav a{min-height:30px;padding:0 10px;border-radius:6px;font-size:11px;font-weight:650}
+body[data-forum] .forum-global-subnav a.is-active{background:rgba(255,41,66,.12);color:#fff}
+body[data-forum] .forum-global-subnav a.is-active::after{left:10px;right:10px;bottom:0;height:2px}
+@media(max-width:820px){body[data-forum] .forum-global-subnav__inner{width:calc(100% - 28px);min-height:36px}}
+@media(max-width:600px){body[data-forum] .forum-global-subnav__inner{width:calc(100% - 20px);min-height:40px;padding:2px 0}body[data-forum] .forum-global-subnav a{min-height:34px;padding:0 10px;font-size:11px}}
 body[data-forum] .forum-page{padding:0 0 28px;min-height:0;overflow:visible}
 body[data-forum] .forum{width:min(calc(100% - 48px),1280px)}
 body[data-forum] .forum-v21{padding-top:0}
