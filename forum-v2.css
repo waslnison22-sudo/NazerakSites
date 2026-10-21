@@ -397,6 +397,7 @@ body[data-forum] .forum-reference-footer .footer__right{display:flex;justify-con
  body[data-forum] .forum-v21 .forum-board__columns span:nth-child(3){display:none}
 }
 @media(max-width:600px){
+ body[data-forum] .forum-v21-search .forum-search__field input{font-size:16px}
  body[data-forum] .forum{width:calc(100% - 20px)}
  body[data-forum] .forum-showcase{padding:26px 18px 20px;min-height:285px}
  body[data-forum] .forum-showcase:before{background-position:58% center;background-image:linear-gradient(90deg,rgba(3,6,10,.9),rgba(3,6,10,.55)),linear-gradient(0deg,rgba(4,8,13,.62),transparent 80%),url("./assets/images/nazerak-autumn-hero.webp")}
