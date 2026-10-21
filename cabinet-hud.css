@@ -4,7 +4,7 @@ body[data-cabinet] .container{width:min(calc(100% - 48px),1240px)}
 body[data-cabinet] .topbar{position:sticky;top:0;z-index:60;background:rgba(8,9,13,.97);border-bottom:1px solid #222630;backdrop-filter:blur(16px)}
 body[data-cabinet] .topbar__inner{min-height:70px;gap:28px}
 body[data-cabinet] .brand{gap:10px}
-body[data-cabinet] .brand__mark{width:36px;height:36px;display:grid;place-items:center;flex:0 0 auto;padding:0;border:1px solid #30343d;border-radius:9px;background:#0d1016;color:#ff5367;overflow:hidden}
+body[data-cabinet] .brand__mark{width:auto;height:auto;display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;padding:0;border:0;border-radius:0;background:transparent;color:#ff5367;overflow:visible;font-size:22px;line-height:1;font-weight:900;letter-spacing:-.08em}
 body[data-cabinet] .brand__mark svg{width:27px;height:27px;display:block}
 body[data-cabinet] .brand__name{font-size:20px;letter-spacing:-.04em;font-weight:850;color:#f4f5f7}
 body[data-cabinet] .nav{gap:4px}
