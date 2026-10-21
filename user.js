@@ -1,6 +1,12 @@
 (() => {
   "use strict";
   const qs=(s,r=document)=>r.querySelector(s);
+  const safeUrl=(value)=>{
+    try{
+      const url=new URL(String(value||""));
+      return /^https?:$/.test(url.protocol)&&["cdn.discordapp.com","media.discordapp.net","images-ext-1.discordapp.net"].includes(url.hostname.toLowerCase())?url.href:"";
+    }catch{return""}
+  };
   const escapeHtml=(v)=>String(v==null?"":v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
   const formatDate=(v)=>{const d=new Date(v);if(Number.isNaN(d.getTime()))return"—";return new Intl.DateTimeFormat("ru-RU",{day:"2-digit",month:"long",year:"numeric"}).format(d)};
   const showMessage=(m,k)=>{const n=qs("[data-user-message]");if(!n)return;n.textContent=m;n.dataset.kind=k||"error";n.hidden=!m};
