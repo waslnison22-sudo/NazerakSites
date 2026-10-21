@@ -23,6 +23,8 @@ try{
  check(await page.locator(".account-mark-emblem svg").count()===1,"abstract account emblem missing");
  check(await page.locator(".brand__mark").count()===2,"header and footer brand marks should both exist");
  check((await page.locator(".brand__mark").allTextContents()).every(value=>value.trim()==="N"),"header and footer should use the restored NaZerak N mark");
+ const markStyle=await page.locator(".brand__mark").first().evaluate(el=>{const s=getComputedStyle(el);return {border:s.borderTopWidth+" "+s.borderTopStyle,background:s.backgroundColor,width:s.width,height:s.height}});
+ check(markStyle.border.startsWith("0px")&&markStyle.background==="rgba(0, 0, 0, 0)","cabinet brand mark should match the unboxed red N used across the site");
  const css=await page.request.get(new URL("/cabinet-hud.css?v=1",baseUrl).toString());
  check(css.status()===200,"cabinet-specific stylesheet should return HTTP 200");
  check((await css.text()).includes("body[data-cabinet] .account-login"),"dedicated cabinet design rules are missing");

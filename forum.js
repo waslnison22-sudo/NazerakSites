@@ -50,9 +50,11 @@
   };
   const updateViewChrome=()=>{
     const meta=viewMeta[state.view]||viewMeta.all;
-    const title=qs(".forum-index-head h1"),lead=qs(".forum-index-head p"),layout=qs("[data-forum-index-layout]");
-    if(title)title.textContent=meta.title;
-    if(lead)lead.textContent=meta.lead;
+    const title=qs(".forum-showcase h1"),lead=qs(".forum-showcase p"),layout=qs("[data-forum-index-layout]");
+    if(title&&state.view!=="all")title.textContent=meta.title;
+    if(lead&&state.view!=="all")lead.textContent=meta.lead;
+    if(title&&state.view==="all")title.innerHTML='Сообщество, которое<br>создаёт <em>нашу историю</em>';
+    if(lead&&state.view==="all")lead.textContent="Общайся, делись идеями, находи друзей и будь в курсе всех событий проекта. Форум — это сердце нашего сообщества.";
     if(layout)layout.dataset.view=state.view;
     qsa("[data-forum-view-link]").forEach(link=>{
       const active=link.dataset.forumViewLink===state.view;

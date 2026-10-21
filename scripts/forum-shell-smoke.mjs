@@ -4,12 +4,12 @@ import { chromium } from "playwright";
 
 const baseUrl = (process.env.NAZERAK_BASE_URL || "http://127.0.0.1:4173").replace(/\/$/, "");
 const routes = [
-  ["/forum", "Форум"],
-  ["/forum/new", "Новое"],
-  ["/forum/unanswered", "Без ответа"],
-  ["/forum/mine", "Мои темы"],
-  ["/forum/bookmarks", "Закладки"],
-  ["/forum/watched", "Подписки"]
+  ["/forum", "all"],
+  ["/forum/new", "new"],
+  ["/forum/unanswered", "unanswered"],
+  ["/forum/mine", "mine"],
+  ["/forum/bookmarks", "bookmarks"],
+  ["/forum/watched", "watched"]
 ];
 const failures = [];
 const check = (condition, message) => { if (!condition) failures.push(message); };
@@ -30,15 +30,23 @@ try {
     } catch {}
   });
 
-  for (const [route, heading] of routes) {
+  for (const [route, expectedView] of routes) {
     const response = await page.goto(baseUrl + route, { waitUntil: "domcontentloaded" });
     check(response?.status() === 200, route + " should return HTTP 200");
     check(await page.locator("body[data-forum]").count() === 1, route + " should render the real forum shell");
     check(await page.locator(".forum-global-subnav").count() === 1, route + " is missing forum navigation");
-    check(await page.locator('link[href*="forum-v2.css?v=2"]').count() === 1, route + " is missing the new stylesheet");
-    await page.waitForFunction((expected) => document.querySelector(".forum-index-head h1")?.textContent?.trim() === expected, heading, { timeout: 15000 });
-    check(await page.locator(".forum-index-head h1").textContent().then(value => value?.trim()) === heading, route + " selected the wrong forum view");
-    const cssResponse = await page.request.get(baseUrl + "/forum-v2.css?v=2");
+    check(await page.locator('link[href*="forum-v2.css?v=3"]').count() === 1, route + " is missing the new stylesheet");
+    await page.waitForFunction((expected) => {
+      const layout = document.querySelector(".forum-v21-layout");
+      const active = document.querySelector('[data-forum-view-link="' + expected + '"]');
+      const navigation = document.querySelector(".forum-global-subnav");
+      return layout?.dataset.view === expected &&
+        active?.classList.contains("is-active") &&
+        getComputedStyle(navigation).display !== "none";
+    }, expectedView, { timeout: 15000 });
+    check(await page.locator(".forum-v21-layout").getAttribute("data-view") === expectedView, route + " selected the wrong forum view");
+    check(await page.locator('[data-forum-view-link="' + expectedView + '"]').getAttribute("aria-current") === "page", route + " should announce its current view accessibly");
+    const cssResponse = await page.request.get(baseUrl + "/forum-v2.css?v=3");
     check(cssResponse.status() === 200, "forum-v2.css should return HTTP 200");
     check((await cssResponse.text()).includes(".forum-global-subnav"), "new stylesheet should include unified navigation");
 

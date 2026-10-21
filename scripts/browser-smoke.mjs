@@ -563,7 +563,7 @@ await testStaticPage({
   name: "forum index desktop",
   viewport: { width: 1440, height: 900 },
   check: async (page) => {
-    if (!(await page.locator("h1").textContent()).includes("Форум")) throw new Error("forum heading missing");
+    if (!(await page.locator("h1").textContent()).includes("Сообщество")) throw new Error("forum showcase heading missing");
     const layout = await page.locator(".forum-v21-layout").evaluate((node) => {
       const style = getComputedStyle(node);
       const rect = node.getBoundingClientRect();
@@ -586,7 +586,7 @@ await testStaticPage({
   name: "forum mobile",
   viewport: { width: 390, height: 844 },
   check: async (page) => {
-    if (!(await page.locator("h1").textContent()).includes("Форум")) throw new Error("mobile forum heading missing");
+    if (!(await page.locator("h1").textContent()).includes("Сообщество")) throw new Error("mobile forum showcase heading missing");
     if (await page.locator(".forum-board__columns").count() < 1) throw new Error("forum board markup missing");
     const mobileLayout = await page.locator(".forum").evaluate((node) => ({ width: node.getBoundingClientRect().width, viewport: innerWidth }));
     if (mobileLayout.width > mobileLayout.viewport + 1) throw new Error("mobile forum canvas overflows: " + JSON.stringify(mobileLayout));
@@ -598,7 +598,7 @@ await testStaticPage({
   name: "forum tablet",
   viewport: { width: 768, height: 1024 },
   check: async (page) => {
-    if (!(await page.locator("h1").textContent()).includes("Форум")) throw new Error("tablet forum heading missing");
+    if (!(await page.locator("h1").textContent()).includes("Сообщество")) throw new Error("tablet forum showcase heading missing");
     const layout = await page.locator(".forum-v21-layout").evaluate((node) => ({ display: getComputedStyle(node).display, columns: getComputedStyle(node).gridTemplateColumns }));
     const columns = layout.columns.split(/\\s+/).filter(Boolean).length;
     if (layout.display !== "grid" || columns !== 1) throw new Error("tablet forum must use a single readable column: " + JSON.stringify(layout));
@@ -610,7 +610,7 @@ await testStaticPage({
   name: "forum narrow mobile",
   viewport: { width: 320, height: 740 },
   check: async (page) => {
-    if (!(await page.locator("h1").textContent()).includes("Форум")) throw new Error("narrow mobile forum heading missing");
+    if (!(await page.locator("h1").textContent()).includes("Сообщество")) throw new Error("narrow mobile forum showcase heading missing");
     const metrics = await page.evaluate(() => {
       const menu = document.querySelector(".nav-toggle").getBoundingClientRect();
       return {

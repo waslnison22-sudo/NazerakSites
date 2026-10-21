@@ -145,13 +145,13 @@ for (const [name, page] of [
   if (name !== "index.html") assets.push("styles.css?v=44");
   if (name === "index.html") assets.push("home-hud.css?v=7");
   if (name === "cabinet.html") assets.push("cabinet-hud.css?v=1");
-  if (name === "forum.html") { assets.push("forum.css?v=21", "forum-v2.css?v=2", "forum-ui.js?v=5", "forum-social.js?v=2", "forum.js?v=10"); }
-  if (name === "forum-category.html") { assets.push("forum.css?v=21", "forum-v2.css?v=2", "forum-ui.js?v=5", "forum-social.js?v=2", "forum-category.js?v=6"); }
-  if (name === "forum-members.html") { assets.push("forum.css?v=21", "forum-v2.css?v=2", "forum-ui.js?v=5", "forum-social.js?v=2", "forum-members.js?v=2"); }
-  if (name === "forum-search.html") { assets.push("forum.css?v=21", "forum-v2.css?v=2", "forum-ui.js?v=5", "forum-social.js?v=2", "forum-search.js?v=5"); }
-  if (name === "topic.html") { assets.push("forum.css?v=21", "forum-v2.css?v=2", "forum-ui.js?v=5", "forum-social.js?v=2", "topic.js?v=6"); }
-  if (name === "forum-user.html") { assets.push("forum.css?v=21", "forum-v2.css?v=2", "forum-ui.js?v=5", "forum-social.js?v=2", "user.js?v=3"); }
-  if (name === "forum-reports.html") { assets.push("forum.css?v=21", "forum-v2.css?v=2", "forum-ui.js?v=5", "forum-social.js?v=2", "forum-reports.js?v=1"); }
+  if (name === "forum.html") { assets.push("forum.css?v=21", "forum-v2.css?v=3", "forum-ui.js?v=5", "forum-social.js?v=2", "forum.js?v=10"); }
+  if (name === "forum-category.html") { assets.push("forum.css?v=21", "forum-v2.css?v=3", "forum-ui.js?v=5", "forum-social.js?v=2", "forum-category.js?v=6"); }
+  if (name === "forum-members.html") { assets.push("forum.css?v=21", "forum-v2.css?v=3", "forum-ui.js?v=5", "forum-social.js?v=2", "forum-members.js?v=2"); }
+  if (name === "forum-search.html") { assets.push("forum.css?v=21", "forum-v2.css?v=3", "forum-ui.js?v=5", "forum-social.js?v=2", "forum-search.js?v=5"); }
+  if (name === "topic.html") { assets.push("forum.css?v=21", "forum-v2.css?v=3", "forum-ui.js?v=5", "forum-social.js?v=2", "topic.js?v=6"); }
+  if (name === "forum-user.html") { assets.push("forum.css?v=21", "forum-v2.css?v=3", "forum-ui.js?v=5", "forum-social.js?v=2", "user.js?v=3"); }
+  if (name === "forum-reports.html") { assets.push("forum.css?v=21", "forum-v2.css?v=3", "forum-ui.js?v=5", "forum-social.js?v=2", "forum-reports.js?v=1"); }
   for (const asset of assets) {
     if (!page.includes(asset)) {
       fail.push(`${name} asset include missing: ${asset}`);
@@ -376,7 +376,7 @@ if (read("forum-category.html").match(/доступ.*публикац|публи
 if (!read("forum.html").includes('class="forum-page forum-v21"') || !read("forum.html").includes('class="forum-v21-layout"')) fail.push("forum v21 layout markup is missing");
 const forumUnifiedSurfaceFiles = ["forum.html","forum-category.html","forum-members.html","forum-search.html","forum-user.html","forum-reports.html","topic.html"];
 for (const file of forumUnifiedSurfaceFiles) {
-  if (!read(file).includes("forum-v2.css?v=2")) fail.push(file + " is missing the unified forum stylesheet");
+  if (!read(file).includes("forum-v2.css?v=3")) fail.push(file + " is missing the unified forum stylesheet");
 }
 for (const route of ["new","unanswered","mine","bookmarks","watched"]) {
   if (!read(".htaccess").includes("RewriteRule ^forum/" + route + "/?$ forum.html?view=" + route)) fail.push("forum route rewrite is missing: " + route);
