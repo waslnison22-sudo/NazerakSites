@@ -19,6 +19,7 @@ const requiredFiles = [
   "auth.js",
   "auth-config.js",
   "supabase-loader.js",
+  "launcher-auth-bridge.js",
   "supabase/schema.sql",
   "404.html",
   "README.md",
@@ -104,6 +105,7 @@ const css = read("styles.css");
 const forumCss = read("forum.css");
 const script = read("script.js");
 const auth = read("auth.js");
+const launcherAuthBridge = read("launcher-auth-bridge.js");
 const loader = read("supabase-loader.js");
 const config = read("auth-config.js");
 const schema = read("supabase/schema.sql");
@@ -144,7 +146,7 @@ for (const [name, page] of [
   }
   if (name !== "index.html") assets.push("styles.css?v=44");
   if (name === "index.html") assets.push("home-hud.css?v=7");
-  if (name === "cabinet.html") assets.push("cabinet-hud.css?v=1");
+  if (name === "cabinet.html") assets.push("cabinet-hud.css?v=1", "launcher-auth-bridge.js?v=1");
   if (name === "forum.html") { assets.push("forum.css?v=21", "forum-v2.css?v=2", "forum-ui.js?v=5", "forum-social.js?v=2", "forum.js?v=10"); }
   if (name === "forum-category.html") { assets.push("forum.css?v=21", "forum-v2.css?v=2", "forum-ui.js?v=5", "forum-social.js?v=2", "forum-category.js?v=6"); }
   if (name === "forum-members.html") { assets.push("forum.css?v=21", "forum-v2.css?v=2", "forum-ui.js?v=5", "forum-social.js?v=2", "forum-members.js?v=2"); }
@@ -168,6 +170,9 @@ if (!robots.includes("Disallow: /cabinet.html") || !robots.includes("Disallow: /
 if (!robots.includes("Sitemap: https://nazerak.ru/sitemap.xml")) fail.push("robots sitemap URL is missing");
 
 
+if (!index.includes('class="nav-register" href="https://nazerak.ru/cabinet"')) fail.push("homepage registration must use the canonical NaZerak host");
+if (!index.includes('class="nav-login" data-auth-link href="https://nazerak.ru/cabinet"')) fail.push("homepage sign-in must use the canonical NaZerak host");
+
 if (!index.includes("script.js") || !cabinet.includes("script.js") || !read("forum.html").includes("script.js")) {
   fail.push("script.js include missing from a published page");
 }
@@ -186,6 +191,11 @@ for (const token of [
 }
 
 if (!cabinet.includes('class="account-login"')) fail.push("account login layout missing");
+if (!cabinet.includes("launcher-auth-bridge.js?v=1")) fail.push("cabinet is missing the desktop auth callback bridge");
+if (!launcherAuthBridge.includes('params.get("launcher") !== "1"')) fail.push("launcher bridge must not intercept regular website OAuth");
+if (!launcherAuthBridge.includes('new URL("nazerak://auth/callback")')) fail.push("launcher bridge return protocol is missing");
+if (!launcherAuthBridge.includes('target.searchParams.set("code", code)')) fail.push("launcher bridge must forward the one-time OAuth code");
+if (launcherAuthBridge.includes('target.searchParams.set("access_token"')) fail.push("launcher bridge must never forward an access token");
 if (cabinet.includes("data-media-disclosure") || cabinet.includes("account-page--v3")) fail.push("obsolete cabinet architecture markup remains");
 if (auth.includes("data-media-retry") || auth.includes("data-media-disclosure") || auth.includes("const submitMediaApplication")) fail.push("obsolete media workflow remains in auth code");
 if (css.includes("data-media-disclosure") || /\.login-panel\b|\.account-container\b|\.account-layout\b|\.account-page--clean\b|\.account-clean\b|\.account-card-clean\b/.test(css)) fail.push("legacy cabinet CSS remains");
