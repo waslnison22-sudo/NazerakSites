@@ -19,6 +19,7 @@ const requiredFiles = [
   "auth.js",
   "auth-config.js",
   "supabase-loader.js",
+  "launcher-auth-bridge.js",
   "supabase/schema.sql",
   "404.html",
   "README.md",
@@ -63,6 +64,7 @@ const requiredFiles = [
   "scripts/browser-smoke.mjs",
   "scripts/home-hud-smoke.mjs",
   "scripts/cabinet-hud-smoke.mjs",
+  "scripts/launcher-auth-bridge-smoke.mjs",
   "assets/images/README.md",
   "assets/images/nazerak-autumn-hero.webp",
   ".htaccess",
@@ -104,6 +106,7 @@ const css = read("styles.css");
 const forumCss = read("forum.css");
 const script = read("script.js");
 const auth = read("auth.js");
+const launcherAuthBridge = read("launcher-auth-bridge.js");
 const loader = read("supabase-loader.js");
 const config = read("auth-config.js");
 const schema = read("supabase/schema.sql");
@@ -138,13 +141,13 @@ for (const [name, page] of [
   ["forum-user.html", read("forum-user.html")],
   ["forum-reports.html", read("forum-reports.html")]
 ]) {
-  const assets = ["auth-config.js?v=8", "supabase-loader.js?v=9", "auth.js?v=39", "script.js?v=24"];
+  const assets = ["auth-config.js?v=8", "supabase-loader.js?v=9", "auth.js?v=40", "script.js?v=24"];
   if (name === "index.html" || name === "cabinet.html") {
     assets.splice(assets.indexOf("script.js?v=24"), 1, "script.js?v=26");
   }
   if (name !== "index.html") assets.push("styles.css?v=44");
   if (name === "index.html") assets.push("home-hud.css?v=7");
-  if (name === "cabinet.html") assets.push("cabinet-hud.css?v=1");
+  if (name === "cabinet.html") assets.push("cabinet-hud.css?v=1", "launcher-auth-bridge.js?v=1");
   if (name === "forum.html") { assets.push("forum.css?v=21", "forum-v2.css?v=2", "forum-ui.js?v=5", "forum-social.js?v=2", "forum.js?v=10"); }
   if (name === "forum-category.html") { assets.push("forum.css?v=21", "forum-v2.css?v=2", "forum-ui.js?v=5", "forum-social.js?v=2", "forum-category.js?v=6"); }
   if (name === "forum-members.html") { assets.push("forum.css?v=21", "forum-v2.css?v=2", "forum-ui.js?v=5", "forum-social.js?v=2", "forum-members.js?v=2"); }
@@ -168,6 +171,9 @@ if (!robots.includes("Disallow: /cabinet.html") || !robots.includes("Disallow: /
 if (!robots.includes("Sitemap: https://nazerak.ru/sitemap.xml")) fail.push("robots sitemap URL is missing");
 
 
+if (!index.includes('class="nav-register" href="https://nazerak.ru/cabinet"')) fail.push("homepage registration must use the canonical NaZerak host");
+if (!index.includes('class="nav-login" data-auth-link href="https://nazerak.ru/cabinet"')) fail.push("homepage sign-in must use the canonical NaZerak host");
+
 if (!index.includes("script.js") || !cabinet.includes("script.js") || !read("forum.html").includes("script.js")) {
   fail.push("script.js include missing from a published page");
 }
@@ -186,6 +192,11 @@ for (const token of [
 }
 
 if (!cabinet.includes('class="account-login"')) fail.push("account login layout missing");
+if (!cabinet.includes("launcher-auth-bridge.js?v=1")) fail.push("cabinet is missing the desktop auth callback bridge");
+if (!launcherAuthBridge.includes('params.get("launcher") !== "1"')) fail.push("launcher bridge must not intercept regular website OAuth");
+if (!launcherAuthBridge.includes('new URL("nazerak://auth/callback")')) fail.push("launcher bridge return protocol is missing");
+if (!launcherAuthBridge.includes('target.searchParams.set("code", code)')) fail.push("launcher bridge must forward the one-time OAuth code");
+if (launcherAuthBridge.includes('target.searchParams.set("access_token"')) fail.push("launcher bridge must never forward an access token");
 if (cabinet.includes("data-media-disclosure") || cabinet.includes("account-page--v3")) fail.push("obsolete cabinet architecture markup remains");
 if (auth.includes("data-media-retry") || auth.includes("data-media-disclosure") || auth.includes("const submitMediaApplication")) fail.push("obsolete media workflow remains in auth code");
 if (css.includes("data-media-disclosure") || /\.login-panel\b|\.account-container\b|\.account-layout\b|\.account-page--clean\b|\.account-clean\b|\.account-card-clean\b/.test(css)) fail.push("legacy cabinet CSS remains");
@@ -420,6 +431,8 @@ if (!index.includes('<link rel="canonical" href="https://nazerak.ru/">')) fail.p
 if (!index.includes('<span class="brand__mark" aria-hidden="true">N</span>')) fail.push("homepage previous NaZerak mark is missing");
 if (index.includes('<span class="brand__mark" aria-hidden="true"><svg viewBox="0 0 48 48"')) fail.push("temporary bars/slash brand icon returned");
 if (!auth.includes('const PRODUCTION_ORIGIN = "https://nazerak.ru";')) fail.push("OAuth production origin must be pinned to nazerak.ru");
+if (!auth.includes('callbackQuery.get("launcher") === "1"')) fail.push("launcher OAuth callback must be isolated from web PKCE handling");
+if (!auth.includes("if (isDesktopLauncherCallback)") || !auth.includes("readyResolve?.();")) fail.push("desktop OAuth callback must resolve the auth-ready promise without starting web auth");
 if (!auth.includes('new URL("/cabinet.html", isLocalDevelopmentHost() ? window.location.origin : PRODUCTION_ORIGIN).href')) fail.push("OAuth callback must use the exact documented cabinet.html URL");
 if (!auth.includes('hostname.endsWith(".github.io")')) fail.push("legacy GitHub Pages must canonicalize before OAuth");
 if (!auth.includes('target.searchParams.set("auth_redirect", "legacy_pages")')) fail.push("legacy OAuth callbacks must not pass PKCE data to a different origin");
@@ -442,7 +455,7 @@ if (!auth.includes('document.addEventListener("error", restoreAvatarFallback, tr
 for (const pagePath of ["index.html","cabinet.html","forum.html","forum-category.html","forum-members.html","forum-search.html","topic.html","forum-user.html","forum-reports.html"]) {
   const page = read(pagePath);
   if (!page.includes("https://images-ext-1.discordapp.net")) fail.push(pagePath + " CSP does not allow the Discord image proxy");
-  if (!page.includes("auth.js?v=39")) fail.push(pagePath + " is missing updated auth.js");
+  if (!page.includes("auth.js?v=40")) fail.push(pagePath + " is missing updated auth.js");
   if (!page.includes("favicon.svg?v=8")) fail.push(pagePath + " is missing restored favicon cache key");
 }
 if (!read("404.html").includes("favicon.svg?v=8")) fail.push("404 page is missing restored favicon cache key");

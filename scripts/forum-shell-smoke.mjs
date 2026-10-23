@@ -63,7 +63,9 @@ try {
       if (await toggle.count() === 1) {
         await toggle.click();
         check(await toggle.getAttribute("aria-expanded") === "true", "mobile menu must open on tap");
-        check(await page.locator(".nav.is-open").isVisible(), "mobile menu must become visible on tap");
+        const openMenu = page.locator(".nav.is-open");
+        await openMenu.waitFor({ state: "visible", timeout: 1200 });
+        check(await openMenu.isVisible(), "mobile menu must become visible on tap");
         await page.keyboard.press("Escape");
         check(await toggle.getAttribute("aria-expanded") === "false", "mobile menu must close with Escape");
         check(!(await page.locator(".nav").evaluate(n => n.classList.contains("is-open"))), "mobile menu must close its panel with Escape");

@@ -96,7 +96,15 @@ http://localhost:8000/cabinet.html
 http://localhost:8000/cabinet
 ```
 
-OAuth теперь отправляет callback на `https://nazerak.ru/cabinet.html`. Если после Discord пользователь попадает на GitHub Pages, Site URL или Redirect URLs в Supabase могут быть устаревшими, либо вход начат со старого адреса Pages. Начинай вход с `https://nazerak.ru`; код перенаправляет GitHub Pages на официальный домен до запуска OAuth. Не указывай GitHub Pages как production Site URL. Если браузер всё же вернулся на старый Pages-адрес с OAuth callback, параметры авторизации будут отброшены, а кабинет попросит повторить вход на официальном домене: PKCE verifier хранится в origin-local storage, поэтому нельзя завершить такую сессию, просто перенеся одноразовый code на другой origin.
+Для входа **из настольного лаунчера** добавь также точный адрес:
+
+```text
+https://nazerak.ru/cabinet?launcher=1
+```
+
+Он использует тот же кабинет сайта. После Discord OAuth отдельный скрипт перенаправляет одноразовый PKCE-код в зарегистрированный Windows-протокол `nazerak://auth/callback`. Supabase не должен перенаправлять этот поток на GitHub Pages. Секреты и токены через ссылку не передаются.
+
+Обычный веб-вход OAuth по-прежнему отправляет callback на `https://nazerak.ru/cabinet.html`. Если после Discord пользователь попадает на GitHub Pages, Site URL или Redirect URLs в Supabase могут быть устаревшими, либо вход начат со старого адреса Pages. Начинай вход с `https://nazerak.ru`; код перенаправляет GitHub Pages на официальный домен до запуска OAuth. Не указывай GitHub Pages как production Site URL. Если браузер всё же вернулся на старый Pages-адрес с OAuth callback, параметры авторизации будут отброшены, а кабинет попросит повторить вход на официальном домене: PKCE verifier хранится в origin-local storage, поэтому нельзя завершить такую сессию, просто перенеся одноразовый code на другой origin.
 
 Указывай адреса точным совпадением.
 
@@ -138,12 +146,15 @@ https://ujlbyzvdsncvqbrhasuw.supabase.co/auth/v1/callback
 ### `Provider not enabled`
 Проверь **Authentication → Sign In / Providers → Discord → Enabled**.
 
-### После Discord не открывается кабинет
-Проверь **Authentication → URL Configuration → Redirect URLs** и наличие:
+### После Discord открывается старый сайт или не запускается лаунчер
+Убедись, что в **Authentication → URL Configuration → Redirect URLs** есть оба адреса:
 
 ```text
 https://nazerak.ru/cabinet.html
+https://nazerak.ru/cabinet?launcher=1
 ```
+
+Первый адрес — для обычного входа на сайте. Второй — для настольного лаунчера; его callback-страница передаёт одноразовый код приложению. Также запускай регистрацию с `https://nazerak.ru`, а не с GitHub Pages.
 
 ### Профиль не сохраняется
 Проверь, что вход выполнен через Discord, затем открой **Table Editor → profiles**.

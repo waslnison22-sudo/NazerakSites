@@ -768,6 +768,22 @@
 
   const init = async () => {
     if (initialized) return;
+
+    // The launcher bridge owns this callback. The PKCE verifier belongs to
+    // the desktop Supabase client, not the website origin. If this client also
+    // attempts detectSessionInUrl/exchangeCodeForSession, it can consume the
+    // same one-time code with the wrong verifier and break desktop sign-in.
+    const callbackQuery = new URLSearchParams(window.location.search);
+    const isDesktopLauncherCallback =
+      callbackQuery.get("launcher") === "1" &&
+      /\/cabinet(?:\.html)?\/?$/.test(window.location.pathname);
+    if (isDesktopLauncherCallback) {
+      initialized = true;
+      document.documentElement.classList.add("auth-ready");
+      readyResolve?.();
+      return;
+    }
+
     if (canonicalizeLegacyHost()) return;
     initialized = true;
     document.documentElement.classList.add("auth-ready");
