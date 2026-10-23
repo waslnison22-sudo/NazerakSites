@@ -156,7 +156,7 @@ const testPagesCanonicalization = async () => {
         await route.fulfill({
           status: 200,
           contentType: "text/html",
-          body: '<!doctype html><html><head><meta charset="utf-8"></head><body><main>Legacy Pages host</main><script src="/NazerakSites/auth.js?v=39" defer></script></body></html>'
+          body: '<!doctype html><html><head><meta charset="utf-8"></head><body><main>Legacy Pages host</main><script src="/NazerakSites/auth.js?v=40" defer></script></body></html>'
         });
       }
     });
@@ -170,7 +170,7 @@ const testPagesCanonicalization = async () => {
       await route.fulfill({
         status: 200,
         contentType: "text/html",
-        body: '<!doctype html><html><head><meta charset="utf-8"></head><body data-cabinet><main id="main-content" data-canonical-arrival>Official NaZerak</main><div data-auth-message role="status" hidden></div><div data-auth-status><span></span></div><div data-account-view="guest" hidden></div><script>window.NAZERAK_SUPABASE_CONFIG={url:"https://auth-smoke.supabase.co",publishableKey:"sb_publishable_browser_smoke_123456789"};window.supabase={createClient:()=>({auth:{onAuthStateChange:()=>({}),getSession:async()=>({data:{session:null},error:null})}})};</script><script src="/auth.js?v=39" defer></script></body></html>'
+        body: '<!doctype html><html><head><meta charset="utf-8"></head><body data-cabinet><main id="main-content" data-canonical-arrival>Official NaZerak</main><div data-auth-message role="status" hidden></div><div data-auth-status><span></span></div><div data-account-view="guest" hidden></div><script>window.NAZERAK_SUPABASE_CONFIG={url:"https://auth-smoke.supabase.co",publishableKey:"sb_publishable_browser_smoke_123456789"};window.supabase={createClient:()=>({auth:{onAuthStateChange:()=>({}),getSession:async()=>({data:{session:null},error:null})}})};</script><script src="/auth.js?v=40" defer></script></body></html>'
       });
     });
     await page.goto("https://nazerak-pages-smoke.github.io/NazerakSites/?code=sample-pkce-code&state=smoke#oauth", { waitUntil: "domcontentloaded" });
