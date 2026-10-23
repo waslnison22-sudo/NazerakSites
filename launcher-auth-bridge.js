@@ -3,14 +3,15 @@
 
   const current = new URL(window.location.href);
   const params = current.searchParams;
+  const fragment = new URLSearchParams(current.hash.startsWith("#") ? current.hash.slice(1) : current.hash);
 
   // The normal web login must keep Supabase's own PKCE callback handling.
   // Only the explicit launcher callback is forwarded to the installed app.
   if (params.get("launcher") !== "1") return;
 
-  const code = params.get("code");
-  const oauthError = params.get("error") || params.get("error_code");
-  const errorDescription = params.get("error_description") || "";
+  const code = params.get("code") || fragment.get("code");
+  const oauthError = params.get("error") || params.get("error_code") || fragment.get("error") || fragment.get("error_code");
+  const errorDescription = params.get("error_description") || fragment.get("error_description") || "";
   if (!code && !oauthError && !errorDescription) return;
 
   const target = new URL("nazerak://auth/callback");
