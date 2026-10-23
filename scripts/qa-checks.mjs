@@ -64,6 +64,7 @@ const requiredFiles = [
   "scripts/browser-smoke.mjs",
   "scripts/home-hud-smoke.mjs",
   "scripts/cabinet-hud-smoke.mjs",
+  "scripts/launcher-auth-bridge-smoke.mjs",
   "assets/images/README.md",
   "assets/images/nazerak-autumn-hero.webp",
   ".htaccess",
