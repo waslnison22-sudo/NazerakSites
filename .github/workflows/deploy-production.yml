@@ -72,7 +72,7 @@ jobs:
           test -f .deploy/assets/images/nazerak-autumn-hero.webp
           grep -q 'assets/images/nazerak-autumn-hero.webp' .deploy/index.html
           grep -q 'home-hud.css?v=7' .deploy/index.html
-          grep -q 'auth.js?v=39' .deploy/cabinet.html
+          grep -q 'auth.js?v=40' .deploy/cabinet.html
           grep -q 'favicon.svg?v=8' .deploy/index.html
           grep -q 'cabinet-hud.css?v=1' .deploy/cabinet.html
           grep -q 'forum.css?v=21' .deploy/forum.html
@@ -121,7 +121,7 @@ jobs:
             test -f "$HOME/www/nazerak.ru/forum.css" &&
             grep -Fq ".forum-v21-layout{" "$HOME/www/nazerak.ru/forum.css" &&
             grep -q "home-hud.css?v=7" "$HOME/www/nazerak.ru/index.html" &&
-            grep -q "auth.js?v=39" "$HOME/www/nazerak.ru/cabinet.html" &&
+            grep -q "auth.js?v=40" "$HOME/www/nazerak.ru/cabinet.html" &&
             grep -q "favicon.svg?v=8" "$HOME/www/nazerak.ru/index.html" &&
             test -f "$HOME/www/nazerak.ru/cabinet-hud.css" &&
             test -f "$HOME/www/nazerak.ru/assets/images/nazerak-autumn-hero.webp" &&
