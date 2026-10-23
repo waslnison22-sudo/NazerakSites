@@ -87,6 +87,7 @@ https://nazerak.ru/
 ```text
 https://nazerak.ru/cabinet.html
 https://nazerak.ru/cabinet
+nazerak://auth/callback
 ```
 
 Локальное тестирование:
@@ -97,6 +98,8 @@ http://localhost:8000/cabinet
 ```
 
 OAuth теперь отправляет callback на `https://nazerak.ru/cabinet.html`. Если после Discord пользователь попадает на GitHub Pages, Site URL или Redirect URLs в Supabase могут быть устаревшими, либо вход начат со старого адреса Pages. Начинай вход с `https://nazerak.ru`; код перенаправляет GitHub Pages на официальный домен до запуска OAuth. Не указывай GitHub Pages как production Site URL. Если браузер всё же вернулся на старый Pages-адрес с OAuth callback, параметры авторизации будут отброшены, а кабинет попросит повторить вход на официальном домене: PKCE verifier хранится в origin-local storage, поэтому нельзя завершить такую сессию, просто перенеся одноразовый code на другой origin.
+
+Для Windows-лаунчера добавь в этот же allowlist точный redirect URI `nazerak://auth/callback`. Это callback приложения, он не заменяет Discord Developer Portal callback выше. Если URI отсутствует, Supabase может вернуть браузер на Site URL, а не открыть лаунчер.
 
 Указывай адреса точным совпадением.
 
