@@ -57,6 +57,15 @@ function runBridge(href) {
 }
 
 {
+  const result = runBridge("https://nazerak.ru/cabinet?launcher=1#error=access_denied&error_description=fragment%20cancel");
+  const target = new URL(result.redirectedTo);
+  assert.equal(target.protocol, "nazerak:");
+  assert.equal(target.hostname, "auth");
+  assert.equal(target.searchParams.get("error"), "access_denied");
+  assert.equal(target.searchParams.get("error_description"), "fragment cancel");
+}
+
+{
   const oversizedCode = "x".repeat(4097);
   const result = runBridge("https://nazerak.ru/cabinet?launcher=1&code=" + oversizedCode);
   assert.ok(result.redirectedTo, "invalid oversized code must return a safe error to the launcher");
