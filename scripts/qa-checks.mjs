@@ -431,6 +431,8 @@ if (!index.includes('<link rel="canonical" href="https://nazerak.ru/">')) fail.p
 if (!index.includes('<span class="brand__mark" aria-hidden="true">N</span>')) fail.push("homepage previous NaZerak mark is missing");
 if (index.includes('<span class="brand__mark" aria-hidden="true"><svg viewBox="0 0 48 48"')) fail.push("temporary bars/slash brand icon returned");
 if (!auth.includes('const PRODUCTION_ORIGIN = "https://nazerak.ru";')) fail.push("OAuth production origin must be pinned to nazerak.ru");
+if (!auth.includes('callbackQuery.get("launcher") === "1"')) fail.push("launcher OAuth callback must be isolated from web PKCE handling");
+if (!auth.includes("if (isDesktopLauncherCallback)") || !auth.includes("readyResolve?.();")) fail.push("desktop OAuth callback must resolve the auth-ready promise without starting web auth");
 if (!auth.includes('new URL("/cabinet.html", isLocalDevelopmentHost() ? window.location.origin : PRODUCTION_ORIGIN).href')) fail.push("OAuth callback must use the exact documented cabinet.html URL");
 if (!auth.includes('hostname.endsWith(".github.io")')) fail.push("legacy GitHub Pages must canonicalize before OAuth");
 if (!auth.includes('target.searchParams.set("auth_redirect", "legacy_pages")')) fail.push("legacy OAuth callbacks must not pass PKCE data to a different origin");
