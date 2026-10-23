@@ -138,7 +138,7 @@ for (const [name, page] of [
   ["forum-user.html", read("forum-user.html")],
   ["forum-reports.html", read("forum-reports.html")]
 ]) {
-  const assets = ["auth-config.js?v=8", "supabase-loader.js?v=9", "auth.js?v=39", "script.js?v=24"];
+  const assets = ["auth-config.js?v=8", "supabase-loader.js?v=9", "auth.js?v=40", "script.js?v=24"];
   if (name === "index.html" || name === "cabinet.html") {
     assets.splice(assets.indexOf("script.js?v=24"), 1, "script.js?v=26");
   }
@@ -442,7 +442,7 @@ if (!auth.includes('document.addEventListener("error", restoreAvatarFallback, tr
 for (const pagePath of ["index.html","cabinet.html","forum.html","forum-category.html","forum-members.html","forum-search.html","topic.html","forum-user.html","forum-reports.html"]) {
   const page = read(pagePath);
   if (!page.includes("https://images-ext-1.discordapp.net")) fail.push(pagePath + " CSP does not allow the Discord image proxy");
-  if (!page.includes("auth.js?v=39")) fail.push(pagePath + " is missing updated auth.js");
+  if (!page.includes("auth.js?v=40")) fail.push(pagePath + " is missing updated auth.js");
   if (!page.includes("favicon.svg?v=8")) fail.push(pagePath + " is missing restored favicon cache key");
 }
 if (!read("404.html").includes("favicon.svg?v=8")) fail.push("404 page is missing restored favicon cache key");
