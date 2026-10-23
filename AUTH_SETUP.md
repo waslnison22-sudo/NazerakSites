@@ -82,12 +82,20 @@ https://nazerak.ru/
 
 ### Redirect URLs
 
-Добавь оба production URL — OAuth callback и чистый маршрут кабинета:
+Добавь URL сайта и отдельный deep-link URI лаунчера. Для сайта используются следующие production URL:
 
 ```text
 https://nazerak.ru/cabinet.html
 https://nazerak.ru/cabinet
 ```
+
+Для входа из NaZerak Launcher обязательно добавь также custom-protocol redirect URI в этот же список Supabase **Authentication → URL Configuration → Redirect URLs**:
+
+```text
+nazerak://auth/callback
+```
+
+Лаунчер запускает Discord OAuth через системный браузер и ждёт возврат на `nazerak://auth/callback`. Если этот URI не разрешён в Supabase, браузер не сможет корректно вернуть авторизацию приложению. Это отдельный адрес для лаунчера; Discord Developer Portal по-прежнему должен использовать только callback Supabase `https://ujlbyzvdsncvqbrhasuw.supabase.co/auth/v1/callback`.
 
 Локальное тестирование:
 
@@ -139,11 +147,12 @@ https://ujlbyzvdsncvqbrhasuw.supabase.co/auth/v1/callback
 Проверь **Authentication → Sign In / Providers → Discord → Enabled**.
 
 ### После Discord не открывается кабинет
-Проверь **Authentication → URL Configuration → Redirect URLs** и наличие:
+Проверь **Authentication → URL Configuration → Redirect URLs**:
 
-```text
-https://nazerak.ru/cabinet.html
-```
+- Для сайта: `https://nazerak.ru/cabinet.html` и `https://nazerak.ru/cabinet`.
+- Для лаунчера: `nazerak://auth/callback`.
+
+В Discord Developer Portal должен оставаться callback Supabase: `https://ujlbyzvdsncvqbrhasuw.supabase.co/auth/v1/callback`.
 
 ### Профиль не сохраняется
 Проверь, что вход выполнен через Discord, затем открой **Table Editor → profiles**.
